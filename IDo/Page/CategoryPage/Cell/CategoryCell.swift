@@ -11,11 +11,13 @@ import UIKit
 class CategoryCell: UITableViewCell {
     let label: UILabel = {
         let label = UILabel()
+        label.font = .headFont(.xSmall, weight: .regular)
         return label
     }()
 
     let categoryImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.tintColor = .black
         return imageView
     }()
 
@@ -41,6 +43,6 @@ class CategoryCell: UITableViewCell {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) 구현되지 않았습니다.")
     }
 }

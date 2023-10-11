@@ -32,10 +32,7 @@ class CategoryViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(view.snp.top)
-            make.bottom.equalTo(view.snp.bottom)
-            make.leading.equalTo(view.snp.leading)
-            make.trailing.equalTo(view.snp.trailing)
+            make.edges.equalToSuperview().inset(Constant.margin3)
         }
     }
 }

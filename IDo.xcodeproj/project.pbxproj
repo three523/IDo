@@ -22,6 +22,7 @@
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
+		E74C58EC2AD6922000C2DEF5 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
+		E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -145,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */,
+				E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -230,6 +233,7 @@
 				10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */,
 				180C33692AD642B6000979F7 /* Font.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
+				E74C58EC2AD6922000C2DEF5 /* BasicCell.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
