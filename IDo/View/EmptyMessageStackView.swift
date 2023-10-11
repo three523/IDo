@@ -31,7 +31,7 @@ final class EmptyMessageStackView: UIStackView {
         }
     }
     
-    init(imageSize: CGFloat = 60) {
+    init(_ imageSize: CGFloat = 60) {
         self.imageSize = imageSize
         super.init(frame: .zero)
         axis = .vertical
@@ -41,8 +41,8 @@ final class EmptyMessageStackView: UIStackView {
         setup()
     }
     
-    convenience init(imageSize: CGFloat = 60, image: UIImage) {
-        self.init(imageSize: imageSize)
+    convenience init(_ imageSize: CGFloat = 60, image: UIImage?) {
+        self.init(imageSize)
         basicImageView.imageView.image = image
     }
     
@@ -53,7 +53,7 @@ final class EmptyMessageStackView: UIStackView {
 }
 
 extension EmptyMessageStackView {
-    func setImage(image: UIImage) {
+    func setImage(image: UIImage?) {
         basicImageView.imageView.image = image
     }
 }
