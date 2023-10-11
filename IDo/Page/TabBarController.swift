@@ -29,14 +29,15 @@ class TabBarController: UITabBarController {
         let vc4 = UINavigationController(rootViewController: MyProfileViewController())
 
         vc1.title = "홈"
-        vc2.tabBarItem.title = "좋아요"
-        vc3.title = "마이페이지"
+        vc2.title = "카테고리"
+        vc3.title = "알림"
+        vc4.title = "마이프로필"
 
-        self.setViewControllers([vc1, vc2, vc3], animated: false)
+        self.setViewControllers([vc1, vc2, vc3, vc4], animated: false)
 
         guard let items = self.tabBar.items else { return }
 
-        let images = ["house", "heart", "person"]
+        let images = ["house", "list.bullet.rectangle", "bell", "person"]
 
         for index in 0..<items.count {
             items[index].image = UIImage(systemName: images[index])
