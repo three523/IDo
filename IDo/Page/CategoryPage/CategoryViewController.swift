@@ -8,22 +8,48 @@
 import UIKit
 
 class CategoryViewController: UIViewController {
+    let categoryData = ["IT/개발", "사진/영상", "음악/악기", "게임/오락", "여행/맛집", "댄스/공연", "동물/식물", "낚시/캠핑", "운동/스포츠"]
+    let categoryImage = UIImage(systemName: "pencil")
+    private let tableView: UITableView = {
+        let tableview = UITableView()
+        return tableview
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.dataSource = self
 
-        // Do any additional setup after loading the view.
+        tableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
+        setConstraint()
+
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = UITableView.automaticDimension
     }
-    
 
-    /*
-    // MARK: - Navigation
+    private func setConstraint() {
+        view.addSubview(tableView)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(Constant.margin3)
+        }
     }
-    */
+}
 
+extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 60
+    }
+
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return categoryData.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CategoryCell
+        cell.label.text = categoryData[indexPath.row]
+        cell.categoryImageView.image = categoryImage
+        return cell
+    }
 }
