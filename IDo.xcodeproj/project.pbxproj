@@ -79,6 +79,7 @@
 				180C33662AD642B6000979F7 /* Util */,
 				10C265B12AD55BBF002BA40A /* AppDelegate.swift */,
 				10C265B32AD55BBF002BA40A /* SceneDelegate.swift */,
+				E74C58ED2AD6984900C2DEF5 /* View */,
 				10CBA0452AD6476000F1DA37 /* Page */,
 				10C265BD2AD55BC2002BA40A /* Assets.xcassets */,
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
@@ -127,8 +128,8 @@
 				10CBA0372AD6455400F1DA37 /* TabBarController.swift */,
 				10CBA03F2AD6467600F1DA37 /* HomePage */,
 				10CBA0402AD6469200F1DA37 /* CategoryPage */,
-				10CBA0412AD6469F00F1DA37 /* NoticePage */,
 				10CBA0422AD646AA00F1DA37 /* MyProfilePage */,
+				10CBA0412AD6469F00F1DA37 /* NoticePage */,
 			);
 			path = Page;
 			sourceTree = "<group>";
@@ -147,9 +148,16 @@
 			isa = PBXGroup;
 			children = (
 				E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */,
-				E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		E74C58ED2AD6984900C2DEF5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
