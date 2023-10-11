@@ -14,7 +14,8 @@
 		10C265BE2AD55BC2002BA40A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BD2AD55BC2002BA40A /* Assets.xcassets */; };
 		10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */; };
 		10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10C265C92AD55C81002BA40A /* SnapKit */; };
-		10C265CC2AD55C81002BA40A /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 10C265CB2AD55C81002BA40A /* SnapKit-Dynamic */; };
+		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
+		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		10C265BD2AD55BC2002BA40A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		10C265C02AD55BC2002BA40A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		10C265C22AD55BC2002BA40A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
+		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,7 +37,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */,
-				10C265CC2AD55C81002BA40A /* SnapKit-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +62,7 @@
 		10C265B02AD55BBF002BA40A /* IDo */ = {
 			isa = PBXGroup;
 			children = (
+				180C33662AD642B6000979F7 /* Util */,
 				10C265B12AD55BBF002BA40A /* AppDelegate.swift */,
 				10C265B32AD55BBF002BA40A /* SceneDelegate.swift */,
 				10C265B52AD55BBF002BA40A /* ViewController.swift */,
@@ -69,6 +72,15 @@
 				10C265BA2AD55BBF002BA40A /* IDo.xcdatamodeld */,
 			);
 			path = IDo;
+			sourceTree = "<group>";
+		};
+		180C33662AD642B6000979F7 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				180C33672AD642B6000979F7 /* Font.swift */,
+				180C33682AD642B6000979F7 /* Color.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -89,7 +101,6 @@
 			name = IDo;
 			packageProductDependencies = (
 				10C265C92AD55C81002BA40A /* SnapKit */,
-				10C265CB2AD55C81002BA40A /* SnapKit-Dynamic */,
 			);
 			productName = IDo;
 			productReference = 10C265AE2AD55BBF002BA40A /* IDo.app */;
@@ -150,8 +161,10 @@
 			files = (
 				10C265BC2AD55BBF002BA40A /* IDo.xcdatamodeld in Sources */,
 				10C265B62AD55BBF002BA40A /* ViewController.swift in Sources */,
+				180C33692AD642B6000979F7 /* Font.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
+				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -383,11 +396,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 10C265C82AD55C81002BA40A /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		10C265CB2AD55C81002BA40A /* SnapKit-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 10C265C82AD55C81002BA40A /* XCRemoteSwiftPackageReference "SnapKit" */;
-			productName = "SnapKit-Dynamic";
 		};
 /* End XCSwiftPackageProductDependency section */
 
