@@ -11,7 +11,8 @@ import SnapKit
 
 enum Color: String, CaseIterable {
     //core color
-    case primary = "Primary"
+    case main = "Main"
+    case sub = "Sub"
     case negative = "Negative"
     case positive = "Positive"
     case black = "black"
