@@ -31,7 +31,7 @@ class TabBarController: UITabBarController {
         vc1.title = "홈"
         vc2.tabBarItem.title = "좋아요"
         vc3.title = "마이페이지"
-
+        
         self.setViewControllers([vc1, vc2, vc3], animated: false)
 
         guard let items = self.tabBar.items else { return }
