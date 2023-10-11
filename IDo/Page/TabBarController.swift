@@ -29,7 +29,6 @@ class TabBarController: UITabBarController {
         let vc4 = UINavigationController(rootViewController: MyProfileViewController())
 
         vc1.title = "홈"
-
         vc2.title = "카테고리"
         vc3.title = "알림"
         vc4.title = "마이프로필"

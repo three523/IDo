@@ -21,6 +21,9 @@
 		10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA0432AD646CE00F1DA37 /* Margin.swift */; };
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
+		180C33EC2AD6A951000979F7 /* NoticeBoardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33EB2AD6A951000979F7 /* NoticeBoardDetailViewController.swift */; };
+		180C33EF2AD6ADB5000979F7 /* NoticeBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33EE2AD6ADB5000979F7 /* NoticeBoardView.swift */; };
+		180C33F12AD6AF80000979F7 /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33F02AD6AF80000979F7 /* Reusable.swift */; };
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 		E74C58EC2AD6922000C2DEF5 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */; };
 /* End PBXBuildFile section */
@@ -41,6 +44,9 @@
 		10CBA0432AD646CE00F1DA37 /* Margin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Margin.swift; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		180C33EB2AD6A951000979F7 /* NoticeBoardDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardDetailViewController.swift; sourceTree = "<group>"; };
+		180C33EE2AD6ADB5000979F7 /* NoticeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardView.swift; sourceTree = "<group>"; };
+		180C33F02AD6AF80000979F7 /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -130,6 +136,7 @@
 				10CBA0402AD6469200F1DA37 /* CategoryPage */,
 				10CBA0422AD646AA00F1DA37 /* MyProfilePage */,
 				10CBA0412AD6469F00F1DA37 /* NoticePage */,
+				180C33EA2AD6A8E8000979F7 /* NoticeBoardDetailPage */,
 			);
 			path = Page;
 			sourceTree = "<group>";
@@ -140,8 +147,26 @@
 				180C33672AD642B6000979F7 /* Font.swift */,
 				180C33682AD642B6000979F7 /* Color.swift */,
 				10CBA0432AD646CE00F1DA37 /* Margin.swift */,
+				180C33F02AD6AF80000979F7 /* Reusable.swift */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		180C33EA2AD6A8E8000979F7 /* NoticeBoardDetailPage */ = {
+			isa = PBXGroup;
+			children = (
+				180C33EB2AD6A951000979F7 /* NoticeBoardDetailViewController.swift */,
+				180C33ED2AD6AD9B000979F7 /* View */,
+				180C33EE2AD6ADB5000979F7 /* NoticeBoardView.swift */,
+			);
+			path = NoticeBoardDetailPage;
+			sourceTree = "<group>";
+		};
+		180C33ED2AD6AD9B000979F7 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 		E74C58EA2AD65E1800C2DEF5 /* Cell */ = {
@@ -238,6 +263,7 @@
 			files = (
 				10CBA03E2AD6466400F1DA37 /* MyProfileViewController.swift in Sources */,
 				10C265BC2AD55BBF002BA40A /* IDo.xcdatamodeld in Sources */,
+				180C33EC2AD6A951000979F7 /* NoticeBoardDetailViewController.swift in Sources */,
 				10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */,
 				180C33692AD642B6000979F7 /* Font.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
@@ -247,6 +273,8 @@
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
+				180C33F12AD6AF80000979F7 /* Reusable.swift in Sources */,
+				180C33EF2AD6ADB5000979F7 /* NoticeBoardView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 			);
