@@ -59,11 +59,15 @@ class MeetingViewController: UIViewController {
 
     func navigationItem() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(setBtnTap))
+//        button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+//        let noticeBoardVC = MeetingCreateViewController()
+//        navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 
     @objc
     func setBtnTap() {
-        print("setBtnTap")
+        let noticeBoardVC = MeetingCreateViewController()
+        navigationController?.pushViewController(noticeBoardVC, animated: false)
     }
 }
 

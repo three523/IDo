@@ -27,6 +27,7 @@
 		10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */; };
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
+		7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */; };
 		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
 		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
 		7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */; };
@@ -63,6 +64,7 @@
 		10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardView.swift; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishButton.swift; sourceTree = "<group>"; };
 		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
 		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
 		7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingProfileImage.swift; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */,
+				7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -342,6 +345,7 @@
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
 				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
+				7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
