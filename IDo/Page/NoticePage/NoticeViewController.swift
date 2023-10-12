@@ -38,7 +38,6 @@ extension NoticeViewController: UITableViewDelegate, UITableViewDataSource {
         cell.commentsLabel.text = noticeComments[indexPath.row]
         cell.dataLable.text = noticeDate[indexPath.row]
         cell.categoryImageView.image = noticeImage
-
         return cell
     }
 

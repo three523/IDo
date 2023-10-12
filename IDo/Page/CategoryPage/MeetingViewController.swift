@@ -77,6 +77,12 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.titleLabel.text = meetingTitle[indexPath.row]
         cell.aboutLabel.text = meetingDate[indexPath.row]
         cell.basicImageView.image = meetingImage
+
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let noticeBoardVC = NoticeMeetingController()
+        navigationController?.pushViewController(noticeBoardVC, animated: false)
     }
 }

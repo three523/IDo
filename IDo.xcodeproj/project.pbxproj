@@ -30,11 +30,13 @@
 		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
 		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
 		7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */; };
-		E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */; };
-		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185C2AD796AF0052E950 /* BasicCell.swift */; };
 		7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */; };
 		7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185E2AD796AF0052E950 /* BasicImageView.swift */; };
+		E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */; };
+		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
+		E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */; };
+		E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */; };
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 		E74C58EF2AD6B1B300C2DEF5 /* MeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */; };
 /* End PBXBuildFile section */
@@ -64,10 +66,12 @@
 		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
 		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
 		7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingProfileImage.swift; sourceTree = "<group>"; };
-		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		7FBE185C2AD796AF0052E950 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyMessageStackView.swift; sourceTree = "<group>"; };
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
+		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
+		E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeMeetingController.swift; sourceTree = "<group>"; };
+		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -169,6 +173,8 @@
 		10CBA0482AD6661500F1DA37 /* NoticeBoard */ = {
 			isa = PBXGroup;
 			children = (
+				E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */,
+				E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */,
 				10CBA0492AD6665C00F1DA37 /* NoticeBoardViewController.swift */,
 				10CBA04B2AD666F700F1DA37 /* NoticeBoardView.swift */,
 				10CBA04F2AD6678D00F1DA37 /* NoticeBoardCell */,
@@ -344,8 +350,10 @@
 				7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */,
 				7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */,
 				7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */,
+				E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
+				E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */,
 				E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */,
 				7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
