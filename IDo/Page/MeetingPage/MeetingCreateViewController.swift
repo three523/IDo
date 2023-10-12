@@ -2,9 +2,28 @@ import UIKit
 
 class MeetingCreateViewController: UIViewController {
     
-    let profileImageButton = MeetingProfileImageButton()
-    let imageSetLabel = UILabel()
-    let meetingNameField = UITextField()
+    let profileImageButton: MeetingProfileImageButton = {
+        let button = MeetingProfileImageButton()
+        button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    let imageSetLabel: UILabel = {
+        let label = UILabel()
+        label.text = "대표 사진"
+        label.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    let meetingNameField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
+        textField.borderStyle = .roundedRect
+        textField.backgroundColor = UIColor(named: "BackgroundSecondary")
+        textField.placeholder = "모임 이름을 설정하세요."
+        return textField
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,30 +35,23 @@ class MeetingCreateViewController: UIViewController {
         view.addSubview(profileImageButton)
         view.addSubview(imageSetLabel)
         view.addSubview(meetingNameField)
-        profileImageButton.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+        
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
             make.centerX.equalToSuperview()
         }
-        imageSetLabel.text = "대표 사진"
-        imageSetLabel.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
-        imageSetLabel.textAlignment = .center
+        
         imageSetLabel.snp.makeConstraints { (make) in
             make.top.equalTo(profileImageButton.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
         }
-        meetingNameField.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-        meetingNameField.borderStyle = .roundedRect
-        meetingNameField.backgroundColor = UIColor(named: "BackgroundSecondary")
-        meetingNameField.placeholder = "모임 이름을 설정하세요."
+        
         meetingNameField.snp.makeConstraints { (make) in
             make.top.equalTo(imageSetLabel.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
             make.width.equalTo(361)
             make.height.equalTo(37)
         }
-        
-        
     }
     
     @objc private func profileImageTapped() {
@@ -56,6 +68,7 @@ extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINaviga
         picker.dismiss(animated: true, completion: nil)
     }
 }
+
 
 
 
