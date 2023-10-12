@@ -49,7 +49,7 @@ class CreateNoticeBoardViewController: UIViewController {
     
 }
 
-// Navigation 관련 extension
+// MARK: - Navigation 관련 extension
 private extension CreateNoticeBoardViewController {
     
     func navigationControllerSet() {
@@ -73,13 +73,10 @@ private extension CreateNoticeBoardViewController {
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
             }
             
-            // 네비게이션 제목
-            
-            
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
             let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))
-            finishButton.tintColor = UIColor(color: .main)
             self.navigationItem.rightBarButtonItem = finishButton
+            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
         
         // 처음 작성 할 때
@@ -98,7 +95,9 @@ private extension CreateNoticeBoardViewController {
             }
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedNew))
+            let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))
+            self.navigationItem.rightBarButtonItem = finishButton
+            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
     }
     
@@ -131,7 +130,7 @@ private extension CreateNoticeBoardViewController {
     }
 }
 
-// addPictureButton 관련 extension
+// MARK: - addPictureButton 관련
 private extension CreateNoticeBoardViewController {
     
     func buttonAction() {
@@ -157,6 +156,7 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     }
 }
 
+// MARK: - TextView 관련
 extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 초기 호출
@@ -194,9 +194,10 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     }
 }
 
+// MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return 1
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -225,6 +226,7 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - Navigation 관련
 extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         isEditingMode = false

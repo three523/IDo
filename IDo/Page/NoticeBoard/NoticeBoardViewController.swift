@@ -41,7 +41,6 @@ private extension NoticeBoardViewController {
         
         // 네비게이션 LargeTitle 비활성화 및 title 입력
         navigationController?.navigationBar.prefersLargeTitles = false
-        navigationController?.view.tintColor = UIColor(color: .main)
         navigationItem.title = "Team.첫사랑(하늬바람)"
     }
     
@@ -49,8 +48,8 @@ private extension NoticeBoardViewController {
         
         // 네비게이션 오른쪽 버튼 생성
         let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
-        
-        navigationItem.rightBarButtonItems = [ createButton ]
+        self.navigationItem.rightBarButtonItems = [ createButton ]
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         
         let backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
         backBarButtonItem.tintColor = UIColor(color: .main)
