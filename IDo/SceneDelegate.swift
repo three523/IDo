@@ -20,6 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let mainVC = NoticeBoardDetailViewController()
         window.backgroundColor = .white
         window.rootViewController = mainVC
+
+        window.backgroundColor = .white
         window.makeKeyAndVisible()
         self.window = window
     }
