@@ -144,8 +144,8 @@
 			children = (
 				10CBA0492AD6665C00F1DA37 /* NoticeBoardViewController.swift */,
 				10CBA04B2AD666F700F1DA37 /* NoticeBoardView.swift */,
-				10CBA0542AD6B02500F1DA37 /* CreateNoticeBoard */,
 				10CBA04F2AD6678D00F1DA37 /* NoticeBoardCell */,
+				10CBA0542AD6B02500F1DA37 /* CreateNoticeBoard */,
 			);
 			path = NoticeBoard;
 			sourceTree = "<group>";

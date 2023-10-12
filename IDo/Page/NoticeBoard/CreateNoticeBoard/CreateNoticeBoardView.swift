@@ -26,7 +26,7 @@ class CreateNoticeBoardView: UIView {
     private(set) lazy var titleTextView: UITextView = {
         var textView = UITextView()
         textView.backgroundColor = UIColor(color: .backgroundSecondary)
-        textView.font = UIFont.bodyFont(.small, weight: .medium)
+        textView.font = UIFont.bodyFont(.large, weight: .semibold)
         textView.layer.cornerRadius = 5
         return textView
     }()
@@ -57,7 +57,7 @@ private extension CreateNoticeBoardView {
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
             make.leading.equalTo(snp.leading).offset(Constant.margin3)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
-            make.height.equalTo(32)
+            make.height.equalTo(40)
         }
         
         contentTextView.snp.makeConstraints { make in

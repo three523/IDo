@@ -41,7 +41,7 @@ private extension NoticeBoardViewController {
         
         // 네비게이션 LargeTitle 비활성화 및 title 입력
         navigationController?.navigationBar.prefersLargeTitles = false
-        navigationController?.view.tintColor = UIColor(color: .main)
+        navigationController?.view.tintColor = UIColor(color: .negative)
         navigationItem.title = "Team.첫사랑(하늬바람)"
     }
     
@@ -71,9 +71,4 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         
         return noticeBoardTableViewCell
     }
-    
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 200
-//    }
-    
 }
