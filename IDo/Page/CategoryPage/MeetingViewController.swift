@@ -12,11 +12,40 @@ class MeetingViewController: UIViewController {
     let meetingTitle = ["테니스모임", "개발자 스터디", "게임"]
     let meetingDate = ["테니스 모임에 대해 소개합니다.", "개발 공부를 하는 모임입니다.", "게임하는 사람들을 모으고 있습니다."]
     let meetingImage = UIImage(systemName: "camera.circle")
+
+    var categoryData: String?
+    var categoryIndex: Int?
     private var tableView: UITableView!
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem()
+
+        setupNavigationBar()
         setupTableView()
+        navigationItem()
+        if let data = categoryData, // 카테고리 Index에 따른 제목 표시
+           let index = categoryIndex,
+           index < meetingTitle.count && index < meetingDate.count
+        {
+            navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
+            navigationItem.titleView?.addSubview(createTitleLabel(with: data))
+        }
+    }
+
+    private func createTitleLabel(with data: String) -> UILabel {
+        let titleLabel = UILabel()
+        titleLabel.text = "\(data)"
+        titleLabel.textAlignment = .center
+
+        return titleLabel
+    }
+
+    private func setupNavigationBar() {
+        let titleLabel = UILabel()
+        titleLabel.text = categoryData ?? ""
+        titleLabel.textAlignment = .center
+
+        navigationItem.titleView = titleLabel
     }
 
     func setupTableView() {

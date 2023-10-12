@@ -36,8 +36,12 @@ class CategoryViewController: UITableViewController {
         // 선택한 셀의 인덱스에 따라 다른 화면으로 전환
         switch indexPath.row {
         case 0 ... 9:
+            let selectedCategory = categoryData[indexPath.row]
+
             let exampleVC = MeetingViewController()
-            navigationController?.pushViewController(exampleVC, animated: false)
+            exampleVC.categoryData = selectedCategory
+
+            navigationController?.pushViewController(exampleVC, animated: true)
         default:
             break
         }
