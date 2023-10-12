@@ -31,8 +31,13 @@ class CreateNoticeBoardViewController: UIViewController {
         navigationControllerSet()
         navigationBarButtonAction()
         
+        buttonAction()
+        
         createNoticeBoardView.titleTextView.delegate = self
         createNoticeBoardView.contentTextView.delegate = self
+        
+        createNoticeBoardView.galleryCollectionView.delegate = self
+        createNoticeBoardView.galleryCollectionView.dataSource = self
         
         navigationController?.delegate = self
     }
@@ -44,6 +49,7 @@ class CreateNoticeBoardViewController: UIViewController {
     
 }
 
+// Navigation 관련 extension
 private extension CreateNoticeBoardViewController {
     
     func navigationControllerSet() {
@@ -125,6 +131,32 @@ private extension CreateNoticeBoardViewController {
     }
 }
 
+// addPictureButton 관련 extension
+private extension CreateNoticeBoardViewController {
+    
+    func buttonAction() {
+        createNoticeBoardView.addPictureButton.addTarget(self, action: #selector(addPicture), for: .touchUpInside)
+    }
+    
+    @objc func addPicture() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
+    }
+}
+
+extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
+                    cell.galleryImageView.image = image
+                }
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+}
+
 extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 초기 호출
@@ -159,6 +191,37 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             createNoticeBoardView.contentTextView.text =  "내용을 입력하세요."
             createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
         }
+    }
+}
+
+extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
+        return cell
+    }
+    
+    
+}
+
+extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
+    
+    // CollectionView Cell의 사이즈
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: (collectionView.bounds.width - 4)/3, height: (collectionView.bounds.width - 4)/3)
+    }
+    
+    // 수평
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
+    }
+    
+    // 수직
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 2
     }
 }
 
