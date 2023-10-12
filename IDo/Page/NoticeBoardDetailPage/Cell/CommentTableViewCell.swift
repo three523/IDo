@@ -10,7 +10,8 @@ import SnapKit
 
 class CommentTableViewCell: UITableViewCell, Reusable {
     
-    let userInfoStackView: HorizentalImageTitleView = HorizentalImageTitleView()
+//    let userInfoStackView: HorizentalImageTitleView = HorizentalImageTitleView()
+    let userInfoStackView: WriterStackView = WriterStackView()
     let contentLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.small, weight: .regular)
@@ -18,13 +19,14 @@ class CommentTableViewCell: UITableViewCell, Reusable {
         label.numberOfLines = 1
         return label
     }()
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = .bodyFont(.small, weight: .regular)
-        label.text = "10/06 13: 56"
-        label.numberOfLines = 1
-        return label
-    }()
+//    let dateLabel: UILabel = {
+//        let label = UILabel()
+//        label.font = .bodyFont(.small, weight: .regular)
+//        let date = Date().addingTimeInterval(-300)
+//        label.text = date.diffrenceDate
+//        label.numberOfLines = 1
+//        return label
+//    }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -47,12 +49,11 @@ private extension CommentTableViewCell {
     func setup() {
         addViews()
         autoLayoutSetup()
-        userInfoStackViewSetup()
     }
     func addViews() {
         contentView.addSubview(userInfoStackView)
         contentView.addSubview(contentLabel)
-        contentView.addSubview(dateLabel)
+//        contentView.addSubview(dateLabel)
     }
     func autoLayoutSetup() {
         userInfoStackView.snp.makeConstraints { make in
@@ -62,19 +63,7 @@ private extension CommentTableViewCell {
         contentLabel.snp.makeConstraints { make in
             make.top.equalTo(userInfoStackView.snp.bottom).offset(Constant.margin2)
             make.left.right.equalTo(contentView)
-        }
-        dateLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentLabel.snp.bottom).offset(Constant.margin2)
-            make.left.right.equalTo(contentView)
             make.bottom.equalTo(contentView).inset(Constant.margin2)
         }
-    }
-    func userInfoStackViewSetup() {
-        userInfoStackView.imageView.backgroundColor = UIColor(color: .contentPrimary)
-        userInfoStackView.image = UIImage(systemName: "person.fill")
-        userInfoStackView.imageSize = 30
-        userInfoStackView.imageType = .circle
-        userInfoStackView.imageViewContentMargin = 4
-        userInfoStackView.spacing = 8
     }
 }

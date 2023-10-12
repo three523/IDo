@@ -187,6 +187,5 @@ private extension NoticeBoardTableViewCell {
         commentImageView.snp.makeConstraints { make in
             make.width.height.equalTo(15)
         }
-        
     }
 }

@@ -33,9 +33,10 @@ final class WriterStackView: UIStackView {
     private let writerTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.xSmall, weight: .regular)
-        label.textColor = UIColor(color: .textStrong)
+        label.textColor = UIColor(color: .text1)
         label.numberOfLines = 1
-        label.text = "10/06 13 : 55"
+        let date = Date().addingTimeInterval(-200)
+        label.text = date.diffrenceDate
         return label
     }()
     

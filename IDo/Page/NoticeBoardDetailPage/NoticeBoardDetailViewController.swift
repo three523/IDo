@@ -10,50 +10,24 @@ import SnapKit
 
 final class NoticeBoardDetailViewController: UIViewController {
     
-    private let scrollView: UIScrollView = UIScrollView()
-    private lazy var contentStackView = {
-        let stackView = UIStackView(arrangedSubviews: [
-            noticeBoardDetailView,
-            commentTableView,
-        ])
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.spacing = 12
-        return stackView
-    }()
     private let noticeBoardDetailView: NoticeBoardDetailView = NoticeBoardDetailView()
     private let commentTableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.backgroundColor = UIColor(color: .backgroundPrimary)
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.isScrollEnabled = false
+        tableView.sectionHeaderHeight = UITableView.automaticDimension
         return tableView
     }()
     private let commentPositionView: UIView = UIView()
     private let addCommentStackView: CommentStackView = CommentStackView()
-    private let emptyMessageView: EmptyMessageStackView = {
-        let emptyView = EmptyMessageStackView(image: UIImage(systemName: "bubble.right.fill"))
-        emptyView.titleLabel.text = "댓글이 없습니다."
-        emptyView.descriptionLabel.text = "댓글을 작성해주세요"
-        return emptyView
-    }()
-    private var containerView: UIView = UIView()
-    private let dummyList: [Int] = [1,2,3,4,5,6,7,8,9]
-    private var tableViewHeightConstraint: Constraint? = nil
+    private let dummyList: [Int] = [1,2,3,4,5,6,7,8,9,10]
     private var addCommentViewBottomConstraint: Constraint? = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        let tableViewHeight = commentTableView.intrinsicContentSize.height
-        scrollView.contentSize = CGSize(width: scrollView.bounds.width, height: tableViewHeight)
-        tableViewHeightConstraint?.update(offset: tableViewHeight)
-    }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -71,60 +45,20 @@ private extension NoticeBoardDetailViewController {
         addViews()
         autoLayoutSetup()
         tableViewSetup()
-        updateView()
     }
     func addViews() {
-        view.addSubview(containerView)
         view.addSubview(commentPositionView)
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentStackView)
-        containerView.addSubview(emptyMessageView)
+        view.addSubview(commentTableView)
         view.addSubview(addCommentStackView)
     }
     func autoLayoutSetup() {
         let safeArea = view.safeAreaLayoutGuide
-        let contentLayout = scrollView.contentLayoutGuide
-        scrollView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(safeArea).inset(Constant.margin3)
-            make.bottom.equalTo(commentPositionView.snp.top)
-        }
         
         commentTableView.snp.makeConstraints { make in
-            tableViewHeightConstraint = make.height.equalTo(0).constraint
+            make.top.left.right.equalTo(safeArea).inset(Constant.margin3)
+            make.bottom.equalTo(commentPositionView.snp.top).offset(Constant.margin3)
         }
         
-        containerView.snp.makeConstraints { make in
-            make.top.equalTo(noticeBoardDetailView.snp.bottom)
-            make.left.right.bottom.equalTo(safeArea).inset(Constant.margin3)
-        }
-        
-        emptyMessageView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
-        contentStackView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(contentLayout)
-            make.width.equalTo(Constant.screenWidth - (Constant.margin3 * 2))
-        }
-        
-//        videoDecriptionStackView.topAnchor.constraint(equalTo: contentLayout.topAnchor, constant: 8),
-//        videoDecriptionStackView.leadingAnchor.constraint(equalTo: contentLayout.leadingAnchor),
-//        videoDecriptionStackView.trailingAnchor.constraint(equalTo: contentLayout.trailingAnchor),
-//        videoDecriptionStackView.widthAnchor.constraint(equalTo: videoWebView.widthAnchor),
-        
-//        commentTableView.topAnchor.constraint(equalTo: videoDecriptionStackView.bottomAnchor, constant: margin),
-//        commentTableView.leadingAnchor.constraint(equalTo: contentLayout.leadingAnchor),
-//        commentTableView.trailingAnchor.constraint(equalTo: contentLayout.trailingAnchor),
-//        commentTableView.bottomAnchor.constraint(equalTo: contentLayout.bottomAnchor),
-//        tableViewheight!,
-//        noticeBoardDetailView.snp.makeConstraints { make in
-//            make.top.left.right.equalTo(safeArea).inset(Constant.margin3)
-//        }
-//        commentTableView.snp.makeConstraints { make in
-//            make.top.equalTo(noticeBoardDetailView.snp.bottom).offset(32)
-//            make.left.right.equalToSuperview().inset(Constant.margin3)
-//            make.bottom.equalTo(addCommentStackView.snp.top).inset(Constant.margin1)
-//        }
         addCommentStackView.snp.makeConstraints { make in
             make.left.right.equalTo(safeArea)
             self.addCommentViewBottomConstraint = make.bottom.equalTo(safeArea).constraint
@@ -133,20 +67,13 @@ private extension NoticeBoardDetailViewController {
         commentPositionView.snp.makeConstraints { make in
             make.edges.equalTo(addCommentStackView)
         }
-//        emptyMessageView.snp.makeConstraints { make in
-//            make.top.equalTo(noticeBoardDetailView.snp.bottom).offset(Constant.margin3)
-//            make.left.right.bottom.equalTo(safeArea)
-//        }
+        
     }
     func tableViewSetup() {
         commentTableView.register(CommentTableViewCell.self, forCellReuseIdentifier: CommentTableViewCell.identifier)
+        commentTableView.register(EmptyCountTableViewCell.self, forCellReuseIdentifier: EmptyCountTableViewCell.identifier)
         commentTableView.delegate = self
         commentTableView.dataSource = self
-    }
-    func updateView() {
-        let isCommentEmpty = dummyList.isEmpty
-        emptyMessageView.isHidden = !isCommentEmpty
-        commentTableView.isHidden = isCommentEmpty
     }
     
     @objc func keyBoardWillShow(notification: NSNotification) {
@@ -165,11 +92,37 @@ private extension NoticeBoardDetailViewController {
 
 extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataSource {
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dummyList.count
+        if section == 0 {
+            return 0
+        } else {
+            return dummyList.isEmpty ? 1 : dummyList.count
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        if section == 0 {
+            let headerView = UIView()
+            headerView.addSubview(noticeBoardDetailView)
+            noticeBoardDetailView.snp.makeConstraints { make in
+                make.top.left.right.bottom.equalTo(headerView)
+            }
+            return headerView
+        }
+        return nil
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if dummyList.isEmpty {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyCountTableViewCell.identifier, for: indexPath) as? EmptyCountTableViewCell else { return UITableViewCell() }
+            cell.setMessage(image: UIImage(systemName: "bubble.right.fill"), imageSize: 60, title: "댓글이 없습니다.", description: "댓글을 작성해주세요")
+            return cell
+        }
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else { return UITableViewCell() }
         return cell
     }
