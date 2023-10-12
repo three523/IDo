@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10A3DD742AD7CE3000B740FE /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A3DD712AD7CE3000B740FE /* BasicImageView.swift */; };
+		10A3DD752AD7CE3000B740FE /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A3DD722AD7CE3000B740FE /* EmptyMessageStackView.swift */; };
+		10A3DD762AD7CE3000B740FE /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A3DD732AD7CE3000B740FE /* BasicCell.swift */; };
+		10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */; };
 		10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B12AD55BBF002BA40A /* AppDelegate.swift */; };
 		10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B32AD55BBF002BA40A /* SceneDelegate.swift */; };
 		10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B52AD55BBF002BA40A /* HomeViewController.swift */; };
@@ -36,6 +40,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		10A3DD712AD7CE3000B740FE /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BasicImageView.swift; path = IDo/View/BasicImageView.swift; sourceTree = SOURCE_ROOT; };
+		10A3DD722AD7CE3000B740FE /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmptyMessageStackView.swift; path = IDo/View/EmptyMessageStackView.swift; sourceTree = SOURCE_ROOT; };
+		10A3DD732AD7CE3000B740FE /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BasicCell.swift; path = IDo/View/BasicCell.swift; sourceTree = SOURCE_ROOT; };
+		10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		10C265AE2AD55BBF002BA40A /* IDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10C265B12AD55BBF002BA40A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		10C265B32AD55BBF002BA40A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -180,6 +188,7 @@
 			children = (
 				10CBA0502AD6711900F1DA37 /* CreateNoticeBoardViewController.swift */,
 				10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */,
+				10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */,
 			);
 			path = CreateNoticeBoard;
 			sourceTree = "<group>";
@@ -208,6 +217,9 @@
 			isa = PBXGroup;
 			children = (
 				7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */,
+				10A3DD732AD7CE3000B740FE /* BasicCell.swift */,
+				10A3DD712AD7CE3000B740FE /* BasicImageView.swift */,
+				10A3DD722AD7CE3000B740FE /* EmptyMessageStackView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -306,6 +318,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10A3DD762AD7CE3000B740FE /* BasicCell.swift in Sources */,
 				10CBA03E2AD6466400F1DA37 /* MyProfileViewController.swift in Sources */,
 				10C265BC2AD55BBF002BA40A /* IDo.xcdatamodeld in Sources */,
 				10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */,
@@ -315,6 +328,7 @@
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
 				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
+				10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
 				10CBA0512AD6711900F1DA37 /* CreateNoticeBoardViewController.swift in Sources */,
@@ -322,10 +336,12 @@
 				7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */,
 				7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
+				10A3DD742AD7CE3000B740FE /* BasicImageView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA04C2AD666F700F1DA37 /* NoticeBoardView.swift in Sources */,
+				10A3DD752AD7CE3000B740FE /* EmptyMessageStackView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
