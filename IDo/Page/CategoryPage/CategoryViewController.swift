@@ -9,17 +9,12 @@ import UIKit
 
 class CategoryViewController: UITableViewController {
     let categoryData = ["IT/개발", "사진/영상", "음악/악기", "게임/오락", "여행/맛집", "댄스/공연", "동물/식물", "낚시/캠핑", "운동/스포츠"]
-    let categoryImage = UIImage(systemName: "pencil")
+    let categoryImage = UIImage(systemName: "pencil.circle")
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         tableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
-
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = UITableView.automaticDimension
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -40,7 +35,7 @@ class CategoryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 선택한 셀의 인덱스에 따라 다른 화면으로 전환
         switch indexPath.row {
-        case 0:
+        case 0 ... 9:
             let exampleVC = MeetingViewController()
             navigationController?.pushViewController(exampleVC, animated: false)
         default:
