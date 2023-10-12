@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-final class NoticeBoardView: UIStackView {
+final class NoticeBoardDetailView: UIStackView {
     
     private let writerInfoView: WriterStackView = WriterStackView()
     private let contentLabel: UILabel = {
@@ -36,7 +36,7 @@ final class NoticeBoardView: UIStackView {
     
 }
 
-private extension NoticeBoardView {
+private extension NoticeBoardDetailView {
     private func setup() {
         stackViewSetup()
         addViews()

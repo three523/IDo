@@ -8,19 +8,26 @@
 import UIKit
 
 class CommentStackView: UIStackView {
-    
+
     private let lineView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .systemGray5
         return view
     }()
-    let profileImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "person"))
-        imageView.clipsToBounds = true
-        imageView.tintColor = .systemGray6
-        imageView.backgroundColor = .systemGray3
+    let profileImageView: BasicImageView = {
+        let imageView = BasicImageView(image: UIImage(systemName: "person.fill"))
+        imageView.contentMargin = 4
+        imageView.backgroundColor = UIColor(color: .contentPrimary)
         return imageView
+    }()
+    private let sendStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.alignment = .bottom
+        stackView.distribution = .fill
+        stackView.spacing = 12
+        return stackView
     }()
     private let commentTextView: UITextView = {
         let textView = UITextView()
@@ -36,23 +43,22 @@ class CommentStackView: UIStackView {
     private let sendButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "paperplane"), for: .normal)
-        button.tintColor = .systemGray5
+        button.tintColor = UIColor(color: .contentPrimary)
         return button
     }()
     private let textViewPlaceHolder = "댓글을 입력해주세요"
     var commentAddHandler: ((String) -> Void)?
-    
-    private let margin: CGFloat = 12
-    private let imageSize: CGFloat = 30
+
+    var imageSize: CGFloat = 30
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         stackViewSetup()
         addViews()
         configureView()
-        configureAutoLayout()
+        autoLayoutSetup()
     }
-    
+
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -60,31 +66,31 @@ class CommentStackView: UIStackView {
 
 extension CommentStackView {
     private func stackViewSetup() {
+        let margin = Constant.margin3
         axis = .horizontal
-        alignment = .center
+        alignment = .top
         distribution = .fill
         spacing = 12
         isLayoutMarginsRelativeArrangement = true
         layoutMargins = UIEdgeInsets(top: margin, left: margin, bottom: margin, right: margin)
         backgroundColor = .white
     }
-    
+
     private func addViews() {
         addSubview(lineView)
         addArrangedSubview(profileImageView)
-        addArrangedSubview(commentTextView)
-        addArrangedSubview(sendButton)
+        addArrangedSubview(sendStackView)
+        sendStackView.addArrangedSubview(commentTextView)
+        sendStackView.addArrangedSubview(sendButton)
     }
-    
+
     private func configureView() {
-        profileImageView.layer.cornerRadius = imageSize / 2
-        
         commentTextView.delegate = self
         commentTextView.text = textViewPlaceHolder
-        
+
         sendButton.addTarget(self, action: #selector(sendButtonClick), for: .touchUpInside)
     }
-    
+
     @objc private func sendButtonClick() {
         guard let textComment = commentTextView.text else { return }
         commentAddHandler?(textComment)
@@ -95,24 +101,29 @@ extension CommentStackView {
             }
         }
     }
+
+    private func autoLayoutSetup() {
+        lineView.snp.makeConstraints { make in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(1)
+        }
+        
+        profileImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(imageSize)
+        }
+        
+        commentTextView.snp.makeConstraints { make in
+            make.height.equalTo(imageSize)
+        }
+        
+        sendButton.snp.makeConstraints { make in
+            make.width.height.equalTo(imageSize)
+        }
+    }
     
-    private func configureAutoLayout() {
-        NSLayoutConstraint.activate([
-            lineView.topAnchor.constraint(equalTo: topAnchor),
-            lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            lineView.heightAnchor.constraint(equalToConstant: 1),
-            
-            profileImageView.heightAnchor.constraint(equalToConstant: imageSize),
-            profileImageView.widthAnchor.constraint(equalToConstant: imageSize),
-            
-            commentTextView.topAnchor.constraint(equalTo: topAnchor, constant: margin),
-            commentTextView.heightAnchor.constraint(equalToConstant: imageSize),
-            commentTextView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -margin),
-                          
-            sendButton.heightAnchor.constraint(equalToConstant: imageSize),
-            sendButton.widthAnchor.constraint(equalToConstant: imageSize),
-        ])
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        profileImageView.layer.cornerRadius = profileImageView.bounds.height / 2
     }
 }
 
@@ -120,12 +131,12 @@ extension CommentStackView: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let size = CGSize(width: textView.frame.width, height: .infinity)
         let estimatedSize = textView.sizeThatFits(size)
-        
+
         textView.constraints.forEach { (constraint) in
-            
+
             if estimatedSize.height < imageSize - 5 {
                 textView.isScrollEnabled = false
-            } else if textView.numLines > 4 {
+            } else if textView.currentLineCount > 4 {
                 textView.isScrollEnabled = true
             } else {
                 if constraint.firstAttribute == .height {
@@ -140,7 +151,7 @@ extension CommentStackView: UITextViewDelegate {
             textView.textColor = .black
         }
     }
-    
+
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = textViewPlaceHolder
@@ -150,7 +161,7 @@ extension CommentStackView: UITextViewDelegate {
 }
 
 extension UITextView {
-    var numLines: Int {
+    var currentLineCount: Int {
         guard let font else { return 1 }
         return Int(self.contentSize.height / (font.lineHeight))
     }
