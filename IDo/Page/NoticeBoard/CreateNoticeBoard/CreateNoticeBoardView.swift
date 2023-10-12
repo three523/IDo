@@ -40,7 +40,14 @@ class CreateNoticeBoardView: UIView {
         return textView
     }()
     
-    // 사진 
+    // 사진 생성
+    private(set) lazy var galleryCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.register(GalleryCollectionViewCell.self, forCellWithReuseIdentifier: GalleryCollectionViewCell.identifier)
+        return collectionView
+    }()
 }
 
 private extension CreateNoticeBoardView {
@@ -67,7 +74,12 @@ private extension CreateNoticeBoardView {
             make.leading.equalTo(snp.leading).offset(Constant.margin3)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
             make.height.equalTo(240)
-//            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
+        }
+        
+        galleryCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(contentTextView.snp.bottom).offset(Constant.margin3)
+            make.leading.equalTo(snp.leading).offset(Constant.margin3)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
         }
     }
 }
