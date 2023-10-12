@@ -15,8 +15,8 @@ enum Color: String, CaseIterable {
     case sub = "Sub"
     case negative = "Negative"
     case positive = "Positive"
-    case black = "black"
-    case white = "white"
+    case black = "Black"
+    case white = "White"
 
     //Background Colors
     case backgroundPrimary = "Background"
