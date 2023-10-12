@@ -47,6 +47,7 @@ class CreateNoticeBoardViewController: UIViewController {
 private extension CreateNoticeBoardViewController {
     
     func navigationControllerSet() {
+        self.title = "게시판 작성"
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.view.tintColor = UIColor(named: "MainColor")
     }
@@ -65,6 +66,9 @@ private extension CreateNoticeBoardViewController {
                 createNoticeBoardView.contentTextView.text = editingContentText
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
             }
+            
+            // 네비게이션 제목
+            
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
             let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))

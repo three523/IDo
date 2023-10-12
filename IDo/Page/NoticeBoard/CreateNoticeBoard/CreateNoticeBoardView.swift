@@ -59,6 +59,7 @@ private extension CreateNoticeBoardView {
     func addSubView() {
         addSubview(titleTextView)
         addSubview(contentTextView)
+        addSubview(galleryCollectionView)
     }
     
     func autoLayout() {
@@ -80,6 +81,7 @@ private extension CreateNoticeBoardView {
             make.top.equalTo(contentTextView.snp.bottom).offset(Constant.margin3)
             make.leading.equalTo(snp.leading).offset(Constant.margin3)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-Constant.margin3)
         }
     }
 }
