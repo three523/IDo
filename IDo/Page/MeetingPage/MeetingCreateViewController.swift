@@ -37,7 +37,7 @@ class MeetingCreateViewController: UIViewController {
         textView.layer.borderWidth = 0.2
         textView.clipsToBounds = true
         textView.isEditable = true
-        textView.isScrollEnabled = true // 스크롤 방지
+        textView.isScrollEnabled = true 
         textView.textContainerInset = UIEdgeInsets.zero
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsets(top: 12, left: 14, bottom: 12, right: 12)
@@ -97,8 +97,8 @@ class MeetingCreateViewController: UIViewController {
         }
         
         placeholderLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField).offset(12) // 적절한 패딩을 추가합니다.
-            make.left.equalTo(meetingDescriptionField).offset(12.8) // 적절한 패딩을 추가합니다.
+            make.top.equalTo(meetingDescriptionField).offset(12) 
+            make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
         }
         meetingDescriptionField.delegate = self
 

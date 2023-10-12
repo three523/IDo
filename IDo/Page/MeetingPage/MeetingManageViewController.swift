@@ -32,12 +32,12 @@ class MeetingManageViewController: UIViewController {
         textView.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
         textView.backgroundColor = UIColor(named: "BackgroundSecondary")
         textView.textAlignment = .left
-        textView.layer.cornerRadius = 5.0 // 모서리를 둥글게 만듭니다.
-        textView.layer.borderColor = UIColor.lightGray.cgColor// 테두리 색상을 설정합니다.
-        textView.layer.borderWidth = 0.2 // 테두리 두께를 설정합니다.
+        textView.layer.cornerRadius = 5.0
+        textView.layer.borderColor = UIColor.lightGray.cgColor
+        textView.layer.borderWidth = 0.2
         textView.clipsToBounds = true
         textView.isEditable = true
-        textView.isScrollEnabled = false // 스크롤 방지
+        textView.isScrollEnabled = true
         textView.textContainerInset = UIEdgeInsets.zero
         textView.textContainer.lineFragmentPadding = 0
         textView.textContainerInset = UIEdgeInsets(top: 12, left: 14, bottom: 12, right: 12)
@@ -100,8 +100,8 @@ class MeetingManageViewController: UIViewController {
         }
         
         placeholderLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField).offset(12) // 적절한 패딩을 추가합니다.
-            make.left.equalTo(meetingDescriptionField).offset(12.8) // 적절한 패딩을 추가합니다.
+            make.top.equalTo(meetingDescriptionField).offset(12)
+            make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
         }
         meetingDescriptionField.delegate = self
 
