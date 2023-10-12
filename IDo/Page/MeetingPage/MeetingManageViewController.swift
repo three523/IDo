@@ -2,21 +2,116 @@ import UIKit
 
 class MeetingManageViewController: UIViewController {
     
-    let profileImageButton = MeetingProfileImageButton()
+    let profileImageButton: MeetingProfileImageButton = {
+        let button = MeetingProfileImageButton()
+        button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    let imageSetLabel: UILabel = {
+        let label = UILabel()
+        label.text = "대표 사진"
+        label.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    let meetingNameField: UITextField = {
+        let textField = UITextField()
+        textField.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
+        textField.borderStyle = .roundedRect
+        textField.backgroundColor = UIColor(named: "BackgroundSecondary")
+        textField.placeholder = "모임 이름을 설정하세요."
+        return textField
+    }()
+    
+    
+    
+    let meetingDescriptionField: UITextView = {
+        let textView = UITextView()
+        textView.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
+        textView.backgroundColor = UIColor(named: "BackgroundSecondary")
+        textView.textAlignment = .left
+        textView.layer.cornerRadius = 5.0 // 모서리를 둥글게 만듭니다.
+        textView.layer.borderColor = UIColor.lightGray.cgColor// 테두리 색상을 설정합니다.
+        textView.layer.borderWidth = 0.2 // 테두리 두께를 설정합니다.
+        textView.clipsToBounds = true
+        textView.isEditable = true
+        textView.isScrollEnabled = false // 스크롤 방지
+        textView.textContainerInset = UIEdgeInsets.zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.textContainerInset = UIEdgeInsets(top: 12, left: 14, bottom: 12, right: 12)
+        return textView
+    }()
 
+    let placeholderLabel: UILabel = {
+        let label = UILabel()
+        label.text = "모임에 대한 소개를 해주세요."
+        label.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
+        label.textColor = UIColor.placeholderText
+        return label
+    }()
+    
+    private let manageFinishButton = FinishButton(title: "수정 완료")
+
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureUI()
     }
     
     private func configureUI() {
         // UI 설정
         view.addSubview(profileImageButton)
-        profileImageButton.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+        view.addSubview(imageSetLabel)
+        view.addSubview(meetingNameField)
+        view.addSubview(manageFinishButton)
+        view.addSubview(meetingDescriptionField)
+        view.addSubview(placeholderLabel)
+        
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
             make.centerX.equalToSuperview()
         }
+        
+        imageSetLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+        }
+        
+        meetingNameField.snp.makeConstraints { (make) in
+            make.top.equalTo(imageSetLabel.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(361)
+            make.height.equalTo(37)
+        }
+        
+        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 6, height: meetingNameField.frame.height))
+        meetingNameField.leftView = leftPaddingView
+        meetingNameField.leftViewMode = .always
+
+        meetingDescriptionField.snp.makeConstraints { (make) in
+            make.top.equalTo(meetingNameField.snp.bottom).offset(12)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(361)
+            make.height.equalTo(250)
+        }
+        
+        placeholderLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(meetingDescriptionField).offset(12) // 적절한 패딩을 추가합니다.
+            make.left.equalTo(meetingDescriptionField).offset(12.8) // 적절한 패딩을 추가합니다.
+        }
+        meetingDescriptionField.delegate = self
+
+        manageFinishButton.snp.makeConstraints { (make) in
+                make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
+                make.centerX.equalToSuperview()
+                make.width.equalTo(140)
+                make.height.equalTo(44)
+            }
+        
     }
     
     @objc private func profileImageTapped() {
@@ -33,3 +128,11 @@ extension MeetingManageViewController: UIImagePickerControllerDelegate, UINaviga
         picker.dismiss(animated: true, completion: nil)
     }
 }
+
+extension MeetingManageViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        placeholderLabel.isHidden = !textView.text.isEmpty
+    }
+}
+
+
