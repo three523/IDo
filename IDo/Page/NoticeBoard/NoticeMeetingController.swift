@@ -23,10 +23,10 @@ class NoticeMeetingController: TabmanViewController {
             make.trailing.equalTo(view.snp.trailing)
             make.height.equalTo(30)
         }
-        let homeHomeVC = NoticeHomeController()
+        let HomeVC = NoticeHomeController()
         let titleVC = NoticeBoardViewController()
 
-        viewControllers.append(homeHomeVC)
+        viewControllers.append(HomeVC)
         viewControllers.append(titleVC)
 
         dataSource = self
