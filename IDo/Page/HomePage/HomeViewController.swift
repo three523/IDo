@@ -19,7 +19,8 @@ class HomeViewController : UIViewController {
     }
     
     func makeSuggestClub() {
-        suggestClub.textColor = .black
+        suggestClub.text = "추천 모임"
+        suggestClub.textColor = .white
         suggestClub.font = .headFont(.small, weight: .regular)
     }
     
@@ -34,9 +35,12 @@ class HomeViewController : UIViewController {
         view.addSubview(suggestClub)
         
         joinClub.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-//            make.top.equalToSuperview()
-//            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(100)
+            make.left.equalToSuperview().offset(20)
+        }
+        suggestClub.snp.makeConstraints { make in
+            make.top.equalTo(joinClub.snp.bottom).offset(300)
+            make.left.equalToSuperview().offset(20)
         }
     }
 }
