@@ -121,9 +121,11 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         if dummyList.isEmpty {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyCountTableViewCell.identifier, for: indexPath) as? EmptyCountTableViewCell else { return UITableViewCell() }
             cell.setMessage(image: UIImage(systemName: "bubble.right.fill"), imageSize: 60, title: "댓글이 없습니다.", description: "댓글을 작성해주세요")
+            cell.selectionStyle = .none
             return cell
         }
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else { return UITableViewCell() }
+        cell.selectionStyle = .none
         return cell
     }
     
