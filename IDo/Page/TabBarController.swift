@@ -24,7 +24,7 @@ class TabBarController: UITabBarController {
     private func viewControllerSetting() {
         let vc1 = UINavigationController(rootViewController: HomeViewController())
         let vc2 = UINavigationController(rootViewController: CategoryViewController())
-        let vc3 = UINavigationController(rootViewController: NoticeBoardViewController())
+        let vc3 = UINavigationController(rootViewController: NoticeViewController())
         let vc4 = UINavigationController(rootViewController: MyProfileViewController())
 
         vc1.title = "홈"
