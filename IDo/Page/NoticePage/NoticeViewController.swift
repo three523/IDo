@@ -11,7 +11,7 @@ class NoticeViewController: UIViewController {
     let noticeTitle = ["제목입니다"]
     let noticeComments = ["누구님의 게시글에 댓글을 달았습니다."]
     let noticeDate = ["2023.10.11 오후 10:01"]
-    let noticeImage = UIImage(systemName: "applepencil")
+    let noticeImage = UIImage(systemName: "camera.circle")
     private var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
