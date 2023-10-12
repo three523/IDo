@@ -67,7 +67,9 @@ private extension CreateNoticeBoardViewController {
             }
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
-            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))
+            let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))
+            finishButton.tintColor = UIColor(color: .main)
+            self.navigationItem.rightBarButtonItem = finishButton
         }
         
         // 처음 작성 할 때
@@ -143,6 +145,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 입력 종료 시 호출
     func textViewDidEndEditing(_ textView: UITextView) {
+        
         if createNoticeBoardView.titleTextView.text.isEmpty {
             createNoticeBoardView.titleTextView.text =  "제목을 입력하세요."
             createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)

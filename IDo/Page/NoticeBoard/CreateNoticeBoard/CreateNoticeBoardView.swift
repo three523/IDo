@@ -39,6 +39,8 @@ class CreateNoticeBoardView: UIView {
         textView.layer.cornerRadius = 5
         return textView
     }()
+    
+    // 사진 
 }
 
 private extension CreateNoticeBoardView {
