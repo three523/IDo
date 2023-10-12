@@ -21,6 +21,13 @@
 		10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA0432AD646CE00F1DA37 /* Margin.swift */; };
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
+		7BAA94C52AD7BC4E0013002C /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BAA94C22AD7BC4E0013002C /* BasicCell.swift */; };
+		7BAA94C62AD7BC4E0013002C /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BAA94C32AD7BC4E0013002C /* BasicImageView.swift */; };
+		7BAA94C72AD7BC4E0013002C /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BAA94C42AD7BC4E0013002C /* EmptyMessageStackView.swift */; };
+		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
+		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
+		7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */; };
+		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +46,13 @@
 		10CBA0432AD646CE00F1DA37 /* Margin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Margin.swift; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		7BAA94C22AD7BC4E0013002C /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BasicCell.swift; path = IDo/View/BasicCell.swift; sourceTree = SOURCE_ROOT; };
+		7BAA94C32AD7BC4E0013002C /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BasicImageView.swift; path = IDo/View/BasicImageView.swift; sourceTree = SOURCE_ROOT; };
+		7BAA94C42AD7BC4E0013002C /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EmptyMessageStackView.swift; path = IDo/View/EmptyMessageStackView.swift; sourceTree = SOURCE_ROOT; };
+		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
+		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
+		7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingProfileImage.swift; sourceTree = "<group>"; };
+		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				10CBA0392AD6464A00F1DA37 /* CategoryViewController.swift */,
+				E74C58EA2AD65E1800C2DEF5 /* Cell */,
 			);
 			path = CategoryPage;
 			sourceTree = "<group>";
@@ -120,10 +135,11 @@
 			isa = PBXGroup;
 			children = (
 				10CBA0372AD6455400F1DA37 /* TabBarController.swift */,
+				7FA2085F2AD6A16D005C66ED /* MeetingPage */,
 				10CBA03F2AD6467600F1DA37 /* HomePage */,
 				10CBA0402AD6469200F1DA37 /* CategoryPage */,
-				10CBA0412AD6469F00F1DA37 /* NoticePage */,
 				10CBA0422AD646AA00F1DA37 /* MyProfilePage */,
+				10CBA0412AD6469F00F1DA37 /* NoticePage */,
 			);
 			path = Page;
 			sourceTree = "<group>";
@@ -136,6 +152,35 @@
 				10CBA0432AD646CE00F1DA37 /* Margin.swift */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		7FA2085F2AD6A16D005C66ED /* MeetingPage */ = {
+			isa = PBXGroup;
+			children = (
+				7FA208642AD6A894005C66ED /* View */,
+				7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */,
+				7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */,
+			);
+			path = MeetingPage;
+			sourceTree = "<group>";
+		};
+		7FA208642AD6A894005C66ED /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */,
+				7BAA94C22AD7BC4E0013002C /* BasicCell.swift */,
+				7BAA94C32AD7BC4E0013002C /* BasicImageView.swift */,
+				7BAA94C42AD7BC4E0013002C /* EmptyMessageStackView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		E74C58EA2AD65E1800C2DEF5 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -217,14 +262,21 @@
 				10CBA03E2AD6466400F1DA37 /* MyProfileViewController.swift in Sources */,
 				10C265BC2AD55BBF002BA40A /* IDo.xcdatamodeld in Sources */,
 				10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */,
+				7BAA94C62AD7BC4E0013002C /* BasicImageView.swift in Sources */,
 				180C33692AD642B6000979F7 /* Font.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
+				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
+				7BAA94C72AD7BC4E0013002C /* EmptyMessageStackView.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
+				7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */,
+				7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
+				7BAA94C52AD7BC4E0013002C /* BasicCell.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
+				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
