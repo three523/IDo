@@ -8,22 +8,40 @@
 import UIKit
 
 class NoticeViewController: UIViewController {
-
+    let noticeTitle = ["제목입니다"]
+    let noticeComments = ["누구님의 게시글에 댓글을 달았습니다."]
+    let noticeDate = ["2023.10.11 오후 10:01"]
+    let noticeImage = UIImage(systemName: "camera.circle")
+    private var tableView: UITableView!
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView = UITableView(frame: .zero, style: .plain)
+        view.addSubview(tableView)
 
-        // Do any additional setup after loading the view.
+        tableView.register(NoticeCell.self, forCellReuseIdentifier: "Cell")
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(Constant.margin3)
+        }
     }
-    
+}
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+extension NoticeViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return noticeTitle.count
     }
-    */
 
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! NoticeCell
+        cell.label.text = noticeTitle[indexPath.row]
+        cell.commentsLabel.text = noticeComments[indexPath.row]
+        cell.dataLable.text = noticeDate[indexPath.row]
+        cell.categoryImageView.image = noticeImage
+        return cell
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 70
+    }
 }
