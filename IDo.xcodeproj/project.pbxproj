@@ -26,6 +26,10 @@
 		180C33F12AD6AF80000979F7 /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33F02AD6AF80000979F7 /* Reusable.swift */; };
 		180C33F32AD6B340000979F7 /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33F22AD6B340000979F7 /* EmptyMessageStackView.swift */; };
 		180C33F52AD6B929000979F7 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33F42AD6B929000979F7 /* BasicImageView.swift */; };
+		18C0F4212AD7875900E89182 /* WriterStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C0F4202AD7875900E89182 /* WriterStackView.swift */; };
+		18C0F4232AD7AE4F00E89182 /* CommentTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C0F4222AD7AE4F00E89182 /* CommentTableViewCell.swift */; };
+		18C0F4252AD7AF4200E89182 /* HorizentalImageTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C0F4242AD7AF4200E89182 /* HorizentalImageTitleView.swift */; };
+		18C0F42B2AD7B88C00E89182 /* CommentStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C0F42A2AD7B88C00E89182 /* CommentStackView.swift */; };
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 		E74C58EC2AD6922000C2DEF5 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */; };
 /* End PBXBuildFile section */
@@ -51,6 +55,10 @@
 		180C33F02AD6AF80000979F7 /* Reusable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
 		180C33F22AD6B340000979F7 /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyMessageStackView.swift; sourceTree = "<group>"; };
 		180C33F42AD6B929000979F7 /* BasicImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
+		18C0F4202AD7875900E89182 /* WriterStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WriterStackView.swift; sourceTree = "<group>"; };
+		18C0F4222AD7AE4F00E89182 /* CommentTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentTableViewCell.swift; sourceTree = "<group>"; };
+		18C0F4242AD7AF4200E89182 /* HorizentalImageTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizentalImageTitleView.swift; sourceTree = "<group>"; };
+		18C0F42A2AD7B88C00E89182 /* CommentStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentStackView.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E74C58EB2AD6922000C2DEF5 /* BasicCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -160,8 +168,8 @@
 			isa = PBXGroup;
 			children = (
 				180C33EB2AD6A951000979F7 /* NoticeBoardDetailViewController.swift */,
+				18C0F4262AD7B13100E89182 /* Cell */,
 				180C33ED2AD6AD9B000979F7 /* View */,
-				180C33EE2AD6ADB5000979F7 /* NoticeBoardView.swift */,
 			);
 			path = NoticeBoardDetailPage;
 			sourceTree = "<group>";
@@ -169,8 +177,20 @@
 		180C33ED2AD6AD9B000979F7 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				180C33EE2AD6ADB5000979F7 /* NoticeBoardView.swift */,
+				18C0F4202AD7875900E89182 /* WriterStackView.swift */,
+				18C0F4242AD7AF4200E89182 /* HorizentalImageTitleView.swift */,
+				18C0F42A2AD7B88C00E89182 /* CommentStackView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		18C0F4262AD7B13100E89182 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				18C0F4222AD7AE4F00E89182 /* CommentTableViewCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		E74C58EA2AD65E1800C2DEF5 /* Cell */ = {
@@ -274,7 +294,10 @@
 				180C33692AD642B6000979F7 /* Font.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				E74C58EC2AD6922000C2DEF5 /* BasicCell.swift in Sources */,
+				18C0F42B2AD7B88C00E89182 /* CommentStackView.swift in Sources */,
+				18C0F4232AD7AE4F00E89182 /* CommentTableViewCell.swift in Sources */,
 				180C33F52AD6B929000979F7 /* BasicImageView.swift in Sources */,
+				18C0F4212AD7875900E89182 /* WriterStackView.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
@@ -283,6 +306,7 @@
 				180C33F12AD6AF80000979F7 /* Reusable.swift in Sources */,
 				180C33EF2AD6ADB5000979F7 /* NoticeBoardView.swift in Sources */,
 				180C33F32AD6B340000979F7 /* EmptyMessageStackView.swift in Sources */,
+				18C0F4252AD7AF4200E89182 /* HorizentalImageTitleView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 			);
