@@ -8,13 +8,12 @@
 import UIKit
 
 class TabBarController: UITabBarController {
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBarSetting()
-        viewControllerSetting()
+        self.tabBarSetting()
+        self.viewControllerSetting()
     }
-    
+
     private func tabBarSetting() {
         self.tabBar.backgroundColor = .white
         self.modalPresentationStyle = .fullScreen
@@ -25,8 +24,8 @@ class TabBarController: UITabBarController {
     private func viewControllerSetting() {
         let vc1 = UINavigationController(rootViewController: HomeViewController())
         let vc2 = UINavigationController(rootViewController: CategoryViewController())
-        let vc3 = UINavigationController(rootViewController: NoticeBoardViewController())
-        let vc4 = UINavigationController(rootViewController: MyProfileViewController())
+        let vc3 = UINavigationController(rootViewController: NoticeViewController())
+        let vc4 = UINavigationController(rootViewController: NoticeBoardViewController())
 
         vc1.title = "홈"
         vc2.title = "카테고리"
@@ -42,7 +41,7 @@ class TabBarController: UITabBarController {
         for index in 0..<items.count {
             items[index].image = UIImage(systemName: images[index])
         }
-        
+
         // 선택된 아이템의 이미지와 색상 설정
         if let items = self.tabBar.items {
             for index in 0..<items.count {
