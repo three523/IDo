@@ -24,7 +24,7 @@ class CreateNoticeBoardViewController: UIViewController {
     override func loadView() {
         view = createNoticeBoardView
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -49,7 +49,7 @@ class CreateNoticeBoardViewController: UIViewController {
     
 }
 
-// MARK: - Navigation 관련 extension
+// MARK: - NavigationBar 관련 extension
 private extension CreateNoticeBoardViewController {
     
     func navigationControllerSet() {
@@ -81,24 +81,21 @@ private extension CreateNoticeBoardViewController {
         
         // 처음 작성 할 때
         else {
-            DispatchQueue.main.async {
-                
-                // 제목 textView
-                self.createNoticeBoardView.titleTextView.text = "제목을 입력하세요."
-                self.createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
-                self.createNoticeBoardView.titleTextView.resignFirstResponder()
-                
-                // 내용 textView
-                self.createNoticeBoardView.contentTextView.text = "내용을 입력하세요."
-                self.createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
-                self.createNoticeBoardView.contentTextView.resignFirstResponder()
-            }
+            // 제목 textView
+            self.createNoticeBoardView.titleTextView.text = "제목을 입력하세요."
+            self.createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
+            self.createNoticeBoardView.titleTextView.resignFirstResponder()
             
-            // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
-            let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))
-            self.navigationItem.rightBarButtonItem = finishButton
-            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
+            // 내용 textView
+            self.createNoticeBoardView.contentTextView.text = "내용을 입력하세요."
+            self.createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
+            self.createNoticeBoardView.contentTextView.resignFirstResponder()
         }
+        
+        // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
+        let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedNew))
+        self.navigationItem.rightBarButtonItem = finishButton
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
     }
     
     // 새로운 메모 작성
@@ -149,8 +146,8 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
             if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-                    cell.galleryImageView.image = image
-                }
+                cell.galleryImageView.image = image
+            }
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -161,15 +158,23 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
-            
-            // 제목 textView
-            createNoticeBoardView.titleTextView.text = nil
-            createNoticeBoardView.titleTextView.textColor = UIColor.black
-            
-            // 내용 textView
-            createNoticeBoardView.contentTextView.text = nil
-            createNoticeBoardView.contentTextView.textColor = UIColor.black
+        
+        // 제목 textView
+        if textView == createNoticeBoardView.titleTextView {
+            if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder) {
+                
+                createNoticeBoardView.titleTextView.text = nil
+                createNoticeBoardView.titleTextView.textColor = UIColor.black
+            }
+        }
+        
+        // 내용 textView
+        else if textView == createNoticeBoardView.contentTextView {
+            if createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
+                
+                createNoticeBoardView.contentTextView.text = nil
+                createNoticeBoardView.contentTextView.textColor = UIColor.black
+            }
         }
     }
     
