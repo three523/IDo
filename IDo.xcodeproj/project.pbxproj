@@ -31,6 +31,11 @@
 		18C26A022AD941AF00899A6F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A012AD941AF00899A6F /* FirebaseAuth */; };
 		18C26A042AD941AF00899A6F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A032AD941AF00899A6F /* FirebaseDatabase */; };
 		18C26A062AD941AF00899A6F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A052AD941AF00899A6F /* FirebaseStorage */; };
+		18CE9C252AD8EC2C00C921D5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C242AD8EC2C00C921D5 /* User.swift */; };
+		18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C262AD8ECAB00C921D5 /* Club.swift */; };
+		18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */; };
+		18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */; };
+		18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C2C2AD8EDAD00C921D5 /* Category.swift */; };
 		7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */; };
 		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
 		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
@@ -68,6 +73,11 @@
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		18CE9C242AD8EC2C00C921D5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		18CE9C262AD8ECAB00C921D5 /* Club.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Club.swift; sourceTree = "<group>"; };
+		18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoard.swift; sourceTree = "<group>"; };
+		18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
+		18CE9C2C2AD8EDAD00C921D5 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishButton.swift; sourceTree = "<group>"; };
 		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
 		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
@@ -119,6 +129,7 @@
 			isa = PBXGroup;
 			children = (
 				18CE9C202AD8EB5F00C921D5 /* Model */,
+				18CE9C232AD8EC1400C921D5 /* Model */,
 				7FBE18622AD7CC6C0052E950 /* View */,
 				180C33662AD642B6000979F7 /* Util */,
 				10C265B12AD55BBF002BA40A /* AppDelegate.swift */,
@@ -222,9 +233,14 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
-		18CE9C202AD8EB5F00C921D5 /* Model */ = {
+		18CE9C232AD8EC1400C921D5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				18CE9C242AD8EC2C00C921D5 /* User.swift */,
+				18CE9C262AD8ECAB00C921D5 /* Club.swift */,
+				18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */,
+				18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */,
+				18CE9C2C2AD8EDAD00C921D5 /* Category.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -366,8 +382,10 @@
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
 				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
+				18CE9C252AD8EC2C00C921D5 /* User.swift in Sources */,
 				7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
+				18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */,
 				10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
@@ -379,13 +397,16 @@
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */,
+				18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */,
 				E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */,
 				7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */,
+				18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA04C2AD666F700F1DA37 /* NoticeBoardView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
+				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
