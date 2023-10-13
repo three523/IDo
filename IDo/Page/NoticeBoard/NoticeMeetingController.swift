@@ -33,6 +33,8 @@ class NoticeMeetingController: TabmanViewController {
 
         let bar = TMBar.ButtonBar()
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
+        bar.backgroundColor = UIColor.white
+
         addBar(bar, dataSource: self, at: .custom(view: tempView!, layout: nil))
     }
 }
