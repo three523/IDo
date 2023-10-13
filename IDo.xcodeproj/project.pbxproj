@@ -11,7 +11,6 @@
 		10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B12AD55BBF002BA40A /* AppDelegate.swift */; };
 		10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B32AD55BBF002BA40A /* SceneDelegate.swift */; };
 		10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B52AD55BBF002BA40A /* HomeViewController.swift */; };
-		10C265BC2AD55BBF002BA40A /* IDo.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 10C265BA2AD55BBF002BA40A /* IDo.xcdatamodeld */; };
 		10C265BE2AD55BC2002BA40A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BD2AD55BC2002BA40A /* Assets.xcassets */; };
 		10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */; };
 		10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10C265C92AD55C81002BA40A /* SnapKit */; };
@@ -27,6 +26,11 @@
 		10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */; };
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
+		18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */; };
+		18C26A002AD941AF00899A6F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 18C269FF2AD941AF00899A6F /* FirebaseAnalytics */; };
+		18C26A022AD941AF00899A6F /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A012AD941AF00899A6F /* FirebaseAuth */; };
+		18C26A042AD941AF00899A6F /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A032AD941AF00899A6F /* FirebaseDatabase */; };
+		18C26A062AD941AF00899A6F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A052AD941AF00899A6F /* FirebaseStorage */; };
 		7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */; };
 		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
 		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
@@ -48,7 +52,6 @@
 		10C265B12AD55BBF002BA40A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		10C265B32AD55BBF002BA40A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		10C265B52AD55BBF002BA40A /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
-		10C265BB2AD55BBF002BA40A /* IDo.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = IDo.xcdatamodel; sourceTree = "<group>"; };
 		10C265BD2AD55BC2002BA40A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		10C265C02AD55BC2002BA40A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		10C265C22AD55BC2002BA40A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -64,6 +67,7 @@
 		10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardView.swift; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishButton.swift; sourceTree = "<group>"; };
 		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
 		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
@@ -83,8 +87,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18C26A042AD941AF00899A6F /* FirebaseDatabase in Frameworks */,
 				10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */,
 				E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */,
+				18C26A002AD941AF00899A6F /* FirebaseAnalytics in Frameworks */,
+				18C26A022AD941AF00899A6F /* FirebaseAuth in Frameworks */,
+				18C26A062AD941AF00899A6F /* FirebaseStorage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +118,7 @@
 		10C265B02AD55BBF002BA40A /* IDo */ = {
 			isa = PBXGroup;
 			children = (
+				18CE9C202AD8EB5F00C921D5 /* Model */,
 				7FBE18622AD7CC6C0052E950 /* View */,
 				180C33662AD642B6000979F7 /* Util */,
 				10C265B12AD55BBF002BA40A /* AppDelegate.swift */,
@@ -117,8 +126,8 @@
 				10CBA0452AD6476000F1DA37 /* Page */,
 				10C265BD2AD55BC2002BA40A /* Assets.xcassets */,
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
+				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				10C265BA2AD55BBF002BA40A /* IDo.xcdatamodeld */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -213,6 +222,13 @@
 			path = Util;
 			sourceTree = "<group>";
 		};
+		18CE9C202AD8EB5F00C921D5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		7FA2085F2AD6A16D005C66ED /* MeetingPage */ = {
 			isa = PBXGroup;
 			children = (
@@ -277,6 +293,10 @@
 			packageProductDependencies = (
 				10C265C92AD55C81002BA40A /* SnapKit */,
 				E73D73DB2AD7D14000EF9554 /* Tabman */,
+				18C269FF2AD941AF00899A6F /* FirebaseAnalytics */,
+				18C26A012AD941AF00899A6F /* FirebaseAuth */,
+				18C26A032AD941AF00899A6F /* FirebaseDatabase */,
+				18C26A052AD941AF00899A6F /* FirebaseStorage */,
 			);
 			productName = IDo;
 			productReference = 10C265AE2AD55BBF002BA40A /* IDo.app */;
@@ -309,6 +329,7 @@
 			packageReferences = (
 				10C265C82AD55C81002BA40A /* XCRemoteSwiftPackageReference "SnapKit" */,
 				E73D73DA2AD7D14000EF9554 /* XCRemoteSwiftPackageReference "Tabman" */,
+				18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 10C265AF2AD55BBF002BA40A /* Products */;
 			projectDirPath = "";
@@ -326,6 +347,7 @@
 			files = (
 				10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */,
 				10C265BE2AD55BC2002BA40A /* Assets.xcassets in Resources */,
+				18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,7 +359,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				10CBA03E2AD6466400F1DA37 /* MyProfileViewController.swift in Sources */,
-				10C265BC2AD55BBF002BA40A /* IDo.xcdatamodeld in Sources */,
 				E74C58EF2AD6B1B300C2DEF5 /* MeetingViewController.swift in Sources */,
 				10C265B62AD55BBF002BA40A /* HomeViewController.swift in Sources */,
 				10CBA04A2AD6665C00F1DA37 /* NoticeBoardViewController.swift in Sources */,
@@ -592,6 +613,14 @@
 				minimumVersion = 5.6.0;
 			};
 		};
+		18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
 		E73D73DA2AD7D14000EF9554 /* XCRemoteSwiftPackageReference "Tabman" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/uias/Tabman.git";
@@ -608,25 +637,32 @@
 			package = 10C265C82AD55C81002BA40A /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
 		};
+		18C269FF2AD941AF00899A6F /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		18C26A012AD941AF00899A6F /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		18C26A032AD941AF00899A6F /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		18C26A052AD941AF00899A6F /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		E73D73DB2AD7D14000EF9554 /* Tabman */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E73D73DA2AD7D14000EF9554 /* XCRemoteSwiftPackageReference "Tabman" */;
 			productName = Tabman;
 		};
 /* End XCSwiftPackageProductDependency section */
-
-/* Begin XCVersionGroup section */
-		10C265BA2AD55BBF002BA40A /* IDo.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				10C265BB2AD55BBF002BA40A /* IDo.xcdatamodel */,
-			);
-			currentVersion = 10C265BB2AD55BBF002BA40A /* IDo.xcdatamodel */;
-			path = IDo.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 10C265A62AD55BBF002BA40A /* Project object */;
 }
