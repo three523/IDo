@@ -197,12 +197,29 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
         }
     }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        let currentText = textView.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
+        
+        if textView == createNoticeBoardView.titleTextView {
+            return chagedText.count <= 15
+        }
+        
+        else if textView == createNoticeBoardView.contentTextView {
+            createNoticeBoardView.textCountLabel.text = "(\(chagedText.count)/100)"
+            return chagedText.count <= 99
+        }
+        return true
+    }
 }
 
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return 10
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -217,7 +234,7 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
     
     // CollectionView Cell의 사이즈
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (collectionView.bounds.width - 4)/3, height: (collectionView.bounds.width - 4)/3)
+        return CGSize(width: (collectionView.bounds.width - 8)/5, height: (collectionView.bounds.width - 8)/5)
     }
     
     // 수평
