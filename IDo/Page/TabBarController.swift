@@ -26,6 +26,7 @@ class TabBarController: UITabBarController {
         let vc2 = UINavigationController(rootViewController: CategoryViewController())
         let vc3 = UINavigationController(rootViewController: NoticeViewController())
         let vc4 = UINavigationController(rootViewController: NoticeBoardViewController())
+        let vc4 = UINavigationController(rootViewController: MyProfileViewController())
 
         vc1.title = "홈"
         vc2.title = "카테고리"
