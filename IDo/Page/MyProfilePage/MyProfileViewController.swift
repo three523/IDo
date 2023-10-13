@@ -8,7 +8,17 @@
 import UIKit
 
 class MyProfileViewController: UIViewController {
-    
+//    
+//    var profileImage = UIImage
+//    var profileName = UITextField
+//    var choiceEnjoy = UITextView
+//    var choiceEnjoy2 = UITableView
+//    var choiceEnjoy3 = UITextView
+//    
+//    func profileImage() {
+//        
+//    }
+//    
     override func viewDidLoad() {
         super.viewDidLoad()
         

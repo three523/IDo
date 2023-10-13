@@ -22,6 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let mainVC = UINavigationController(rootViewController: TabBarController())
 //        window.backgroundColor = .red
 
+        let mainVC = TabBarController()
         window.rootViewController = mainVC
 
         window.backgroundColor = .white

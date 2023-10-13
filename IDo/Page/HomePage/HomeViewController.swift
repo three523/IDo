@@ -12,12 +12,12 @@ class HomeViewController : UIViewController {
     let joinClub = UILabel()
     let line = UIView()
     let joinClubList = ["신림 헬린이 모여라", "동대문구 배드민턴 모임"]
-    var tableView = UITableView()
+    var joinClubTableView = UITableView()
     
     let suggestClub = UILabel()
     let line2 = UIView()
     let suggestClubList = ["종로 맛집 모임", "판교 앱개발 모임"]
-    var tableView2 = UITableView()
+    var suggestTableView = UITableView()
     
     func makeJoinClub() {
         joinClub.text = "가입한 모임"
@@ -36,14 +36,14 @@ class HomeViewController : UIViewController {
         suggestClub.font = .headFont(.small, weight: .regular)
     }
     func makeTableView() {
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
-        tableView.dataSource = self
-        tableView.delegate = self
+        joinClubTableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
+        joinClubTableView.dataSource = self
+        joinClubTableView.delegate = self
     }
     func makeTableView2() {
-        tableView2.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
-        tableView2.dataSource = self
-        tableView2.delegate = self
+        suggestTableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
+        suggestTableView.dataSource = self
+        suggestTableView.delegate = self
     }
     
     override func viewDidLoad() {
@@ -61,8 +61,8 @@ class HomeViewController : UIViewController {
         view.addSubview(suggestClub)
         view.addSubview(line)
         view.addSubview(line2)
-        view.addSubview(tableView)
-        view.addSubview(tableView2)
+        view.addSubview(joinClubTableView)
+        view.addSubview(suggestTableView)
         
         joinClub.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(100)
@@ -84,12 +84,12 @@ class HomeViewController : UIViewController {
             make.width.equalTo(350)
             make.height.equalTo(1)
         }
-        tableView.snp.makeConstraints { make in
+        joinClubTableView.snp.makeConstraints { make in
             make.top.equalTo(line.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
         }
-        tableView2.snp.makeConstraints { make in
+        suggestTableView.snp.makeConstraints { make in
             make.top.equalTo(line2.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
@@ -108,7 +108,11 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CategoryCell
-        cell.label.text = joinClubList[indexPath.row]
+        if tableView == joinClubTableView {
+            cell.label.text = joinClubList[indexPath.row]
+        } else {
+            cell.label.text = suggestClubList[indexPath.row]
+        }
         cell.categoryImageView.image = UIImage(named: "MeetingProfileImage")
         return cell
     }
