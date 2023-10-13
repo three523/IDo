@@ -43,7 +43,7 @@ class CreateNoticeBoardView: UIView {
     // Content Text 글자 수 표시 label
     private(set) lazy var textCountLabel: UILabel = {
         var label = UILabel()
-        label.text = "(0/100)"
+        label.text = "(0/500)"
         label.textColor = UIColor(color: .placeholder)
         label.font = UIFont.bodyFont(.small, weight: .medium)
         return label

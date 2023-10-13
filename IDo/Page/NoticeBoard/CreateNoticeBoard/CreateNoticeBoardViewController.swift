@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol RemoveDelegate: AnyObject {
+    func removeCell(_ indexPath: IndexPath)
+}
+
 class CreateNoticeBoardViewController: UIViewController {
+    
+    var count = 10
     
     private let createNoticeBoardView = CreateNoticeBoardView()
     
@@ -146,7 +152,7 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
             if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-                cell.galleryImageView.image = image
+                cell.createNoticeBoardImagePicker.galleryImageView.image = image
             }
         }
         picker.dismiss(animated: true, completion: nil)
@@ -209,8 +215,8 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         }
         
         else if textView == createNoticeBoardView.contentTextView {
-            createNoticeBoardView.textCountLabel.text = "(\(chagedText.count)/100)"
-            return chagedText.count <= 99
+            createNoticeBoardView.textCountLabel.text = "(\(chagedText.count)/500)"
+            return chagedText.count <= 499
         }
         return true
     }
@@ -219,11 +225,13 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
+        cell.indexPath = indexPath
+        cell.removeCellDelegate = self
         return cell
     }
     
@@ -255,4 +263,13 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
     }
 }
 
-
+extension CreateNoticeBoardViewController: RemoveDelegate {
+    func removeCell(_ indexPath: IndexPath) {
+        createNoticeBoardView.galleryCollectionView.performBatchUpdates {
+            self.count -= 1
+            self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
+        } completion: { (_) in
+            self.createNoticeBoardView.galleryCollectionView.reloadData()
+        }
+    }
+}
