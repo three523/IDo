@@ -10,9 +10,10 @@ import UIKit
 class NoticeBoardViewController: UIViewController {
     
     private let noticeBoardView = NoticeBoardView()
+    private let noticeBoardEmptyView = NoticeBoardEmptyView()
     
     override func loadView() {
-        view = noticeBoardView
+        view = noticeBoardEmptyView
     }
 
     override func viewDidLoad() {
