@@ -25,11 +25,11 @@ extension UIFont {
     }
     
     enum FontName: String {
-        case bold = "SpoqaHanSans-Bold"
-        case medium = "SpoqaHanSans-Medium"
-        case regular = "SpoqaHanSans-Regular"
-        case light = "SpoqaHanSans-Light"
-        case thin = "SpoqaHanSans-Thin"
+        case bold = "SpoqaHanSansNeo-Bold"
+        case medium = "SpoqaHanSansNeo-Medium"
+        case regular = "SpoqaHanSansNeo-Regular"
+        case light = "SpoqaHanSansNeo-Light"
+        case thin = "SpoqaHanSansNeo-Thin"
     }
     
     static func bodyFont(_ label: Body, weight: Weight) -> UIFont {
@@ -44,11 +44,11 @@ extension UIFont {
 //        return UIFont(name: name.rawValue, size: size) ?? UIFont.systemFont(ofSize: size)
 //    }
 //    
-//    static func bodyFont(_ label: Body, name: FontName) -> UIFont {
-//        return customFont(name, size: label.rawValue)
+//    static func bodyFont(_ label: Body, weight: FontName) -> UIFont {
+//        return customFont(weight, size: label.rawValue)
 //    }
 //    
-//    static func headFont(_ head: Heading, name: FontName) -> UIFont {
-//        return customFont(name, size: head.rawValue)
+//    static func headFont(_ head: Heading, weight: FontName) -> UIFont {
+//        return customFont(weight, size: head.rawValue)
 //    }
 }
