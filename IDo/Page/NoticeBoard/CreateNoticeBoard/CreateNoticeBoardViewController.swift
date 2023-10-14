@@ -55,6 +55,23 @@ class CreateNoticeBoardViewController: UIViewController {
     
 }
 
+// MARK: - Alert 관련 extension
+private extension CreateNoticeBoardViewController {
+    func popAlert() {
+        if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor != UIColor(color: .placeholder) {
+            AlertManager.showAlert(on: self, title: "알림", message: "제목을 입력해주세요.")
+        }
+        
+        else if createNoticeBoardView.titleTextView.textColor != UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
+            AlertManager.showAlert(on: self, title: "알림", message: "내용을 입력해주세요.")
+        }
+        
+        else if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
+            AlertManager.showAlert(on: self, title: "알림", message: "제목과 내용을 입력해주세요.")
+        }
+    }
+}
+
 // MARK: - NavigationBar 관련 extension
 private extension CreateNoticeBoardViewController {
     
@@ -96,36 +113,56 @@ private extension CreateNoticeBoardViewController {
             self.createNoticeBoardView.contentTextView.text = "내용을 입력하세요."
             self.createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
             self.createNoticeBoardView.contentTextView.resignFirstResponder()
+            
+            // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
+            let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedNew))
+            self.navigationItem.rightBarButtonItem = finishButton
+            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
-        
-        // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
-        let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedNew))
-        self.navigationItem.rightBarButtonItem = finishButton
-        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
     }
     
     // 새로운 메모 작성
     @objc func finishButtonTappedNew() {
-        navigationController?.popViewController(animated: true)
+        
         if isTitleTextViewEdited && isContentTextViewEdited {
             let newTitleText = createNoticeBoardView.titleTextView.text
             let newContentText = createNoticeBoardView.contentTextView.text
             
             // 메모 추가 코드 필요
+            
+            // 제목과 내용이 채워졌을 때
+            if createNoticeBoardView.titleTextView.textColor != UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor != UIColor(color: .placeholder) {
+                
+                navigationController?.popViewController(animated: true)
+            }
+            
+            // 제목과 내용이 채워지지 않았을 때
+            else {
+                popAlert()
+            }
         }
     }
     
     // 메모 내용 수정
     @objc func finishButtonTappedEdit() {
-        navigationController?.popViewController(animated: true)
         
-        if let updatedTitle = createNoticeBoardView.titleTextView.text, !updatedTitle.isEmpty, let updatedContent = createNoticeBoardView.contentTextView.text, !updatedContent.isEmpty,
-           let index = editingMemoIndex {
+        if !createNoticeBoardView.titleTextView.text.isEmpty, !createNoticeBoardView.contentTextView.text.isEmpty, let index = editingMemoIndex {
             
             // 해당 인덱스의 메모 수정 코드 필요
             
             // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
             (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+            
+            // 제목과 내용이 채워졌을 때
+            if createNoticeBoardView.titleTextView.textColor != UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor != UIColor(color: .placeholder) {
+                
+                navigationController?.popViewController(animated: true)
+            }
+            
+            // 제목과 내용이 채워지지 않았을 때
+            else {
+                popAlert()
+            }
         }
         
         // 수정 모드 종료

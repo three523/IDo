@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A7A8D22AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift */; };
 		10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */; };
+		10B174812ADA60D900BF4273 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B174802ADA60D800BF4273 /* AlertManager.swift */; };
 		10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */; };
 		10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B12AD55BBF002BA40A /* AppDelegate.swift */; };
 		10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B32AD55BBF002BA40A /* SceneDelegate.swift */; };
@@ -56,6 +57,7 @@
 /* Begin PBXFileReference section */
 		10A7A8D22AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardImagePicker.swift; sourceTree = "<group>"; };
 		10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardEmptyView.swift; sourceTree = "<group>"; };
+		10B174802ADA60D800BF4273 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		10C265AE2AD55BBF002BA40A /* IDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10C265B12AD55BBF002BA40A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -275,6 +277,7 @@
 				7FBE185C2AD796AF0052E950 /* BasicCell.swift */,
 				7FBE185E2AD796AF0052E950 /* BasicImageView.swift */,
 				7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */,
+				10B174802ADA60D800BF4273 /* AlertManager.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 				7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */,
+				10B174812ADA60D900BF4273 /* AlertManager.swift in Sources */,
 				10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
 				10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */,
