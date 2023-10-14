@@ -31,6 +31,15 @@ class CreateNoticeBoardView: UIView {
         return textView
     }()
     
+    // Title Text 글자 수 표시 label
+    private(set) lazy var titleCountLabel: UILabel = {
+        var label = UILabel()
+        label.text = "(0/15)"
+        label.textColor = UIColor(color: .placeholder)
+        label.font = UIFont.bodyFont(.small, weight: .medium)
+        return label
+    }()
+    
     // 내용을 작성하는 textView
     private(set) lazy var contentTextView: UITextView = {
         var textView = UITextView()
@@ -41,7 +50,7 @@ class CreateNoticeBoardView: UIView {
     }()
     
     // Content Text 글자 수 표시 label
-    private(set) lazy var textCountLabel: UILabel = {
+    private(set) lazy var contentCountLabel: UILabel = {
         var label = UILabel()
         label.text = "(0/500)"
         label.textColor = UIColor(color: .placeholder)
@@ -82,8 +91,9 @@ private extension CreateNoticeBoardView {
     
     func addSubView() {
         addSubview(titleTextView)
+        addSubview(titleCountLabel)
         addSubview(contentTextView)
-        addSubview(textCountLabel)
+        addSubview(contentCountLabel)
         addSubview(addPictureButton)
         addSubview(galleryCollectionView)
     }
@@ -96,20 +106,25 @@ private extension CreateNoticeBoardView {
             make.height.equalTo(40)
         }
         
-        contentTextView.snp.makeConstraints { make in
-            make.top.equalTo(titleTextView.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
+        titleCountLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleTextView.snp.bottom).offset(Constant.margin1)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
-            make.height.equalTo(360)
         }
         
-        textCountLabel.snp.makeConstraints { make in
+        contentTextView.snp.makeConstraints { make in
+            make.top.equalTo(titleCountLabel.snp.bottom).offset(Constant.margin3)
+            make.leading.equalTo(snp.leading).offset(Constant.margin3)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.height.equalTo(320)
+        }
+        
+        contentCountLabel.snp.makeConstraints { make in
             make.top.equalTo(contentTextView.snp.bottom).offset(Constant.margin1)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
         }
         
         addPictureButton.snp.makeConstraints { make in
-            make.top.equalTo(textCountLabel.snp.bottom).offset(Constant.margin3)
+            make.top.equalTo(contentCountLabel.snp.bottom).offset(Constant.margin3)
             make.leading.equalTo(snp.leading).offset(Constant.margin3)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
             make.height.equalTo(30)

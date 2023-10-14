@@ -248,11 +248,12 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == createNoticeBoardView.titleTextView {
+            createNoticeBoardView.titleCountLabel.text = "(\(chagedText.count)/15)"
             return chagedText.count <= 15
         }
         
         else if textView == createNoticeBoardView.contentTextView {
-            createNoticeBoardView.textCountLabel.text = "(\(chagedText.count)/500)"
+            createNoticeBoardView.contentCountLabel.text = "(\(chagedText.count)/500)"
             return chagedText.count <= 499
         }
         return true

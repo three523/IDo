@@ -10,6 +10,11 @@
 		10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A7A8D22AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift */; };
 		10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */; };
 		10B174812ADA60D900BF4273 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B174802ADA60D800BF4273 /* AlertManager.swift */; };
+		10B174882ADAE11C00BF4273 /* SpoqaHanSansNeo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174832ADAE11A00BF4273 /* SpoqaHanSansNeo-Bold.ttf */; };
+		10B174892ADAE11C00BF4273 /* SpoqaHanSansNeo-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174842ADAE11B00BF4273 /* SpoqaHanSansNeo-Light.ttf */; };
+		10B1748A2ADAE11C00BF4273 /* SpoqaHanSansNeo-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174852ADAE11B00BF4273 /* SpoqaHanSansNeo-Medium.ttf */; };
+		10B1748B2ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174862ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf */; };
+		10B1748C2ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174872ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf */; };
 		10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */; };
 		10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B12AD55BBF002BA40A /* AppDelegate.swift */; };
 		10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B32AD55BBF002BA40A /* SceneDelegate.swift */; };
@@ -58,6 +63,11 @@
 		10A7A8D22AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardImagePicker.swift; sourceTree = "<group>"; };
 		10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardEmptyView.swift; sourceTree = "<group>"; };
 		10B174802ADA60D800BF4273 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
+		10B174832ADAE11A00BF4273 /* SpoqaHanSansNeo-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Bold.ttf"; sourceTree = "<group>"; };
+		10B174842ADAE11B00BF4273 /* SpoqaHanSansNeo-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Light.ttf"; sourceTree = "<group>"; };
+		10B174852ADAE11B00BF4273 /* SpoqaHanSansNeo-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Medium.ttf"; sourceTree = "<group>"; };
+		10B174862ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Regular.ttf"; sourceTree = "<group>"; };
+		10B174872ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Thin.ttf"; sourceTree = "<group>"; };
 		10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		10C265AE2AD55BBF002BA40A /* IDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10C265B12AD55BBF002BA40A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -115,6 +125,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		10B174822ADAE0F500BF4273 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				10B174832ADAE11A00BF4273 /* SpoqaHanSansNeo-Bold.ttf */,
+				10B174852ADAE11B00BF4273 /* SpoqaHanSansNeo-Medium.ttf */,
+				10B174862ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf */,
+				10B174842ADAE11B00BF4273 /* SpoqaHanSansNeo-Light.ttf */,
+				10B174872ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
 		10C265A52AD55BBF002BA40A = {
 			isa = PBXGroup;
 			children = (
@@ -233,6 +255,7 @@
 		180C33662AD642B6000979F7 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				10B174822ADAE0F500BF4273 /* Font */,
 				180C33672AD642B6000979F7 /* Font.swift */,
 				180C33682AD642B6000979F7 /* Color.swift */,
 				10CBA0432AD646CE00F1DA37 /* Margin.swift */,
@@ -369,8 +392,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10B1748A2ADAE11C00BF4273 /* SpoqaHanSansNeo-Medium.ttf in Resources */,
+				10B1748B2ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf in Resources */,
+				10B174892ADAE11C00BF4273 /* SpoqaHanSansNeo-Light.ttf in Resources */,
+				10B174882ADAE11C00BF4273 /* SpoqaHanSansNeo-Bold.ttf in Resources */,
 				10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */,
 				10C265BE2AD55BC2002BA40A /* Assets.xcassets in Resources */,
+				10B1748C2ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf in Resources */,
 				18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
