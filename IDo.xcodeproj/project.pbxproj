@@ -21,6 +21,7 @@
 		10B565B52ADD1439006DED66 /* KakaoSDKCertCore in Frameworks */ = {isa = PBXBuildFile; productRef = 10B565B42ADD1439006DED66 /* KakaoSDKCertCore */; };
 		10B565B72ADD1439006DED66 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 10B565B62ADD1439006DED66 /* KakaoSDKCommon */; };
 		10B565BA2ADD1CD5006DED66 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B565B92ADD1CD5006DED66 /* LoginViewController.swift */; };
+		10B565BE2ADD2385006DED66 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B565BD2ADD2385006DED66 /* LoginView.swift */; };
 		10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */; };
 		10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B12AD55BBF002BA40A /* AppDelegate.swift */; };
 		10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B32AD55BBF002BA40A /* SceneDelegate.swift */; };
@@ -86,6 +87,7 @@
 		10B174862ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Regular.ttf"; sourceTree = "<group>"; };
 		10B174872ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Thin.ttf"; sourceTree = "<group>"; };
 		10B565B92ADD1CD5006DED66 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		10B565BD2ADD2385006DED66 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		10C265AE2AD55BBF002BA40A /* IDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10C265B12AD55BBF002BA40A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				10B565B92ADD1CD5006DED66 /* LoginViewController.swift */,
+				10B565BD2ADD2385006DED66 /* LoginView.swift */,
 			);
 			path = LoginPage;
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				18CCC1782ADD00D7000D092C /* CommentStackView.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA04C2AD666F700F1DA37 /* NoticeBoardView.swift in Sources */,
+				10B565BE2ADD2385006DED66 /* LoginView.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				18CCC1772ADD00D7000D092C /* HorizentalImageTitleView.swift in Sources */,
 				18CCC1812ADD03C4000D092C /* Reusable.swift in Sources */,
