@@ -113,7 +113,7 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
         } else {
             cell.label.text = suggestClubList[indexPath.row]
         }
-        cell.categoryImageView.image = UIImage(named: "MeetingProfileImage")
+        cell.categoryImageView.image = UIImage(systemName: "photo")
         return cell
     }
 }
