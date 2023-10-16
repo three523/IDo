@@ -49,7 +49,25 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     func viewController(for pageboyViewController: PageboyViewController,
                         at index: PageboyViewController.PageIndex) -> UIViewController?
     {
+        print("###", index)
+        if index == 1 {
+            let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
+            navigationItem.rightBarButtonItem = createButton
+        } else {
+            let updateButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(moveUpdateVC))
+            navigationItem.rightBarButtonItem = updateButton
+        }
         return viewControllers[index]
+    }
+
+    @objc func moveCreateVC() {
+        let createNoticeBoardVC = CreateNoticeBoardViewController()
+        navigationController?.pushViewController(createNoticeBoardVC, animated: true)
+    }
+
+    @objc func moveUpdateVC() {
+        let updateNoticeBoardVC = UpdateNoticeBoardViewController()
+        navigationController?.pushViewController(updateNoticeBoardVC, animated: true)
     }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
@@ -58,6 +76,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     func barItem(for bar: TMBar, at index: Int) -> TMBarItemable {
+//        print("###", index)
         switch index {
         case 0:
             return TMBarItem(title: "홈")

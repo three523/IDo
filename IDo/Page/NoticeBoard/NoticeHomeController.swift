@@ -25,7 +25,8 @@ class NoticeHomeController: UIViewController {
     lazy var textLabel: UILabel = {
         var textLabel = UILabel()
         textLabel.font = .bodyFont(.medium, weight: .regular)
-        textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. 설명입니다. 설명입니다.설명입니다.설명입니다.설명입니다.설명입니다. 설명입니다."
+        textLabel.numberOfLines = 0
+        textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. "
         return textLabel
     }()
     
