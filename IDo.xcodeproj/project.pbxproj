@@ -69,6 +69,7 @@
 		7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185C2AD796AF0052E950 /* BasicCell.swift */; };
 		7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */; };
 		7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185E2AD796AF0052E950 /* BasicImageView.swift */; };
+		E736811D2ADD21C70073FDC4 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E736811C2ADD21C70073FDC4 /* APIKey.swift */; };
 		E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */; };
@@ -132,6 +133,7 @@
 		7FBE185C2AD796AF0052E950 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyMessageStackView.swift; sourceTree = "<group>"; };
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
+		E736811C2ADD21C70073FDC4 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeMeetingController.swift; sourceTree = "<group>"; };
 		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
+				E736811C2ADD21C70073FDC4 /* APIKey.swift */,
 				18CCC1862ADD203C000D092C /* APIKey.swift */,
 			);
 			path = IDo;
@@ -562,6 +565,7 @@
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				18CCC1792ADD00D7000D092C /* EmptyAbleTableVIew.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
+				E736811D2ADD21C70073FDC4 /* APIKey.swift in Sources */,
 				10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
