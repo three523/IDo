@@ -26,7 +26,7 @@ class NoticeHomeController: UIViewController {
         var textLabel = UILabel()
         textLabel.font = .bodyFont(.medium, weight: .regular)
         textLabel.numberOfLines = 0
-        textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. "
+        textLabel.text = "안녕하세요. 설명입니다. "
         return textLabel
     }()
     
@@ -40,7 +40,7 @@ class NoticeHomeController: UIViewController {
     private let scrollStackViewContainer: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
-        view.distribution = .fill
+        view.distribution = .fillProportionally
         view.spacing = 25
         return view
     }()
@@ -53,27 +53,32 @@ class NoticeHomeController: UIViewController {
     func setup() {
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
-        
+        view.addSubview(imageView)
+            
+        imageView.snp.makeConstraints { make in
+            make.top.equalTo(view.layoutMarginsGuide.snp.top).offset(40)
+            make.centerX.equalTo(view)
+        }
+            
         scrollStackViewContainer.snp.makeConstraints { make in
             make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading)
             make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing)
-            make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(50)
+            make.top.equalTo(imageView.snp.bottom).offset(20)
             make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
             make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
         }
-        
+            
         scrollView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.top.equalTo(view.layoutMarginsGuide.snp.top)
             make.bottom.equalTo(view.layoutMarginsGuide.snp.bottom)
         }
-        
+            
         configureContainerView()
     }
     
     private func configureContainerView() {
-        scrollStackViewContainer.addArrangedSubview(imageView)
         scrollStackViewContainer.addArrangedSubview(label)
         scrollStackViewContainer.addArrangedSubview(textLabel)
     }
