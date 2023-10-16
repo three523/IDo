@@ -66,7 +66,7 @@ private extension CreateNoticeBoardViewController {
             AlertManager.showAlert(on: self, title: "알림", message: "내용을 입력해주세요.")
         }
         
-        else if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
+        else if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder) && createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
             AlertManager.showAlert(on: self, title: "알림", message: "제목과 내용을 입력해주세요.")
         }
     }
