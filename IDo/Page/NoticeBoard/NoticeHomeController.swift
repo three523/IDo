@@ -5,53 +5,74 @@
 //  Created by t2023-m0053 on 2023/10/12.
 //
 
+import SnapKit
 import UIKit
 
 class NoticeHomeController: UIViewController {
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-
+    
     lazy var label: UILabel = {
         var label = UILabel()
         label.font = .headFont(.xSmall, weight: .bold)
         label.text = "[B.R.P] 보라매 런앤플레이"
         return label
     }()
-
+    
     lazy var textLabel: UILabel = {
         var textLabel = UILabel()
         textLabel.font = .bodyFont(.medium, weight: .regular)
         textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. 설명입니다. 설명입니다.설명입니다.설명입니다.설명입니다.설명입니다. 설명입니다."
         return textLabel
     }()
-
+    
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.isScrollEnabled = true
+        scrollView.scrollsToTop = true
+        return scrollView
+    }()
+    
+    private let scrollStackViewContainer: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.spacing = 10
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
     }
-
+    
     func setup() {
-        view.addSubview(imageView)
-        view.addSubview(label)
-        view.addSubview(textLabel)
-        imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(70)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(imageView.snp.width).multipliedBy(0.5)
+        view.addSubview(scrollView)
+        scrollView.addSubview(scrollStackViewContainer)
+        
+        scrollStackViewContainer.snp.makeConstraints { make in
+            make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
+            make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
+            make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
         }
-        label.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(30)
-            make.leading.trailing.equalToSuperview().inset(18)
+        
+        scrollView.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.top.equalTo(view.layoutMarginsGuide.snp.top)
+            make.bottom.equalTo(view.layoutMarginsGuide.snp.bottom)
         }
-
-        textLabel.snp.makeConstraints { make in
-            make.top.equalTo(label.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(18)
-            make.height.equalTo(100)
-        }
+        
+        configureContainerView()
+    }
+    
+    private func configureContainerView() {
+        scrollStackViewContainer.addArrangedSubview(imageView)
+        scrollStackViewContainer.addArrangedSubview(label)
+        scrollStackViewContainer.addArrangedSubview(textLabel)
     }
 }

@@ -15,6 +15,7 @@ class NoticeMeetingController: TabmanViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         tempView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 50))
         view.addSubview(tempView)
         tempView.snp.makeConstraints { make in
@@ -29,6 +30,7 @@ class NoticeMeetingController: TabmanViewController {
         viewControllers.append(HomeVC)
         viewControllers.append(titleVC)
 
+        bounces = false
         dataSource = self
 
         let bar = TMBar.ButtonBar()
