@@ -21,6 +21,7 @@
 		10B565B52ADD1439006DED66 /* KakaoSDKCertCore in Frameworks */ = {isa = PBXBuildFile; productRef = 10B565B42ADD1439006DED66 /* KakaoSDKCertCore */; };
 		10B565B72ADD1439006DED66 /* KakaoSDKCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 10B565B62ADD1439006DED66 /* KakaoSDKCommon */; };
 		10B565BA2ADD1CD5006DED66 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B565B92ADD1CD5006DED66 /* LoginViewController.swift */; };
+		10B565BC2ADD1DF1006DED66 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B565BB2ADD1DF1006DED66 /* APIKey.swift */; };
 		10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */; };
 		10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B12AD55BBF002BA40A /* AppDelegate.swift */; };
 		10C265B42AD55BBF002BA40A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C265B32AD55BBF002BA40A /* SceneDelegate.swift */; };
@@ -75,6 +76,7 @@
 		10B174862ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Regular.ttf"; sourceTree = "<group>"; };
 		10B174872ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "SpoqaHanSansNeo-Thin.ttf"; sourceTree = "<group>"; };
 		10B565B92ADD1CD5006DED66 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		10B565BB2ADD1DF1006DED66 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		10C1E80B2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryCollectionViewCell.swift; sourceTree = "<group>"; };
 		10C265AE2AD55BBF002BA40A /* IDo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IDo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10C265B12AD55BBF002BA40A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
+				10B565BB2ADD1DF1006DED66 /* APIKey.swift */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -474,6 +477,7 @@
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
+				10B565BC2ADD1DF1006DED66 /* APIKey.swift in Sources */,
 				10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
