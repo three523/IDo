@@ -15,6 +15,7 @@ class NoticeMeetingController: TabmanViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         tempView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 50))
         view.addSubview(tempView)
         tempView.snp.makeConstraints { make in
@@ -29,10 +30,13 @@ class NoticeMeetingController: TabmanViewController {
         viewControllers.append(HomeVC)
         viewControllers.append(titleVC)
 
+        bounces = false
         dataSource = self
 
         let bar = TMBar.ButtonBar()
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
+        bar.backgroundColor = UIColor.white
+
         addBar(bar, dataSource: self, at: .custom(view: tempView!, layout: nil))
     }
 }
@@ -45,8 +49,26 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     func viewController(for pageboyViewController: PageboyViewController,
                         at index: PageboyViewController.PageIndex) -> UIViewController?
     {
+//        print("###", index)
+        if index == 1 {
+            let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC)) // 게시글 수정 페이지
+            navigationItem.rightBarButtonItem = createButton
+        } else {
+            let updateButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
+            navigationItem.rightBarButtonItem = updateButton // 모임 수정 페이지
+        }
         return viewControllers[index]
     }
+
+    @objc func moveCreateVC() {
+        let createNoticeBoardVC = CreateNoticeBoardViewController()
+        navigationController?.pushViewController(createNoticeBoardVC, animated: true)
+    }
+
+//    @objc func moveUpdateVC() {
+//        let updateNoticeBoardVC = UpdateNoticeBoardViewController()
+//        navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
+//    }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
         // return nil
@@ -54,6 +76,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     func barItem(for bar: TMBar, at index: Int) -> TMBarItemable {
+//        print("###", index)
         switch index {
         case 0:
             return TMBarItem(title: "홈")
