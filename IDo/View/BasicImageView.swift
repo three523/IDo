@@ -47,7 +47,6 @@ private extension BasicImageView {
     }
     func update() {
         imageView.snp.remakeConstraints { make in
-            make.center.equalToSuperview()
             make.edges.equalToSuperview().inset(contentMargin)
         }
     }
