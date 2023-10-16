@@ -49,7 +49,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     func viewController(for pageboyViewController: PageboyViewController,
                         at index: PageboyViewController.PageIndex) -> UIViewController?
     {
-        print("###", index)
+//        print("###", index)
         if index == 1 {
             let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
             navigationItem.rightBarButtonItem = createButton

@@ -210,8 +210,8 @@
 		10CBA0452AD6476000F1DA37 /* Page */ = {
 			isa = PBXGroup;
 			children = (
-				10CBA0482AD6661500F1DA37 /* NoticeBoard */,
 				10CBA0372AD6455400F1DA37 /* TabBarController.swift */,
+				10CBA0482AD6661500F1DA37 /* NoticeBoard */,
 				10CBA0412AD6469F00F1DA37 /* NoticePage */,
 				7FA2085F2AD6A16D005C66ED /* MeetingPage */,
 				10CBA03F2AD6467600F1DA37 /* HomePage */,

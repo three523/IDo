@@ -40,7 +40,8 @@ class NoticeHomeController: UIViewController {
     private let scrollStackViewContainer: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
-        view.spacing = 10
+        view.distribution = .fill
+        view.spacing = 25
         return view
     }()
     
@@ -56,7 +57,7 @@ class NoticeHomeController: UIViewController {
         scrollStackViewContainer.snp.makeConstraints { make in
             make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading)
             make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing)
-            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(50)
             make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
             make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
         }
