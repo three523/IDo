@@ -22,11 +22,11 @@ class NoticeHomeController: UIViewController {
         return label
     }()
 
-    lazy var textView: UITextView = {
-        var textView = UITextView()
-        textView.font = .bodyFont(.medium, weight: .regular)
-        textView.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. 설명입니다. 설명입니다.설명입니다.설명입니다.설명입니다.설명입니다. 설명입니다."
-        return textView
+    lazy var textLabel: UILabel = {
+        var textLabel = UILabel()
+        textLabel.font = .bodyFont(.medium, weight: .regular)
+        textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. 설명입니다. 설명입니다.설명입니다.설명입니다.설명입니다.설명입니다. 설명입니다."
+        return textLabel
     }()
 
     override func viewDidLoad() {
@@ -37,7 +37,7 @@ class NoticeHomeController: UIViewController {
     func setup() {
         view.addSubview(imageView)
         view.addSubview(label)
-        view.addSubview(textView)
+        view.addSubview(textLabel)
         imageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(70)
             make.leading.trailing.equalToSuperview()
@@ -48,7 +48,7 @@ class NoticeHomeController: UIViewController {
             make.leading.trailing.equalToSuperview().inset(18)
         }
 
-        textView.snp.makeConstraints { make in
+        textLabel.snp.makeConstraints { make in
             make.top.equalTo(label.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(18)
             make.height.equalTo(100)
