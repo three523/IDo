@@ -75,4 +75,9 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = NoticeBoardDetailViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
 }
