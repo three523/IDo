@@ -51,11 +51,11 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     {
 //        print("###", index)
         if index == 1 {
-            let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
+            let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC)) // 게시글 수정 페이지
             navigationItem.rightBarButtonItem = createButton
         } else {
-            let updateButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(moveUpdateVC))
-            navigationItem.rightBarButtonItem = updateButton
+            let updateButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
+            navigationItem.rightBarButtonItem = updateButton // 모임 수정 페이지
         }
         return viewControllers[index]
     }
@@ -65,10 +65,10 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
 
-    @objc func moveUpdateVC() {
-        let updateNoticeBoardVC = UpdateNoticeBoardViewController()
-        navigationController?.pushViewController(updateNoticeBoardVC, animated: true)
-    }
+//    @objc func moveUpdateVC() {
+//        let updateNoticeBoardVC = UpdateNoticeBoardViewController()
+//        navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
+//    }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
         // return nil
