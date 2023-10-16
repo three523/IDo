@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import FirebaseDatabase
 
 final class NoticeBoardDetailViewController: UIViewController {
     
@@ -25,6 +26,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        var ref = Database.database().reference()
         setup()
     }
 
