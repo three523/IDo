@@ -227,9 +227,9 @@
 				E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */,
 				E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */,
 				10CBA0492AD6665C00F1DA37 /* NoticeBoardViewController.swift */,
-				E73681172ADCFAF90073FDC4 /* UpdateNoticeBoardViewController.swift */,
 				10CBA04B2AD666F700F1DA37 /* NoticeBoardView.swift */,
 				10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */,
+				E73681192ADCFC3A0073FDC4 /* UpdateNoticeBoard */,
 				10CBA04F2AD6678D00F1DA37 /* NoticeBoardCell */,
 				10CBA0542AD6B02500F1DA37 /* CreateNoticeBoard */,
 			);
@@ -306,6 +306,14 @@
 				10B174802ADA60D800BF4273 /* AlertManager.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		E73681192ADCFC3A0073FDC4 /* UpdateNoticeBoard */ = {
+			isa = PBXGroup;
+			children = (
+				E73681172ADCFAF90073FDC4 /* UpdateNoticeBoardViewController.swift */,
+			);
+			path = UpdateNoticeBoard;
 			sourceTree = "<group>";
 		};
 		E73D73D72AD7BD0B00EF9554 /* Cell */ = {
