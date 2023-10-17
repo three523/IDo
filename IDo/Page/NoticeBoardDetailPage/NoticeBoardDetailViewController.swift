@@ -21,12 +21,24 @@ final class NoticeBoardDetailViewController: UIViewController {
     }()
     private let commentPositionView: UIView = UIView()
     private let addCommentStackView: CommentStackView = CommentStackView()
-    private let dummyList: [Int] = [1,2,3,4,5,6,7,8,9,10]
+    private var dummyList: [CommentTest] = []
     private var addCommentViewBottomConstraint: Constraint? = nil
+    private var firebaseManager: FirebaseCommentManager!
+    private var viewState: ViewState = .loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        var ref = Database.database().reference()
+        firebaseManager = FirebaseCommentManager(noticeBoardID: "NoticeBoardID")
+        firebaseManager.readCommtents { result in
+            switch result {
+            case .success(let commentList):
+                self.dummyList = commentList
+                self.commentTableView.reloadData()
+                self.viewState = .loaded
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
         setup()
     }
 
@@ -47,6 +59,7 @@ private extension NoticeBoardDetailViewController {
         addViews()
         autoLayoutSetup()
         tableViewSetup()
+        addCommentSetup()
     }
     func addViews() {
         view.addSubview(commentPositionView)
@@ -76,6 +89,26 @@ private extension NoticeBoardDetailViewController {
         commentTableView.register(EmptyCountTableViewCell.self, forCellReuseIdentifier: EmptyCountTableViewCell.identifier)
         commentTableView.delegate = self
         commentTableView.dataSource = self
+    }
+    
+    func addCommentSetup() {
+        addCommentStackView.commentAddHandler = { [weak self] comment in
+            guard let self else { return }
+            let commentTest = CommentTest(id: UUID().uuidString, createDate: Date(), content: comment, noticeBoardID: "NoticeBoardID", writeUser: "Tester")
+            firebaseManager.addComment(comment: commentTest)
+            firebaseManager.readCommtents { result in
+                switch result {
+                case .success(let commentList):
+                    self.dummyList = commentList
+                    self.commentTableView.reloadData()
+                    self.viewState = .loaded
+                case .failure(let error):
+                    self.viewState = .error(false)
+                    print(error.localizedDescription)
+                }
+            }
+            self.resignFirstResponder()
+        }
     }
     
     @objc func keyBoardWillShow(notification: NSNotification) {
@@ -122,13 +155,43 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if dummyList.isEmpty {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyCountTableViewCell.identifier, for: indexPath) as? EmptyCountTableViewCell else { return UITableViewCell() }
-            cell.setMessage(image: UIImage(systemName: "bubble.right.fill"), imageSize: 60, title: "댓글이 없습니다.", description: "댓글을 작성해주세요")
+            cell.viewState = self.viewState
             cell.selectionStyle = .none
             return cell
         }
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else { return UITableViewCell() }
         cell.selectionStyle = .none
+        cell.contentLabel.text = dummyList[indexPath.row].content
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if dummyList.isEmpty { return nil }
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제", handler: {(action, view, completionHandler) in
+            let comment = self.dummyList[indexPath.row]
+            self.firebaseManager.deleteComment(comment: comment)
+            self.dummyList.remove(at: indexPath.row)
+            if self.dummyList.count == 0 {
+                self.commentTableView.reloadData()
+            } else {
+                tableView.deleteRows(at: [indexPath], with: .fade)
+            }
+        })
+        let updateAction = UIContextualAction(style: .normal, title: "수정", handler: {(action, view, completionHandler) in
+            let comment = self.dummyList[indexPath.row]
+            let vc = CommentUpdateViewController(comment: comment)
+            vc.commentUpdate = { [weak self] comment in
+                guard let self else { return }
+                self.dummyList[indexPath.row] = comment
+                self.firebaseManager.updateComments(comment: comment)
+                self.commentTableView.reloadData()
+            }
+            vc.hidesBottomBarWhenPushed = true
+            vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
+            self.navigationController?.pushViewController(vc, animated: true)
+        })
+        updateAction.backgroundColor = UIColor(color: .contentPrimary)
+        return UISwipeActionsConfiguration(actions: [deleteAction, updateAction])
     }
     
 }

@@ -32,4 +32,17 @@ extension Date {
         }
         return nil
     }
+    var dateToString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.string(from: self)
+    }
+}
+
+extension String {
+    var toDate: Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter.date(from: self)
+    }
 }

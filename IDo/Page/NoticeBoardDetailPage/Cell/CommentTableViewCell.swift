@@ -10,23 +10,22 @@ import SnapKit
 
 class CommentTableViewCell: UITableViewCell, Reusable {
     
-//    let userInfoStackView: HorizentalImageTitleView = HorizentalImageTitleView()
     let userInfoStackView: WriterStackView = WriterStackView()
-    let contentLabel: UILabel = {
+    var contentLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.small, weight: .regular)
         label.text = "텍스트 입니다"
         label.numberOfLines = 1
         return label
     }()
-//    let dateLabel: UILabel = {
-//        let label = UILabel()
-//        label.font = .bodyFont(.small, weight: .regular)
-//        let date = Date().addingTimeInterval(-300)
-//        label.text = date.diffrenceDate
-//        label.numberOfLines = 1
-//        return label
-//    }()
+    let dateLabel: UILabel = {
+        let label = UILabel()
+        label.font = .bodyFont(.small, weight: .regular)
+        let date = Date().addingTimeInterval(-300)
+        label.text = date.diffrenceDate
+        label.numberOfLines = 1
+        return label
+    }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -53,7 +52,7 @@ private extension CommentTableViewCell {
     func addViews() {
         contentView.addSubview(userInfoStackView)
         contentView.addSubview(contentLabel)
-//        contentView.addSubview(dateLabel)
+        contentView.addSubview(dateLabel)
     }
     func autoLayoutSetup() {
         userInfoStackView.snp.makeConstraints { make in
