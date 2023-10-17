@@ -12,6 +12,7 @@ import KakaoSDKUser
 class LoginViewController: UIViewController {
     
     private let loginView = LoginView()
+    let mainBarController = TabBarController()
     
     override func loadView() {
         view = loginView
@@ -47,6 +48,8 @@ private extension LoginViewController {
                     
                     let accessToken = oauthToken?.accessToken
                     self.setUserInfo()
+                    
+                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
                 }
             }
         }
@@ -65,6 +68,7 @@ private extension LoginViewController {
                 
                 let accessToken = oauthToken?.accessToken
                 self.setUserInfo()
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
             }
         }
     }
@@ -79,6 +83,7 @@ private extension LoginViewController {
                 //do something
                 _ = user
                 self.loginView.userNameLabel.text = user?.kakaoAccount?.profile?.nickname
+                self.loginView.userIDLabel.text = String((user?.id)!)
             }
         }
     }
