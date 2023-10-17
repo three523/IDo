@@ -18,63 +18,137 @@ enum FirebaseError: Error {
     case otherError
 }
 
-class FirebaseCommentManager {
+class FirebaseCommentManager: ObservableObject {
     private var ref: DatabaseReference!
+    var commentList = [CommentTest]() {
+        didSet {
+            update()
+        }
+    }
+    var viewState: ViewState = .loading
+    var update: () -> Void = {}
     
     init(noticeBoardID: String) {
         self.ref = Database.database().reference().child("NoticeBoard").child("CommentList")
+        listenSetup()
+    }
+    
+    private func listenSetup() {
+//        ref.observe(.childAdded) { dataSnapshot,_  in
+//            print("comment\(dataSnapshot)")
+//            guard let comment: CommentTest = self.getDecodingData(dataSnapshot: dataSnapshot) else {
+//                self.viewState = .error(false)
+//                return
+//            }
+//            self.commentList.append(comment)
+//            self.viewState = .loaded
+//        }
+//        ref.observe(.childChanged) { dataSnapshot in
+//            print("changed\(dataSnapshot)")
+//            guard let comment: CommentTest = self.getDecodingData(dataSnapshot: dataSnapshot) else { return }
+//            guard let index = self.commentList.firstIndex(where: { $0.id == comment.id }) else { return }
+//            self.commentList[index] = comment
+//        }
+//        ref.observe(.childRemoved) { dataSnapshot in
+//            print("remove\(dataSnapshot)")
+//            guard let comment: CommentTest = self.getDecodingData(dataSnapshot: dataSnapshot) else { return }
+//            self.commentList.removeAll(where: { $0.id == comment.id })
+//        }
     }
     
     func addComment(comment: CommentTest) {
         ref.child(comment.id).setValue(comment.toDictionary())
+        commentList.append(comment)
     }
     
-    func readCommtents(completion: @escaping (Result<[CommentTest], FirebaseError>) -> Void) {
+    func readCommtents() {
         ref.getData { error, dataSnapshot in
             if let error {
                 let nsError = error as NSError
-                if nsError.code == 1 { completion(.failure(.networkError)) }
-                else if nsError.code == 2 { completion(.failure(.userNotFound)) }
-                else if nsError.code == 3 { completion(.failure(.userTokenExpired)) }
-                else if nsError.code == 4 { completion(.failure(.tooManyRequests)) }
-                else { completion(.failure(.otherError)) }
+                if nsError.code == 1 { self.viewState = .error(true) }
+                else { self.viewState = .error(false) }
+                self.update()
                 return
             }
             guard let dataSnapshot else {
-                completion(.failure(.dataSnapshotNil))
+                self.viewState = .error(false)
+                self.update()
                 return
             }
-            let commentList = dataSnapshot.value as? NSDictionary
-            var commentTest = [CommentTest]()
-            commentList?.forEach({ key, value in
-                let comment = value as! NSDictionary
-                guard let writeUser = comment["writeUser"] as? String else { return }
-                commentTest.append(CommentTest(id: comment["id"] as! String, createDate: (comment["createDate"] as! String).toDate!, content: comment["content"] as! String, noticeBoardID: comment["noticeBoardID"] as! String, writeUser: writeUser))
-                
-            })
-            completion(.success(commentTest))
+            guard let value = dataSnapshot.value as? [String: Any] else {
+                self.viewState = .loaded
+                self.commentList = []
+                return
+            }
+            let commentList: [CommentTest] = self.decodingDataSnapshot(value: value)
+            self.viewState = .loaded
+            self.commentList = commentList
+            print("loaded")
         }
-        
     }
     
+//    func readCommtents(completion: @escaping (Result<[CommentTest], FirebaseError>) -> Void) {
+//        ref.getData { error, dataSnapshot in
+//            if let error {
+//                let nsError = error as NSError
+//                if nsError.code == 1 { completion(.failure(.networkError)) }
+//                else if nsError.code == 2 { completion(.failure(.userNotFound)) }
+//                else if nsError.code == 3 { completion(.failure(.userTokenExpired)) }
+//                else if nsError.code == 4 { completion(.failure(.tooManyRequests)) }
+//                else { completion(.failure(.otherError)) }
+//                return
+//            }
+//            guard let dataSnapshot else {
+//                completion(.failure(.dataSnapshotNil))
+//                return
+//            }
+//            guard let value = dataSnapshot.value as? [String: Any] else { return }
+//            self.commentList = self.decodingDataSnapshot(value: value)
+//            print(self.commentList)
+//        }
+//    }
+    
     func updateComments(comment: CommentTest) {
+        guard let index = commentList.firstIndex(where: { $0.id == comment.id }) else { return }
+        commentList[index] = comment
         ref.updateChildValues([comment.id: comment.toDictionary()])
     }
     
     func deleteComment(comment: CommentTest) {
+        commentList.removeAll(where: { $0.id == comment.id })
         ref.updateChildValues([comment.id: nil])
+    }
+    
+    private func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
+        let commentTestList: [T] = value.compactMap { key, value in
+            let comment: T? = decodingSingleDataSnapshot(value: value)
+            return comment
+        }
+        return commentTestList
+    }
+    
+    private func getDecodingData<T: Decodable>(dataSnapshot: DataSnapshot) -> T? {
+        guard let value = dataSnapshot.value as? [String: Any] else { return nil }
+        guard let data: T = self.decodingSingleDataSnapshot(value: value) else { return  nil }
+        return data
+    }
+    
+    private func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
+        let decoder = JSONDecoder()
+        guard let data = try? JSONSerialization.data(withJSONObject: value) else { return nil }
+        return try? decoder.decode(T.self, from: data)
     }
 }
 
-struct CommentTest {
+struct CommentTest: Codable {
     let id: String
-    let createDate: Date
+    let createDate: String
     var content: String
     var noticeBoardID: String
     let writeUser: String
     
     func toDictionary() -> [String: Any] {
-        let dictionary = ["id": id, "createDate": createDate.dateToString, "content": content, "noticeBoardID": noticeBoardID, "writeUser": writeUser]
+        let dictionary = ["id": id, "createDate": createDate, "content": content, "noticeBoardID": noticeBoardID, "writeUser": writeUser]
         return dictionary
     }
 }
