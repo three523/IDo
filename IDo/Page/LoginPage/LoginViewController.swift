@@ -30,12 +30,11 @@ class LoginViewController: UIViewController {
 private extension LoginViewController {
     
     func clickLoginButton() {
-        loginView.kakaoLoginByAppButton.addTarget(self, action: #selector(kakaoLoginByApp), for: .touchUpInside)
-        loginView.kakaoLoginByWebButton.addTarget(self, action: #selector(kakaoLoginByWeb), for: .touchUpInside)
+        loginView.kakaoLoginButton.addTarget(self, action: #selector(kakaoLogin), for: .touchUpInside)
     }
     
-    @objc func kakaoLoginByApp() {
-        if (UserApi.isKakaoTalkLoginAvailable()) {
+    @objc func kakaoLogin() {
+        if UserApi.isKakaoTalkLoginAvailable() {
             UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
                 if let error = error {
                     print(error)
@@ -46,29 +45,28 @@ private extension LoginViewController {
                     //do something
                     _ = oauthToken
                     
-                    let accessToken = oauthToken?.accessToken
+                    
                     self.setUserInfo()
                     
                     (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
                 }
             }
         }
-    }
-    
-    @objc func kakaoLoginByWeb() {
-        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-            if let error = error {
-                print(error)
-            }
-            else {
-                print("loginWithKakaoAccount() success.")
-                
-                //do something
-                _ = oauthToken
-                
-                let accessToken = oauthToken?.accessToken
-                self.setUserInfo()
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
+        else {
+            UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+                if let error = error {
+                    print(error)
+                }
+                else {
+                    print("loginWithKakaoAccount() success.")
+                    
+                    //do something
+                    _ = oauthToken
+                    
+                    
+                    self.setUserInfo()
+                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
+                }
             }
         }
     }

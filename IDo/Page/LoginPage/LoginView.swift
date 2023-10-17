@@ -22,17 +22,8 @@ class LoginView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // 카카오톡 로그인 버튼
-    private(set) lazy var kakaoLoginByAppButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("카카오톡으로 로그인", for: .normal)
-        button.titleLabel?.textColor = UIColor.white
-        button.backgroundColor = UIColor.systemBlue
-        return button
-    }()
-    
-    // 카카오 계정 로그인 버튼
-    private(set) lazy var kakaoLoginByWebButton: UIButton = {
+    // 카카오 로그인 버튼
+    private(set) lazy var kakaoLoginButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "kakao_login_large_wide"), for: .normal)
         return button
@@ -64,29 +55,23 @@ private extension LoginView {
     
     // noticeBoardTableView를 SubView에 추가
     func addSubView() {
-        addSubview(kakaoLoginByAppButton)
-        addSubview(kakaoLoginByWebButton)
+        addSubview(kakaoLoginButton)
         addSubview(userNameLabel)
         addSubview(userIDLabel)
     }
     
     // 오토레이아웃 설정
     func autoLayout() {
-        kakaoLoginByAppButton.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
-        }
         
-        kakaoLoginByWebButton.snp.makeConstraints { make in
-            make.top.equalTo(kakaoLoginByAppButton.snp.bottom).offset(Constant.margin3)
+        kakaoLoginButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
             make.centerX.equalToSuperview()
             make.width.equalTo(300)
             make.height.equalTo(45)
         }
         
         userNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(kakaoLoginByWebButton.snp.bottom).offset(Constant.margin3)
+            make.top.equalTo(kakaoLoginButton.snp.bottom).offset(Constant.margin3)
             make.leading.equalTo(snp.leading).offset(Constant.margin3)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
         }
