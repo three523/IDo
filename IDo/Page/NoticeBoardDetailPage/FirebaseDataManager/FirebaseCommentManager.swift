@@ -33,29 +33,6 @@ class FirebaseCommentManager: ObservableObject {
         listenSetup()
     }
     
-    private func listenSetup() {
-//        ref.observe(.childAdded) { dataSnapshot,_  in
-//            print("comment\(dataSnapshot)")
-//            guard let comment: CommentTest = self.getDecodingData(dataSnapshot: dataSnapshot) else {
-//                self.viewState = .error(false)
-//                return
-//            }
-//            self.commentList.append(comment)
-//            self.viewState = .loaded
-//        }
-//        ref.observe(.childChanged) { dataSnapshot in
-//            print("changed\(dataSnapshot)")
-//            guard let comment: CommentTest = self.getDecodingData(dataSnapshot: dataSnapshot) else { return }
-//            guard let index = self.commentList.firstIndex(where: { $0.id == comment.id }) else { return }
-//            self.commentList[index] = comment
-//        }
-//        ref.observe(.childRemoved) { dataSnapshot in
-//            print("remove\(dataSnapshot)")
-//            guard let comment: CommentTest = self.getDecodingData(dataSnapshot: dataSnapshot) else { return }
-//            self.commentList.removeAll(where: { $0.id == comment.id })
-//        }
-    }
-    
     func addComment(comment: CommentTest) {
         ref.child(comment.id).setValue(comment.toDictionary())
         commentList.append(comment)
@@ -86,27 +63,6 @@ class FirebaseCommentManager: ObservableObject {
             print("loaded")
         }
     }
-    
-//    func readCommtents(completion: @escaping (Result<[CommentTest], FirebaseError>) -> Void) {
-//        ref.getData { error, dataSnapshot in
-//            if let error {
-//                let nsError = error as NSError
-//                if nsError.code == 1 { completion(.failure(.networkError)) }
-//                else if nsError.code == 2 { completion(.failure(.userNotFound)) }
-//                else if nsError.code == 3 { completion(.failure(.userTokenExpired)) }
-//                else if nsError.code == 4 { completion(.failure(.tooManyRequests)) }
-//                else { completion(.failure(.otherError)) }
-//                return
-//            }
-//            guard let dataSnapshot else {
-//                completion(.failure(.dataSnapshotNil))
-//                return
-//            }
-//            guard let value = dataSnapshot.value as? [String: Any] else { return }
-//            self.commentList = self.decodingDataSnapshot(value: value)
-//            print(self.commentList)
-//        }
-//    }
     
     func updateComments(comment: CommentTest) {
         guard let index = commentList.firstIndex(where: { $0.id == comment.id }) else { return }
