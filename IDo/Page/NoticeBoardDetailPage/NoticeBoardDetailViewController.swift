@@ -24,7 +24,11 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var dummyList: [CommentTest] = []
     private var addCommentViewBottomConstraint: Constraint? = nil
     private var firebaseManager: FirebaseCommentManager!
-    private var viewState: ViewState = .loading
+    private var viewState: ViewState = .loading {
+        didSet {
+            commentTableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,10 +37,14 @@ final class NoticeBoardDetailViewController: UIViewController {
             switch result {
             case .success(let commentList):
                 self.dummyList = commentList
-                self.commentTableView.reloadData()
                 self.viewState = .loaded
             case .failure(let error):
-                print(error.localizedDescription)
+                switch error {
+                case .networkError:
+                    self.viewState = .error(false)
+                default :
+                    self.viewState = .error(true)
+                }
             }
         }
         setup()
@@ -103,8 +111,13 @@ private extension NoticeBoardDetailViewController {
                     self.commentTableView.reloadData()
                     self.viewState = .loaded
                 case .failure(let error):
-                    self.viewState = .error(false)
-                    print(error.localizedDescription)
+                    switch error {
+                    case .networkError:
+                        self.viewState = .error(false)
+                    default :
+                        self.viewState = .error(true)
+                    }
+                    self.commentTableView.reloadData()
                 }
             }
             self.resignFirstResponder()

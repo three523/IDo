@@ -10,7 +10,7 @@ import UIKit
 protocol DataLoding {
     var errorView: EmptyMessageStackView { get }
     var lodingView: UIActivityIndicatorView { get }
-    var loadedView: UIView { get }
+    var loadedView: UIStackView { get }
     var viewState: ViewState { get set }
     
     func update()
@@ -34,6 +34,12 @@ extension DataLoding where Self: UIView {
                 self.lodingView.stopAnimating()
                 self.lodingView.isHidden = true
                 self.errorView.isHidden = false
+                if isConnectedToInternet {
+                    self.errorView.type = .custom(image: UIImage(systemName: "xmark"), title: "알수없는 에러", description: "잠시후 다시시도 해주세요")
+                    self.errorView.setColor(color: UIColor(color: .negative))
+                } else {
+                    self.errorView.type = .networkError
+                }
                 self.loadedView.isHidden = true
             }
         }
@@ -43,26 +49,15 @@ extension DataLoding where Self: UIView {
 class EmptyCountTableViewCell: UITableViewCell, Reusable, DataLoding {
     
     
-    var errorView: EmptyMessageStackView = {
-        let emptyView = EmptyMessageStackView()
-        emptyView.setImage(image: UIImage(systemName: "bubble.right.fill"))
-        emptyView.titleLabel.text = "인터넷 연결이 불안정 합니다"
-        emptyView.descriptionLabel.text = "인터넷 연결 후 다시시도 해주세요"
-        return emptyView
-    }()
+    var errorView: EmptyMessageStackView = EmptyMessageStackView(messageType: .networkError)
     var lodingView: UIActivityIndicatorView = UIActivityIndicatorView(style: .medium)
-    var loadedView: UIView = UIView()
+    var loadedView: UIStackView = UIStackView()
     var viewState: ViewState = .loading {
         didSet {
             update()
         }
     }
-    private let emptyMessageView: EmptyMessageStackView = {
-        let view = EmptyMessageStackView(imageSize: 60, image: UIImage(systemName: "bubble.right.fill"))
-        view.titleLabel.text = "댓글이 없습니다."
-        view.descriptionLabel.text = "댓글을 작성해주세요"
-        return view
-    }()
+    private let emptyMessageView: EmptyMessageStackView = EmptyMessageStackView(messageType: .commentEmpty)
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -91,13 +86,9 @@ private extension EmptyCountTableViewCell {
         contentView.addSubview(errorView)
         contentView.addSubview(lodingView)
         contentView.addSubview(loadedView)
-        loadedView.addSubview(emptyMessageView)
+        loadedView.addArrangedSubview(emptyMessageView)
     }
     func autoLayoutSetup() {
-        emptyMessageView.snp.makeConstraints { make in
-            make.top.bottom.equalTo(loadedView).inset(Constant.margin3)
-            make.left.right.equalTo(loadedView)
-        }
         errorView.snp.makeConstraints { make in
             make.top.bottom.equalTo(contentView).inset(Constant.margin3)
             make.left.right.equalTo(contentView)

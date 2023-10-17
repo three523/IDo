@@ -9,8 +9,13 @@ import Foundation
 import Firebase
 import FirebaseDatabase
 
-enum RealTimeDatabaseError: Error {
+enum FirebaseError: Error {
     case dataSnapshotNil
+    case networkError
+    case userNotFound
+    case userTokenExpired
+    case tooManyRequests
+    case otherError
 }
 
 class FirebaseCommentManager {
@@ -24,14 +29,19 @@ class FirebaseCommentManager {
         ref.child(comment.id).setValue(comment.toDictionary())
     }
     
-    func readCommtents(completion: @escaping (Result<[CommentTest], Error>) -> Void) {
+    func readCommtents(completion: @escaping (Result<[CommentTest], FirebaseError>) -> Void) {
         ref.getData { error, dataSnapshot in
             if let error {
-                completion(.failure(error))
+                let nsError = error as NSError
+                if nsError.code == 1 { completion(.failure(.networkError)) }
+                else if nsError.code == 2 { completion(.failure(.userNotFound)) }
+                else if nsError.code == 3 { completion(.failure(.userTokenExpired)) }
+                else if nsError.code == 4 { completion(.failure(.tooManyRequests)) }
+                else { completion(.failure(.otherError)) }
                 return
             }
             guard let dataSnapshot else {
-                completion(.failure(RealTimeDatabaseError.dataSnapshotNil))
+                completion(.failure(.dataSnapshotNil))
                 return
             }
             let commentList = dataSnapshot.value as? NSDictionary
