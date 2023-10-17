@@ -28,22 +28,6 @@ class LoginView: UIView {
         button.setImage(UIImage(named: "kakao_login_large_wide"), for: .normal)
         return button
     }()
-    
-    private(set) lazy var userNameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "userName"
-        label.textColor = UIColor.black
-        label.font = UIFont.bodyFont(.medium, weight: .bold)
-        return label
-    }()
-    
-    private(set) lazy var userIDLabel: UILabel = {
-        let label = UILabel()
-        label.text = "userID"
-        label.textColor = UIColor.black
-        label.font = UIFont.bodyFont(.medium, weight: .bold)
-        return label
-    }()
 }
 
 private extension LoginView {
@@ -56,8 +40,6 @@ private extension LoginView {
     // noticeBoardTableView를 SubView에 추가
     func addSubView() {
         addSubview(kakaoLoginButton)
-        addSubview(userNameLabel)
-        addSubview(userIDLabel)
     }
     
     // 오토레이아웃 설정
@@ -68,18 +50,6 @@ private extension LoginView {
             make.centerX.equalToSuperview()
             make.width.equalTo(300)
             make.height.equalTo(45)
-        }
-        
-        userNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(kakaoLoginButton.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
-        }
-        
-        userIDLabel.snp.makeConstraints { make in
-            make.top.equalTo(userNameLabel.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
         }
     }
 }
