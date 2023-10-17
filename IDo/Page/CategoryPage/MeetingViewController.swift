@@ -7,19 +7,22 @@
 
 import Foundation
 import UIKit
+import FirebaseDatabase
 
 class MeetingViewController: UIViewController {
-    let meetingTitle = ["테니스모임", "개발자 스터디", "게임"]
-    let meetingDate = ["테니스 모임에 대해 소개합니다.", "개발 공부를 하는 모임입니다.", "게임하는 사람들을 모으고 있습니다."]
+//    let meetingTitle = ["테니스모임", "개발자 스터디", "게임"]
+//    let meetingDate = ["테니스 모임에 대해 소개합니다.", "개발 공부를 하는 모임입니다.", "게임하는 사람들을 모으고 있습니다."]
     let meetingImage = UIImage(systemName: "camera.circle")
-
+    
+    var meetingTitle: [String] = []
+    var meetingDate: [String] = []
     var categoryData: String?
     var categoryIndex: Int?
     private var tableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        loadDataFromFirebase()
         setupNavigationBar()
         setupTableView()
         navigationItem()
@@ -47,6 +50,33 @@ class MeetingViewController: UIViewController {
 
         navigationItem.titleView = titleLabel
     }
+    
+    func loadDataFromFirebase() {
+        guard let category = categoryData else { return }
+            
+        let ref = Database.database().reference().child(category).child("meetings")
+        
+        ref.observe(.value) { [weak self] (snapshot) in
+            
+            var newTitles: [String] = []
+            var newDates: [String] = []
+            
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let dict = childSnapshot.value as? [String: Any],
+                   let title = dict["title"] as? String,
+                   let description = dict["description"] as? String {
+                    newTitles.append(title)
+                    newDates.append(description)
+                }
+            }
+            
+            self?.meetingTitle = newTitles
+            self?.meetingDate = newDates
+            self?.tableView.reloadData()
+        }
+    }
+
 
     func setupTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
@@ -66,9 +96,13 @@ class MeetingViewController: UIViewController {
 
     @objc
     func setBtnTap() {
-        let noticeBoardVC = MeetingCreateViewController()
-        navigationController?.pushViewController(noticeBoardVC, animated: false)
+        let createMeetingVC = MeetingCreateViewController()
+        createMeetingVC.selectedCategory = self.categoryData
+        navigationController?.pushViewController(createMeetingVC, animated: true)
+        
+        
     }
+
 }
 
 extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
@@ -85,8 +119,14 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
 
+
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let noticeBoardVC = NoticeMeetingController()
-        navigationController?.pushViewController(noticeBoardVC, animated: false)
+        noticeBoardVC.meetingIndex = indexPath.row
+        noticeBoardVC.categoryData = self.categoryData
+        navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
+
+
 }

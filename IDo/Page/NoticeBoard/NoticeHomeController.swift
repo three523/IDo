@@ -6,8 +6,14 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 class NoticeHomeController: UIViewController {
+    
+    var meetingId: String?
+    var categoryData: String?
+    var meetingIndex: Int?
+    
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
@@ -32,6 +38,7 @@ class NoticeHomeController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        loadDataFromFirebase()
     }
 
     func setup() {
@@ -54,4 +61,33 @@ class NoticeHomeController: UIViewController {
             make.height.equalTo(100)
         }
     }
+    
+    func loadDataFromFirebase() {
+        guard let category = categoryData else { return }
+        
+        let ref = Database.database().reference().child(category).child("meetings")
+        
+        ref.observe(.value) { [weak self] (snapshot) in
+            var index = 0
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let meetingData = childSnapshot.value as? [String: Any],
+                   let title = meetingData["title"] as? String,
+                   let description = meetingData["description"] as? String {
+                    
+                    if index == self?.meetingIndex {
+                        DispatchQueue.main.async {
+                            self?.label.text = title
+                            self?.textView.text = description
+                        }
+                        break
+                    }
+                    index += 1
+                }
+            }
+        }
+    }
+
+
+    
 }
