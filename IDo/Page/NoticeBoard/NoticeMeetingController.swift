@@ -8,10 +8,13 @@
 import Pageboy
 import Tabman
 import UIKit
+import FirebaseDatabase
 
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
+    var meetingIndex: Int?
+    var categoryData: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,6 +28,9 @@ class NoticeMeetingController: TabmanViewController {
             make.height.equalTo(30)
         }
         let HomeVC = NoticeHomeController()
+        HomeVC.meetingIndex = meetingIndex
+        HomeVC.categoryData = categoryData
+
         let titleVC = NoticeBoardViewController()
 
         viewControllers.append(HomeVC)

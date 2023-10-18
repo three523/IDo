@@ -170,32 +170,6 @@ private extension CreateNoticeBoardViewController {
     }
 }
 
-// MARK: - addPictureButton 관련
-private extension CreateNoticeBoardViewController {
-    
-    func buttonAction() {
-        createNoticeBoardView.addPictureButton.addTarget(self, action: #selector(addPicture), for: .touchUpInside)
-    }
-    
-    @objc func addPicture() {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
-    }
-}
-
-extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[.originalImage] as? UIImage {
-            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-                cell.createNoticeBoardImagePicker.galleryImageView.image = image
-            }
-        }
-        picker.dismiss(animated: true, completion: nil)
-    }
-}
-
 // MARK: - TextView 관련
 extension CreateNoticeBoardViewController: UITextViewDelegate {
     
@@ -219,12 +193,21 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
             }
         }
+        print(isTitleTextViewEdited)
+        print(isContentTextViewEdited)
     }
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        isTitleTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        isContentTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if !createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && createNoticeBoardView.titleTextView.textColor == UIColor.black {
+            isTitleTextViewEdited = true
+        }
+        
+        else if !createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && createNoticeBoardView.contentTextView.textColor == UIColor.black{
+            isContentTextViewEdited = true
+        }
+        //isTitleTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        //isContentTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     // 입력 종료 시 호출
@@ -257,6 +240,32 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             return chagedText.count <= 499
         }
         return true
+    }
+}
+
+// MARK: - addPictureButton 관련
+private extension CreateNoticeBoardViewController {
+    
+    func buttonAction() {
+        createNoticeBoardView.addPictureButton.addTarget(self, action: #selector(addPicture), for: .touchUpInside)
+    }
+    
+    @objc func addPicture() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
+    }
+}
+
+extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let image = info[.originalImage] as? UIImage {
+            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
+                cell.createNoticeBoardImagePicker.galleryImageView.image = image
+            }
+        }
+        picker.dismiss(animated: true, completion: nil)
     }
 }
 
