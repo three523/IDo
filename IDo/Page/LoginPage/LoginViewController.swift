@@ -119,7 +119,6 @@ private extension LoginViewController {
             }
             // Success(등록 성공)
             else {
-                
                 (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
             }
         }

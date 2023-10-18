@@ -61,6 +61,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
+    // rootVC를 바꾸기 위한 함수
     func changeRootVC(_ vc: UIViewController, animated: Bool) {
         guard let window = self.window else { return }
         window.rootViewController = vc
