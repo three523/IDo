@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Club: Codable {
+struct Club: Codable, Identifier {
     let id: String
     var rootUser: User
     var title: String

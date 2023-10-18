@@ -1,44 +1,36 @@
 //
-//  FirebaseDataManager.swift
+//  FBDataManager.swift
 //  IDo
 //
-//  Created by 김도현 on 2023/10/16.
+//  Created by 김도현 on 2023/10/18.
 //
 
 import Foundation
-import Firebase
 import FirebaseDatabase
 
-enum FirebaseError: Error {
-    case dataSnapshotNil
-    case networkError
-    case userNotFound
-    case userTokenExpired
-    case tooManyRequests
-    case otherError
-}
-
-class FirebaseCommentManager {
-    private var ref: DatabaseReference!
-    var commentList = [Comment]() {
+class FBDataManager<T: Codable & Identifier> {
+    var ref: DatabaseReference
+    var viewState: ViewState = .loading
+    var update: () -> Void = {}
+    var dataList: [T] = [] {
         didSet {
             update()
         }
     }
-    var viewState: ViewState = .loading
-    var update: () -> Void = {}
     
-    init(noticeBoardID: String) {
-        self.ref = Database.database().reference().child("NoticeBoard").child("CommentList")
+    init(refPath: [String]) {
+        self.ref = Database.database().reference()
+        for path in refPath {
+            self.ref = ref.child(path)
+        }
     }
     
-    func addComment(comment: Comment) {
-        ref.child(comment.id).setValue(comment.dictionary)
-        commentList.append(comment)
+    func addData(data: T) {
+        ref.child(data.id).setValue(data.dictionary)
+        dataList.append(data)
     }
     
-    //
-    func readCommtents() {
+    func readDatas() {
         ref.getData { error, dataSnapshot in
             if let error {
                 let nsError = error as NSError
@@ -54,27 +46,24 @@ class FirebaseCommentManager {
             }
             guard let value = dataSnapshot.value as? [String: Any] else {
                 self.viewState = .loaded
-                self.commentList = []
+                self.dataList = []
                 return
             }
-            let commentList: [Comment] = self.decodingDataSnapshot(value: value)
-            let commentSortedList: [Comment] = commentList.sorted(by: {
-                    $0.createDate <= $1.createDate
-                })
+            let dataList: [T] = self.decodingDataSnapshot(value: value)
             self.viewState = .loaded
-            self.commentList = commentSortedList
+            self.dataList = dataList
         }
     }
     
-    func updateComments(comment: Comment) {
-        guard let index = commentList.firstIndex(where: { $0.id == comment.id }) else { return }
-        commentList[index] = comment
-        ref.updateChildValues([comment.id: comment.dictionary])
+    func updateDatas(data: T) {
+        guard let index = dataList.firstIndex(where: { $0.id == data.id }) else { return }
+        dataList[index] = data
+        ref.updateChildValues([data.id: data.dictionary])
     }
     
-    func deleteComment(comment: Comment) {
-        commentList.removeAll(where: { $0.id == comment.id })
-        ref.updateChildValues([comment.id: nil])
+    func deleteData(data: T) {
+        dataList.removeAll(where: { $0.id == data.id })
+        ref.updateChildValues([data.id: nil])
     }
     
     private func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
