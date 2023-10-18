@@ -119,6 +119,7 @@ private extension CreateNoticeBoardViewController {
             self.navigationItem.rightBarButtonItem = finishButton
             self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
+        self.navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
     }
     
     // 새로운 메모 작성
@@ -199,13 +200,13 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        if !createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && createNoticeBoardView.titleTextView.textColor == UIColor.black {
-            isTitleTextViewEdited = true
-        }
-        
-        else if !createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && createNoticeBoardView.contentTextView.textColor == UIColor.black{
-            isContentTextViewEdited = true
-        }
+//        if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.titleTextView.textColor == UIColor.black {
+//            isTitleTextViewEdited = true
+//        }
+//        
+//        else if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.contentTextView.textColor == UIColor.black {
+//            isContentTextViewEdited = true
+//        }
         //isTitleTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         //isContentTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -238,6 +239,14 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         else if textView == createNoticeBoardView.contentTextView {
             createNoticeBoardView.contentCountLabel.text = "(\(chagedText.count)/500)"
             return chagedText.count <= 499
+        }
+        
+        if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.titleTextView.textColor == UIColor.black {
+            isTitleTextViewEdited = true
+        }
+        
+        else if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.contentTextView.textColor == UIColor.black {
+            isContentTextViewEdited = true
         }
         return true
     }
