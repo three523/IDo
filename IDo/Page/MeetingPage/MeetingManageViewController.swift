@@ -1,8 +1,12 @@
 import UIKit
+import FirebaseDatabase
 
 class MeetingManageViewController: UIViewController {
     
-    let profileImageButton: MeetingProfileImageButton = {
+    var meetingTitle: String?
+    var meetingImageURL: String?
+    
+    var profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
         return button
@@ -85,7 +89,37 @@ class MeetingManageViewController: UIViewController {
         view.addSubview(meetingDescriptionField)
         view.addSubview(placeholderLabel)
         configureUI()
-    }
+        
+        if let title = meetingTitle {
+                    meetingNameField.text = title
+                }
+        if let description = TemporaryManager.shared.meetingDescription {
+                    meetingDescriptionField.text = description
+                }
+        if let imageUrlString = meetingImageURL {
+            // 캐시에서 이미지 확인
+            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
+                if let resizedImage = cachedImage.resized(to: CGSize(width: 120, height: 120)) {
+                    self.profileImageButton.setImage(resizedImage, for: .normal)
+                }
+            } else {
+                // 캐시에 이미지 없는 경우
+                if let url = URL(string: imageUrlString) {
+                    URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+                        if let data = data, let image = UIImage(data: data) {
+                            if let resizedImage = image.resized(to: CGSize(width: 120, height: 120)) {
+                                DispatchQueue.main.async {
+                                    self?.profileImageButton.setImage(resizedImage, for: .normal)
+                                    ImageCache.shared.cacheImage(resizedImage, for: imageUrlString)
+                                }
+                            }
+                        }
+                    }.resume()
+                }
+            }
+        }
+
+            }
     
     private func configureUI() {
         // UI 설정
@@ -187,7 +221,7 @@ extension MeetingManageViewController: UITextViewDelegate {
         let currentText = textView.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
         
-        if prospectiveText.count > 301 { // 변경된 부분
+        if prospectiveText.count > 301 { 
             return false
         }
         return true

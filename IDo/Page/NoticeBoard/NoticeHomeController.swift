@@ -11,11 +11,7 @@ import FirebaseDatabase
 
 class NoticeHomeController: UIViewController {
     
-    var meetingId: String?
-    var categoryData: String?
-    var meetingIndex: Int?
-//    var meetingImageUrls: [String] = []
-    
+
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
@@ -93,7 +89,7 @@ class NoticeHomeController: UIViewController {
 
     
     func loadDataFromFirebase() {
-        guard let category = categoryData else { return }
+        guard let category = TemporaryManager.shared.categoryData else { return }
         
         let ref = Database.database().reference().child(category).child("meetings")
         
@@ -107,19 +103,19 @@ class NoticeHomeController: UIViewController {
                    let imageUrlString = meetingData["imageUrl"] as? String,
                    let imageUrl = URL(string: imageUrlString) {
                     
-                    if index == self?.meetingIndex {
+                    if index == TemporaryManager.shared.meetingIndex {
                         DispatchQueue.main.async {
                             self?.label.text = title
                             self?.textLabel.text = description
                             
-                            // 이미지 캐시 확인
+                    
                             if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
                                 self?.imageView.image = cachedImage
                             } else {
-                                // 이미지 로드
+                                
                                 URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
                                     if let error = error {
-                                        print("Failed to load image: ", error.localizedDescription)
+                                        print("이미지 로딩 실패", error.localizedDescription)
                                         return
                                     }
                                     
