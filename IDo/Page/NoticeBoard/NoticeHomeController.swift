@@ -7,8 +7,15 @@
 
 import SnapKit
 import UIKit
+import FirebaseDatabase
 
 class NoticeHomeController: UIViewController {
+    
+    var meetingId: String?
+    var categoryData: String?
+    var meetingIndex: Int?
+//    var meetingImageUrls: [String] = []
+    
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
@@ -49,6 +56,7 @@ class NoticeHomeController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        loadDataFromFirebase()
     }
     
     func setup() {
@@ -81,4 +89,60 @@ class NoticeHomeController: UIViewController {
         scrollStackViewContainer.addArrangedSubview(label)
         scrollStackViewContainer.addArrangedSubview(textLabel)
     }
+
+    
+    func loadDataFromFirebase() {
+        guard let category = categoryData else { return }
+        
+        let ref = Database.database().reference().child(category).child("meetings")
+        
+        ref.observe(.value) { [weak self] (snapshot) in
+            var index = 0
+            for child in snapshot.children {
+                if let childSnapshot = child as? DataSnapshot,
+                   let meetingData = childSnapshot.value as? [String: Any],
+                   let title = meetingData["title"] as? String,
+                   let description = meetingData["description"] as? String,
+                   let imageUrlString = meetingData["imageUrl"] as? String,
+                   let imageUrl = URL(string: imageUrlString) {
+                    
+                    if index == self?.meetingIndex {
+                        DispatchQueue.main.async {
+                            self?.label.text = title
+                            self?.textLabel.text = description
+                            
+                            // 이미지 캐시 확인
+                            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
+                                self?.imageView.image = cachedImage
+                            } else {
+                                // 이미지 로드
+                                URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
+                                    if let error = error {
+                                        print("Failed to load image: ", error.localizedDescription)
+                                        return
+                                    }
+                                    
+                                    guard let data = data, let image = UIImage(data: data) else { return }
+                                    
+                                    // 이미지 캐시 저장
+                                    ImageCache.shared.cacheImage(image, for: imageUrlString)
+                                    
+                                    DispatchQueue.main.async {
+                                        self?.imageView.image = image
+                                    }
+                                }.resume()
+                            }
+                        }
+                        break
+                    }
+                    index += 1
+                }
+            }
+        }
+        scrollStackViewContainer.addArrangedSubview(label)
+        scrollStackViewContainer.addArrangedSubview(textLabel)
+    }
+
+
 }
+

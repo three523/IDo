@@ -59,7 +59,6 @@
 		18CCC17F2ADD039B000D092C /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC17E2ADD039B000D092C /* Date.swift */; };
 		18CCC1812ADD03C4000D092C /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1802ADD03C4000D092C /* Reusable.swift */; };
 		18CCC1852ADD1207000D092C /* FirebaseCommentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1842ADD1207000D092C /* FirebaseCommentManager.swift */; };
-		18CCC1872ADD203C000D092C /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1862ADD203C000D092C /* APIKey.swift */; };
 		18CE9C252AD8EC2C00C921D5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C242AD8EC2C00C921D5 /* User.swift */; };
 		18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C262AD8ECAB00C921D5 /* Club.swift */; };
 		18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */; };
@@ -72,7 +71,8 @@
 		7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185C2AD796AF0052E950 /* BasicCell.swift */; };
 		7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */; };
 		7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185E2AD796AF0052E950 /* BasicImageView.swift */; };
-		E736811D2ADD21C70073FDC4 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E736811C2ADD21C70073FDC4 /* APIKey.swift */; };
+		7FE072A42ADF82E900966916 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A32ADF82E900966916 /* ImageCache.swift */; };
+		7FE072A62ADFA30A00966916 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A52ADFA30A00966916 /* APIKey.swift */; };
 		E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */; };
@@ -126,7 +126,6 @@
 		18CCC17E2ADD039B000D092C /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		18CCC1802ADD03C4000D092C /* Reusable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
 		18CCC1842ADD1207000D092C /* FirebaseCommentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCommentManager.swift; sourceTree = "<group>"; };
-		18CCC1862ADD203C000D092C /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		18CE9C242AD8EC2C00C921D5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		18CE9C262AD8ECAB00C921D5 /* Club.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Club.swift; sourceTree = "<group>"; };
 		18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoard.swift; sourceTree = "<group>"; };
@@ -139,7 +138,8 @@
 		7FBE185C2AD796AF0052E950 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyMessageStackView.swift; sourceTree = "<group>"; };
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
-		E736811C2ADD21C70073FDC4 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
+		7FE072A32ADF82E900966916 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		7FE072A52ADFA30A00966916 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeMeetingController.swift; sourceTree = "<group>"; };
 		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
@@ -221,8 +221,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				E736811C2ADD21C70073FDC4 /* APIKey.swift */,
-				18CCC1862ADD203C000D092C /* APIKey.swift */,
+				7FE072A52ADFA30A00966916 /* APIKey.swift */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -398,6 +397,7 @@
 				7FA208642AD6A894005C66ED /* View */,
 				7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */,
 				7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */,
+				7FE072A32ADF82E900966916 /* ImageCache.swift */,
 			);
 			path = MeetingPage;
 			sourceTree = "<group>";
@@ -549,7 +549,6 @@
 				18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */,
 				10B174812ADA60D900BF4273 /* AlertManager.swift in Sources */,
 				18C055252ADE8AA3003D26E4 /* ViewState.swift in Sources */,
-				18CCC1872ADD203C000D092C /* APIKey.swift in Sources */,
 				18CCC17B2ADD00D7000D092C /* WriterStackView.swift in Sources */,
 				10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */,
 				10CBA0382AD6455400F1DA37 /* TabBarController.swift in Sources */,
@@ -568,8 +567,10 @@
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */,
 				18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */,
+				7FE072A62ADFA30A00966916 /* APIKey.swift in Sources */,
 				E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */,
 				7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */,
+				7FE072A42ADF82E900966916 /* ImageCache.swift in Sources */,
 				18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */,
 				18CCC1782ADD00D7000D092C /* CommentStackView.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
@@ -585,7 +586,6 @@
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				18CCC1792ADD00D7000D092C /* EmptyAbleTableVIew.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
-				E736811D2ADD21C70073FDC4 /* APIKey.swift in Sources */,
 				10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
