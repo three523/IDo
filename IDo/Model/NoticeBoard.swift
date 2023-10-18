@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct NoticeBoard {
+struct NoticeBoard: Codable {
     let id: String
     let rootUser: User
     let createDate: Date

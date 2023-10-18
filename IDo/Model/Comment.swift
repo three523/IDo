@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct Comment {
+struct Comment: Codable {
     let id: String
     let noticeBoardID: String
-    let writeUser: User
+    let writeUser: UserSummary
     let createDate: Date
     var content: String
 }

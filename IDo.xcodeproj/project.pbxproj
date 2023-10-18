@@ -41,6 +41,8 @@
 		10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */; };
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
+		18B12CB22ADFBDC700FB325F /* UserSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB12ADFBDC700FB325F /* UserSummary.swift */; };
+		18B12CB42ADFC01000FB325F /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB32ADFC01000FB325F /* Encodable.swift */; };
 		18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */; };
 		18C055252ADE8AA3003D26E4 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055242ADE8AA3003D26E4 /* ViewState.swift */; };
 		18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */; };
@@ -112,6 +114,8 @@
 		10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardView.swift; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		18B12CB12ADFBDC700FB325F /* UserSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSummary.swift; sourceTree = "<group>"; };
+		18B12CB32ADFC01000FB325F /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
 		18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUpdateViewController.swift; sourceTree = "<group>"; };
 		18C055242ADE8AA3003D26E4 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -221,7 +225,6 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				E736811C2ADD21C70073FDC4 /* APIKey.swift */,
 				7FE072A52ADFA30A00966916 /* APIKey.swift */,
 			);
 			path = IDo;
@@ -368,6 +371,7 @@
 			isa = PBXGroup;
 			children = (
 				18CCC17E2ADD039B000D092C /* Date.swift */,
+				18B12CB32ADFC01000FB325F /* Encodable.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -388,6 +392,7 @@
 				18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */,
 				18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */,
 				18CE9C2C2AD8EDAD00C921D5 /* Category.swift */,
+				18B12CB12ADFBDC700FB325F /* UserSummary.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -549,6 +554,7 @@
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */,
 				10B174812ADA60D900BF4273 /* AlertManager.swift in Sources */,
+				18B12CB42ADFC01000FB325F /* Encodable.swift in Sources */,
 				18C055252ADE8AA3003D26E4 /* ViewState.swift in Sources */,
 				18CCC17B2ADD00D7000D092C /* WriterStackView.swift in Sources */,
 				10C1E80C2AD7CC4D0081EBC3 /* GalleryCollectionViewCell.swift in Sources */,
@@ -558,6 +564,7 @@
 				7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */,
 				7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */,
 				18CCC17C2ADD00D7000D092C /* NoticeBoardDetailViewController.swift in Sources */,
+				18B12CB22ADFBDC700FB325F /* UserSummary.swift in Sources */,
 				7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */,
 				18CCC17F2ADD039B000D092C /* Date.swift in Sources */,
 				E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */,

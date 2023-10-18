@@ -36,7 +36,17 @@ class NoticeHomeController: UIViewController {
         textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. "
         return textLabel
     }()
-    
+
+    lazy var signUpButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Sign Up", for: .normal)
+        button.backgroundColor = .blue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
+        return button
+    }()
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = true
@@ -59,9 +69,16 @@ class NoticeHomeController: UIViewController {
         loadDataFromFirebase()
     }
     
+    @objc func handleSignUp() {
+        print("Sign Up button tapped!")
+    }
+
     func setup() {
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
+        
+        // Add this line to add the button to the main view
+        view.addSubview(signUpButton)
         
         scrollStackViewContainer.snp.makeConstraints { make in
             make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading)
@@ -75,7 +92,13 @@ class NoticeHomeController: UIViewController {
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.top.equalTo(view.layoutMarginsGuide.snp.top)
-            make.bottom.equalTo(view.layoutMarginsGuide.snp.bottom)
+            make.bottom.equalTo(signUpButton.snp.top).offset(-10)
+        }
+        
+        signUpButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
         }
         
         configureContainerView()
@@ -88,6 +111,11 @@ class NoticeHomeController: UIViewController {
         }
         scrollStackViewContainer.addArrangedSubview(label)
         scrollStackViewContainer.addArrangedSubview(textLabel)
+        
+        signUpButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
     }
 
     func loadDataFromFirebase() {
