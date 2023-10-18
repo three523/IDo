@@ -22,7 +22,7 @@ final class WriterStackView: UIStackView {
         stackView.distribution = .equalSpacing
         return stackView
     }()
-    private let writerNameLabel: UILabel = {
+    let writerNameLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
@@ -30,7 +30,7 @@ final class WriterStackView: UIStackView {
         label.text = "사용자 이름"
         return label
     }()
-    private let writerTimeLabel: UILabel = {
+    let writerTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.xSmall, weight: .regular)
         label.textColor = UIColor(color: .text1)
