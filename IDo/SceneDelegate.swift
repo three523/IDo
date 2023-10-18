@@ -7,6 +7,8 @@
 
 import UIKit
 import KakaoSDKAuth
+import KakaoSDKUser
+import KakaoSDKCommon
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -17,23 +19,55 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
-        let mainVC = TabBarController()
         window.backgroundColor = .white
-        window.rootViewController = mainVC
+        
+        // 카카오 로그인 토큰이 있는지 여부 확인
+        if (AuthApi.hasToken()) {
+            UserApi.shared.accessTokenInfo { (_, error) in
+                if let error = error {
+                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
+                        //로그인 필요
+                        let mainVC = LoginViewController()
+                        window.rootViewController = mainVC
+                    }
+                    else {
+                        //기타 에러
+                        print(error.localizedDescription)
+                    }
+                }
+                else {
+                    //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+                    let mainVC = TabBarController()
+                    window.rootViewController = mainVC
+                }
+            }
+        }
+        else {
+            //로그인 필요
+            let mainVC = LoginViewController()
+            window.rootViewController = mainVC
+        }
 
-        window.backgroundColor = .white
         window.makeKeyAndVisible()
         self.window = window
     }
     
     // 카카오톡을 통한 사용자 인증에 필요한 함수
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-            if let url = URLContexts.first?.url {
-                if (AuthApi.isKakaoTalkLoginUrl(url)) {
-                    _ = AuthController.handleOpenUrl(url: url)
-                }
+        if let url = URLContexts.first?.url {
+            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                _ = AuthController.handleOpenUrl(url: url)
             }
         }
+    }
+    
+    // rootVC를 바꾸기 위한 함수
+    func changeRootVC(_ vc: UIViewController, animated: Bool) {
+        guard let window = self.window else { return }
+        window.rootViewController = vc
+        
+        UIView.transition(with: window, duration: 0.2, options: [.transitionCrossDissolve], animations: nil, completion: nil)
+    }
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
