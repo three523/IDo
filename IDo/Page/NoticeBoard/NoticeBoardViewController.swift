@@ -13,7 +13,7 @@ class NoticeBoardViewController: UIViewController {
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
     
     override func loadView() {
-        view = noticeBoardEmptyView
+        view = noticeBoardView
     }
 
     override func viewDidLoad() {
