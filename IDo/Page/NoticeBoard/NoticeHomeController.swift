@@ -5,6 +5,7 @@
 //  Created by t2023-m0053 on 2023/10/12.
 //
 
+import SnapKit
 import UIKit
 import FirebaseDatabase
 
@@ -18,7 +19,6 @@ class NoticeHomeController: UIViewController {
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -139,6 +139,8 @@ class NoticeHomeController: UIViewController {
                 }
             }
         }
+        scrollStackViewContainer.addArrangedSubview(label)
+        scrollStackViewContainer.addArrangedSubview(textLabel)
     }
 
 

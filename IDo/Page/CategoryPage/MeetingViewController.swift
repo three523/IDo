@@ -21,6 +21,7 @@ class MeetingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadDataFromFirebase()
+        navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
         navigationItem()
@@ -93,6 +94,12 @@ class MeetingViewController: UIViewController {
 
     func navigationItem() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(setBtnTap))
+
+
+        //        button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
+        //        let noticeBoardVC = MeetingCreateViewController()
+        //        navigationController?.pushViewController(noticeBoardVC, animated: true)
+
     }
 
     @objc
