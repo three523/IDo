@@ -45,7 +45,7 @@ class MeetingCreateViewController: UIViewController {
         textView.backgroundColor = UIColor(named: "BackgroundSecondary")
         textView.textAlignment = .left
         textView.layer.cornerRadius = 5.0
-        textView.layer.borderColor = UIColor.lightGray.cgColor// .
+        textView.layer.borderColor = UIColor.lightGray.cgColor
         textView.layer.borderWidth = 0.2
         textView.clipsToBounds = true
         textView.isEditable = true
@@ -93,7 +93,7 @@ class MeetingCreateViewController: UIViewController {
         
         var imageData: Data? = nil
             if let image = profileImageButton.image(for: .normal) {
-                imageData = image.jpegData(compressionQuality: 0.8) // 이미지의 품질
+                imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
             }
 
             saveMeetingToFirebase(name: title, description: description, imageData: imageData)
@@ -102,7 +102,7 @@ class MeetingCreateViewController: UIViewController {
 
     private func saveMeetingToFirebase(name: String, description: String, imageData: Data?) {
         guard let category = selectedCategory else { return }
-        // 
+        //
         let ref = Database.database().reference().child(category).child("meetings")
         let newMeetingID = ref.childByAutoId().key ?? ""
         
@@ -155,6 +155,7 @@ class MeetingCreateViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCreateButton()
+        updateFinishButtonState()
         view.addSubview(meetingDescriptionField)
         view.addSubview(placeholderLabel)
         configureUI()
@@ -228,6 +229,15 @@ class MeetingCreateViewController: UIViewController {
         profileImageButton.openImagePicker(in: self)
     }
     
+    func updateFinishButtonState() {
+            // meetingNameField와 meetingDescriptionField가 모두 내용이 있을때만 활성화
+            let istitleFieldEmpty = meetingNameField.text?.isEmpty ?? true
+            let isDescriptionEmpty = meetingDescriptionField.text.isEmpty
+            createFinishButton.isEnabled = !(istitleFieldEmpty || isDescriptionEmpty)
+        }
+
+
+
     
 }
 
@@ -246,6 +256,7 @@ extension MeetingCreateViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         placeholderLabel.isHidden = !textView.text.isEmpty
         countDescriptionField.text = "\(textView.text.count)/300"
+        updateFinishButtonState()
         
         if textView.text.count > 300 {
             shakeAnimation(for: countDescriptionField)
@@ -259,7 +270,7 @@ extension MeetingCreateViewController: UITextViewDelegate {
         let currentText = textView.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
         
-        if prospectiveText.count > 301 { // 변경된 부분
+        if prospectiveText.count > 301 {
             return false
         }
         return true
@@ -273,6 +284,10 @@ extension MeetingCreateViewController: UITextFieldDelegate {
             return true
         }
         
+        func textFieldDidChangeSelection(_ textField: UITextField) {
+                updateFinishButtonState()
+            }
+        
         let currentText = textField.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
@@ -285,7 +300,9 @@ extension MeetingCreateViewController: UITextFieldDelegate {
         } else {
             countMeetingNameField.textColor = .black
         }
+        
         return true
+        
     }
 }
 

@@ -22,4 +22,10 @@ class FinishButton: UIButton {
     @objc private func showDebug() {
         print("버튼누름")
     }
+    
+    override var isEnabled: Bool {
+        didSet {
+            backgroundColor = isEnabled ? UIColor(named: "ContentPrimay") : .lightGray
+        }
+    }
 }
