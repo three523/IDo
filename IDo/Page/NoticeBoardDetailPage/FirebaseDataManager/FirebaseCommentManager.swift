@@ -37,6 +37,7 @@ class FirebaseCommentManager {
         commentList.append(comment)
     }
     
+    //
     func readCommtents() {
         ref.getData { error, dataSnapshot in
             if let error {
