@@ -120,17 +120,27 @@ class MeetingViewController: UIViewController {
     }
 
     private func setupNoMeetingsView() {
-        noMeetingsView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 200))
-        noMeetingsView.center = view.center
+        noMeetingsView = UIView(frame: view.bounds)
         noMeetingsView.backgroundColor = .white
-
-        let label = UILabel(frame: CGRect(x: 0, y: 0, width: noMeetingsView.bounds.width, height: 40))
-        label.center = CGPoint(x: noMeetingsView.bounds.width / 2, y: noMeetingsView.bounds.height / 2)
-        label.textAlignment = .center
-        label.text = "모임이 없습니다."
-
-        noMeetingsView.addSubview(label)
         view.addSubview(noMeetingsView)
+
+        // 아이콘 이미지 설정
+        let iconImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        iconImageView.center = CGPoint(x: noMeetingsView.bounds.width / 2, y: noMeetingsView.bounds.height / 2 - 60)
+        iconImageView.image = UIImage(systemName: "person.3.fill")
+        iconImageView.tintColor = .gray
+        noMeetingsView.addSubview(iconImageView)
+
+        // 메시지 레이블 설정
+        messageLabel.text = """
+        모임하는 카테고리의 모임이 없습니다
+        참여가 있는 모임에 참ㅁ여하시거나
+        새로운 카테고리를 만들어보세요.
+        """
+        messageLabel.numberOfLines = 3
+        messageLabel.textAlignment = .center
+        messageLabel.textColor = .gray
+        noMeetingsView.addSubview(messageLabel)
 
         // 처음에는 숨깁니다.
         noMeetingsView.isHidden = true
