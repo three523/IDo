@@ -30,7 +30,6 @@ class FirebaseCommentManager: ObservableObject {
     
     init(noticeBoardID: String) {
         self.ref = Database.database().reference().child("NoticeBoard").child("CommentList")
-        listenSetup()
     }
     
     func addComment(comment: CommentTest) {
@@ -58,9 +57,11 @@ class FirebaseCommentManager: ObservableObject {
                 return
             }
             let commentList: [CommentTest] = self.decodingDataSnapshot(value: value)
+            let commentSortedList: [CommentTest] = commentList.sorted(by: {
+                $0.createDate.toDate ?? Date() <= $1.createDate.toDate ?? Date()
+            })
             self.viewState = .loaded
-            self.commentList = commentList
-            print("loaded")
+            self.commentList = commentSortedList
         }
     }
     

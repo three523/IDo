@@ -18,14 +18,6 @@ class CommentTableViewCell: UITableViewCell, Reusable {
         label.numberOfLines = 1
         return label
     }()
-    let dateLabel: UILabel = {
-        let label = UILabel()
-        label.font = .bodyFont(.small, weight: .regular)
-        let date = Date().addingTimeInterval(-300)
-        label.text = date.diffrenceDate
-        label.numberOfLines = 1
-        return label
-    }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -35,13 +27,12 @@ class CommentTableViewCell: UITableViewCell, Reusable {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+}
 
-        // Configure the view for the selected state
+extension CommentTableViewCell {
+    func setDate(dateText: String) {
+        userInfoStackView.writerTimeLabel.text = dateText
     }
-
 }
 
 private extension CommentTableViewCell {
@@ -52,7 +43,6 @@ private extension CommentTableViewCell {
     func addViews() {
         contentView.addSubview(userInfoStackView)
         contentView.addSubview(contentLabel)
-        contentView.addSubview(dateLabel)
     }
     func autoLayoutSetup() {
         userInfoStackView.snp.makeConstraints { make in

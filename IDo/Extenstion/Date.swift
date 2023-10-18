@@ -29,6 +29,8 @@ extension Date {
         } else if let minute = diffrenceDate.minute,
                   !(minute <= 0) {
             return "\(minute)분 전"
+        }  else if diffrenceDate.minute == 0 {
+            return "방금전"
         }
         return nil
     }

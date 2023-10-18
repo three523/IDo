@@ -36,20 +36,6 @@ final class NoticeBoardDetailViewController: UIViewController {
         firebaseManager.update = { [weak self] in
             self?.commentTableView.reloadData()
         }
-//        firebaseManager.readCommtents { result in
-//            switch result {
-//            case .success(let commentList):
-//                self.dummyList = commentList
-//                self.viewState = .loaded
-//            case .failure(let error):
-//                switch error {
-//                case .networkError:
-//                    self.viewState = .error(false)
-//                default :
-//                    self.viewState = .error(true)
-//                }
-//            }
-//        }
         firebaseManager.readCommtents()
         setup()
     }
@@ -139,6 +125,7 @@ private extension NoticeBoardDetailViewController {
         addCommentStackView.commentAddHandler = { [weak self] comment in
             guard let self else { return }
             let commentTest = CommentTest(id: UUID().uuidString, createDate: Date().dateToString, content: comment, noticeBoardID: "NoticeBoardID", writeUser: "Tester")
+            print(Date().dateToString.toDate?.diffrenceDate)
             firebaseManager.addComment(comment: commentTest)
         }
     }
@@ -193,7 +180,10 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         }
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else { return UITableViewCell() }
         cell.selectionStyle = .none
+        let comment = firebaseManager.commentList[indexPath.row]
         cell.contentLabel.text = firebaseManager.commentList[indexPath.row].content
+        guard let dateText = comment.createDate.toDate?.diffrenceDate else { return cell }
+        cell.setDate(dateText: dateText)
         return cell
     }
     
@@ -204,7 +194,6 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
             self.firebaseManager.deleteComment(comment: comment)
         })
         let updateAction = UIContextualAction(style: .normal, title: "수정", handler: {(action, view, completionHandler) in
-//            let comment = self.dummyList[indexPath.row]
             let comment = self.firebaseManager.commentList[indexPath.row]
             let vc = CommentUpdateViewController(comment: comment)
             vc.commentUpdate = { [weak self] comment in
