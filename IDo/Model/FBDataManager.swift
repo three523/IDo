@@ -21,7 +21,7 @@ class FBDataManager<T: Codable & Identifier> {
     init(refPath: [String]) {
         self.ref = Database.database().reference()
         for path in refPath {
-            self.ref = DatabaseReference().child(path)
+            self.ref = Database.database().reference().child(path)
         }
     }
     
