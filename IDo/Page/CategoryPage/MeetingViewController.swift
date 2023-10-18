@@ -7,6 +7,7 @@
 
 import FirebaseDatabase
 import Foundation
+import SnapKit
 import UIKit
 
 class MeetingViewController: UIViewController {
@@ -19,7 +20,7 @@ class MeetingViewController: UIViewController {
     private var tableView: UITableView!
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadDataFromFirebase()
@@ -28,7 +29,7 @@ class MeetingViewController: UIViewController {
         setupTableView()
         navigationItem()
         setupNoMeetingsView()
-
+        
         if let data = categoryData, // 카테고리 Index에 따른 제목 표시
            let index = categoryIndex,
            index < meetingTitle.count && index < meetingDate.count
@@ -37,34 +38,34 @@ class MeetingViewController: UIViewController {
             navigationItem.titleView?.addSubview(createTitleLabel(with: data))
         }
     }
-
+    
     private func createTitleLabel(with data: String) -> UILabel {
         let titleLabel = UILabel()
         titleLabel.text = "\(data)"
         titleLabel.textAlignment = .center
-
+        
         return titleLabel
     }
-
+    
     private func setupNavigationBar() {
         let titleLabel = UILabel()
         titleLabel.text = categoryData ?? ""
         titleLabel.textAlignment = .center
-
+        
         navigationItem.titleView = titleLabel
     }
-
+    
     func loadDataFromFirebase() {
         guard let category = categoryData else { return }
-
+        
         let ref = Database.database().reference().child(category).child("meetings")
-
+        
         ref.observe(.value) { [weak self] snapshot in
-
+            
             var newTitles: [String] = []
             var newDates: [String] = []
             var newImageUrls: [String] = []
-
+            
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
                    let dict = childSnapshot.value as? [String: Any],
@@ -77,11 +78,11 @@ class MeetingViewController: UIViewController {
                     newImageUrls.append(imageUrl)
                 }
             }
-
+            
             self?.meetingTitle = newTitles
             self?.meetingDate = newDates
             self?.meetingImageUrls = newImageUrls
-
+            
             self?.tableView.reloadData()
             if self?.meetingTitle.isEmpty == true {
                 self?.noMeetingsView.isHidden = false
@@ -90,59 +91,71 @@ class MeetingViewController: UIViewController {
                 self?.noMeetingsView.isHidden = true
                 self?.tableView.isHidden = false
             }
-
+            
             self?.tableView.reloadData()
         }
     }
-
+    
     func setupTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(BasicCell.self, forCellReuseIdentifier: "Cell")
-
+        
         view.addSubview(tableView)
     }
-
+    
     func navigationItem() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(setBtnTap))
-
+        
         //        button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
         //        let noticeBoardVC = MeetingCreateViewController()
         //        navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
-
+    
     @objc
     func setBtnTap() {
         let createMeetingVC = MeetingCreateViewController()
         createMeetingVC.selectedCategory = categoryData
         navigationController?.pushViewController(createMeetingVC, animated: true)
     }
-
+    
     private func setupNoMeetingsView() {
-        noMeetingsView = UIView(frame: view.bounds)
+        noMeetingsView = UIView()
         noMeetingsView.backgroundColor = .white
         view.addSubview(noMeetingsView)
-
-        // 아이콘 이미지 설정
-        let iconImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
-        iconImageView.center = CGPoint(x: noMeetingsView.bounds.width / 2, y: noMeetingsView.bounds.height / 2 - 60)
+        
+        noMeetingsView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        let iconImageView = UIImageView()
         iconImageView.image = UIImage(systemName: "person.3.fill")
         iconImageView.tintColor = .gray
         noMeetingsView.addSubview(iconImageView)
-
-        // 메시지 레이블 설정
+        
+        iconImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-60)
+            make.width.height.equalTo(100)
+        }
+        let messageLabel = UILabel()
         messageLabel.text = """
         모임하는 카테고리의 모임이 없습니다
-        참여가 있는 모임에 참ㅁ여하시거나
+        참여가 있는 모임에 참여하시거나
         새로운 카테고리를 만들어보세요.
         """
         messageLabel.numberOfLines = 3
         messageLabel.textAlignment = .center
         messageLabel.textColor = .gray
         noMeetingsView.addSubview(messageLabel)
-
-        // 처음에는 숨깁니다.
+        
+        messageLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(20)
+            make.trailing.equalToSuperview().offset(-20)
+            make.top.equalTo(iconImageView.snp.bottom).offset(20)
+        }
+        
         noMeetingsView.isHidden = true
     }
 }
