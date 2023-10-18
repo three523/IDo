@@ -139,7 +139,7 @@ class MeetingViewController: UIViewController {
             make.centerY.equalToSuperview().offset(-60)
             make.width.height.equalTo(100)
         }
-        let messageLabel = UILabel()
+        let messageLabel = UILabel()    
         messageLabel.text = """
         모임하는 카테고리의 모임이 없습니다
         참여가 있는 모임에 참여하시거나
