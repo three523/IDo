@@ -5,15 +5,13 @@
 //  Created by Junyoung_Hong on 2023/10/10.
 //
 
-import UIKit
 import KakaoSDKAuth
-import KakaoSDKUser
 import KakaoSDKCommon
+import KakaoSDKUser
+import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
-
     var window: UIWindow?
-
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -23,33 +21,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
 
         let mainVC = TabBarController()
-        
+
         window.rootViewController = mainVC
         window.backgroundColor = .white
-        
+
         // 카카오 로그인 토큰이 있는지 여부 확인
-        if (AuthApi.hasToken()) {
-            UserApi.shared.accessTokenInfo { (_, error) in
+        if AuthApi.hasToken() {
+            UserApi.shared.accessTokenInfo { _, error in
                 if let error = error {
-                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true  {
-                        //로그인 필요
+                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true {
+                        // 로그인 필요
                         let mainVC = LoginViewController()
                         window.rootViewController = mainVC
                     }
                     else {
-                        //기타 에러
+                        // 기타 에러
                         print(error.localizedDescription)
                     }
                 }
                 else {
-                    //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+                    // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
                     let mainVC = TabBarController()
                     window.rootViewController = mainVC
                 }
             }
         }
         else {
-            //로그인 필요
+            // 로그인 필요
             let mainVC = LoginViewController()
             window.rootViewController = mainVC
         }
@@ -57,21 +55,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
         self.window = window
     }
-    
+
     // 카카오톡을 통한 사용자 인증에 필요한 함수
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         if let url = URLContexts.first?.url {
-            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            if AuthApi.isKakaoTalkLoginUrl(url) {
                 _ = AuthController.handleOpenUrl(url: url)
             }
         }
     }
-    
+
     // rootVC를 바꾸기 위한 함수
     func changeRootVC(_ vc: UIViewController, animated: Bool) {
-        guard let window = self.window else { return }
+        guard let window = window else { return }
         window.rootViewController = vc
-        
+
         UIView.transition(with: window, duration: 0.2, options: [.transitionCrossDissolve], animations: nil, completion: nil)
     }
 
@@ -103,9 +101,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
 
         // Save changes in the application's managed object context when the application transitions to the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
-
-
 }
-
