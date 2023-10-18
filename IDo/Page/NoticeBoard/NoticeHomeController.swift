@@ -5,12 +5,11 @@
 //  Created by t2023-m0053 on 2023/10/12.
 //
 
+import FirebaseDatabase
 import SnapKit
 import UIKit
-import FirebaseDatabase
 
 class NoticeHomeController: UIViewController {
-    
     var meetingId: String?
     var categoryData: String?
     var meetingIndex: Int?
@@ -91,13 +90,12 @@ class NoticeHomeController: UIViewController {
         scrollStackViewContainer.addArrangedSubview(textLabel)
     }
 
-    
     func loadDataFromFirebase() {
         guard let category = categoryData else { return }
         
         let ref = Database.database().reference().child(category).child("meetings")
         
-        ref.observe(.value) { [weak self] (snapshot) in
+        ref.observe(.value) { [weak self] snapshot in
             var index = 0
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
@@ -105,8 +103,8 @@ class NoticeHomeController: UIViewController {
                    let title = meetingData["title"] as? String,
                    let description = meetingData["description"] as? String,
                    let imageUrlString = meetingData["imageUrl"] as? String,
-                   let imageUrl = URL(string: imageUrlString) {
-                    
+                   let imageUrl = URL(string: imageUrlString)
+                {
                     if index == self?.meetingIndex {
                         DispatchQueue.main.async {
                             self?.label.text = title
@@ -117,7 +115,7 @@ class NoticeHomeController: UIViewController {
                                 self?.imageView.image = cachedImage
                             } else {
                                 // 이미지 로드
-                                URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
+                                URLSession.shared.dataTask(with: imageUrl) { data, _, error in
                                     if let error = error {
                                         print("Failed to load image: ", error.localizedDescription)
                                         return
@@ -143,7 +141,4 @@ class NoticeHomeController: UIViewController {
         scrollStackViewContainer.addArrangedSubview(label)
         scrollStackViewContainer.addArrangedSubview(textLabel)
     }
-
-
 }
-
