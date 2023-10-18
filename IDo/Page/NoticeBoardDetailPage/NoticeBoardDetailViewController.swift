@@ -21,14 +21,9 @@ final class NoticeBoardDetailViewController: UIViewController {
     }()
     private let commentPositionView: UIView = UIView()
     private let addCommentStackView: CommentStackView = CommentStackView()
-    private var dummyList: [CommentTest] = []
     private var addCommentViewBottomConstraint: Constraint? = nil
     private var firebaseManager: FirebaseCommentManager!
-    private var viewState: ViewState = .loading {
-        didSet {
-            commentTableView.reloadData()
-        }
-    }
+    private var viewState: ViewState = .loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,7 +120,6 @@ private extension NoticeBoardDetailViewController {
         addCommentStackView.commentAddHandler = { [weak self] comment in
             guard let self else { return }
             let commentTest = CommentTest(id: UUID().uuidString, createDate: Date().dateToString, content: comment, noticeBoardID: "NoticeBoardID", writeUser: "Tester")
-            print(Date().dateToString.toDate?.diffrenceDate)
             firebaseManager.addComment(comment: commentTest)
         }
     }
