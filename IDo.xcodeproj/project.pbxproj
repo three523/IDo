@@ -62,7 +62,6 @@
 		18CCC17C2ADD00D7000D092C /* NoticeBoardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */; };
 		18CCC17F2ADD039B000D092C /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC17E2ADD039B000D092C /* Date.swift */; };
 		18CCC1812ADD03C4000D092C /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1802ADD03C4000D092C /* Reusable.swift */; };
-		18CCC1852ADD1207000D092C /* FirebaseCommentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1842ADD1207000D092C /* FirebaseCommentManager.swift */; };
 		18CE9C252AD8EC2C00C921D5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C242AD8EC2C00C921D5 /* User.swift */; };
 		18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C262AD8ECAB00C921D5 /* Club.swift */; };
 		18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */; };
@@ -133,7 +132,6 @@
 		18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoticeBoardDetailViewController.swift; sourceTree = "<group>"; };
 		18CCC17E2ADD039B000D092C /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		18CCC1802ADD03C4000D092C /* Reusable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
-		18CCC1842ADD1207000D092C /* FirebaseCommentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCommentManager.swift; sourceTree = "<group>"; };
 		18CE9C242AD8EC2C00C921D5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		18CE9C262AD8ECAB00C921D5 /* Club.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Club.swift; sourceTree = "<group>"; };
 		18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoard.swift; sourceTree = "<group>"; };
@@ -342,7 +340,6 @@
 		18CCC16A2ADD00D7000D092C /* NoticeBoardDetailPage */ = {
 			isa = PBXGroup;
 			children = (
-				18CCC1832ADD11F1000D092C /* FirebaseDataManager */,
 				18CCC16B2ADD00D7000D092C /* Cell */,
 				18CCC16E2ADD00D7000D092C /* View */,
 				18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */,
@@ -379,14 +376,6 @@
 				18B12CB32ADFC01000FB325F /* Encodable.swift */,
 			);
 			path = Extenstion;
-			sourceTree = "<group>";
-		};
-		18CCC1832ADD11F1000D092C /* FirebaseDataManager */ = {
-			isa = PBXGroup;
-			children = (
-				18CCC1842ADD1207000D092C /* FirebaseCommentManager.swift */,
-			);
-			path = FirebaseDataManager;
 			sourceTree = "<group>";
 		};
 		18CE9C232AD8EC1400C921D5 /* Model */ = {
@@ -578,7 +567,6 @@
 				18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */,
 				18B12CB82ADFDB0900FB325F /* FBDataManager.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
-				18CCC1852ADD1207000D092C /* FirebaseCommentManager.swift in Sources */,
 				10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */,
