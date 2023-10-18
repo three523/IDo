@@ -10,9 +10,10 @@ import UIKit
 class NoticeBoardViewController: UIViewController {
     
     private let noticeBoardView = NoticeBoardView()
+    private let noticeBoardEmptyView = NoticeBoardEmptyView()
     
     override func loadView() {
-        view = noticeBoardView
+        view = noticeBoardEmptyView
     }
 
     override func viewDidLoad() {
@@ -73,5 +74,10 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NoticeBoardTableViewCell.identifier, for: indexPath) as? NoticeBoardTableViewCell else { return UITableViewCell() }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let vc = NoticeBoardDetailViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
