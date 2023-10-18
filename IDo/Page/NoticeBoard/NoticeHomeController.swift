@@ -33,6 +33,7 @@ class NoticeHomeController: UIViewController {
         var textLabel = UILabel()
         textLabel.font = .bodyFont(.medium, weight: .regular)
         textLabel.numberOfLines = 0
+        textLabel.text = "안녕하세요. 설명입니다. "
         textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. "
         return textLabel
     }()
