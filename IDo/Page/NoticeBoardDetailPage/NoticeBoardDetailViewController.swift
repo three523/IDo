@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
 import FirebaseDatabase
 
 final class NoticeBoardDetailViewController: UIViewController {
@@ -22,16 +23,15 @@ final class NoticeBoardDetailViewController: UIViewController {
     private let commentPositionView: UIView = UIView()
     private let addCommentStackView: CommentStackView = CommentStackView()
     private var addCommentViewBottomConstraint: Constraint? = nil
-    private var firebaseManager: FirebaseCommentManager!
-    private var viewState: ViewState = .loading
+    private var firebaseManager: FBDataManager<Comment>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        firebaseManager = FirebaseCommentManager(noticeBoardID: "NoticeBoardID")
+        firebaseManager = FBDataManager(refPath: ["NoticeBoard","CommentList"])
         firebaseManager.update = { [weak self] in
             self?.commentTableView.reloadData()
         }
-        firebaseManager.readCommtents()
+        firebaseManager.readDatas()
         setup()
     }
 
@@ -94,14 +94,14 @@ private extension NoticeBoardDetailViewController {
                                 
                 let cancelAction = UIAlertAction(title: "취소", style: .cancel)
                 let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
-                    self.firebaseManager.commentList.remove(at: indexPath.row)
+                    self.firebaseManager.dataList.remove(at: indexPath.row)
                 }
                 let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
-                    let comment = self.firebaseManager.commentList[indexPath.row]
+                    let comment = self.firebaseManager.dataList[indexPath.row]
                     let vc = CommentUpdateViewController(comment: comment)
                     vc.commentUpdate = { [weak self] comment in
                         guard let self else { return }
-                        self.firebaseManager.updateComments(comment: comment)
+                        self.firebaseManager.updateDatas(data: comment)
                     }
                     vc.hidesBottomBarWhenPushed = true
                     vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
@@ -117,10 +117,15 @@ private extension NoticeBoardDetailViewController {
     }
     
     func addCommentSetup() {
-        addCommentStackView.commentAddHandler = { [weak self] comment in
+        addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
-            let commentTest = CommentTest(id: UUID().uuidString, createDate: Date().dateToString, content: comment, noticeBoardID: "NoticeBoardID", writeUser: "Tester")
-            firebaseManager.addComment(comment: commentTest)
+            if let user = Auth.auth().currentUser {
+                let user = UserSummary(id: user.uid, nickName: "test")
+                let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
+                firebaseManager.addData(data: comment)
+            } else {
+                //TODO: 사용자 로그인이 필요하다는 경고창과 함꼐 로그인 화면으로 넘기기
+            }
         }
     }
     
@@ -148,7 +153,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         if section == 0 {
             return 0
         } else {
-            return firebaseManager.commentList.isEmpty ? 1 : firebaseManager.commentList.count
+            return firebaseManager.dataList.isEmpty ? 1 : firebaseManager.dataList.count
         }
     }
     
@@ -166,7 +171,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if firebaseManager.commentList.isEmpty {
+        if firebaseManager.dataList.isEmpty {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyCountTableViewCell.identifier, for: indexPath) as? EmptyCountTableViewCell else { return UITableViewCell() }
             cell.viewState = firebaseManager.viewState
             cell.selectionStyle = .none
@@ -174,25 +179,52 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         }
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else { return UITableViewCell() }
         cell.selectionStyle = .none
-        let comment = firebaseManager.commentList[indexPath.row]
-        cell.contentLabel.text = firebaseManager.commentList[indexPath.row].content
-        guard let dateText = comment.createDate.toDate?.diffrenceDate else { return cell }
+        let comment = firebaseManager.dataList[indexPath.row]
+        cell.contentLabel.text = comment.content
+        cell.userInfoStackView.writerNameLabel.text = comment.writeUser.nickName
+        cell.moreButtonTapHandler = { [weak self] in
+            //TODO: 같이 LongPress할때와 똑같이 작동함 함수로 뺄 필요가 있음
+            guard let self else { return }
+            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+                            
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+            let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
+                self.firebaseManager.dataList.remove(at: indexPath.row)
+            }
+            let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
+                let comment = self.firebaseManager.dataList[indexPath.row]
+                let vc = CommentUpdateViewController(comment: comment)
+                vc.commentUpdate = { [weak self] comment in
+                    guard let self else { return }
+                    self.firebaseManager.updateDatas(data: comment)
+                }
+                vc.hidesBottomBarWhenPushed = true
+                vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
+            
+            alert.addAction(cancelAction)
+            alert.addAction(updateAction)
+            alert.addAction(removeAction)
+            present(alert, animated: true)
+        }
+        guard let dateText = comment.createDate.diffrenceDate else { return cell }
         cell.setDate(dateText: dateText)
         return cell
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        if firebaseManager.commentList.isEmpty { return nil }
+        if firebaseManager.dataList.isEmpty { return nil }
         let deleteAction = UIContextualAction(style: .normal, title: "삭제", handler: {(action, view, completionHandler) in
-            let comment = self.firebaseManager.commentList[indexPath.row]
-            self.firebaseManager.deleteComment(comment: comment)
+            let comment = self.firebaseManager.dataList[indexPath.row]
+            self.firebaseManager.deleteData(data: comment)
         })
         let updateAction = UIContextualAction(style: .normal, title: "수정", handler: {(action, view, completionHandler) in
-            let comment = self.firebaseManager.commentList[indexPath.row]
+            let comment = self.firebaseManager.dataList[indexPath.row]
             let vc = CommentUpdateViewController(comment: comment)
             vc.commentUpdate = { [weak self] comment in
                 guard let self else { return }
-                self.firebaseManager.updateComments(comment: comment)
+                self.firebaseManager.updateDatas(data: comment)
             }
             vc.hidesBottomBarWhenPushed = true
             vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
