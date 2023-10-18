@@ -8,6 +8,7 @@
 import KakaoSDKAuth
 import KakaoSDKCommon
 import KakaoSDKUser
+import FirebaseAuth
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -41,6 +42,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 }
                 else {
                     // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+                    self.getUserInfo()
                     let mainVC = TabBarController()
                     window.rootViewController = mainVC
                 }
@@ -54,6 +56,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         window.makeKeyAndVisible()
         self.window = window
+    }
+    
+    private func getUserInfo() {
+        UserApi.shared.me() {(user, error) in
+            if let error = error {
+                print(error)
+            }
+            else {
+                print("me() success.")
+                
+                //do something
+                _ = user
+                if let email = user?.kakaoAccount?.email,
+                   let id = user?.id{
+                    let password = String(id)
+                    Auth.auth().signIn(withEmail: email, password: password)
+                }
+            }
+        }
     }
 
     // 카카오톡을 통한 사용자 인증에 필요한 함수

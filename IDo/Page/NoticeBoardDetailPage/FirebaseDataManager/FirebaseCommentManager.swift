@@ -18,9 +18,9 @@ enum FirebaseError: Error {
     case otherError
 }
 
-class FirebaseCommentManager: ObservableObject {
+class FirebaseCommentManager {
     private var ref: DatabaseReference!
-    var commentList = [CommentTest]() {
+    var commentList = [Comment]() {
         didSet {
             update()
         }
@@ -32,8 +32,8 @@ class FirebaseCommentManager: ObservableObject {
         self.ref = Database.database().reference().child("NoticeBoard").child("CommentList")
     }
     
-    func addComment(comment: CommentTest) {
-        ref.child(comment.id).setValue(comment.toDictionary())
+    func addComment(comment: Comment) {
+        ref.child(comment.id).setValue(comment.dictionary)
         commentList.append(comment)
     }
     
@@ -56,22 +56,22 @@ class FirebaseCommentManager: ObservableObject {
                 self.commentList = []
                 return
             }
-            let commentList: [CommentTest] = self.decodingDataSnapshot(value: value)
-            let commentSortedList: [CommentTest] = commentList.sorted(by: {
-                $0.createDate.toDate ?? Date() <= $1.createDate.toDate ?? Date()
-            })
+            let commentList: [Comment] = self.decodingDataSnapshot(value: value)
+            let commentSortedList: [Comment] = commentList.sorted(by: {
+                    $0.createDate <= $1.createDate
+                })
             self.viewState = .loaded
             self.commentList = commentSortedList
         }
     }
     
-    func updateComments(comment: CommentTest) {
+    func updateComments(comment: Comment) {
         guard let index = commentList.firstIndex(where: { $0.id == comment.id }) else { return }
         commentList[index] = comment
-        ref.updateChildValues([comment.id: comment.toDictionary()])
+        ref.updateChildValues([comment.id: comment.dictionary])
     }
     
-    func deleteComment(comment: CommentTest) {
+    func deleteComment(comment: Comment) {
         commentList.removeAll(where: { $0.id == comment.id })
         ref.updateChildValues([comment.id: nil])
     }
@@ -95,21 +95,4 @@ class FirebaseCommentManager: ObservableObject {
         guard let data = try? JSONSerialization.data(withJSONObject: value) else { return nil }
         return try? decoder.decode(T.self, from: data)
     }
-}
-
-struct CommentTest: Codable {
-    let id: String
-    let createDate: String
-    var content: String
-    var noticeBoardID: String
-    let writeUser: String
-    
-    func toDictionary() -> [String: Any] {
-        let dictionary = ["id": id, "createDate": createDate, "content": content, "noticeBoardID": noticeBoardID, "writeUser": writeUser]
-        return dictionary
-    }
-}
-
-struct WriteUser {
-    let id: String
 }
