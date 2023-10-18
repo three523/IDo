@@ -187,7 +187,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         }
         
         // 내용 textView
-        else if textView == createNoticeBoardView.contentTextView {
+        if textView == createNoticeBoardView.contentTextView {
             if createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
                 
                 createNoticeBoardView.contentTextView.text = nil
@@ -200,13 +200,15 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-//        if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.titleTextView.textColor == UIColor.black {
-//            isTitleTextViewEdited = true
-//        }
-//        
-//        else if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.contentTextView.textColor == UIColor.black {
-//            isContentTextViewEdited = true
-//        }
+        if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.titleTextView.textColor == UIColor.black {
+            isTitleTextViewEdited = true
+        }
+        
+        if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.contentTextView.textColor == UIColor.black {
+            isContentTextViewEdited = true
+        }
+        
+        self.navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
         //isTitleTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         //isContentTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
@@ -219,7 +221,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
         }
         
-        else if createNoticeBoardView.contentTextView.text.isEmpty {
+        if createNoticeBoardView.contentTextView.text.isEmpty {
             createNoticeBoardView.contentTextView.text =  "내용을 입력하세요."
             createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
         }
@@ -239,14 +241,6 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         else if textView == createNoticeBoardView.contentTextView {
             createNoticeBoardView.contentCountLabel.text = "(\(chagedText.count)/500)"
             return chagedText.count <= 499
-        }
-        
-        if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.titleTextView.textColor == UIColor.black {
-            isTitleTextViewEdited = true
-        }
-        
-        else if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0 && createNoticeBoardView.contentTextView.textColor == UIColor.black {
-            isContentTextViewEdited = true
         }
         return true
     }
