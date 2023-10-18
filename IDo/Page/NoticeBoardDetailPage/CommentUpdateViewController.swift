@@ -17,15 +17,22 @@ class CommentUpdateViewController: UIViewController {
         return textView
     }()
     
-    private var comment: CommentTest
+//    private var comment: CommentTest
+    private var comment: Comment
     
-    var commentUpdate: ((CommentTest)->Void)?
+//    var commentUpdate: ((CommentTest)->Void)?
+    var commentUpdate: ((Comment)->Void)?
     
-    init(comment: CommentTest) {
+    init(comment: Comment) {
         self.comment = comment
         super.init(nibName: nil, bundle: nil)
         commentTextView.text = comment.content
     }
+//    init(comment: CommentTest) {
+//        self.comment = comment
+//        super.init(nibName: nil, bundle: nil)
+//        commentTextView.text = comment.content
+//    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
