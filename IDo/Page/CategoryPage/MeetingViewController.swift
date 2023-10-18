@@ -15,6 +15,7 @@ class MeetingViewController: UIViewController {
     private var tableView: UITableView!
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         loadDataFromFirebase()
@@ -24,12 +25,14 @@ class MeetingViewController: UIViewController {
         navigationItem()
         setupNoMeetingsView()
         if let data = TemporaryManager.shared.categoryData, // 카테고리 Index에 따른 제목 표시
-           let index = TemporaryManager.shared.categoryIndex,
-           index < TemporaryManager.shared.meetingTitle.count && index < TemporaryManager.shared.meetingDate.count
-            navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
-            navigationItem.titleView?.addSubview(createTitleLabel(with: data))
-        }
+                 let index = TemporaryManager.shared.categoryIndex,
+                 index < TemporaryManager.shared.meetingTitle.count && index < TemporaryManager.shared.meetingDate.count
+              {
+                  navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
+                  navigationItem.titleView?.addSubview(createTitleLabel(with: data))
+              }
     }
+    
     
     private func createTitleLabel(with data: String) -> UILabel {
         let titleLabel = UILabel()
