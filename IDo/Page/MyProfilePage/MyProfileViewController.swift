@@ -33,8 +33,8 @@ class MyProfileViewController: UIViewController {
         let thirdText = "운동/스포츠"
         let totalText = firstText + ",  " + secondText + ",  " + thirdText
         choiceEnjoy.text = totalText
-        choiceEnjoy.textColor = UIColor.borderSelected
-        choiceEnjoy.backgroundColor = UIColor.contentBackground
+        choiceEnjoy.textColor = UIColor(color: .borderSelected)
+        choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
         choiceEnjoy.font = UIFont.bodyFont(.xSmall, weight:.semibold)
         choiceEnjoy.layer.cornerRadius = 10
         choiceEnjoy.textContainerInset = UIEdgeInsets(top: 9, left: 6, bottom: 8, right: 6)
@@ -48,7 +48,7 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
         selfInfoDetail.text = "안녕하세요. 이애라입니다."
         selfInfoDetail.textColor = UIColor(named: "ui-text-strong")
-        selfInfoDetail.backgroundColor = UIColor.backgroundSecondary
+        selfInfoDetail.backgroundColor = UIColor(color: .backgroundSecondary)
         selfInfoDetail.layer.cornerRadius = 10
         selfInfoDetail.textContainerInset = UIEdgeInsets(top: 9, left: 8, bottom: 0, right: 9)
     }

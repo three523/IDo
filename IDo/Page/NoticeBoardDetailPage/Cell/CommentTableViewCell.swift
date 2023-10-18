@@ -18,6 +18,7 @@ class CommentTableViewCell: UITableViewCell, Reusable {
         label.numberOfLines = 1
         return label
     }()
+    var moreButtonTapHandler: () -> Void = {}
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -39,6 +40,7 @@ private extension CommentTableViewCell {
     func setup() {
         addViews()
         autoLayoutSetup()
+        writeStackViewSetup()
     }
     func addViews() {
         contentView.addSubview(userInfoStackView)
@@ -53,6 +55,12 @@ private extension CommentTableViewCell {
             make.top.equalTo(userInfoStackView.snp.bottom).offset(Constant.margin2)
             make.left.right.equalTo(contentView)
             make.bottom.equalTo(contentView).inset(Constant.margin2)
+        }
+    }
+    func writeStackViewSetup() {
+        userInfoStackView.moreButtonTapHandler = { [weak self] in
+            guard let self else { return }
+            self.moreButtonTapHandler()
         }
     }
 }
