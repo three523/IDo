@@ -14,7 +14,7 @@ class LoginViewController: UIViewController {
     
     private let loginView = LoginView()
     private let mainBarController = TabBarController()
-    private let fbUserDatabaseManager: FBDataManager<IDoUser> = FBDataManager(refPath: ["Users"])
+    private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
     
     var kakaoEmail: String = ""
     var kakaoPassword: String = ""

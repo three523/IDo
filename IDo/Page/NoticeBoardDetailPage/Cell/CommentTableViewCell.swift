@@ -10,7 +10,7 @@ import SnapKit
 
 class CommentTableViewCell: UITableViewCell, Reusable {
     
-    let userInfoStackView: WriterStackView = WriterStackView()
+    let writeInfoView: WriterStackView = WriterStackView()
     var contentLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.small, weight: .regular)
@@ -19,6 +19,11 @@ class CommentTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     var moreButtonTapHandler: () -> Void = {}
+    var updateEnable: Bool = false {
+        didSet {
+            writeInfoView.moreImageView.isHidden = !updateEnable
+        }
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -32,7 +37,7 @@ class CommentTableViewCell: UITableViewCell, Reusable {
 
 extension CommentTableViewCell {
     func setDate(dateText: String) {
-        userInfoStackView.writerTimeLabel.text = dateText
+        writeInfoView.writerTimeLabel.text = dateText
     }
 }
 
@@ -43,22 +48,22 @@ private extension CommentTableViewCell {
         writeStackViewSetup()
     }
     func addViews() {
-        contentView.addSubview(userInfoStackView)
+        contentView.addSubview(writeInfoView)
         contentView.addSubview(contentLabel)
     }
     func autoLayoutSetup() {
-        userInfoStackView.snp.makeConstraints { make in
+        writeInfoView.snp.makeConstraints { make in
             make.top.equalTo(contentView).inset(Constant.margin2)
             make.left.right.equalTo(contentView)
         }
         contentLabel.snp.makeConstraints { make in
-            make.top.equalTo(userInfoStackView.snp.bottom).offset(Constant.margin2)
+            make.top.equalTo(writeInfoView.snp.bottom).offset(Constant.margin2)
             make.left.right.equalTo(contentView)
             make.bottom.equalTo(contentView).inset(Constant.margin2)
         }
     }
     func writeStackViewSetup() {
-        userInfoStackView.moreButtonTapHandler = { [weak self] in
+        writeInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
             self.moreButtonTapHandler()
         }

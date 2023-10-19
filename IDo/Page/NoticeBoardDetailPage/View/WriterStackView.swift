@@ -22,7 +22,7 @@ final class WriterStackView: UIStackView {
         imageView.contentMargin = 4
         return imageView
     }()
-    private let moreImageView: UIImageView = {
+    let moreImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "ellipsis"))
         imageView.tintColor = UIColor(color: .backgroundTertiary)
         return imageView

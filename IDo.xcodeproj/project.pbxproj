@@ -43,8 +43,9 @@
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
 		18B12CB22ADFBDC700FB325F /* UserSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB12ADFBDC700FB325F /* UserSummary.swift */; };
 		18B12CB42ADFC01000FB325F /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB32ADFC01000FB325F /* Encodable.swift */; };
-		18B12CB82ADFDB0900FB325F /* FBDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB72ADFDB0900FB325F /* FBDataManager.swift */; };
+		18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */; };
 		18B12CBA2ADFDD1700FB325F /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB92ADFDD1700FB325F /* Identifier.swift */; };
+		18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */; };
 		18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */; };
 		18C055252ADE8AA3003D26E4 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055242ADE8AA3003D26E4 /* ViewState.swift */; };
 		18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */; };
@@ -118,8 +119,9 @@
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		18B12CB12ADFBDC700FB325F /* UserSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSummary.swift; sourceTree = "<group>"; };
 		18B12CB32ADFC01000FB325F /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
-		18B12CB72ADFDB0900FB325F /* FBDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDataManager.swift; sourceTree = "<group>"; };
+		18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDatabaseManager.swift; sourceTree = "<group>"; };
 		18B12CB92ADFDD1700FB325F /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
+		18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCommentManager.swift; sourceTree = "<group>"; };
 		18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUpdateViewController.swift; sourceTree = "<group>"; };
 		18C055242ADE8AA3003D26E4 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -346,6 +348,7 @@
 				18CCC16E2ADD00D7000D092C /* View */,
 				18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */,
 				18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */,
+				18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */,
 			);
 			path = NoticeBoardDetailPage;
 			sourceTree = "<group>";
@@ -389,7 +392,7 @@
 				18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */,
 				18CE9C2C2AD8EDAD00C921D5 /* Category.swift */,
 				18B12CB12ADFBDC700FB325F /* UserSummary.swift */,
-				18B12CB72ADFDB0900FB325F /* FBDataManager.swift */,
+				18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */,
 				7FE072A72ADFE21200966916 /* TemporaryManager.swift */,
 			);
 			path = Model;
@@ -568,7 +571,7 @@
 				18CCC17F2ADD039B000D092C /* Date.swift in Sources */,
 				E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */,
 				18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */,
-				18B12CB82ADFDB0900FB325F /* FBDataManager.swift in Sources */,
+				18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
 				10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
@@ -593,6 +596,7 @@
 				7FE072A82ADFE21200966916 /* TemporaryManager.swift in Sources */,
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				18CCC1792ADD00D7000D092C /* EmptyAbleTableVIew.swift in Sources */,
+				18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 				10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */,
 			);

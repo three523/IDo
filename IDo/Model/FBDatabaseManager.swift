@@ -8,10 +8,21 @@
 import Foundation
 import FirebaseDatabase
 
-class FBDataManager<T: Codable & Identifier> {
+class FBDatabaseManager<T: Codable & Identifier> {
+    
+    enum DataType {
+        case single
+        case array
+    }
+    
     var ref: DatabaseReference
     var viewState: ViewState = .loading
     var update: () -> Void = {}
+    var data: T? {
+        didSet {
+            update()
+        }
+    }
     var dataList: [T] = [] {
         didSet {
             update()
@@ -30,7 +41,7 @@ class FBDataManager<T: Codable & Identifier> {
         dataList.append(data)
     }
     
-    func readDatas() {
+    func readDatas(dataType: DataType) {
         ref.getData { error, dataSnapshot in
             if let error {
                 let nsError = error as NSError
@@ -49,9 +60,16 @@ class FBDataManager<T: Codable & Identifier> {
                 self.dataList = []
                 return
             }
-            let dataList: [T] = self.decodingDataSnapshot(value: value)
+            
+            if dataType == .array {
+                let dataList: [T] = self.decodingDataSnapshot(value: value)
+                self.dataList = dataList
+            } else {
+                let data: T? = self.decodingSingleDataSnapshot(value: value)
+                self.data = data
+            }
+            
             self.viewState = .loaded
-            self.dataList = dataList
         }
     }
     
@@ -66,7 +84,7 @@ class FBDataManager<T: Codable & Identifier> {
         ref.updateChildValues([data.id: nil])
     }
     
-    private func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
+    func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
         let commentTestList: [T] = value.compactMap { key, value in
             let comment: T? = decodingSingleDataSnapshot(value: value)
             return comment
