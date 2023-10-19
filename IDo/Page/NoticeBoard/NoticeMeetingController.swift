@@ -13,7 +13,7 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,7 +39,7 @@ class NoticeMeetingController: TabmanViewController {
 
         let bar = TMBar.ButtonBar()
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
-        bar.backgroundColor = UIColor.white
+        bar.backgroundView.style = .flat(color: .white)
 
         addBar(bar, dataSource: self, at: .custom(view: tempView!, layout: nil))
     }
@@ -70,15 +70,15 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     @objc func moveUpdateVC() {
-            guard let selectedIndex = TemporaryManager.shared.meetingIndex else { return }
-            let updateNoticeBoardVC = MeetingManageViewController()
-            // 데이터 전달
-            updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex]
+        guard let selectedIndex = TemporaryManager.shared.meetingIndex else { return }
+        let updateNoticeBoardVC = MeetingManageViewController()
+        // 데이터 전달
+        updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex]
         TemporaryManager.shared.meetingDescription = TemporaryManager.shared.meetingDate[selectedIndex]
-            updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
-        
-            navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
-        }
+        updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
+
+        navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
+    }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
         // return nil
