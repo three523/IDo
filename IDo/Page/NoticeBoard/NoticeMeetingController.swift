@@ -13,9 +13,7 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
-    var meetingIndex: Int?
-    var categoryData: String?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -28,8 +26,8 @@ class NoticeMeetingController: TabmanViewController {
             make.height.equalTo(30)
         }
         let HomeVC = NoticeHomeController()
-        HomeVC.meetingIndex = meetingIndex
-        HomeVC.categoryData = categoryData
+        TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
+        TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 
         let titleVC = NoticeBoardViewController()
 
@@ -72,9 +70,15 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     @objc func moveUpdateVC() {
-        let updateNoticeBoardVC = MeetingManageViewController()
-        navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
-    }
+            guard let selectedIndex = TemporaryManager.shared.meetingIndex else { return }
+            let updateNoticeBoardVC = MeetingManageViewController()
+            // 데이터 전달
+            updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex]
+        TemporaryManager.shared.meetingDescription = TemporaryManager.shared.meetingDate[selectedIndex]
+            updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
+        
+            navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
+        }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
         // return nil
