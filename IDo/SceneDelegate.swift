@@ -58,6 +58,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
     }
     
+    // 카카오 사용자 정보 가져오기
     private func getUserInfo() {
         UserApi.shared.me() {(user, error) in
             if let error = error {
