@@ -44,8 +44,9 @@
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
 		18B12CB22ADFBDC700FB325F /* UserSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB12ADFBDC700FB325F /* UserSummary.swift */; };
 		18B12CB42ADFC01000FB325F /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB32ADFC01000FB325F /* Encodable.swift */; };
-		18B12CB82ADFDB0900FB325F /* FBDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB72ADFDB0900FB325F /* FBDataManager.swift */; };
+		18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */; };
 		18B12CBA2ADFDD1700FB325F /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB92ADFDD1700FB325F /* Identifier.swift */; };
+		18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */; };
 		18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */; };
 		18C055252ADE8AA3003D26E4 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055242ADE8AA3003D26E4 /* ViewState.swift */; };
 		18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */; };
@@ -63,7 +64,7 @@
 		18CCC17C2ADD00D7000D092C /* NoticeBoardDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */; };
 		18CCC17F2ADD039B000D092C /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC17E2ADD039B000D092C /* Date.swift */; };
 		18CCC1812ADD03C4000D092C /* Reusable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC1802ADD03C4000D092C /* Reusable.swift */; };
-		18CE9C252AD8EC2C00C921D5 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C242AD8EC2C00C921D5 /* User.swift */; };
+		18CE9C252AD8EC2C00C921D5 /* IDoUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C242AD8EC2C00C921D5 /* IDoUser.swift */; };
 		18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C262AD8ECAB00C921D5 /* Club.swift */; };
 		18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */; };
 		18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */; };
@@ -77,6 +78,7 @@
 		7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185E2AD796AF0052E950 /* BasicImageView.swift */; };
 		7FE072A42ADF82E900966916 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A32ADF82E900966916 /* ImageCache.swift */; };
 		7FE072A62ADFA30A00966916 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A52ADFA30A00966916 /* APIKey.swift */; };
+		7FE072A82ADFE21200966916 /* TemporaryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A72ADFE21200966916 /* TemporaryManager.swift */; };
 		E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */; };
@@ -119,8 +121,9 @@
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		18B12CB12ADFBDC700FB325F /* UserSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSummary.swift; sourceTree = "<group>"; };
 		18B12CB32ADFC01000FB325F /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
-		18B12CB72ADFDB0900FB325F /* FBDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDataManager.swift; sourceTree = "<group>"; };
+		18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDatabaseManager.swift; sourceTree = "<group>"; };
 		18B12CB92ADFDD1700FB325F /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
+		18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCommentManager.swift; sourceTree = "<group>"; };
 		18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUpdateViewController.swift; sourceTree = "<group>"; };
 		18C055242ADE8AA3003D26E4 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
 		18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -134,7 +137,7 @@
 		18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoticeBoardDetailViewController.swift; sourceTree = "<group>"; };
 		18CCC17E2ADD039B000D092C /* Date.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		18CCC1802ADD03C4000D092C /* Reusable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reusable.swift; sourceTree = "<group>"; };
-		18CE9C242AD8EC2C00C921D5 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		18CE9C242AD8EC2C00C921D5 /* IDoUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDoUser.swift; sourceTree = "<group>"; };
 		18CE9C262AD8ECAB00C921D5 /* Club.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Club.swift; sourceTree = "<group>"; };
 		18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoard.swift; sourceTree = "<group>"; };
 		18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
@@ -148,6 +151,7 @@
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
 		7FE072A32ADF82E900966916 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		7FE072A52ADFA30A00966916 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
+		7FE072A72ADFE21200966916 /* TemporaryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryManager.swift; sourceTree = "<group>"; };
 		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeMeetingController.swift; sourceTree = "<group>"; };
 		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
@@ -347,6 +351,7 @@
 				18CCC16E2ADD00D7000D092C /* View */,
 				18CCC1742ADD00D7000D092C /* NoticeBoardDetailViewController.swift */,
 				18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */,
+				18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */,
 			);
 			path = NoticeBoardDetailPage;
 			sourceTree = "<group>";
@@ -384,13 +389,14 @@
 		18CE9C232AD8EC1400C921D5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				18CE9C242AD8EC2C00C921D5 /* User.swift */,
+				18CE9C242AD8EC2C00C921D5 /* IDoUser.swift */,
 				18CE9C262AD8ECAB00C921D5 /* Club.swift */,
 				18CE9C282AD8ED0B00C921D5 /* NoticeBoard.swift */,
 				18CE9C2A2AD8ED5E00C921D5 /* Comment.swift */,
 				18CE9C2C2AD8EDAD00C921D5 /* Category.swift */,
 				18B12CB12ADFBDC700FB325F /* UserSummary.swift */,
-				18B12CB72ADFDB0900FB325F /* FBDataManager.swift */,
+				18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */,
+				7FE072A72ADFE21200966916 /* TemporaryManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -547,7 +553,7 @@
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
 				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
-				18CE9C252AD8EC2C00C921D5 /* User.swift in Sources */,
+				18CE9C252AD8EC2C00C921D5 /* IDoUser.swift in Sources */,
 				7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */,
@@ -568,7 +574,7 @@
 				18CCC17F2ADD039B000D092C /* Date.swift in Sources */,
 				E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */,
 				18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */,
-				18B12CB82ADFDB0900FB325F /* FBDataManager.swift in Sources */,
+				18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
 				10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
@@ -591,8 +597,10 @@
 				18CCC17A2ADD00D7000D092C /* NoticeBoardDetailView.swift in Sources */,
 				10842A212AE0FCB700684FDE /* NoticeBoardCRUD.swift in Sources */,
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
+				7FE072A82ADFE21200966916 /* TemporaryManager.swift in Sources */,
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				18CCC1792ADD00D7000D092C /* EmptyAbleTableVIew.swift in Sources */,
+				18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 				10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */,
 			);

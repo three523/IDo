@@ -23,15 +23,18 @@ final class NoticeBoardDetailViewController: UIViewController {
     private let commentPositionView: UIView = UIView()
     private let addCommentStackView: CommentStackView = CommentStackView()
     private var addCommentViewBottomConstraint: Constraint? = nil
-    private var firebaseManager: FBDataManager<Comment>!
+    private var firebaseManager: FirebaseCommentManaer!
+    private var currentUser: User?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        firebaseManager = FBDataManager(refPath: ["NoticeBoard","CommentList"])
+        
+        self.currentUser = Auth.auth().currentUser
+        firebaseManager = FirebaseCommentManaer(refPath: ["NoticeBoard","CommentList"])
         firebaseManager.update = { [weak self] in
             self?.commentTableView.reloadData()
         }
-        firebaseManager.readDatas()
+        firebaseManager.readDatas(dataType: .array)
         setup()
     }
 
@@ -52,6 +55,7 @@ private extension NoticeBoardDetailViewController {
         addViews()
         autoLayoutSetup()
         tableViewSetup()
+        noticeBoardSetup()
         addCommentSetup()
     }
     func addViews() {
@@ -116,6 +120,10 @@ private extension NoticeBoardDetailViewController {
         }
     }
     
+    func noticeBoardSetup() {
+        noticeBoardDetailView.updateEnable
+    }
+    
     func addCommentSetup() {
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
@@ -177,11 +185,13 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
             cell.selectionStyle = .none
             return cell
         }
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell,
+              let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
         let comment = firebaseManager.dataList[indexPath.row]
+        cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
-        cell.userInfoStackView.writerNameLabel.text = comment.writeUser.nickName
+        cell.writeInfoView.writerNameLabel.text = comment.writeUser.nickName
         cell.moreButtonTapHandler = { [weak self] in
             //TODO: 같이 LongPress할때와 똑같이 작동함 함수로 뺄 필요가 있음
             guard let self else { return }
@@ -214,7 +224,10 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard let currentUser else { return nil }
         if firebaseManager.dataList.isEmpty { return nil }
+        let comment = firebaseManager.dataList[indexPath.row]
+        guard comment.writeUser.id == currentUser.uid else { return nil }
         let deleteAction = UIContextualAction(style: .normal, title: "삭제", handler: {(action, view, completionHandler) in
             let comment = self.firebaseManager.dataList[indexPath.row]
             self.firebaseManager.deleteData(data: comment)

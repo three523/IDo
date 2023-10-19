@@ -4,8 +4,6 @@ import FirebaseStorage
 
 class MeetingCreateViewController: UIViewController {
     
-    var selectedCategory: String?
-    
     let profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
@@ -101,14 +99,14 @@ class MeetingCreateViewController: UIViewController {
 
 
     private func saveMeetingToFirebase(name: String, description: String, imageData: Data?) {
-        guard let category = selectedCategory else { return }
+        guard let category = TemporaryManager.shared.selectedCategory else { return }
         //
         let ref = Database.database().reference().child(category).child("meetings")
         let newMeetingID = ref.childByAutoId().key ?? ""
         
         if let imageData = imageData {
             // 이미지 업로드
-            let storageRef = Storage.storage().reference().child("\(selectedCategory ?? "default_category")").child("meeting_images").child("\(newMeetingID).png")
+            let storageRef = Storage.storage().reference().child("\(TemporaryManager.shared.selectedCategory ?? "default_category")").child("meeting_images").child("\(newMeetingID).png")
 
             storageRef.putData(imageData, metadata: nil) { (metadata, error) in
                 if let error = error {

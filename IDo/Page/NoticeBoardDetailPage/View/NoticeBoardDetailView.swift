@@ -32,6 +32,11 @@ final class NoticeBoardDetailView: UIStackView {
         label.textColor = UIColor(color: .textStrong)
         return label
     }()
+    var updateEnable: Bool = false {
+        didSet {
+            writerInfoView.moreImageView.isHidden = !updateEnable
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

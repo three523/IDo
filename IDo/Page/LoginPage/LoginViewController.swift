@@ -14,6 +14,7 @@ class LoginViewController: UIViewController {
     
     private let loginView = LoginView()
     private let mainBarController = TabBarController()
+    private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
     
     var kakaoEmail: String = ""
     var kakaoPassword: String = ""
@@ -105,6 +106,9 @@ private extension LoginViewController {
             
             // Success(등록 성공)
             else {
+                guard let user = authResult?.user else { return }
+                let idoUser = IDoUser(id: user.uid, nickName: "name", hobbyList: [], myClubList: [], myNoticeBoardList: [], myCommentList: [])
+                self.fbUserDatabaseManager.addData(data: idoUser)
                 self.loginFirebase(email: email, password: password)
             }
         }
