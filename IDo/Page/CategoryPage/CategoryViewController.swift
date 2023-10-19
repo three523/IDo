@@ -39,7 +39,7 @@ class CategoryViewController: UITableViewController {
             let selectedCategory = categoryData[indexPath.row]
 
             let exampleVC = MeetingViewController()
-            exampleVC.categoryData = selectedCategory
+            TemporaryManager.shared.categoryData = selectedCategory
             
 
             navigationController?.pushViewController(exampleVC, animated: true)
