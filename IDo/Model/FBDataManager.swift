@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseDatabase
 
-class FBDataManager<T: Codable & Identifier> {
+class FBDatabaseManager<T: Codable & Identifier> {
     var ref: DatabaseReference
     var viewState: ViewState = .loading
     var update: () -> Void = {}
@@ -66,7 +66,7 @@ class FBDataManager<T: Codable & Identifier> {
         ref.updateChildValues([data.id: nil])
     }
     
-    private func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
+    func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
         let commentTestList: [T] = value.compactMap { key, value in
             let comment: T? = decodingSingleDataSnapshot(value: value)
             return comment
