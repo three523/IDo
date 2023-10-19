@@ -9,9 +9,20 @@ import Foundation
 import FirebaseDatabase
 
 class FBDatabaseManager<T: Codable & Identifier> {
+    
+    enum DataType {
+        case single
+        case array
+    }
+    
     var ref: DatabaseReference
     var viewState: ViewState = .loading
     var update: () -> Void = {}
+    var data: T? {
+        didSet {
+            update()
+        }
+    }
     var dataList: [T] = [] {
         didSet {
             update()
@@ -30,7 +41,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
         dataList.append(data)
     }
     
-    func readDatas() {
+    func readDatas(dataType: DataType) {
         ref.getData { error, dataSnapshot in
             if let error {
                 let nsError = error as NSError
@@ -49,9 +60,16 @@ class FBDatabaseManager<T: Codable & Identifier> {
                 self.dataList = []
                 return
             }
-            let dataList: [T] = self.decodingDataSnapshot(value: value)
+            
+            if dataType == .array {
+                let dataList: [T] = self.decodingDataSnapshot(value: value)
+                self.dataList = dataList
+            } else {
+                let data: T? = self.decodingSingleDataSnapshot(value: value)
+                self.data = data
+            }
+            
             self.viewState = .loaded
-            self.dataList = dataList
         }
     }
     

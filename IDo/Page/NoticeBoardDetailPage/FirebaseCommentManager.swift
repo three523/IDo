@@ -8,7 +8,7 @@
 import Foundation
 
 class FirebaseCommentManaer: FBDatabaseManager<Comment> {
-    override func readDatas() {
+    override func readDatas(dataType: DataType) {
         ref.getData { error, dataSnapshot in
             if let error {
                 let nsError = error as NSError

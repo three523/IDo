@@ -28,12 +28,13 @@ final class NoticeBoardDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.currentUser = Auth.auth().currentUser
         firebaseManager = FirebaseCommentManaer(refPath: ["NoticeBoard","CommentList"])
         firebaseManager.update = { [weak self] in
             self?.commentTableView.reloadData()
         }
-        firebaseManager.readDatas()
+        firebaseManager.readDatas(dataType: .array)
         setup()
     }
 
