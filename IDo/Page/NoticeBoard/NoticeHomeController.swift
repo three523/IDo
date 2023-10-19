@@ -77,7 +77,6 @@ class NoticeHomeController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
         
-        // Add this line to add the button to the main view
         view.addSubview(signUpButton)
         
         scrollStackViewContainer.snp.makeConstraints { make in
