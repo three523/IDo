@@ -6,6 +6,7 @@
 //
 
 import FirebaseDatabase
+import FirebaseAuth
 import Pageboy
 import Tabman
 import UIKit
@@ -13,6 +14,16 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
+    private var club: Club
+    
+    init(club: Club) {
+        self.club = club
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +36,9 @@ class NoticeMeetingController: TabmanViewController {
             make.trailing.equalTo(view.snp.trailing)
             make.height.equalTo(30)
         }
-        let HomeVC = NoticeHomeController()
+        
+        guard let userID = Auth.auth().currentUser?.uid else { return }
+        let HomeVC = NoticeHomeController(club: club, userID: userID)
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 

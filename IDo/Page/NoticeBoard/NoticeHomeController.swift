@@ -8,11 +8,14 @@
 import FirebaseDatabase
 import SnapKit
 import UIKit
+import FirebaseAuth
 
 class NoticeHomeController: UIViewController {
     var meetingId: String?
     var categoryData: String?
     var meetingIndex: Int?
+    var club: Club
+    let fbDatabaseUserManager: FirebaseClubDatabaseManager
 //    var meetingImageUrls: [String] = []
     
 
@@ -64,6 +67,17 @@ class NoticeHomeController: UIViewController {
         return view
     }()
     
+    init(club: Club, userID: String) {
+        self.club = club
+        self.fbDatabaseUserManager = FirebaseClubDatabaseManager(refPath: ["Users",userID])
+        super.init(nibName: nil, bundle: nil)
+        self.fbDatabaseUserManager.readDatas(dataType: .single)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -72,6 +86,9 @@ class NoticeHomeController: UIViewController {
     
     @objc func handleSignUp() {
         print("Sign Up button tapped!")
+        
+        guard var idoUser = fbDatabaseUserManager.model else { return }
+        fbDatabaseUserManager.updateAddClub(club: club)
     }
 
     func setup() {

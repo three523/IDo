@@ -41,6 +41,7 @@
 		10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */; };
 		180C33692AD642B6000979F7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33672AD642B6000979F7 /* Font.swift */; };
 		180C336A2AD642B6000979F7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 180C33682AD642B6000979F7 /* Color.swift */; };
+		187108632AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 187108622AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift */; };
 		18B12CB22ADFBDC700FB325F /* UserSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB12ADFBDC700FB325F /* UserSummary.swift */; };
 		18B12CB42ADFC01000FB325F /* Encodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB32ADFC01000FB325F /* Encodable.swift */; };
 		18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */; };
@@ -117,6 +118,7 @@
 		10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardView.swift; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		187108622AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseClubDatabaseManager.swift; sourceTree = "<group>"; };
 		18B12CB12ADFBDC700FB325F /* UserSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSummary.swift; sourceTree = "<group>"; };
 		18B12CB32ADFC01000FB325F /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
 		18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDatabaseManager.swift; sourceTree = "<group>"; };
@@ -297,6 +299,7 @@
 				10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */,
 				10CBA04F2AD6678D00F1DA37 /* NoticeBoardCell */,
 				10CBA0542AD6B02500F1DA37 /* CreateNoticeBoard */,
+				187108622AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift */,
 			);
 			path = NoticeBoard;
 			sourceTree = "<group>";
@@ -546,6 +549,7 @@
 				10CBA04A2AD6665C00F1DA37 /* NoticeBoardViewController.swift in Sources */,
 				10B565BA2ADD1CD5006DED66 /* LoginViewController.swift in Sources */,
 				180C33692AD642B6000979F7 /* Font.swift in Sources */,
+				187108632AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift in Sources */,
 				18CCC1752ADD00D7000D092C /* EmptyCountTableViewCell.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,

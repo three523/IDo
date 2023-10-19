@@ -15,6 +15,7 @@ class MeetingViewController: UIViewController {
     private var tableView: UITableView!
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
+    private var clubList: [Club] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,10 +66,16 @@ func loadDataFromFirebase() {
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
                    let dict = childSnapshot.value as? [String: Any],
+                   let id = dict["id"] as? String,
                    let title = dict["title"] as? String,
                    let description = dict["description"] as? String,
                    let imageUrl = dict["imageUrl"] as? String
                 {
+                    
+                    //MARK: 추가한 부분
+                    let club = Club(id: id, title: title, imageURL: imageUrl, description: description)
+                    strongSelf.clubList.append(club)
+                    
                     newTitles.append(title)
                     newDates.append(description)
                     newImageUrls.append(imageUrl)
@@ -176,9 +183,15 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let noticeBoardVC = NoticeMeetingController()
         TemporaryManager.shared.meetingIndex = indexPath.row
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
+        let title = TemporaryManager.shared.meetingTitle[indexPath.row]
+        let imageUrl = TemporaryManager.shared.meetingImageUrls[indexPath.row]
+        let description = TemporaryManager.shared.meetingDescription ?? ""
+//        let club = Club(id: "-Nh2UFXYcr3l6fKCtxjY", rootUser: nil, title: title, imageURL: imageUrl, description: description)
+        let club = clubList[indexPath.row]
+        print(club)
+        let noticeBoardVC = NoticeMeetingController(club: club)
         navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 }

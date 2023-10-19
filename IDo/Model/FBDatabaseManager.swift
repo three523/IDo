@@ -14,11 +14,10 @@ class FBDatabaseManager<T: Codable & Identifier> {
         case single
         case array
     }
-    
     var ref: DatabaseReference
     var viewState: ViewState = .loading
     var update: () -> Void = {}
-    var data: T? {
+    var model: T? {
         didSet {
             update()
         }
@@ -66,9 +65,8 @@ class FBDatabaseManager<T: Codable & Identifier> {
                 self.dataList = dataList
             } else {
                 let data: T? = self.decodingSingleDataSnapshot(value: value)
-                self.data = data
+                self.model = data
             }
-            
             self.viewState = .loaded
         }
     }
@@ -77,6 +75,12 @@ class FBDatabaseManager<T: Codable & Identifier> {
         guard let index = dataList.firstIndex(where: { $0.id == data.id }) else { return }
         dataList[index] = data
         ref.updateChildValues([data.id: data.dictionary])
+    }
+    
+    func updateModel(data: T) {
+        guard var model else { return }
+        self.model = data
+        ref.setValue([data.id: data.dictionary])
     }
     
     func deleteData(data: T) {
