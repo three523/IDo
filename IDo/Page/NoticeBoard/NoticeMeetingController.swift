@@ -6,6 +6,7 @@
 //
 
 import FirebaseDatabase
+import FirebaseAuth
 import Pageboy
 import Tabman
 import UIKit
@@ -13,6 +14,23 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
+    private var club: Club
+    private var currentUser: User
+    private var isJoin: Bool
+    private let fbUserDatabaseManager: FirebaseUserDatabaseManager
+    
+    init(club: Club, currentUser: User, isJoin: Bool) {
+        self.club = club
+        self.currentUser = currentUser
+        self.isJoin = isJoin
+        self.fbUserDatabaseManager = FirebaseUserDatabaseManager(refPath: ["Users",currentUser.uid])
+        super.init(nibName: nil, bundle: nil)
+        fbUserDatabaseManager.readData()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +43,8 @@ class NoticeMeetingController: TabmanViewController {
             make.trailing.equalTo(view.snp.trailing)
             make.height.equalTo(30)
         }
-        let HomeVC = NoticeHomeController()
+        
+        let HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager)
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 

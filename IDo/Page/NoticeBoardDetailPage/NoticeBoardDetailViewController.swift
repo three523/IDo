@@ -34,7 +34,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         firebaseManager.update = { [weak self] in
             self?.commentTableView.reloadData()
         }
-        firebaseManager.readDatas(dataType: .array)
+        firebaseManager.readDatas()
         setup()
     }
 

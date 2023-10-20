@@ -14,11 +14,10 @@ class FBDatabaseManager<T: Codable & Identifier> {
         case single
         case array
     }
-    
     var ref: DatabaseReference
     var viewState: ViewState = .loading
     var update: () -> Void = {}
-    var data: T? {
+    var model: T? {
         didSet {
             update()
         }
@@ -41,12 +40,13 @@ class FBDatabaseManager<T: Codable & Identifier> {
         dataList.append(data)
     }
     
-    func readDatas(dataType: DataType) {
+    func readDatas(completion: @escaping (Result<[T],Error>)->Void = {_ in}) {
         ref.getData { error, dataSnapshot in
             if let error {
                 let nsError = error as NSError
                 if nsError.code == 1 { self.viewState = .error(true) }
                 else { self.viewState = .error(false) }
+                completion(.failure(nsError))
                 self.update()
                 return
             }
@@ -61,13 +61,41 @@ class FBDatabaseManager<T: Codable & Identifier> {
                 return
             }
             
-            if dataType == .array {
-                let dataList: [T] = self.decodingDataSnapshot(value: value)
-                self.dataList = dataList
-            } else {
-                let data: T? = self.decodingSingleDataSnapshot(value: value)
-                self.data = data
+            let dataList: [T] = self.decodingDataSnapshot(value: value)
+            completion(.success(dataList))
+            
+            self.dataList = dataList
+            self.viewState = .loaded
+        }
+    }
+    
+    func readData(completion: @escaping (Result<T,Error>)->Void = {_ in}) {
+        ref.getData { error, dataSnapshot in
+            if let error {
+                let nsError = error as NSError
+                if nsError.code == 1 { self.viewState = .error(true) }
+                else { self.viewState = .error(false) }
+                completion(.failure(nsError))
+                self.update()
+                return
             }
+            guard let dataSnapshot else {
+                self.viewState = .error(false)
+                self.update()
+                return
+            }
+            guard let value = dataSnapshot.value as? [String: Any] else {
+                self.viewState = .loaded
+                self.dataList = []
+                return
+            }
+            
+            guard let data: T = self.decodingSingleDataSnapshot(value: value) else {
+                print("decoding error")
+                return
+            }
+            self.model = data
+            completion(.success(data))
             
             self.viewState = .loaded
         }
@@ -77,6 +105,12 @@ class FBDatabaseManager<T: Codable & Identifier> {
         guard let index = dataList.firstIndex(where: { $0.id == data.id }) else { return }
         dataList[index] = data
         ref.updateChildValues([data.id: data.dictionary])
+    }
+    
+    func updateModel(data: T) {
+        guard var model else { return }
+        self.model = data
+        ref.setValue([data.id: data.dictionary])
     }
     
     func deleteData(data: T) {
