@@ -16,6 +16,7 @@ class CreateNoticeBoardViewController: UIViewController {
     var count = 10
     
     private let createNoticeBoardView = CreateNoticeBoardView()
+    private let firebaseManager = FirebaseManager()
     
     private var isTitleTextViewEdited = false
     private var isContentTextViewEdited = false
@@ -111,11 +112,12 @@ private extension CreateNoticeBoardViewController {
         navigationController?.popViewController(animated: true)
         
         if isTitleTextViewEdited && isContentTextViewEdited {
-            let newTitleText = createNoticeBoardView.titleTextView.text
-            let newContentText = createNoticeBoardView.contentTextView.text
+            
+            guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
+            guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
             // 메모 추가 코드 필요
-            
+            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText)
         }
     }
     
@@ -129,6 +131,7 @@ private extension CreateNoticeBoardViewController {
            let index = editingMemoIndex {
             
             // 해당 인덱스의 메모 수정 코드 필요
+            firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent)
             
             // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
             (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)

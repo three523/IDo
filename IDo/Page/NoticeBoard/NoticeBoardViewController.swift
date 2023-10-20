@@ -11,6 +11,7 @@ class NoticeBoardViewController: UIViewController {
     
     private let noticeBoardView = NoticeBoardView()
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
+    private let firebaseManager = FirebaseManager()
     
     override func loadView() {
         view = noticeBoardView
@@ -25,6 +26,8 @@ class NoticeBoardViewController: UIViewController {
         
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
+        
+        firebaseManager.delegate = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -67,17 +70,24 @@ private extension NoticeBoardViewController {
 extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return firebaseManager.noticeBoards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NoticeBoardTableViewCell.identifier, for: indexPath) as? NoticeBoardTableViewCell else { return UITableViewCell() }
-        
+        cell.titleLabel.text = firebaseManager.noticeBoards[indexPath.row].title
+        cell.contentLabel.text = firebaseManager.noticeBoards[indexPath.row].content
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = NoticeBoardDetailViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+extension NoticeBoardViewController: FirebaseManagerDelegate {
+    func reloadData() {
+        noticeBoardView.noticeBoardTableView.reloadData()
     }
 }

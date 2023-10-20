@@ -8,12 +8,17 @@
 import Foundation
 import Firebase
 
-class FirebaseManager {
 
+protocol FirebaseManagerDelegate: AnyObject {
+    func reloadData()
+}
+
+class FirebaseManager {
     
-    static var noticeBoards: [NoticeBoard] = []
+    weak var delegate: FirebaseManagerDelegate?
+    var noticeBoards: [NoticeBoard] = []
     
-    static func createNoticeBoard(title: String, content: String) {
+    func createNoticeBoard(title: String, content: String) {
         let ref = Database.database().reference().child("noticeBoards")
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
         
@@ -31,16 +36,21 @@ class FirebaseManager {
             } else {
                 print("Successfully saved notice board.")
                 
-                // 새로운 NoticeBoard 객체 생성
-                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, title: title, content: content)
-                
-                // noticeBoards 배열에 추가
-                FirebaseManager.noticeBoards.append(newNoticeBoard)
+                self.addNoticeBoards(id: newNoticeBoardID, title: title, content: content)
             }
         }
+        delegate?.reloadData()
+    }
+    
+    func addNoticeBoards(id newID: String, title newTitle: String, content newContent: String) {
+        // 새로운 NoticeBoard 객체 생성
+        let newNoticeBoard = NoticeBoard(id: newID, title: newTitle, content: newContent)
+        
+        // noticeBoards 배열에 추가
+        noticeBoards.append(newNoticeBoard)
     }
 
-    static func readNoticeBoard() {
+    func readNoticeBoard() {
         let ref = Database.database().reference().child("noticeBoards")
         
         // 2. 데이터 읽기
@@ -54,6 +64,20 @@ class FirebaseManager {
             }
         })
     }
-
     
+    func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String) {
+        if index >= 0 && index < noticeBoards.count {
+            noticeBoards[index].title = newTitle
+            noticeBoards[index].content = newContent
+            
+            let ref = Database.database().reference().child("noticeBoards").child(noticeBoards[index].id)
+            ref.updateChildValues(["title": newTitle, "content": newContent]) { error, _ in
+                if let error = error {
+                    print("Error updating notice board: \(error)")
+                } else {
+                    print("Successfully updated notice board.")
+                }
+            }
+        }
+    }
 }
