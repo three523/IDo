@@ -6,6 +6,7 @@
 //
 
 import FirebaseDatabase
+import FirebaseAuth
 import Foundation
 import SnapKit
 import UIKit
@@ -185,13 +186,21 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         TemporaryManager.shared.meetingIndex = indexPath.row
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
-        let title = TemporaryManager.shared.meetingTitle[indexPath.row]
-        let imageUrl = TemporaryManager.shared.meetingImageUrls[indexPath.row]
-        let description = TemporaryManager.shared.meetingDescription ?? ""
-//        let club = Club(id: "-Nh2UFXYcr3l6fKCtxjY", rootUser: nil, title: title, imageURL: imageUrl, description: description)
         let club = clubList[indexPath.row]
-        print(club)
-        let noticeBoardVC = NoticeMeetingController(club: club)
-        navigationController?.pushViewController(noticeBoardVC, animated: true)
+        
+        guard let currentUser = Auth.auth().currentUser else { return }
+        let fbDatabaseUserManager = FirebaseClubDatabaseManager(refPath: ["Users",currentUser.uid])
+        
+        fbDatabaseUserManager.readData { result in
+            switch result {
+            case .success(let idoUser):
+                guard let myClubList = idoUser.myClubList else { return }
+                let isSingUpButtonHidden = myClubList.contains(where: { $0.id == club.id })
+                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isSingUpButtonHidden: isSingUpButtonHidden, fbDatabaseUserManager: fbDatabaseUserManager)
+                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }

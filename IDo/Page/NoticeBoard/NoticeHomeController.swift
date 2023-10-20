@@ -14,10 +14,7 @@ class NoticeHomeController: UIViewController {
     var meetingId: String?
     var categoryData: String?
     var meetingIndex: Int?
-    var club: Club
-    let fbDatabaseUserManager: FirebaseClubDatabaseManager
-//    var meetingImageUrls: [String] = []
-    
+    var club: Club    
 
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
@@ -67,11 +64,9 @@ class NoticeHomeController: UIViewController {
         return view
     }()
     
-    init(club: Club, userID: String) {
+    init(club: Club) {
         self.club = club
-        self.fbDatabaseUserManager = FirebaseClubDatabaseManager(refPath: ["Users",userID])
         super.init(nibName: nil, bundle: nil)
-        self.fbDatabaseUserManager.readDatas(dataType: .single)
     }
     
     required init?(coder: NSCoder) {
@@ -84,11 +79,16 @@ class NoticeHomeController: UIViewController {
         loadDataFromFirebase()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        self.fbDatabaseUserManager.readData()
+    }
+    
     @objc func handleSignUp() {
         print("Sign Up button tapped!")
         
-        guard var idoUser = fbDatabaseUserManager.model else { return }
-        fbDatabaseUserManager.updateAddClub(club: club)
+//        if fbDatabaseUserManager.model == nil { return }
+//        fbDatabaseUserManager.updateAddClub(club: club)
     }
 
     func setup() {

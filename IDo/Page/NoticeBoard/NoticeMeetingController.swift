@@ -15,10 +15,23 @@ class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
     private var club: Club
+    private var currentUser: User
+    private var isSignUpButtonHidden: Bool
+    private var fbDatabaseUserManager: FirebaseClubDatabaseManager
     
-    init(club: Club) {
+    init(club: Club, currentUser: User, isSingUpButtonHidden: Bool, fbDatabaseUserManager: FirebaseClubDatabaseManager) {
         self.club = club
+        self.currentUser = currentUser
+        self.isSignUpButtonHidden = isSingUpButtonHidden
+        self.fbDatabaseUserManager = fbDatabaseUserManager
         super.init(nibName: nil, bundle: nil)
+        
+//        self.fbDatabaseUserManager.update = { [weak self] in
+//            guard let self else { return }
+//            guard let myClubList = self.fbDatabaseUserManager.model?.myClubList else { return }
+//            self.isSignUpButtonHidden = myClubList.contains(where: { $0.id == self.club.id })
+//        }
+//        self.fbDatabaseUserManager.readData()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -37,8 +50,8 @@ class NoticeMeetingController: TabmanViewController {
             make.height.equalTo(30)
         }
         
-        guard let userID = Auth.auth().currentUser?.uid else { return }
-        let HomeVC = NoticeHomeController(club: club, userID: userID)
+        let HomeVC = NoticeHomeController(club: club)
+        HomeVC.signUpButton.isHidden = isSignUpButtonHidden
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 
