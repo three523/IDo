@@ -27,12 +27,13 @@ class NoticeBoardViewController: UIViewController {
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
         
-        firebaseManager.delegate = self
+        firebaseManager.readNoticeBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        firebaseManager.delegate = self
         noticeBoardView.noticeBoardTableView.reloadData()
     }
 
@@ -70,19 +71,39 @@ private extension NoticeBoardViewController {
 extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return firebaseManager.noticeBoards.count
+        return FirebaseManager.noticeBoards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NoticeBoardTableViewCell.identifier, for: indexPath) as? NoticeBoardTableViewCell else { return UITableViewCell() }
-        cell.titleLabel.text = firebaseManager.noticeBoards[indexPath.row].title
-        cell.contentLabel.text = firebaseManager.noticeBoards[indexPath.row].content
+        cell.titleLabel.text = FirebaseManager.noticeBoards[indexPath.row].title
+        cell.contentLabel.text = FirebaseManager.noticeBoards[indexPath.row].content
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = NoticeBoardDetailViewController()
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteNoticeBoardAction = UIContextualAction(style: .normal, title: nil) { (action, view, completion) in
+            self.firebaseManager.deleteNoticeBoard(at: indexPath.row) { success in
+                if success {
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                    self.firebaseManager.readNoticeBoard()
+                }
+            }
+            completion(true)
+        }
+        
+        deleteNoticeBoardAction.backgroundColor = .systemRed
+        deleteNoticeBoardAction.image = UIImage(systemName: "trash.fill")
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteNoticeBoardAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        
+        return configuration
     }
 }
 
