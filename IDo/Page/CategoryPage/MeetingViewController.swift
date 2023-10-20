@@ -6,6 +6,7 @@
 //
 
 import FirebaseDatabase
+import FirebaseAuth
 import Foundation
 import SnapKit
 import UIKit
@@ -15,6 +16,7 @@ class MeetingViewController: UIViewController {
     private var tableView: UITableView!
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
+    private var clubList: [Club] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,10 +67,16 @@ func loadDataFromFirebase() {
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
                    let dict = childSnapshot.value as? [String: Any],
+                   let id = dict["id"] as? String,
                    let title = dict["title"] as? String,
                    let description = dict["description"] as? String,
                    let imageUrl = dict["imageUrl"] as? String
                 {
+                    
+                    //MARK: 추가한 부분
+                    let club = Club(id: id, title: title, imageURL: imageUrl, description: description)
+                    strongSelf.clubList.append(club)
+                    
                     newTitles.append(title)
                     newDates.append(description)
                     newImageUrls.append(imageUrl)
@@ -176,9 +184,25 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let noticeBoardVC = NoticeMeetingController()
         TemporaryManager.shared.meetingIndex = indexPath.row
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
-        navigationController?.pushViewController(noticeBoardVC, animated: true)
+        let club = clubList[indexPath.row]
+        
+        guard let currentUser = Auth.auth().currentUser else { return }
+        let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users",currentUser.uid])
+        
+        fbDatabaseUserManager.readData { result in
+            switch result {
+            case .success(let idoUser):
+                var isJoin = false
+                if let myClubList = idoUser.myClubList {
+                    isJoin = myClubList.contains(where: { $0.id == club.id })
+                }
+                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin)
+                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
