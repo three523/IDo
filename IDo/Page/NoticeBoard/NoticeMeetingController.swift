@@ -14,9 +14,8 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
-<<<<<<< HEAD
 
-=======
+
     private var club: Club
     private var currentUser: User
     private var isJoin: Bool
@@ -35,7 +34,6 @@ class NoticeMeetingController: TabmanViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
->>>>>>> 995bb5b7cebe16c8b57666fafff150199f6b4dfb
     override func viewDidLoad() {
         super.viewDidLoad()
 
