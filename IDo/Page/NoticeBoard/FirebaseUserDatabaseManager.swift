@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseDatabase
 
-class FirebaseClubDatabaseManager: FBDatabaseManager<IDoUser> {
+class FirebaseUserDatabaseManager: FBDatabaseManager<IDoUser> {
     func updateAddClub(club: Club) {
         guard var model else { return }
         var clubList = [Club]()
