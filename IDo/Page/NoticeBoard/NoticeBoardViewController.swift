@@ -26,14 +26,14 @@ class NoticeBoardViewController: UIViewController {
         
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
-        
-        firebaseManager.readNoticeBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         firebaseManager.delegate = self
+        firebaseManager.readNoticeBoard()
+        
         noticeBoardView.noticeBoardTableView.reloadData()
     }
 

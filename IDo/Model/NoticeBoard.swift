@@ -10,7 +10,7 @@ import Foundation
 struct NoticeBoard: Codable {
     let id: String
     //let rootUser: IDoUser
-    //let createDate: Date
+    let createDate: Date
     //let clubID: String
     var title: String
     var content: String

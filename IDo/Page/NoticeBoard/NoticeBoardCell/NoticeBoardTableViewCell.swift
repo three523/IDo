@@ -12,6 +12,8 @@ class NoticeBoardTableViewCell: UITableViewCell {
     
     static let identifier = "NoticeBoardTableViewCell"
     
+    var indexPath: IndexPath?
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

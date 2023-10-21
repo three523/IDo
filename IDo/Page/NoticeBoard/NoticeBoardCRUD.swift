@@ -18,19 +18,21 @@ class FirebaseManager {
     weak var delegate: FirebaseManagerDelegate?
     static var noticeBoards: [NoticeBoard] = []
     
-    private func saveNoticeBoard(id: String, title: String, content: String, completion: ((Bool) -> Void)? = nil) {
-        let ref = Database.database().reference().child("noticeBoards").child(id)
+    func saveNoticeBoard(noticeBoard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
+        let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.id)
         let noticeBoardDict: [String: Any] = [
-            "id": id,
-            "title": title,
-            "content": content
+            "id": noticeBoard.id,
+            "title": noticeBoard.title,
+            "content": noticeBoard.content,
+            "createDate": noticeBoard.createDate.timeIntervalSince1970
         ]
         
         ref.setValue(noticeBoardDict) { error, _ in
             if let error = error {
                 print("Error saving notice board: \(error)")
                 completion?(false)
-            } else {
+            }
+            else {
                 print("Successfully saved notice board.")
                 completion?(true)
             }
@@ -49,14 +51,14 @@ class FirebaseManager {
     func createNoticeBoard(title: String, content: String) {
         let ref = Database.database().reference().child("noticeBoards")
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
+        let createDate = Date()
+
+        let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, createDate: createDate, title: title, content: content)
         
-        saveNoticeBoard(id: newNoticeBoardID, title: title, content: content) { success in
+        saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
             if success {
-                // 새로운 NoticeBoard 객체 생성
-                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, title: title, content: content)
-                
                 // noticeBoards 배열에 추가
-                FirebaseManager.noticeBoards.append(newNoticeBoard)
+                FirebaseManager.noticeBoards.insert(newNoticeBoard, at: 0)
                 self.delegate?.reloadData()
             }
         }
@@ -68,18 +70,22 @@ class FirebaseManager {
         ref.observe(.value, with: { (snapshot) in
             var newNoticeBoards: [NoticeBoard] = []
             
-            guard let value = snapshot.value as? [[String: Any]] else { return }
+            guard let value = snapshot.value as? [String: Any] else { return }
             
-            for item in value {
-                let id = item["id"] as? String ?? ""
-                let title = item["title"] as? String ?? ""
-                let content = item["content"] as? String ?? ""
-                
-                let noticeBoard = NoticeBoard(id: id, title: title, content: content)
-                newNoticeBoards.append(noticeBoard)
+            for (_, item) in value {
+                if let itemDict = item as? [String: Any],
+                   let id = itemDict["id"] as? String,
+                   let title = itemDict["title"] as? String,
+                   let content = itemDict["content"] as? String,
+                   let createDateTimestamp = itemDict["createDate"] as? TimeInterval {
+                    
+                    let createDate = Date(timeIntervalSince1970: createDateTimestamp)
+                    let noticeBoard = NoticeBoard(id: id, createDate: createDate, title: title, content: content)
+                    newNoticeBoards.append(noticeBoard)
+                }
             }
             
-            FirebaseManager.noticeBoards = newNoticeBoards
+            FirebaseManager.noticeBoards = newNoticeBoards.sorted(by: { $0.createDate > $1.createDate })
             
             self.delegate?.reloadData()
         })
@@ -88,11 +94,14 @@ class FirebaseManager {
     
     func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String) {
         if index >= 0 && index < FirebaseManager.noticeBoards.count {
-            let noticeBoardID = FirebaseManager.noticeBoards[index].id
-            saveNoticeBoard(id: noticeBoardID, title: newTitle, content: newContent) { success in
+            var updatedNoticeBoard = FirebaseManager.noticeBoards[index]
+            updatedNoticeBoard.title = newTitle
+            updatedNoticeBoard.content = newContent
+            
+            saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                 if success {
-                    FirebaseManager.noticeBoards[index].title = newTitle
-                    FirebaseManager.noticeBoards[index].content = newContent
+                    FirebaseManager.noticeBoards[index] = updatedNoticeBoard
+                    self.delegate?.reloadData()
                 }
             }
         }
