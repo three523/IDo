@@ -78,6 +78,8 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NoticeBoardTableViewCell.identifier, for: indexPath) as? NoticeBoardTableViewCell else { return UITableViewCell() }
         cell.titleLabel.text = FirebaseManager.noticeBoards[indexPath.row].title
         cell.contentLabel.text = FirebaseManager.noticeBoards[indexPath.row].content
+        cell.timeLabel.text = FirebaseManager.noticeBoards[indexPath.row].createDate.diffrenceDate ?? FirebaseManager.noticeBoards[indexPath.row].createDate.dateToString
+        cell.nameLabel.text = FirebaseManager.noticeBoards[indexPath.row].rootUser.nickName
         return cell
     }
     
