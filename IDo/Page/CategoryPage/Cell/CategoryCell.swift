@@ -9,11 +9,16 @@ import SnapKit
 import UIKit
 
 class CategoryCell: UITableViewCell {
+    // label1
     let label: UILabel = {
         let label = UILabel()
         label.font = .headFont(.xSmall, weight: .regular)
         return label
     }()
+    
+    // label2
+    
+    // label3
 
     let categoryImageView: UIImageView = {
         let imageView = UIImageView()
@@ -25,6 +30,9 @@ class CategoryCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         contentView.addSubview(label)
+        // addSubview(label2)
+        // addSubview(label2)
+        
         contentView.addSubview(categoryImageView)
         label.snp.makeConstraints { make in
             make.top.equalTo(contentView)

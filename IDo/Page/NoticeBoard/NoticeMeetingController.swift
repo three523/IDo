@@ -50,7 +50,7 @@ class NoticeMeetingController: TabmanViewController {
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 
-        let titleVC = NoticeBoardViewController()
+        let titleVC = NoticeBoardViewController(club: club)
 
         viewControllers.append(HomeVC)
         viewControllers.append(titleVC)
@@ -86,7 +86,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     @objc func moveCreateVC() {
-        let createNoticeBoardVC = CreateNoticeBoardViewController()
+        let createNoticeBoardVC = CreateNoticeBoardViewController(club: club)
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
 
