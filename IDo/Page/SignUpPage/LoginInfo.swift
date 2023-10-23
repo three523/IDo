@@ -8,8 +8,9 @@
 import Foundation
 
 class LoginInfo {
-    var email: String? = nil
-    var password: String? = nil
-    var nickName: String? = nil
+    var email: String = ""
+    var password: String = ""
+    var nickName: String = ""
+    var myHobbys: [String] = []
     var idoUser: IDoUser? = nil
 }

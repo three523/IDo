@@ -20,41 +20,52 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
+        do {
+            try Auth.auth().signOut()
+        } catch let error {
+            print(error.localizedDescription)
+        }
 
-        let mainVC = TabBarController()
+        if Auth.auth().currentUser != nil {
+            print(Auth.auth().currentUser?.uid)
+            window.rootViewController = TabBarController()
+        } else {
+            window.rootViewController = LoginViewController()
+//            window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
+        }
 
-        window.rootViewController = mainVC
+//        window.rootViewController = mainVC
         window.backgroundColor = .white
 
         // 카카오 로그인 토큰이 있는지 여부 확인
-        if AuthApi.hasToken() {
-            UserApi.shared.accessTokenInfo { _, error in
-                if let error = error {
-                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true {
-                        // 로그인 필요
-                        let mainVC = LoginViewController()
-                        window.rootViewController = mainVC
-                    }
-                    else {
-                        // 기타 에러
-                        print(error.localizedDescription)
-                    }
-                }
-                else {
-                    // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    self.getUserInfo()
-                    let mainVC = TabBarController()
-                    window.rootViewController = mainVC
-//                    window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
-
-                }
-            }
-        }
-        else {
-            // 로그인 필요
-            let mainVC = LoginViewController()
-            window.rootViewController = mainVC
-        }
+//        if AuthApi.hasToken() {
+//            UserApi.shared.accessTokenInfo { _, error in
+//                if let error = error {
+//                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true {
+//                        // 로그인 필요
+//                        let mainVC = LoginViewController()
+//                        window.rootViewController = mainVC
+//                    }
+//                    else {
+//                        // 기타 에러
+//                        print(error.localizedDescription)
+//                    }
+//                }
+//                else {
+//                    // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+////                    self.getUserInfo()
+////                    let mainVC = TabBarController()
+////                    window.rootViewController = mainVC
+////                    window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
+//
+//                }
+//            }
+//        }
+//        else {
+//            // 로그인 필요
+//            let mainVC = LoginViewController()
+//            window.rootViewController = mainVC
+//        }
 
         window.makeKeyAndVisible()
         self.window = window

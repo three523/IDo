@@ -11,6 +11,7 @@ final class CategorySelectViewController: UIViewController {
     
     private let email: String
     private let password: String
+    private let loginInfo: LoginInfo
     private let selectedCountLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
@@ -46,14 +47,9 @@ final class CategorySelectViewController: UIViewController {
     }
     
     init(loginInfo: LoginInfo) {
-        if let email = loginInfo.email,
-           let password = loginInfo.password {
-            self.email = email
-            self.password = password
-        } else {
-            self.email = ""
-            self.password = ""
-        }
+        self.email = loginInfo.email
+        self.password = loginInfo.password
+        self.loginInfo = loginInfo
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -105,7 +101,7 @@ private extension CategorySelectViewController {
     }
     
     @objc func nextButtonClcik() {
-        let vc = SignUpProfileViewController(email: email, password: password, selectedCategorys: selectedCategorys)
+        let vc = SignUpProfileViewController(loginInfo: loginInfo)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -133,5 +129,6 @@ extension CategorySelectViewController: UICollectionViewDelegate, UICollectionVi
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return }
         let selectedItems = collectionView.indexPathsForSelectedItems ?? []
         selectedCategorys = selectedItems.compactMap({ categoryData[$0.row] })
+        loginInfo.myHobbys = selectedCategorys
     }
 }

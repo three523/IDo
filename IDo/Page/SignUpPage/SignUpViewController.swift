@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 final class SignUpViewController: UIViewController {
+    private let backButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("back", for: .normal)
+        button.setTitleColor(UIColor(color: .contentPrimary), for: .normal)
+        return button
+    }()
     private let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "이메일을 입력해주세요"
@@ -39,11 +46,16 @@ final class SignUpViewController: UIViewController {
         setup()
         // Do any additional setup after loading the view.
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
 
 }
 
 private extension SignUpViewController {
     func setup() {
+        view.backgroundColor = .white
         addViews()
         autolayoutSetup()
         setupButton()
@@ -52,8 +64,13 @@ private extension SignUpViewController {
         view.addSubview(emailTextField)
         view.addSubview(passwordTextField)
         view.addSubview(nextButton)
+        view.addSubview(backButton)
     }
     func autolayoutSetup() {
+        let safeArea = view.safeAreaLayoutGuide
+        backButton.snp.makeConstraints { make in
+            make.top.left.equalTo(safeArea).inset(Constant.margin3)
+        }
         emailTextField.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.left.right.equalToSuperview().inset(Constant.margin3)
@@ -68,15 +85,15 @@ private extension SignUpViewController {
         }
     }
     func setupButton() {
-        nextButton.addTarget(self, action: #selector(nextButtonClick), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
+        backButton.addTarget(self, action: #selector(clicikBackButton), for: <#T##UIControl.Event#>)
     }
-    @objc func nextButtonClick() {
+    @objc func clickNextButton() {
         guard let email = emailTextField.text,
         let password = passwordTextField.text else { return }
         loginInfo.email = email
         loginInfo.password = password
         let categoryVC = CategorySelectViewController(loginInfo: loginInfo)
         navigationController?.pushViewController(categoryVC, animated: true)
-        
     }
 }
