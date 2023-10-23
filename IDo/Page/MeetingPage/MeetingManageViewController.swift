@@ -1,10 +1,15 @@
 import UIKit
 import FirebaseDatabase
+import FirebaseStorage
 
 class MeetingManageViewController: UIViewController {
     
     var meetingTitle: String?
     var meetingImageURL: String?
+    var ref: DatabaseReference?
+    let storage = Storage.storage()
+    lazy var storageRef = storage.reference()
+    
     
     var profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
@@ -82,7 +87,7 @@ class MeetingManageViewController: UIViewController {
     }()
     
     private let manageFinishButton = FinishButton(title: "수정 완료")
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,11 +96,11 @@ class MeetingManageViewController: UIViewController {
         configureUI()
         
         if let title = meetingTitle {
-                    meetingNameField.text = title
-                }
+            meetingNameField.text = title
+        }
         if let description = TemporaryManager.shared.meetingDescription {
-                    meetingDescriptionField.text = description
-                }
+            meetingDescriptionField.text = description
+        }
         if let imageUrlString = meetingImageURL {
             // 캐시에서 이미지 확인
             if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
@@ -118,8 +123,9 @@ class MeetingManageViewController: UIViewController {
                 }
             }
         }
-
-            }
+        ref = Database.database().reference()
+        manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
+    }
     
     private func configureUI() {
         // UI 설정
@@ -190,7 +196,61 @@ class MeetingManageViewController: UIViewController {
         profileImageButton.openImagePicker(in: self)
     }
     
+    @objc func manageFinishButtonTapped() {
+        guard let name = meetingNameField.text, !name.isEmpty,
+              let description = meetingDescriptionField.text, let meetingImage = profileImageButton.imageView?.image else {
+            
+            return
+        }
+        
+        guard let imageData = meetingImage.jpegData(compressionQuality: 0.8) else {
+            
+            return
+        }
+        
+        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
+    }
     
+    private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
+        guard let category = TemporaryManager.shared.selectedCategory else { return }
+        
+        let ref = Database.database().reference().child(category).child("meetings")
+        let safeMeetingTitle = name.replacingOccurrences(of: "\\W", with: "", options: .regularExpression)
+        
+        let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(safeMeetingTitle).png")
+        
+        storageRef.putData(imageData, metadata: nil) { (metadata, error) in
+            if let error = error {
+                print("Failed to upload image to Firebase Storage:", error)
+                return
+            }
+            
+            storageRef.downloadURL { (url, error) in
+                guard let imageUrl = url?.absoluteString else { return }
+                
+                let meetingData: [String: Any] = [
+                    "id": safeMeetingTitle,
+                    "title": name,
+                    "description": description,
+                    "imageUrl": imageUrl
+                ]
+                
+                ref.child(safeMeetingTitle).setValue(meetingData) { [weak self] (error, _) in
+                    if let error = error {
+                        print("Data could not be saved: \(error).")
+                    } else {
+                        print("Data saved successfully!")
+                        
+                        let alert = UIAlertController(title: "완료", message: "수정되었습니다.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                            self?.navigationController?.popViewController(animated: true)
+                        }))
+                        self?.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
