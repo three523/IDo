@@ -196,104 +196,62 @@ class MeetingManageViewController: UIViewController {
         profileImageButton.openImagePicker(in: self)
     }
     
-    func uploadImageToFirebaseStorage(_ image: UIImage, meetingTitle: String, completion: @escaping (String?) -> Void) {
-        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-            completion(nil)
-            return
-        }
-        
-        // Firebase 키로 사용하기 전에 meetingTitle에서 특수문자와 공백을 제거합니다.
-        let safeMeetingTitle = meetingTitle.replacingOccurrences(of: "\\W", with: "", options: .regularExpression)
-        
-        // meetingTitle을 이미지 이름으로 사용합니다.
-        let imageRef = storageRef.child("meetings_images/\(safeMeetingTitle).jpg")
-        
-        let metadata = StorageMetadata()
-        metadata.contentType = "image/jpeg"
-        
-        imageRef.putData(imageData, metadata: metadata) { _, error in
-            if let error = error {
-                print("Failed to upload image to Firebase Storage:", error)
-                completion(nil)
-                return
-            }
-            
-            imageRef.downloadURL { url, error in
-                if let error = error {
-                    print("Failed to fetch downloadURL:", error)
-                    completion(nil)
-                    return
-                }
-                
-                guard let imageURL = url?.absoluteString else {
-                    completion(nil)
-                    return
-                }
-                
-                completion(imageURL)
-            }
-        }
-    }
-    
-    
-    
     @objc func manageFinishButtonTapped() {
-        // 데이터 유효성 검사는 동일하게 진행합니다.
-        guard let meetingTitle = meetingNameField.text,
-              !meetingTitle.isEmpty, // 추가: 제목 필드가 비어 있지 않은지 확인합니다.
-              let meetingDescription = meetingDescriptionField.text,
-              let meetingImage = profileImageButton.imageView?.image else {
+        guard let name = meetingNameField.text, !name.isEmpty,
+              let description = meetingDescriptionField.text, let meetingImage = profileImageButton.imageView?.image else {
             // Handle the error, perhaps show an alert to the user
             return
         }
         
-        uploadImageToFirebaseStorage(meetingImage, meetingTitle: meetingTitle) { [weak self] imageURL in
-            guard let self = self, let imageURL = imageURL else {
-                // Handle the error, perhaps show an alert to the user
+        guard let imageData = meetingImage.jpegData(compressionQuality: 0.8) else {
+            // Handle the error, perhaps show another alert to the user
+            return
+        }
+        
+        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
+    }
+    
+    private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
+        guard let category = TemporaryManager.shared.selectedCategory else { return }
+        
+        let ref = Database.database().reference().child(category).child("meetings")
+        let safeMeetingTitle = name.replacingOccurrences(of: "\\W", with: "", options: .regularExpression)
+        
+        let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(safeMeetingTitle).png")
+        
+        storageRef.putData(imageData, metadata: nil) { (metadata, error) in
+            if let error = error {
+                print("Failed to upload image to Firebase Storage:", error)
                 return
             }
             
-            // 안전하게 옵셔널 바인딩 사용
-            guard let categoryData = TemporaryManager.shared.categoryData else {
-                print("categoryData is nil")
-                return
-            }
-            
-            // 이미지 업로드 완료 후 Firebase Database에 데이터 업데이트
-            let meetingPath = "\(categoryData)/meetings/\(meetingTitle)" // 여기에서 meetingTitle을 키로 사용하였습니다.
-            
-            let postData: [String: Any] = [
-                "title": meetingTitle,
-                "description": meetingDescription,
-                "imageUrl": imageURL
-            ]
-            
-            guard let ref = self.ref else {
-                print("DatabaseReference is nil")
-                return
-            }
-            
-            ref.child(meetingPath).updateChildValues(postData) { [weak self] (error, _) in
-                guard let strongSelf = self else { return }
-                if let error = error {
-                    print("Data could not be saved: \(error).")
-                } else {
-                    print("Data saved successfully!")
-                    
-                    // 수정이 성공적으로 완료되면 알림을 표시합니다.
-                    let alert = UIAlertController(title: "완료", message: "수정되었습니다.", preferredStyle: .alert)
-                    alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-                        // 확인 버튼을 누르면 이전 화면으로 돌아갑니다.
-                        strongSelf.navigationController?.popViewController(animated: true)
-                    }))
-                    strongSelf.present(alert, animated: true, completion: nil)
+            storageRef.downloadURL { (url, error) in
+                guard let imageUrl = url?.absoluteString else { return }
+                
+                let meetingData: [String: Any] = [
+                    "id": safeMeetingTitle,
+                    "title": name,
+                    "description": description,
+                    "imageUrl": imageUrl
+                ]
+                
+                ref.child(safeMeetingTitle).setValue(meetingData) { [weak self] (error, _) in
+                    if let error = error {
+                        print("Data could not be saved: \(error).")
+                    } else {
+                        print("Data saved successfully!")
+                        
+                        let alert = UIAlertController(title: "완료", message: "수정되었습니다.", preferredStyle: .alert)
+                        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                            self?.navigationController?.popViewController(animated: true)
+                        }))
+                        self?.present(alert, animated: true, completion: nil)
+                    }
                 }
             }
-            
         }
     }
 }
-
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {

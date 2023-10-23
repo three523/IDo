@@ -83,49 +83,48 @@ class MeetingCreateViewController: UIViewController {
 
 
     @objc private func createMeeting() {
-        guard let title = meetingNameField.text, !title.isEmpty,
+        guard let name = meetingNameField.text, !name.isEmpty,
               let description = meetingDescriptionField.text, !description.isEmpty else {
             print("모임의 이름과 설명은 필수 입력 항목입니다.")
             return
         }
-        
-        var imageData: Data? = nil
-            if let image = profileImageButton.image(for: .normal) {
-                imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
-            }
 
-            saveMeetingToFirebase(name: title, description: description, imageData: imageData)
+        var imageData: Data? = nil
+        if let image = profileImageButton.image(for: .normal) {
+            imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
         }
 
+        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
+    }
 
     private func saveMeetingToFirebase(name: String, description: String, imageData: Data?) {
         guard let category = TemporaryManager.shared.selectedCategory else { return }
         //
         let ref = Database.database().reference().child(category).child("meetings")
-        let newMeetingID = ref.childByAutoId().key ?? ""
-        
+        let safeMeetingTitle = name.replacingOccurrences(of: "\\W", with: "", options: .regularExpression)
+
         if let imageData = imageData {
             // 이미지 업로드
-            let storageRef = Storage.storage().reference().child("\(TemporaryManager.shared.selectedCategory ?? "default_category")").child("meeting_images").child("\(newMeetingID).png")
+            let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(safeMeetingTitle).png")
 
             storageRef.putData(imageData, metadata: nil) { (metadata, error) in
                 if let error = error {
                     print("Failed to upload image to Firebase Storage:", error)
                     return
                 }
-                
+
                 storageRef.downloadURL { (url, error) in
                     guard let imageUrl = url?.absoluteString else { return }
-                    
+
                     // 데이터에 해당 키로 저장
                     let data: [String: Any] = [
-                        "id": newMeetingID,
+                        "id": safeMeetingTitle,
                         "title": name,
                         "description": description,
                         "imageUrl": imageUrl
                     ]
-                    
-                    ref.child(newMeetingID).setValue(data) { [weak self] (error, _) in
+
+                    ref.child(safeMeetingTitle).setValue(data) { [weak self] (error, _) in
                         if let error = error {
                             print("Data could not be saved: \(error).")
                         } else {
@@ -141,7 +140,6 @@ class MeetingCreateViewController: UIViewController {
             }
         }
     }
-
 
 
  
