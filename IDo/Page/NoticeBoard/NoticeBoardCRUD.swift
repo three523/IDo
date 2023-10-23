@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseDatabase
 import FirebaseStorage
 
 
@@ -44,7 +44,8 @@ class FirebaseManager {
             "title": noticeBoard.title,
             "content": noticeBoard.content,
             "createDate": noticeBoard.createDate.dateToString,
-            "imageList": noticeBoard.imageList
+            "imageList": noticeBoard.imageList,
+            "commentCount": noticeBoard.commentCount
         ]
         
         ref.setValue(noticeBoardDict) { error, _ in
@@ -68,7 +69,7 @@ class FirebaseManager {
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
         let createDate = Date()
 
-        let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: [])
+        let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: [], commentCount: "0")
         
         saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
             if success {
@@ -98,14 +99,15 @@ class FirebaseManager {
                    let content = itemDict["content"] as? String,
                    let createDateStr = itemDict["createDate"] as? String,
                    let createDate = createDateStr.toDate,
-                   let profileImageString = rootUserDict["profileImage"] as? String {
+                   let commentCount = itemDict["commentCount"] as? String {
                     
+                    let profileImageString = rootUserDict["profileImage"] as? String
                     
                     let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
                     
                     let imageList = itemDict["imageList"] as? [String] ?? []
                     
-                    let noticeBoard = NoticeBoard(id: id, rootUser: rootUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageList)
+                    let noticeBoard = NoticeBoard(id: id, rootUser: rootUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageList, commentCount: commentCount)
                     newNoticeBoards.append(noticeBoard)
                 }
             }
