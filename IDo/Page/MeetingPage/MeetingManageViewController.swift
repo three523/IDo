@@ -199,12 +199,12 @@ class MeetingManageViewController: UIViewController {
     @objc func manageFinishButtonTapped() {
         guard let name = meetingNameField.text, !name.isEmpty,
               let description = meetingDescriptionField.text, let meetingImage = profileImageButton.imageView?.image else {
-            // Handle the error, perhaps show an alert to the user
+            
             return
         }
         
         guard let imageData = meetingImage.jpegData(compressionQuality: 0.8) else {
-            // Handle the error, perhaps show another alert to the user
+            
             return
         }
         
