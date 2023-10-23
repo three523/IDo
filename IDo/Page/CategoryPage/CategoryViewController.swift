@@ -5,46 +5,51 @@
 //  Created by Junyoung_Hong on 2023/10/11.
 //
 
+import SnapKit
 import UIKit
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: UICollectionViewController {
     let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
     let categoryImage = UIImage(systemName: "pencil.circle")
+
+    init() {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 120, height: 150)
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
+        super.init(collectionViewLayout: layout)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
+        collectionView.register(CategoryCollectionCell.self, forCellWithReuseIdentifier: "Cell")
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return categoryData.count
     }
 
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CategoryCell
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as? CategoryCollectionCell else {
+            fatalError()
+        }
         cell.label.text = categoryData[indexPath.row]
         cell.categoryImageView.image = categoryImage
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60
-    }
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedCategory = categoryData[indexPath.row]
 
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 선택한 셀의 인덱스에 따라 다른 화면으로 전환
-        switch indexPath.row {
-        case 0 ... 9:
-            let selectedCategory = categoryData[indexPath.row]
+        let meetingVC = MeetingViewController()
+        TemporaryManager.shared.categoryData = selectedCategory
 
-            let exampleVC = MeetingViewController()
-            TemporaryManager.shared.categoryData = selectedCategory
-            
-
-            navigationController?.pushViewController(exampleVC, animated: true)
-        default:
-            break
-        }
+        navigationController?.pushViewController(meetingVC, animated: true)
     }
 }
