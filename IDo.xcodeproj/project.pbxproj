@@ -74,6 +74,8 @@
 		18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CE9C2C2AD8EDAD00C921D5 /* Category.swift */; };
 		18DCD1A52AE5FB4300FEE070 /* SignUpProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DCD1A42AE5FB4300FEE070 /* SignUpProfileViewController.swift */; };
 		18DCD1A92AE61E9F00FEE070 /* LoginInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DCD1A82AE61E9F00FEE070 /* LoginInfo.swift */; };
+		7B6D8C632ADFD6CA00FF2194 /* MyProfileViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */; };
+		7B6D8C652AE0D0B100FF2194 /* HomeViewcell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6D8C642AE0D0B100FF2194 /* HomeViewcell.swift */; };
 		7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */; };
 		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
 		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
@@ -153,6 +155,8 @@
 		18CE9C2C2AD8EDAD00C921D5 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		18DCD1A42AE5FB4300FEE070 /* SignUpProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpProfileViewController.swift; sourceTree = "<group>"; };
 		18DCD1A82AE61E9F00FEE070 /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
+		7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewCell.swift; sourceTree = "<group>"; };
+		7B6D8C642AE0D0B100FF2194 /* HomeViewcell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewcell.swift; sourceTree = "<group>"; };
 		7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishButton.swift; sourceTree = "<group>"; };
 		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
 		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
@@ -245,6 +249,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
+				7FE072A52ADFA30A00966916 /* APIKey.swift */,
 				E76A3FC52AE61526005751AD /* APIKey.swift */,
 			);
 			path = IDo;
@@ -254,6 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				10C265B52AD55BBF002BA40A /* HomeViewController.swift */,
+				7B6D8C642AE0D0B100FF2194 /* HomeViewcell.swift */,
 			);
 			path = HomePage;
 			sourceTree = "<group>";
@@ -281,6 +287,7 @@
 			isa = PBXGroup;
 			children = (
 				10CBA03D2AD6466400F1DA37 /* MyProfileViewController.swift */,
+				7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */,
 			);
 			path = MyProfilePage;
 			sourceTree = "<group>";
@@ -588,6 +595,7 @@
 				18CCC1752ADD00D7000D092C /* EmptyCountTableViewCell.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
+				7B6D8C652AE0D0B100FF2194 /* HomeViewcell.swift in Sources */,
 				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
 				18CE9C252AD8EC2C00C921D5 /* IDoUser.swift in Sources */,
 				E76A3FC82AE6159A005751AD /* CategoryCollectionCell.swift in Sources */,
@@ -627,6 +635,7 @@
 				7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */,
 				7FE072A42ADF82E900966916 /* ImageCache.swift in Sources */,
 				18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */,
+				7B6D8C632ADFD6CA00FF2194 /* MyProfileViewCell.swift in Sources */,
 				18CCC1782ADD00D7000D092C /* CommentStackView.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA04C2AD666F700F1DA37 /* NoticeBoardView.swift in Sources */,
