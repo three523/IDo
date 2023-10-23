@@ -13,7 +13,7 @@ protocol RemoveDelegate: AnyObject {
 
 class CreateNoticeBoardViewController: UIViewController {
     
-    var count = 10
+    var selectedImages: [UIImage] = []
     
     private let createNoticeBoardView = CreateNoticeBoardView()
     private let firebaseManager = FirebaseManager()
@@ -27,6 +27,17 @@ class CreateNoticeBoardViewController: UIViewController {
     private var editingContentText: String?
     
     private var editingMemoIndex: Int?
+    
+    private let club: Club
+    
+    init(club: Club) {
+        self.club = club
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         view = createNoticeBoardView
@@ -109,22 +120,20 @@ private extension CreateNoticeBoardViewController {
     // 새로운 메모 작성
     @objc func finishButtonTappedNew() {
         
-        navigationController?.popViewController(animated: true)
-        
         if isTitleTextViewEdited && isContentTextViewEdited {
             
             guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
             guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
             // 메모 추가 코드 필요
-            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText)
+            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id)
         }
+        
+        navigationController?.popViewController(animated: true)
     }
     
     // 메모 내용 수정
     @objc func finishButtonTappedEdit() {
-        
-        navigationController?.popViewController(animated: true)
         
         if let updateTitle = createNoticeBoardView.titleTextView.text, !updateTitle.isEmpty,
            let updateContent = createNoticeBoardView.contentTextView.text, !updateContent.isEmpty,
@@ -139,6 +148,7 @@ private extension CreateNoticeBoardViewController {
         
         // 수정 모드 종료
         isEditingMode = false
+        navigationController?.popViewController(animated: true)
     }
 }
 
@@ -235,9 +245,13 @@ private extension CreateNoticeBoardViewController {
 extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
-            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-                cell.createNoticeBoardImagePicker.galleryImageView.image = image
-            }
+//            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
+//                cell.createNoticeBoardImagePicker.galleryImageView.image = image
+//            }
+            selectedImages.append(image)
+            // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
+            createNoticeBoardView.galleryCollectionView.reloadData()
+            
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -246,13 +260,14 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return count
+        return selectedImages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
-        cell.indexPath = indexPath
+        cell.createNoticeBoardImagePicker.galleryImageView.image = selectedImages[indexPath.row]
         cell.removeCellDelegate = self
+        cell.indexPath = indexPath
         return cell
     }
     
@@ -287,7 +302,7 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            self.count -= 1
+            //self.selectedImages.count -= 1
             self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { (_) in
             self.createNoticeBoardView.galleryCollectionView.reloadData()

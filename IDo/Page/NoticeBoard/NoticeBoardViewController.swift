@@ -13,6 +13,17 @@ class NoticeBoardViewController: UIViewController {
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
     private let firebaseManager = FirebaseManager()
     
+    private let club: Club
+    
+    init(club: Club) {
+        self.club = club
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func loadView() {
         view = noticeBoardView
     }
@@ -26,15 +37,16 @@ class NoticeBoardViewController: UIViewController {
         
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
+        firebaseManager.readNoticeBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         firebaseManager.delegate = self
-        firebaseManager.readNoticeBoard()
+//        firebaseManager.readNoticeBoard()
         
-        noticeBoardView.noticeBoardTableView.reloadData()
+//        noticeBoardView.noticeBoardTableView.reloadData()
     }
 
 }
@@ -63,7 +75,7 @@ private extension NoticeBoardViewController {
     
     // 메모 생성 페이지 이동
     @objc func moveCreateVC() {
-        let createNoticeBoardVC = CreateNoticeBoardViewController()
+        let createNoticeBoardVC = CreateNoticeBoardViewController(club: club)
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
 }
@@ -71,15 +83,15 @@ private extension NoticeBoardViewController {
 extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return FirebaseManager.noticeBoards.count
+        return firebaseManager.noticeBoards.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NoticeBoardTableViewCell.identifier, for: indexPath) as? NoticeBoardTableViewCell else { return UITableViewCell() }
-        cell.titleLabel.text = FirebaseManager.noticeBoards[indexPath.row].title
-        cell.contentLabel.text = FirebaseManager.noticeBoards[indexPath.row].content
-        cell.timeLabel.text = FirebaseManager.noticeBoards[indexPath.row].createDate.diffrenceDate ?? FirebaseManager.noticeBoards[indexPath.row].createDate.dateToString
-        cell.nameLabel.text = FirebaseManager.noticeBoards[indexPath.row].rootUser.nickName
+        cell.titleLabel.text = firebaseManager.noticeBoards[indexPath.row].title
+        cell.contentLabel.text = firebaseManager.noticeBoards[indexPath.row].content
+        cell.timeLabel.text = firebaseManager.noticeBoards[indexPath.row].createDate.diffrenceDate ?? firebaseManager.noticeBoards[indexPath.row].createDate.dateToString
+        cell.nameLabel.text = firebaseManager.noticeBoards[indexPath.row].rootUser.nickName
         return cell
     }
     

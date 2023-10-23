@@ -11,9 +11,9 @@ struct NoticeBoard: Codable {
     let id: String
     let rootUser: UserSummary
     let createDate: Date
-    //let clubID: String
+    let clubID: String
     var title: String
     var content: String
-    //var imageList: [String]
-    //var commentList: [Comment]?
+    var imageList: [String]
+    var commentList: [Comment]?
 }
