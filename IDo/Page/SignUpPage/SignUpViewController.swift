@@ -86,7 +86,7 @@ private extension SignUpViewController {
     }
     func setupButton() {
         nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
-        backButton.addTarget(self, action: #selector(clicikBackButton), for: <#T##UIControl.Event#>)
+        backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
     }
     @objc func clickNextButton() {
         guard let email = emailTextField.text,
@@ -95,5 +95,8 @@ private extension SignUpViewController {
         loginInfo.password = password
         let categoryVC = CategorySelectViewController(loginInfo: loginInfo)
         navigationController?.pushViewController(categoryVC, animated: true)
+    }
+    @objc func clickBackButton() {
+        dismiss(animated: true)
     }
 }
