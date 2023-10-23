@@ -5,10 +5,10 @@
 //  Created by Junyoung_Hong on 2023/10/19.
 //
 
-import Foundation
 import FirebaseDatabase
 import FirebaseStorage
-
+import Foundation
+import UIKit
 
 protocol FirebaseManagerDelegate: AnyObject {
     func reloadData()
@@ -19,12 +19,12 @@ protocol FirebaseManagerDelegate: AnyObject {
 // image URL 업로드
 
 class FirebaseManager {
-    
     weak var delegate: FirebaseManagerDelegate?
 
     var noticeBoards: [NoticeBoard] = []
     
     // MARK: - 데이터 저장
+
     func saveNoticeBoard(noticeBoard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
         let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.id)
         
@@ -61,6 +61,7 @@ class FirebaseManager {
     }
     
     // MARK: - 데이터 생성
+
     // 임시 작성 유저 정보
     let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
 
@@ -71,19 +72,19 @@ class FirebaseManager {
 
         let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: [], commentCount: "0")
         
-        saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
+        self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
             if success {
 //                FirebaseManager.noticeBoards.insert(newNoticeBoard, at: 0)
                 self.delegate?.reloadData()
             }
         }
     }
-    
     // MARK: - 데이터 읽기
+
     func readNoticeBoard() {
         let ref = Database.database().reference().child("noticeBoards")
         
-        ref.observe(.value, with: { (snapshot) in
+        ref.observe(.value, with: { snapshot in
             var newNoticeBoards: [NoticeBoard] = []
             
             guard let value = snapshot.value as? [String: Any] else { return }
@@ -99,8 +100,8 @@ class FirebaseManager {
                    let content = itemDict["content"] as? String,
                    let createDateStr = itemDict["createDate"] as? String,
                    let createDate = createDateStr.toDate,
-                   let commentCount = itemDict["commentCount"] as? String {
-                    
+                   let commentCount = itemDict["commentCount"] as? String
+                {
                     let profileImageString = rootUserDict["profileImage"] as? String
                     
                     let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
@@ -120,13 +121,14 @@ class FirebaseManager {
     }
 
     // MARK: - 데이터 업데이트
+
     func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String) {
-        if index >= 0 && index < self.noticeBoards.count {
+        if index >= 0, index < self.noticeBoards.count {
             var updatedNoticeBoard = self.noticeBoards[index]
             updatedNoticeBoard.title = newTitle
             updatedNoticeBoard.content = newContent
             
-            saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
+            self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                 if success {
                     self.noticeBoards[index] = updatedNoticeBoard
                     self.delegate?.reloadData()
@@ -136,8 +138,9 @@ class FirebaseManager {
     }
     
     // MARK: - 데이터 삭제
+
     func deleteNoticeBoard(at index: Int, completion: ((Bool) -> Void)? = nil) {
-        if index >= 0 && index < self.noticeBoards.count {
+        if index >= 0, index < self.noticeBoards.count {
             let noticeBoardID = self.noticeBoards[index].id
             let ref = Database.database().reference().child("noticeBoards").child(noticeBoardID)
             
@@ -152,13 +155,14 @@ class FirebaseManager {
                     completion?(true)
                 }
             }
-        } 
+        }
         else {
             completion?(false)
         }
     }
     
     // MARK: - 이미지 업로드 & 다운로드
+
     func uploadImages(_ images: [UIImage], completion: @escaping ([String]) -> Void) {
         let storageRef = Storage.storage().reference().child("images")
         var imageURLs: [String] = []
@@ -171,14 +175,14 @@ class FirebaseManager {
             let ref = storageRef.child(imageName)
             
             if let uploadData = image.jpegData(compressionQuality: 0.5) {
-                ref.putData(uploadData, metadata: nil) { (metadata, error) in
+                ref.putData(uploadData, metadata: nil) { _, error in
                     if error != nil {
                         print("Failed to upload image:", error!)
                         dispatchGroup.leave()
                         return
                     }
                     
-                    ref.downloadURL { (url, error) in
+                    ref.downloadURL { url, _ in
                         if let imageUrl = url?.absoluteString {
                             imageURLs.append(imageUrl)
                         }
