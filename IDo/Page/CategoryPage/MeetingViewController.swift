@@ -20,7 +20,7 @@ class MeetingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadDataFromFirebase()
+//        loadDataFromFirebase()
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -35,6 +35,12 @@ class MeetingViewController: UIViewController {
               }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadDataFromFirebase()
+    }
+
+
     
     private func createTitleLabel(with data: String) -> UILabel {
         let titleLabel = UILabel()
@@ -52,34 +58,32 @@ class MeetingViewController: UIViewController {
         navigationItem.titleView = titleLabel
     }
     
-func loadDataFromFirebase() {
-    guard let category = TemporaryManager.shared.categoryData else { return }
-    
-    let ref = Database.database().reference().child(category).child("meetings")
-    
-        ref.observe(.value) { [weak self] (snapshot) in
+    func loadDataFromFirebase() {
+        guard let category = TemporaryManager.shared.categoryData else { return }
+        
+        let ref = Database.database().reference().child(category).child("meetings")
+        
+        ref.observe(.value) { [weak self] snapshot in
             guard let strongSelf = self else { return }
             
             var newTitles: [String] = []
             var newDates: [String] = []
             var newImageUrls: [String] = []
+            strongSelf.clubList.removeAll()
             
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
-                   let dict = childSnapshot.value as? [String: Any],
-                   let id = dict["id"] as? String,
-                   let title = dict["title"] as? String,
-                   let description = dict["description"] as? String,
-                   let imageUrl = dict["imageUrl"] as? String
+                   let meetingData = childSnapshot.value as? [String: Any],
+                   let title = meetingData["title"] as? String,
+                   let description = meetingData["description"] as? String,
+                   let imageUrlString = meetingData["imageUrl"] as? String
                 {
-                    
-                    //MARK: 추가한 부분
-                    let club = Club(id: id, title: title, imageURL: imageUrl, description: description)
+                    let club = Club(id: childSnapshot.key, title: title, imageURL: imageUrlString, description: description)
                     strongSelf.clubList.append(club)
                     
                     newTitles.append(title)
                     newDates.append(description)
-                    newImageUrls.append(imageUrl)
+                    newImageUrls.append(imageUrlString)
                 }
             }
             
@@ -88,8 +92,8 @@ func loadDataFromFirebase() {
             TemporaryManager.shared.meetingImageUrls = newImageUrls
             strongSelf.tableView.reloadData()
         }
-
     }
+
     
     func setupTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
