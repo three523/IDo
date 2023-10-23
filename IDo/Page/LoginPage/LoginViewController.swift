@@ -139,10 +139,12 @@ private extension LoginViewController {
     
     // MARK: - Firebase 로그인
     private func loginFirebase(email: String, password: String) {
+        print(email, password)
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             // Error(등록 실패)
             if let e = error {
                 print(e.localizedDescription)
+                return
             }
             // Success(등록 성공)
             else {

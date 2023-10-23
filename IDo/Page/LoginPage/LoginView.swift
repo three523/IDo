@@ -71,7 +71,7 @@ private extension LoginView {
     
     // noticeBoardTableView를 SubView에 추가
     func addSubView() {
-        addSubview(kakaoLoginButton)
+//        addSubview(kakaoLoginButton)
         addSubview(emailTextField)
         addSubview(passwordTextField)
         addSubview(loginButton)
@@ -80,12 +80,12 @@ private extension LoginView {
     
     // 오토레이아웃 설정
     func autoLayout() {
-        kakaoLoginButton.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(300)
-            make.height.equalTo(45)
-        }
+//        kakaoLoginButton.snp.makeConstraints { make in
+//            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+//            make.centerX.equalToSuperview()
+//            make.width.equalTo(300)
+//            make.height.equalTo(45)
+//        }
         emailTextField.snp.makeConstraints { make in
             make.centerY.equalTo(safeAreaLayoutGuide)
             make.left.right.equalToSuperview().inset(Constant.margin3)

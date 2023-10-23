@@ -9,9 +9,6 @@ import UIKit
 
 final class CategorySelectViewController: UIViewController {
     
-    private let email: String
-    private let password: String
-    private let loginInfo: LoginInfo
     private let selectedCountLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
@@ -39,6 +36,8 @@ final class CategorySelectViewController: UIViewController {
         return collectionView
     }()
     private let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
+    private let email: String
+    private let password: String
     private var selectedCategorys: [String] = [] {
         didSet {
             selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다"
@@ -46,10 +45,10 @@ final class CategorySelectViewController: UIViewController {
         }
     }
     
-    init(loginInfo: LoginInfo) {
-        self.email = loginInfo.email
-        self.password = loginInfo.password
-        self.loginInfo = loginInfo
+    
+    init(email: String, password: String) {
+        self.email = email
+        self.password = password
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -101,7 +100,7 @@ private extension CategorySelectViewController {
     }
     
     @objc func nextButtonClcik() {
-        let vc = SignUpProfileViewController(loginInfo: loginInfo)
+        let vc = SignUpProfileViewController(email: email, password: password, selectedCategorys: selectedCategorys)
         navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -129,6 +128,5 @@ extension CategorySelectViewController: UICollectionViewDelegate, UICollectionVi
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return }
         let selectedItems = collectionView.indexPathsForSelectedItems ?? []
         selectedCategorys = selectedItems.compactMap({ categoryData[$0.row] })
-        loginInfo.myHobbys = selectedCategorys
     }
 }

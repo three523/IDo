@@ -20,21 +20,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
-        do {
-            try Auth.auth().signOut()
-        } catch let error {
-            print(error.localizedDescription)
-        }
 
+//        try? Auth.auth().signOut()
         if Auth.auth().currentUser != nil {
-            print(Auth.auth().currentUser?.uid)
             window.rootViewController = TabBarController()
         } else {
             window.rootViewController = LoginViewController()
-//            window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
         }
 
-//        window.rootViewController = mainVC
         window.backgroundColor = .white
 
         // 카카오 로그인 토큰이 있는지 여부 확인

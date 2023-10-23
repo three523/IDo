@@ -39,16 +39,11 @@ final class SignUpViewController: UIViewController {
         button.layer.cornerRadius = 5
         return button
     }()
-    private let loginInfo = LoginInfo()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         // Do any additional setup after loading the view.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
     }
 
 }
@@ -91,9 +86,7 @@ private extension SignUpViewController {
     @objc func clickNextButton() {
         guard let email = emailTextField.text,
         let password = passwordTextField.text else { return }
-        loginInfo.email = email
-        loginInfo.password = password
-        let categoryVC = CategorySelectViewController(loginInfo: loginInfo)
+        let categoryVC = CategorySelectViewController(email: email, password: password)
         navigationController?.pushViewController(categoryVC, animated: true)
     }
     @objc func clickBackButton() {

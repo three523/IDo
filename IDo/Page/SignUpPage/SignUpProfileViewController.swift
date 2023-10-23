@@ -15,7 +15,6 @@ class SignUpProfileViewController: UIViewController {
     private let email: String
     private let password: String
     private let selectedCategorys: [String]
-    private let loginInfo: LoginInfo
     private var user: IDoUser?
     private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
     private let imagePickerViewController: UIImagePickerController = UIImagePickerController()
@@ -44,11 +43,10 @@ class SignUpProfileViewController: UIViewController {
         }
     }
     
-    init(loginInfo: LoginInfo) {
-        self.email = loginInfo.email
-        self.password = loginInfo.password
-        self.selectedCategorys = loginInfo.myHobbys
-        self.loginInfo = loginInfo
+    init(email: String, password: String, selectedCategorys: [String]) {
+        self.email = email
+        self.password = password
+        self.selectedCategorys = selectedCategorys
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -116,7 +114,7 @@ private extension SignUpProfileViewController {
         signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
     }
     @objc func signUp() {
-        Auth.auth().createUser(withEmail: loginInfo.email, password: loginInfo.password) { authDataResult, error in
+        Auth.auth().createUser(withEmail: email, password: password) { authDataResult, error in
             if let error {
                 print(error.localizedDescription)
                 return
@@ -125,7 +123,6 @@ private extension SignUpProfileViewController {
             let uid = authDataResult.user.uid
             var user = IDoUser(id: uid, nickName: self.nickName, hobbyList: self.selectedCategorys)
             self.fbUserDatabaseManager.addData(data: user)
-            self.loginInfo.idoUser = user
             self.firebaseLogin()
             self.imageUpload(uid: uid) { result in
                 switch result {
@@ -146,7 +143,6 @@ private extension SignUpProfileViewController {
                 return
             }
             (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(TabBarController(), animated: true)
-            
         }
     }
     
