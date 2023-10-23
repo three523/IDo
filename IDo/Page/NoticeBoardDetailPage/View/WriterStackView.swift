@@ -16,7 +16,7 @@ final class WriterStackView: UIStackView {
         stackView.distribution = .fill
         return stackView
     }()
-    private let writerImageView: BasicImageView = {
+    let writerImageView: BasicImageView = {
         let imageView = BasicImageView(image: UIImage(systemName: "person.fill"))
         imageView.backgroundColor = UIColor(color: .contentPrimary)
         imageView.contentMargin = 4

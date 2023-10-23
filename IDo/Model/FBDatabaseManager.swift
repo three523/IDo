@@ -33,9 +33,13 @@ class FBDatabaseManager<T: Codable & Identifier> {
         }
     }
     
-    func addData(data: T) {
+    func appendData(data: T) {
         ref.child(data.id).setValue(data.dictionary)
         modelList.append(data)
+    }
+    
+    func setData(data: T) {
+        model = data
     }
     
     func readDatas(completion: @escaping (Result<[T],Error>)->Void = {_ in}) {
@@ -115,7 +119,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
     func updateModel(data: T, completion: @escaping (isDatabaseActionComplete) -> Void = {_ in}) {
         guard var model else { return }
         self.model = data
-        ref.setValue([data.id: data.dictionary]) { error, _ in
+        ref.updateChildValues([data.id: data.dictionary]) { error, _ in
             if let error {
                 print(error.localizedDescription)
                 completion(false)
@@ -151,7 +155,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
         return data
     }
     
-    private func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
+    func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
         let decoder = JSONDecoder()
         guard let data = try? JSONSerialization.data(withJSONObject: value) else { return nil }
         return try? decoder.decode(T.self, from: data)

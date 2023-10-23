@@ -7,9 +7,14 @@
 
 import Foundation
 import FirebaseDatabase
+import FirebaseStorage
+import UIKit
 
 class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     let noticeBoardRef: DatabaseReference
+    let storage = Storage.storage().reference()
+    var currentIDoUser: IDoUser?
+    var profileUpdate: ()->Void = {}
 
     init(refPath: [String], noticeBoard: NoticeBoard) {
         self.noticeBoardRef = Database.database().reference().child("noticeBoards").child("\(noticeBoard.id)")
@@ -46,6 +51,39 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             if let error {
                 print(error.localizedDescription)
             }
+        }
+    }
+    
+    func getMyProfileImage(uid: String, completion: @escaping (UIImage?)->Void ) {
+        let myProfileRef = Database.database().reference().child("Users").child(uid)
+        myProfileRef.getData { error, dataSnapShot in
+            if let error {
+                print(error.localizedDescription)
+            }
+            guard let value = dataSnapShot?.value,
+                let idoUser: IDoUser = self.decodingSingleDataSnapshot(value: value) else { return }
+            self.currentIDoUser = idoUser
+            self.getUserImage(referencePath: idoUser.profileImage) { profileImage in
+                completion(profileImage)
+            }
+        }
+    }
+    
+    func getUserImage(referencePath: String?, completion: @escaping(UIImage?) -> Void) {
+        guard let referencePath else { return }
+        let imageRef = storage.child(referencePath)
+        imageRef.downloadURL { url, error in
+            if let error {
+                print(error)
+            }
+            guard let url else { return }
+            URLSession.shared.dataTask(with: url) { data, _, error in
+                if let error {
+                    print(error.localizedDescription)
+                }
+                guard let data else { return }
+                completion(UIImage(data: data))
+            }.resume()
         }
     }
 }
