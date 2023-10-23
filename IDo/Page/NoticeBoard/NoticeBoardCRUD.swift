@@ -31,7 +31,7 @@ class FirebaseManager {
         // UserSummary
         let userSummaryDict: [String: Any?] = [
             "id": noticeBoard.rootUser.id,
-            "profileImage": noticeBoard.rootUser.profileImage?.base64EncodedString(),
+            "profileImage": noticeBoard.rootUser.profileImageURL,
             "nickName": noticeBoard.rootUser.nickName,
             "description": noticeBoard.rootUser.description
         ]
@@ -61,7 +61,7 @@ class FirebaseManager {
     
     // MARK: - 데이터 생성
     // 임시 작성 유저 정보
-    let currentUser = UserSummary(id: "currentUser", profileImage: nil, nickName: "파이브 아이즈", description: "This is the current user.")
+    let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
 
     func createNoticeBoard(title: String, content: String, clubID: String) {
         let ref = Database.database().reference().child("noticeBoards")
@@ -97,14 +97,11 @@ class FirebaseManager {
                    let title = itemDict["title"] as? String,
                    let content = itemDict["content"] as? String,
                    let createDateStr = itemDict["createDate"] as? String,
-                   let createDate = createDateStr.toDate {
+                   let createDate = createDateStr.toDate,
+                   let profileImageString = rootUserDict["profileImage"] as? String {
                     
-                    var profileImageData: Data? = nil
-                    if let profileImageString = rootUserDict["profileImage"] as? String {
-                        profileImageData = Data(base64Encoded: profileImageString)
-                    }
                     
-                    let rootUser = UserSummary(id: rootUserId, profileImage: profileImageData, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
+                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
                     
                     let imageList = itemDict["imageList"] as? [String] ?? []
                     

@@ -9,7 +9,7 @@ import Foundation
 
 struct UserSummary: Codable, Identifier {
     let id: String
-    var profileImage: String?
+    var profileImageURL: String?
     var nickName: String
     var description: String?
 }
