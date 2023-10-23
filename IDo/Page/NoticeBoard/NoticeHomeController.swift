@@ -5,17 +5,19 @@
 //  Created by t2023-m0053 on 2023/10/12.
 //
 
+import FirebaseDatabase
 import SnapKit
 import UIKit
-import FirebaseDatabase
+import FirebaseAuth
 
 class NoticeHomeController: UIViewController {
-    
     var meetingId: String?
     var categoryData: String?
     var meetingIndex: Int?
-//    var meetingImageUrls: [String] = []
+    var club: Club
+    let fbUserDatabaseManager: FirebaseUserDatabaseManager
     
+
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
@@ -37,7 +39,17 @@ class NoticeHomeController: UIViewController {
         textLabel.text = "안녕하세요. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다. 설명입니다.설명입니다. "
         return textLabel
     }()
-    
+
+    lazy var signUpButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Sign Up", for: .normal)
+        button.backgroundColor = .blue
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = 10
+        button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
+        return button
+    }()
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.isScrollEnabled = true
@@ -54,15 +66,45 @@ class NoticeHomeController: UIViewController {
         return view
     }()
     
+    init(club: Club, isJoin: Bool, fbUserDatabaseManager: FirebaseUserDatabaseManager) {
+        self.club = club
+        self.fbUserDatabaseManager = fbUserDatabaseManager
+        super.init(nibName: nil, bundle: nil)
+        signUpButton.isHidden = isJoin
+        self.fbUserDatabaseManager.update = { [weak self] in
+            guard let self else { return }
+            guard let myClubList = self.fbUserDatabaseManager.model?.myClubList else { return }
+            self.signUpButton.isHidden = myClubList.contains(where: { $0.id == self.club.id })
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
         loadDataFromFirebase()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fbUserDatabaseManager.readData()
+    }
+    
+    @objc func handleSignUp() {
+        print("Sign Up button tapped!")
+        
+        if fbUserDatabaseManager.model == nil { return }
+        fbUserDatabaseManager.updateAddClub(club: club)
+    }
+
     func setup() {
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
+        
+        view.addSubview(signUpButton)
         
         scrollStackViewContainer.snp.makeConstraints { make in
             make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading)
@@ -76,7 +118,13 @@ class NoticeHomeController: UIViewController {
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.top.equalTo(view.layoutMarginsGuide.snp.top)
-            make.bottom.equalTo(view.layoutMarginsGuide.snp.bottom)
+            make.bottom.equalTo(signUpButton.snp.top).offset(-10)
+        }
+        
+        signUpButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
         }
         
         configureContainerView()
@@ -89,15 +137,19 @@ class NoticeHomeController: UIViewController {
         }
         scrollStackViewContainer.addArrangedSubview(label)
         scrollStackViewContainer.addArrangedSubview(textLabel)
+        
+        signUpButton.snp.makeConstraints { make in
+            make.height.equalTo(50)
+            make.leading.trailing.equalToSuperview().inset(20)
+        }
     }
 
-    
     func loadDataFromFirebase() {
-        guard let category = categoryData else { return }
+        guard let category = TemporaryManager.shared.categoryData else { return }
         
         let ref = Database.database().reference().child(category).child("meetings")
         
-        ref.observe(.value) { [weak self] (snapshot) in
+        ref.observe(.value) { [weak self] snapshot in
             var index = 0
             for child in snapshot.children {
                 if let childSnapshot = child as? DataSnapshot,
@@ -107,19 +159,19 @@ class NoticeHomeController: UIViewController {
                    let imageUrlString = meetingData["imageUrl"] as? String,
                    let imageUrl = URL(string: imageUrlString) {
                     
-                    if index == self?.meetingIndex {
+                    if index == TemporaryManager.shared.meetingIndex {
                         DispatchQueue.main.async {
                             self?.label.text = title
                             self?.textLabel.text = description
                             
-                            // 이미지 캐시 확인
+                    
                             if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
                                 self?.imageView.image = cachedImage
                             } else {
-                                // 이미지 로드
+                                
                                 URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
                                     if let error = error {
-                                        print("Failed to load image: ", error.localizedDescription)
+                                        print("이미지 로딩 실패", error.localizedDescription)
                                         return
                                     }
                                     
@@ -143,7 +195,4 @@ class NoticeHomeController: UIViewController {
         scrollStackViewContainer.addArrangedSubview(label)
         scrollStackViewContainer.addArrangedSubview(textLabel)
     }
-
-
 }
-

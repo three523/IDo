@@ -5,17 +5,35 @@
 //  Created by t2023-m0053 on 2023/10/12.
 //
 
+import FirebaseDatabase
+import FirebaseAuth
 import Pageboy
 import Tabman
 import UIKit
-import FirebaseDatabase
 
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
-    var meetingIndex: Int?
-    var categoryData: String?
 
+
+    private var club: Club
+    private var currentUser: User
+    private var isJoin: Bool
+    private let fbUserDatabaseManager: FirebaseUserDatabaseManager
+    
+    init(club: Club, currentUser: User, isJoin: Bool) {
+        self.club = club
+        self.currentUser = currentUser
+        self.isJoin = isJoin
+        self.fbUserDatabaseManager = FirebaseUserDatabaseManager(refPath: ["Users",currentUser.uid])
+        super.init(nibName: nil, bundle: nil)
+        fbUserDatabaseManager.readData()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -27,9 +45,10 @@ class NoticeMeetingController: TabmanViewController {
             make.trailing.equalTo(view.snp.trailing)
             make.height.equalTo(30)
         }
-        let HomeVC = NoticeHomeController()
-        HomeVC.meetingIndex = meetingIndex
-        HomeVC.categoryData = categoryData
+        
+        let HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager)
+        TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
+        TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 
         let titleVC = NoticeBoardViewController()
 
@@ -41,7 +60,7 @@ class NoticeMeetingController: TabmanViewController {
 
         let bar = TMBar.ButtonBar()
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
-        bar.backgroundColor = UIColor.white
+        bar.backgroundView.style = .flat(color: .white)
 
         addBar(bar, dataSource: self, at: .custom(view: tempView!, layout: nil))
     }
@@ -60,7 +79,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
             let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC)) // 게시글 수정 페이지
             navigationItem.rightBarButtonItem = createButton
         } else {
-            let updateButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
+            let updateButton = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .plain, target: self, action: #selector(moveUpdateVC))
             navigationItem.rightBarButtonItem = updateButton // 모임 수정 페이지
         }
         return viewControllers[index]
@@ -71,10 +90,16 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
 
-//    @objc func moveUpdateVC() {
-//        let updateNoticeBoardVC = UpdateNoticeBoardViewController()
-//        navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
-//    }
+    @objc func moveUpdateVC() {
+        guard let selectedIndex = TemporaryManager.shared.meetingIndex else { return }
+        let updateNoticeBoardVC = MeetingManageViewController()
+        // 데이터 전달
+        updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex]
+        TemporaryManager.shared.meetingDescription = TemporaryManager.shared.meetingDate[selectedIndex]
+        updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
+
+        navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
+    }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {
         // return nil

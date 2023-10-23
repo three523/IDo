@@ -7,13 +7,13 @@
 
 import Foundation
  
-struct User {
+struct IDoUser: Codable, Identifier {
     let id: String
     var profileImage: Data?
     var nickName: String
     var description: String?
-    var hobbyList: [Category]
-    var createClubList: [Club]
-    var myNoticeBoardList: [NoticeBoard]
-    var myCommentList: [Comment]
+    var hobbyList: [Category]?
+    var myClubList: [Club]?
+    var myNoticeBoardList: [NoticeBoard]?
+    var myCommentList: [Comment]?
 }

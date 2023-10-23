@@ -57,7 +57,7 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
         selfInfoDetail.text = "안녕하세요. 이애라입니다."
         selfInfoDetail.textColor = UIColor(named: "ui-text-strong")
-        selfInfoDetail.backgroundColor = UIColor.backgroundSecondary
+        selfInfoDetail.backgroundColor = UIColor(color: .backgroundSecondary)
         selfInfoDetail.layer.cornerRadius = 10
         selfInfoDetail.textContainerInset = UIEdgeInsets(top: 9, left: 8, bottom: 0, right: 9)
     }

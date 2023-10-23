@@ -17,11 +17,11 @@ class CommentUpdateViewController: UIViewController {
         return textView
     }()
     
-    private var comment: CommentTest
+    private var comment: Comment
     
-    var commentUpdate: ((CommentTest)->Void)?
+    var commentUpdate: ((Comment)->Void)?
     
-    init(comment: CommentTest) {
+    init(comment: Comment) {
         self.comment = comment
         super.init(nibName: nil, bundle: nil)
         commentTextView.text = comment.content
