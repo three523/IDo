@@ -13,9 +13,10 @@ protocol RemoveDelegate: AnyObject {
 
 class CreateNoticeBoardViewController: UIViewController {
     
-    var count = 10
+    var selectedImages: [UIImage] = []
     
     private let createNoticeBoardView = CreateNoticeBoardView()
+    private let firebaseManager = FirebaseManager()
     
     private var isTitleTextViewEdited = false
     private var isContentTextViewEdited = false
@@ -26,6 +27,17 @@ class CreateNoticeBoardViewController: UIViewController {
     private var editingContentText: String?
     
     private var editingMemoIndex: Int?
+    
+    private let club: Club
+    
+    init(club: Club) {
+        self.club = club
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func loadView() {
         view = createNoticeBoardView
@@ -53,23 +65,6 @@ class CreateNoticeBoardViewController: UIViewController {
         self.createNoticeBoardView.contentTextView.resignFirstResponder()
     }
     
-}
-
-// MARK: - Alert 관련 extension
-private extension CreateNoticeBoardViewController {
-    func popAlert() {
-        if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor != UIColor(color: .placeholder) {
-            AlertManager.showAlert(on: self, title: "알림", message: "제목을 입력해주세요.")
-        }
-        
-        else if createNoticeBoardView.titleTextView.textColor != UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
-            AlertManager.showAlert(on: self, title: "알림", message: "내용을 입력해주세요.")
-        }
-        
-        else if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder) && createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
-            AlertManager.showAlert(on: self, title: "알림", message: "제목과 내용을 입력해주세요.")
-        }
-    }
 }
 
 // MARK: - NavigationBar 관련 extension
@@ -119,54 +114,41 @@ private extension CreateNoticeBoardViewController {
             self.navigationItem.rightBarButtonItem = finishButton
             self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
+        self.navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
     }
     
     // 새로운 메모 작성
     @objc func finishButtonTappedNew() {
         
         if isTitleTextViewEdited && isContentTextViewEdited {
-            let newTitleText = createNoticeBoardView.titleTextView.text
-            let newContentText = createNoticeBoardView.contentTextView.text
+            
+            guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
+            guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
             // 메모 추가 코드 필요
-            
-            // 제목과 내용이 채워졌을 때
-            if createNoticeBoardView.titleTextView.textColor != UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor != UIColor(color: .placeholder) {
-                
-                navigationController?.popViewController(animated: true)
-            }
-            
-            // 제목과 내용이 채워지지 않았을 때
-            else {
-                popAlert()
-            }
+            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id)
         }
+        
+        navigationController?.popViewController(animated: true)
     }
     
     // 메모 내용 수정
     @objc func finishButtonTappedEdit() {
         
-        if !createNoticeBoardView.titleTextView.text.isEmpty, !createNoticeBoardView.contentTextView.text.isEmpty, let index = editingMemoIndex {
+        if let updateTitle = createNoticeBoardView.titleTextView.text, !updateTitle.isEmpty,
+           let updateContent = createNoticeBoardView.contentTextView.text, !updateContent.isEmpty,
+           let index = editingMemoIndex {
             
             // 해당 인덱스의 메모 수정 코드 필요
+            firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent)
             
             // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
             (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
-            
-            // 제목과 내용이 채워졌을 때
-            if createNoticeBoardView.titleTextView.textColor != UIColor(color: .placeholder), createNoticeBoardView.contentTextView.textColor != UIColor(color: .placeholder) {
-                
-                navigationController?.popViewController(animated: true)
-            }
-            
-            // 제목과 내용이 채워지지 않았을 때
-            else {
-                popAlert()
-            }
         }
         
         // 수정 모드 종료
         isEditingMode = false
+        navigationController?.popViewController(animated: true)
     }
 }
 
@@ -186,28 +168,30 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         }
         
         // 내용 textView
-        else if textView == createNoticeBoardView.contentTextView {
+        if textView == createNoticeBoardView.contentTextView {
             if createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
                 
                 createNoticeBoardView.contentTextView.text = nil
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
             }
         }
-        print(isTitleTextViewEdited)
-        print(isContentTextViewEdited)
     }
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        if !createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && createNoticeBoardView.titleTextView.textColor == UIColor.black {
+        
+        // 제목 textView에 내용이 있는 경우
+        if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0, createNoticeBoardView.titleTextView.textColor == UIColor.black {
             isTitleTextViewEdited = true
         }
         
-        else if !createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && createNoticeBoardView.contentTextView.textColor == UIColor.black{
+        // 내용 textView에 내용이 있는 경우
+        if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0, createNoticeBoardView.contentTextView.textColor == UIColor.black{
             isContentTextViewEdited = true
         }
-        //isTitleTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        //isContentTextViewEdited = !textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        
+        // 제목과 내용이 모두 있으면 "완료" 버튼 활성화
+        self.navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
     }
     
     // 입력 종료 시 호출
@@ -218,7 +202,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
         }
         
-        else if createNoticeBoardView.contentTextView.text.isEmpty {
+        if createNoticeBoardView.contentTextView.text.isEmpty {
             createNoticeBoardView.contentTextView.text =  "내용을 입력하세요."
             createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
         }
@@ -235,7 +219,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             return chagedText.count <= 15
         }
         
-        else if textView == createNoticeBoardView.contentTextView {
+        if textView == createNoticeBoardView.contentTextView {
             createNoticeBoardView.contentCountLabel.text = "(\(chagedText.count)/500)"
             return chagedText.count <= 499
         }
@@ -261,9 +245,13 @@ private extension CreateNoticeBoardViewController {
 extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
-            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-                cell.createNoticeBoardImagePicker.galleryImageView.image = image
-            }
+//            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
+//                cell.createNoticeBoardImagePicker.galleryImageView.image = image
+//            }
+            selectedImages.append(image)
+            // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
+            createNoticeBoardView.galleryCollectionView.reloadData()
+            
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -272,13 +260,14 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return count
+        return selectedImages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
-        cell.indexPath = indexPath
+        cell.createNoticeBoardImagePicker.galleryImageView.image = selectedImages[indexPath.row]
         cell.removeCellDelegate = self
+        cell.indexPath = indexPath
         return cell
     }
     
@@ -313,7 +302,7 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            self.count -= 1
+            //self.selectedImages.count -= 1
             self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { (_) in
             self.createNoticeBoardView.galleryCollectionView.reloadData()

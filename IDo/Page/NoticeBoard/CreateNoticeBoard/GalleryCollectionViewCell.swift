@@ -18,15 +18,6 @@ class GalleryCollectionViewCell: UICollectionViewCell {
     let createNoticeBoardImagePicker = CreateNoticeBoardImagePicker()
     var indexPath: IndexPath!
     
-    // Cell에 UIImageView
-    private(set) lazy var galleryImageView: UIImageView = {
-        var imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.masksToBounds = true
-        imageView.backgroundColor = UIColor.lightGray
-        return imageView
-    }()
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         addSubView()
@@ -40,18 +31,12 @@ class GalleryCollectionViewCell: UICollectionViewCell {
     }
     
     private func addSubView() {
-//        contentView.addSubview(galleryImageView)
         contentView.addSubview(createNoticeBoardImagePicker)
     }
     
     // Cell 객체 autoLayout
     private func autoLayout() {
-        
-//        galleryImageView.snp.makeConstraints { make in
-//            make.width.equalTo(contentView.snp.width)
-//            make.height.equalTo(contentView.snp.height)
-//            make.top.bottom.leading.trailing.equalToSuperview()
-//        }
+
         createNoticeBoardImagePicker.snp.makeConstraints { make in
             make.width.equalTo(contentView.snp.width)
             make.height.equalTo(contentView.snp.height)
