@@ -84,7 +84,8 @@
 		E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */; };
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 		E74C58EF2AD6B1B300C2DEF5 /* MeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */; };
-		E74EEEB92AE0EBFB00904029 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74EEEB82AE0EBFB00904029 /* APIKey.swift */; };
+		E76A3FC62AE61526005751AD /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC52AE61526005751AD /* APIKey.swift */; };
+		E76A3FC82AE6159A005751AD /* CategoryCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,7 +157,8 @@
 		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingViewController.swift; sourceTree = "<group>"; };
-		E74EEEB82AE0EBFB00904029 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
+		E76A3FC52AE61526005751AD /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
+		E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,7 +235,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				E74EEEB82AE0EBFB00904029 /* APIKey.swift */,
+				E76A3FC52AE61526005751AD /* APIKey.swift */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -444,6 +446,7 @@
 			isa = PBXGroup;
 			children = (
 				E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */,
+				E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -555,6 +558,7 @@
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
 				7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */,
 				18CE9C252AD8EC2C00C921D5 /* IDoUser.swift in Sources */,
+				E76A3FC82AE6159A005751AD /* CategoryCollectionCell.swift in Sources */,
 				7F671C702AD7F6A10095BD7B /* FinishButton.swift in Sources */,
 				10CBA03A2AD6464B00F1DA37 /* CategoryViewController.swift in Sources */,
 				18CE9C2D2AD8EDAD00C921D5 /* Category.swift in Sources */,
@@ -577,6 +581,7 @@
 				18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */,
 				18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
+				E76A3FC62AE61526005751AD /* APIKey.swift in Sources */,
 				10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */,
@@ -592,7 +597,6 @@
 				10CBA0442AD646CE00F1DA37 /* Margin.swift in Sources */,
 				18CCC1772ADD00D7000D092C /* HorizentalImageTitleView.swift in Sources */,
 				18CCC1812ADD03C4000D092C /* Reusable.swift in Sources */,
-				E74EEEB92AE0EBFB00904029 /* APIKey.swift in Sources */,
 				10CBA0532AD6713C00F1DA37 /* CreateNoticeBoardView.swift in Sources */,
 				18CCC1762ADD00D7000D092C /* CommentTableViewCell.swift in Sources */,
 				18CCC17A2ADD00D7000D092C /* NoticeBoardDetailView.swift in Sources */,
