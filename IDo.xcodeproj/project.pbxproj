@@ -91,8 +91,8 @@
 		E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */; };
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 		E74C58EF2AD6B1B300C2DEF5 /* MeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */; };
-		E76A3FC62AE61526005751AD /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC52AE61526005751AD /* APIKey.swift */; };
 		E76A3FC82AE6159A005751AD /* CategoryCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */; };
+		E79223C62AE656AA00867FAF /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79223C52AE656AA00867FAF /* APIKey.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -171,8 +171,8 @@
 		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingViewController.swift; sourceTree = "<group>"; };
-		E76A3FC52AE61526005751AD /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionCell.swift; sourceTree = "<group>"; };
+		E79223C52AE656AA00867FAF /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -249,8 +249,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				7FE072A52ADFA30A00966916 /* APIKey.swift */,
-				E76A3FC52AE61526005751AD /* APIKey.swift */,
+				E79223C52AE656AA00867FAF /* APIKey.swift */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -622,13 +621,11 @@
 				18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */,
 				18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
-				E76A3FC62AE61526005751AD /* APIKey.swift in Sources */,
 				10B1747F2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift in Sources */,
 				10CBA03C2AD6465600F1DA37 /* NoticeViewController.swift in Sources */,
 				E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */,
 				18DCD1A52AE5FB4300FEE070 /* SignUpProfileViewController.swift in Sources */,
 				18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */,
-				7FE072A62ADFA30A00966916 /* APIKey.swift in Sources */,
 				18B230AD2AE296DA00E51270 /* CategoryCollectionViewCell.swift in Sources */,
 				18A6A70E2AE269FB0086B37D /* CategorySelectViewController.swift in Sources */,
 				E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */,
@@ -636,6 +633,7 @@
 				7FE072A42ADF82E900966916 /* ImageCache.swift in Sources */,
 				18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */,
 				7B6D8C632ADFD6CA00FF2194 /* MyProfileViewCell.swift in Sources */,
+				E79223C62AE656AA00867FAF /* APIKey.swift in Sources */,
 				18CCC1782ADD00D7000D092C /* CommentStackView.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA04C2AD666F700F1DA37 /* NoticeBoardView.swift in Sources */,

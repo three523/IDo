@@ -5,10 +5,10 @@
 //  Created by Junyoung_Hong on 2023/10/10.
 //
 
+import FirebaseAuth
 import KakaoSDKAuth
 import KakaoSDKCommon
 import KakaoSDKUser
-import FirebaseAuth
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -46,10 +46,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //                }
 //                else {
 //                    // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-////                    self.getUserInfo()
-////                    let mainVC = TabBarController()
-////                    window.rootViewController = mainVC
-////                    window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
+        ////                    self.getUserInfo()
+        ////                    let mainVC = TabBarController()
+        ////                    window.rootViewController = mainVC
+        ////                    window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
 //
 //                }
 //            }
@@ -63,19 +63,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
         self.window = window
     }
-    
+
     private func getUserInfo() {
-        UserApi.shared.me() {(user, error) in
+        UserApi.shared.me { user, error in
             if let error = error {
                 print(error)
-            }
-            else {
+            } else {
                 print("me() success.")
-                
-                //do something
+
+                // do something
                 _ = user
                 if let email = user?.kakaoAccount?.email,
-                   let id = user?.id{
+                   let id = user?.id
+                {
                     let password = String(id)
                     Auth.auth().signIn(withEmail: email, password: password)
                 }

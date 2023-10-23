@@ -5,11 +5,10 @@
 //  Created by Junyoung_Hong on 2023/10/16.
 //
 
-import UIKit
 import SnapKit
+import UIKit
 
 class LoginView: UIView {
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -18,6 +17,7 @@ class LoginView: UIView {
         autoLayout()
     }
     
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -28,6 +28,7 @@ class LoginView: UIView {
         button.setImage(UIImage(named: "kakao_login_large_wide"), for: .normal)
         return button
     }()
+
     private(set) var emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "이메일을 입력해주세요"
@@ -36,14 +37,17 @@ class LoginView: UIView {
         textField.borderStyle = .roundedRect
         return textField
     }()
+
     private(set) var passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "비밀번호를 입력해주세요"
         textField.font = .bodyFont(.medium, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
         textField.borderStyle = .roundedRect
+        textField.isSecureTextEntry = true 
         return textField
     }()
+
     private(set) var loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("로그인", for: .normal)
@@ -52,6 +56,7 @@ class LoginView: UIView {
         button.layer.cornerRadius = 5
         return button
     }()
+
     private(set) var signUpButton: UIButton = {
         let button = UIButton()
         button.setTitle("회원가입", for: .normal)
@@ -63,7 +68,6 @@ class LoginView: UIView {
 }
 
 private extension LoginView {
-    
     // NoticeBoardView의 기본 UI 설정
     func configureUI() {
         backgroundColor = UIColor.white
