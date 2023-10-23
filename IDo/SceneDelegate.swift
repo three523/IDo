@@ -45,6 +45,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     self.getUserInfo()
                     let mainVC = TabBarController()
                     window.rootViewController = mainVC
+//                    window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
+
                 }
             }
         }
