@@ -35,7 +35,7 @@ class FirebaseManager {
             "rootUser": userSummaryDict,
             "title": noticeBoard.title,
             "content": noticeBoard.content,
-            "createDate": noticeBoard.createDate.timeIntervalSince1970
+            "createDate": noticeBoard.createDate.dateToString
         ]
         
         ref.setValue(noticeBoardDict) { error, _ in
@@ -84,9 +84,8 @@ class FirebaseManager {
                    let rootUserNickName = rootUserDict["nickName"] as? String,
                    let title = itemDict["title"] as? String,
                    let content = itemDict["content"] as? String,
-                   let createDateTimestamp = itemDict["createDate"] as? TimeInterval {
-                    
-                    let createDate = Date(timeIntervalSince1970: createDateTimestamp)
+                   let createDateStr = itemDict["createDate"] as? String,
+                   let createDate = createDateStr.toDate {
                     
                     var profileImageData: Data? = nil
                     if let profileImageString = rootUserDict["profileImage"] as? String {
