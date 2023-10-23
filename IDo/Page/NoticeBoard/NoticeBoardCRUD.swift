@@ -39,11 +39,11 @@ class FirebaseManager {
         // NoticeBoard
         let noticeBoardDict: [String: Any] = [
             "id": noticeBoard.id,
-            "clubID": noticeBoard.clubID,
             "rootUser": userSummaryDict,
+            "createDate": noticeBoard.createDate.dateToString,
+            "clubID": noticeBoard.clubID,
             "title": noticeBoard.title,
             "content": noticeBoard.content,
-            "createDate": noticeBoard.createDate.dateToString,
             "imageList": noticeBoard.imageList
         ]
         
@@ -90,14 +90,14 @@ class FirebaseManager {
             for (_, item) in value {
                 if let itemDict = item as? [String: Any],
                    let id = itemDict["id"] as? String,
-                   let clubID = itemDict["clubID"] as? String,
                    let rootUserDict = itemDict["rootUser"] as? [String: Any],
                    let rootUserId = rootUserDict["id"] as? String,
                    let rootUserNickName = rootUserDict["nickName"] as? String,
-                   let title = itemDict["title"] as? String,
-                   let content = itemDict["content"] as? String,
                    let createDateStr = itemDict["createDate"] as? String,
-                   let createDate = createDateStr.toDate {
+                   let createDate = createDateStr.toDate,
+                   let clubID = itemDict["clubID"] as? String,
+                   let title = itemDict["title"] as? String,
+                   let content = itemDict["content"] as? String {
                     
                     
                     let rootUser = UserSummary(id: rootUserId, profileImageURL: rootUserDict["profileImageURL"] as? String, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
