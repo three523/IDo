@@ -42,8 +42,9 @@ final class CategorySelectViewController: UIViewController {
     private let password: String
     private var selectedCategorys: [String] = [] {
         didSet {
+            print(selectedCategorys)
             if selectedCategorys.count <= 3 {
-                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다" // 3개 이상 됬을 시 출력이 안되게
+                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다"
                 nextButton.isEnabled = !selectedCategorys.isEmpty
             }
         }
@@ -63,7 +64,6 @@ final class CategorySelectViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
-        // Do any additional setup after loading the view.
     }
 }
 
@@ -124,15 +124,23 @@ extension CategorySelectViewController: UICollectionViewDelegate, UICollectionVi
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return }
+
         let selectedItems = collectionView.indexPathsForSelectedItems ?? []
         selectedCategorys = selectedItems.compactMap { categoryData[$0.row] }
     }
 
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return }
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool { // 클릭되고 난 순간
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return false }
         let selectedItems = collectionView.indexPathsForSelectedItems ?? []
         selectedCategorys = selectedItems.compactMap { categoryData[$0.row] }
+        print(selectedCategorys.count)
+        if selectedCategorys.count <= 3 {
+            selectedCategorys.append(categoryData[indexPath.row])
+            return true
+        } else {
+            return false
+        }
     }
 }
