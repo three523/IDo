@@ -31,7 +31,7 @@ class FirebaseManager {
         // UserSummary
         let userSummaryDict: [String: Any?] = [
             "id": noticeBoard.rootUser.id,
-            "profileImage": noticeBoard.rootUser.profileImageURL,
+            "profileImageURL": noticeBoard.rootUser.profileImageURL,
             "nickName": noticeBoard.rootUser.nickName,
             "description": noticeBoard.rootUser.description
         ]
@@ -72,7 +72,7 @@ class FirebaseManager {
         
         saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
             if success {
-//                FirebaseManager.noticeBoards.insert(newNoticeBoard, at: 0)
+                self.noticeBoards.insert(newNoticeBoard, at: 0)
                 self.delegate?.reloadData()
             }
         }
@@ -97,11 +97,10 @@ class FirebaseManager {
                    let title = itemDict["title"] as? String,
                    let content = itemDict["content"] as? String,
                    let createDateStr = itemDict["createDate"] as? String,
-                   let createDate = createDateStr.toDate,
-                   let profileImageString = rootUserDict["profileImage"] as? String {
+                   let createDate = createDateStr.toDate {
                     
                     
-                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
+                    let rootUser = UserSummary(id: rootUserId, profileImageURL: rootUserDict["profileImageURL"] as? String, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
                     
                     let imageList = itemDict["imageList"] as? [String] ?? []
                     
