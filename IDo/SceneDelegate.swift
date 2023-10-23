@@ -5,10 +5,10 @@
 //  Created by Junyoung_Hong on 2023/10/10.
 //
 
+import FirebaseAuth
 import KakaoSDKAuth
 import KakaoSDKCommon
 import KakaoSDKUser
-import FirebaseAuth
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -21,38 +21,44 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
 
-        let mainVC = TabBarController()
+//        try? Auth.auth().signOut()
+        if Auth.auth().currentUser != nil {
+            window.rootViewController = TabBarController()
+        } else {
+            window.rootViewController = LoginViewController()
+        }
 
-        window.rootViewController = mainVC
         window.backgroundColor = .white
 
         // 카카오 로그인 토큰이 있는지 여부 확인
-        if AuthApi.hasToken() {
-            UserApi.shared.accessTokenInfo { _, error in
-                if let error = error {
-                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true {
-                        // 로그인 필요
-                        let mainVC = LoginViewController()
-                        window.rootViewController = mainVC
-                    }
-                    else {
-                        // 기타 에러
-                        print(error.localizedDescription)
-                    }
-                }
-                else {
-                    // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    self.getUserInfo()
-                    let mainVC = TabBarController()
-                    window.rootViewController = mainVC
-                }
-            }
-        }
-        else {
-            // 로그인 필요
-            let mainVC = LoginViewController()
-            window.rootViewController = mainVC
-        }
+//        if AuthApi.hasToken() {
+//            UserApi.shared.accessTokenInfo { _, error in
+//                if let error = error {
+//                    if let sdkError = error as? SdkError, sdkError.isInvalidTokenError() == true {
+//                        // 로그인 필요
+//                        let mainVC = LoginViewController()
+//                        window.rootViewController = mainVC
+//                    }
+//                    else {
+//                        // 기타 에러
+//                        print(error.localizedDescription)
+//                    }
+//                }
+//                else {
+//                    // 토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+        ////                    self.getUserInfo()
+        ////                    let mainVC = TabBarController()
+        ////                    window.rootViewController = mainVC
+        ////                    window.rootViewController = UINavigationController(rootViewController: SignUpViewController())
+//
+//                }
+//            }
+//        }
+//        else {
+//            // 로그인 필요
+//            let mainVC = LoginViewController()
+//            window.rootViewController = mainVC
+//        }
 
         window.makeKeyAndVisible()
         self.window = window
@@ -60,17 +66,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     // 카카오 사용자 정보 가져오기
     private func getUserInfo() {
-        UserApi.shared.me() {(user, error) in
+        UserApi.shared.me { user, error in
             if let error = error {
                 print(error)
-            }
-            else {
+            } else {
                 print("me() success.")
-                
-                //do something
+
+                // do something
                 _ = user
                 if let email = user?.kakaoAccount?.email,
-                   let id = user?.id{
+                   let id = user?.id
+                {
                     let password = String(id)
                     Auth.auth().signIn(withEmail: email, password: password)
                 }

@@ -98,10 +98,10 @@ private extension NoticeBoardDetailViewController {
                                 
                 let cancelAction = UIAlertAction(title: "취소", style: .cancel)
                 let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
-                    self.firebaseManager.dataList.remove(at: indexPath.row)
+                    self.firebaseManager.modelList.remove(at: indexPath.row)
                 }
                 let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
-                    let comment = self.firebaseManager.dataList[indexPath.row]
+                    let comment = self.firebaseManager.modelList[indexPath.row]
                     let vc = CommentUpdateViewController(comment: comment)
                     vc.commentUpdate = { [weak self] comment in
                         guard let self else { return }
@@ -161,7 +161,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         if section == 0 {
             return 0
         } else {
-            return firebaseManager.dataList.isEmpty ? 1 : firebaseManager.dataList.count
+            return firebaseManager.modelList.isEmpty ? 1 : firebaseManager.modelList.count
         }
     }
     
@@ -179,7 +179,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if firebaseManager.dataList.isEmpty {
+        if firebaseManager.modelList.isEmpty {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: EmptyCountTableViewCell.identifier, for: indexPath) as? EmptyCountTableViewCell else { return UITableViewCell() }
             cell.viewState = firebaseManager.viewState
             cell.selectionStyle = .none
@@ -188,7 +188,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell,
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
-        let comment = firebaseManager.dataList[indexPath.row]
+        let comment = firebaseManager.modelList[indexPath.row]
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
         cell.writeInfoView.writerNameLabel.text = comment.writeUser.nickName
@@ -199,10 +199,10 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                             
             let cancelAction = UIAlertAction(title: "취소", style: .cancel)
             let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
-                self.firebaseManager.dataList.remove(at: indexPath.row)
+                self.firebaseManager.modelList.remove(at: indexPath.row)
             }
             let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
-                let comment = self.firebaseManager.dataList[indexPath.row]
+                let comment = self.firebaseManager.modelList[indexPath.row]
                 let vc = CommentUpdateViewController(comment: comment)
                 vc.commentUpdate = { [weak self] comment in
                     guard let self else { return }
@@ -225,15 +225,15 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard let currentUser else { return nil }
-        if firebaseManager.dataList.isEmpty { return nil }
-        let comment = firebaseManager.dataList[indexPath.row]
+        if firebaseManager.modelList.isEmpty { return nil }
+        let comment = firebaseManager.modelList[indexPath.row]
         guard comment.writeUser.id == currentUser.uid else { return nil }
         let deleteAction = UIContextualAction(style: .normal, title: "삭제", handler: {(action, view, completionHandler) in
-            let comment = self.firebaseManager.dataList[indexPath.row]
+            let comment = self.firebaseManager.modelList[indexPath.row]
             self.firebaseManager.deleteData(data: comment)
         })
         let updateAction = UIContextualAction(style: .normal, title: "수정", handler: {(action, view, completionHandler) in
-            let comment = self.firebaseManager.dataList[indexPath.row]
+            let comment = self.firebaseManager.modelList[indexPath.row]
             let vc = CommentUpdateViewController(comment: comment)
             vc.commentUpdate = { [weak self] comment in
                 guard let self else { return }

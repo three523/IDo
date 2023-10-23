@@ -24,12 +24,12 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             }
             guard let value = dataSnapshot.value as? [String: Any] else {
                 self.viewState = .loaded
-                self.dataList = []
+                self.modelList = []
                 return
             }
             let dataList: [Comment] = self.decodingDataSnapshot(value: value).sorted(by: { $0.createDate <= $1.createDate })
             self.viewState = .loaded
-            self.dataList = dataList
+            self.modelList = dataList
         }
     }
 }

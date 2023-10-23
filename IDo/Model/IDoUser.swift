@@ -9,10 +9,10 @@ import Foundation
  
 struct IDoUser: Codable, Identifier {
     let id: String
-    var profileImage: Data?
+    var profileImage: String?
     var nickName: String
     var description: String?
-    var hobbyList: [Category]?
+    var hobbyList: [String]?
     var myClubList: [Club]?
     var myNoticeBoardList: [NoticeBoard]?
     var myCommentList: [Comment]?
