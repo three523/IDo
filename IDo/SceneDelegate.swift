@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
 
-        try? Auth.auth().signOut()
+//        try? Auth.auth().signOut()
         if Auth.auth().currentUser != nil {
             window.rootViewController = TabBarController()
         } else {
@@ -63,7 +63,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.makeKeyAndVisible()
         self.window = window
     }
-    
+
     // 카카오 사용자 정보 가져오기
     private func getUserInfo() {
         UserApi.shared.me { user, error in
