@@ -9,14 +9,19 @@ import UIKit
 import SnapKit
 
 class MyProfileViewController: UIViewController {
-    
+    //프로필
     var profileImage = UIImageView()
     var profileName = UILabel()
-    var choiceEnjoy = UITextView()
+    var choiceEnjoy = UILabel()
+    
+    //자기소개
     let selfInfo = UILabel()
     var selfInfoDetail = UITextView()
+    
+    //내가쓴글
     let writeMe = UILabel()
     var writeMeList = ["헬린이 멤버 구합니다","카본 낚시대 20만원선에서 추천 받아요"]
+    var writeMeDate = ["yyyy-mm-dd","yyyy-mm-dd"]
     var writeMeTableView = UITableView()
     
     func makeProfileImage() {
@@ -28,6 +33,7 @@ class MyProfileViewController: UIViewController {
         profileName.font = UIFont.headFont(.xSmall , weight: .semibold)
     }
     func makeChoiceEnjoy() {
+        let makeChoiceEnjoy = choiceEnjoy
         let firstText = "낚시/캠핑"
         let secondText = "맛집/여행"
         let thirdText = "운동/스포츠"
@@ -35,9 +41,12 @@ class MyProfileViewController: UIViewController {
         choiceEnjoy.text = totalText
         choiceEnjoy.textColor = UIColor(color: .borderSelected)
         choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
-        choiceEnjoy.font = UIFont.bodyFont(.xSmall, weight:.semibold)
-        choiceEnjoy.layer.cornerRadius = 10
-        choiceEnjoy.textContainerInset = UIEdgeInsets(top: 9, left: 6, bottom: 8, right: 6)
+        choiceEnjoy.font = UIFont.bodyFont(.small, weight:.semibold)
+        choiceEnjoy.layer.cornerRadius = 10 // 원하는 값으로 설정
+        choiceEnjoy.layer.borderWidth = 5 // 원하는 두께로 설정
+        choiceEnjoy.layer.borderColor = UIColor(color: .contentBackground).cgColor //원하는 테두리 색상으로 설정
+        choiceEnjoy.clipsToBounds = true
+        choiceEnjoy.textAlignment = .center
     }
     func makeSelfInfo() {
         selfInfo.text = "자기소개"
@@ -58,7 +67,7 @@ class MyProfileViewController: UIViewController {
         writeMe.font = UIFont.bodyFont(.large, weight: .semibold)
     }
     func makeWriteMeTableView() {
-        writeMeTableView.register(CategoryCell.self, forCellReuseIdentifier: "Cell")
+        writeMeTableView.register(WriteMeTableViewCell.self, forCellReuseIdentifier: "Cell")
         writeMeTableView.dataSource = self
         writeMeTableView.delegate = self
     }
@@ -72,6 +81,8 @@ class MyProfileViewController: UIViewController {
         makeWriteMe()
         makeWriteMeTableView()
         setLayout()
+        profileEditControllerSet()
+        navigationBarButtonAction()
         selfInfoDetail.delegate = self
     }
     func setLayout() {
@@ -96,8 +107,8 @@ class MyProfileViewController: UIViewController {
         }
         choiceEnjoy.snp.makeConstraints { make in
             make.top.equalTo(profileName.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(100)
-            make.width.equalTo(50)
+            make.leading.trailing.equalToSuperview().inset(80)
+            make.width.equalTo(60)
             make.height.equalTo(35)
         }
         selfInfo.snp.makeConstraints { make in
@@ -135,7 +146,6 @@ extension MyProfileViewController : UITextViewDelegate {
     }
 }
 
-
 extension MyProfileViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
@@ -146,11 +156,39 @@ extension MyProfileViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CategoryCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as!
+        WriteMeTableViewCell
         if tableView == writeMeTableView {
-            cell.label.text = writeMeList[indexPath.row]
+            cell.write.text = writeMeList[indexPath.row]
+            cell.write2.text = writeMeDate[indexPath.row]
         }
-        cell.categoryImageView.image = UIImage(systemName: "photo")
+        cell.writeImageView.image = UIImage(systemName: "photo")
         return cell
+    }
+}
+
+private extension MyProfileViewController {
+    
+    func profileEditControllerSet() {
+
+        // 네비게이션 LargeTitle 비활성화 및 title 입력
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    
+    func navigationBarButtonAction() {
+        
+        // 네비게이션 오른쪽 버튼 생성
+        let editButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(editVC))
+        self.navigationItem.rightBarButtonItem = editButton
+        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
+        
+        let backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = UIColor(color: .main)
+        self.navigationItem.backBarButtonItem = backBarButtonItem
+    }
+    
+    @objc func editVC() {
+        let editprofileVC = MyProfileViewController()
+        navigationController?.pushViewController(editprofileVC, animated: true)
     }
 }
