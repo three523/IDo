@@ -39,12 +39,12 @@ class MyProfileViewController: UIViewController {
         let thirdText = "운동/스포츠"
         let totalText = firstText + ",  " + secondText + ",  " + thirdText
         choiceEnjoy.text = totalText
-        choiceEnjoy.textColor = UIColor.borderSelected
-        choiceEnjoy.backgroundColor = UIColor.contentBackground
+        choiceEnjoy.textColor = UIColor(color: .borderSelected)
+        choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
         choiceEnjoy.font = UIFont.bodyFont(.small, weight:.semibold)
         choiceEnjoy.layer.cornerRadius = 10 // 원하는 값으로 설정
         choiceEnjoy.layer.borderWidth = 5 // 원하는 두께로 설정
-        choiceEnjoy.layer.borderColor = UIColor.contentBackground .cgColor //원하는 테두리 색상으로 설정
+        choiceEnjoy.layer.borderColor = UIColor(color: .contentBackground).cgColor //원하는 테두리 색상으로 설정
         choiceEnjoy.clipsToBounds = true
         choiceEnjoy.textAlignment = .center
     }

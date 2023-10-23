@@ -25,14 +25,14 @@ class HomeViewController : UIViewController {
     
     func makeJoinClub() {
         joinClub.text = "가입한 모임"
-        joinClub.textColor = UIColor.textStrong
+        joinClub.textColor = UIColor(color: .textStrong)
         joinClub.font = .headFont(.xSmall , weight: .semibold)
     }
     func makeLine() {
-        line.backgroundColor = UIColor.textStrong
+        line.backgroundColor = UIColor(color: .textStrong)
     }
     func makeLine2() {
-        line2.backgroundColor = UIColor.textStrong
+        line2.backgroundColor = UIColor(color: .textStrong)
     }
     func makeSuggestClub() {
         suggestClub.text = "추천 모임"

@@ -9,6 +9,7 @@ import UIKit
 import KakaoSDKAuth
 import KakaoSDKUser
 import Firebase
+import FirebaseAuth
 
 class LoginViewController: UIViewController {
     
@@ -28,12 +29,34 @@ class LoginViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         clickLoginButton()
+        clickDefaultLoginButton()
+        clickSignupButton()
     }
 
 }
 
 private extension LoginViewController {
     
+    func clickSignupButton() {
+        loginView.signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
+    }
+    
+    @objc func signUp() {
+        let signUpVC = UINavigationController(rootViewController: SignUpViewController())
+        signUpVC.modalPresentationStyle = .fullScreen
+        present(signUpVC, animated: true)
+    }
+    
+    func clickDefaultLoginButton() {
+        loginView.loginButton.addTarget(self, action: #selector(firebaseLogin), for: .touchUpInside)
+    }
+    
+    @objc func firebaseLogin() {
+        guard let email = loginView.emailTextField.text,
+              let password = loginView.passwordTextField.text else { return }
+        loginFirebase(email: email, password: password)
+    }
+        
     func clickLoginButton() {
         loginView.kakaoLoginButton.addTarget(self, action: #selector(kakaoLogin), for: .touchUpInside)
     }
@@ -116,10 +139,12 @@ private extension LoginViewController {
     
     // MARK: - Firebase 로그인
     private func loginFirebase(email: String, password: String) {
+        print(email, password)
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             // Error(등록 실패)
             if let e = error {
                 print(e.localizedDescription)
+                return
             }
             // Success(등록 성공)
             else {
