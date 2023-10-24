@@ -33,9 +33,17 @@ class FBDatabaseManager<T: Codable & Identifier> {
         }
     }
     
-    func appendData(data: T) {
-        ref.child(data.id).setValue(data.dictionary)
-        modelList.append(data)
+    func appendData(data: T, completion: ((Bool) -> Void)? = nil) {
+        ref.child(data.id).setValue(data.dictionary) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                completion?(false)
+                return
+            }
+            completion?(true)
+            self.modelList.append(data)
+        }
+        
     }
     
     func setData(data: T) {

@@ -16,7 +16,7 @@ class CreateNoticeBoardViewController: UIViewController {
     var selectedImages: [UIImage] = []
     
     private let createNoticeBoardView = CreateNoticeBoardView()
-    private let firebaseManager = FirebaseManager()
+    var firebaseManager: FirebaseManager
     
     private var isTitleTextViewEdited = false
     private var isContentTextViewEdited = false
@@ -30,8 +30,9 @@ class CreateNoticeBoardViewController: UIViewController {
     
     private let club: Club
     
-    init(club: Club) {
+    init(club: Club, firebaseManager: FirebaseManager) {
         self.club = club
+        self.firebaseManager = firebaseManager
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -302,8 +303,8 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            //self.selectedImages.count -= 1
-            self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
+            selectedImages.remove(at: indexPath.row)
+            createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { (_) in
             self.createNoticeBoardView.galleryCollectionView.reloadData()
         }

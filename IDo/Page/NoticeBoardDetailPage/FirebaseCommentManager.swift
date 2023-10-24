@@ -18,7 +18,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     var profileUpdate: ()->Void = {}
 
     init(refPath: [String], noticeBoard: NoticeBoard) {
-        self.noticeBoardRef = Database.database().reference().child("noticeBoards").child("\(noticeBoard.id)")
+        self.noticeBoardRef = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child("\(noticeBoard.id)")
         super.init(refPath: refPath)
     }
     

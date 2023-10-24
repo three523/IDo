@@ -27,6 +27,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var currentUser: User?
     private var myProfileImage: UIImage?
     private let noticeBoard: NoticeBoard
+    weak var delegate: FirebaseManagerDelegate?
     
     init(noticeBoard: NoticeBoard) {
         self.noticeBoard = noticeBoard
@@ -44,8 +45,10 @@ final class NoticeBoardDetailViewController: UIViewController {
         super.viewDidLoad()
         
         firebaseCommentManager.update = { [weak self] in
-            self?.commentTableView.reloadData()
-            self?.firebaseCommentManager.noticeBoardUpdate()
+            guard let self else { return }
+            self.commentTableView.reloadData()
+            self.firebaseCommentManager.noticeBoardUpdate()
+            self.delegate?.updateComment(noticeBoardID: self.noticeBoard.id, commentCount: "\(self.firebaseCommentManager.modelList.count)")
         }
         firebaseCommentManager.readDatas()
         setup()
@@ -68,7 +71,6 @@ private extension NoticeBoardDetailViewController {
         addViews()
         autoLayoutSetup()
         tableViewSetup()
-        noticeBoardSetup()
         addCommentSetup()
     }
     func addViews() {
@@ -131,10 +133,6 @@ private extension NoticeBoardDetailViewController {
                 present(alert, animated: true)
             }
         }
-    }
-    
-    func noticeBoardSetup() {
-        noticeBoardDetailView.updateEnable
     }
     
     func addCommentSetup() {

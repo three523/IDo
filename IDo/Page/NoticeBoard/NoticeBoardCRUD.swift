@@ -10,8 +10,10 @@ import FirebaseStorage
 import Foundation
 import UIKit
 
+
 protocol FirebaseManagerDelegate: AnyObject {
     func reloadData()
+    func updateComment(noticeBoardID: String, commentCount: String)
 }
 
 // 매개변수를 noticBoard로 통일
@@ -22,11 +24,12 @@ class FirebaseManager {
     weak var delegate: FirebaseManagerDelegate?
 
     var noticeBoards: [NoticeBoard] = []
+    var selectedImage: [String] = []
     
     // MARK: - 데이터 저장
 
     func saveNoticeBoard(noticeBoard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
-        let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.id)
+        let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
         
         // UserSummary
         let userSummaryDict: [String: Any?] = [
@@ -65,8 +68,8 @@ class FirebaseManager {
     // 임시 작성 유저 정보
     let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
 
-    func createNoticeBoard(title: String, content: String, clubID: String) {
-        let ref = Database.database().reference().child("noticeBoards")
+    func createNoticeBoard(title: String, content: String, clubID: String, completion: ((Bool) -> Void)? = nil) {
+        let ref = Database.database().reference().child("noticeBoards").child(clubID)
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
         let createDate = Date()
 
@@ -74,21 +77,31 @@ class FirebaseManager {
         
         self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
             if success {
-//                FirebaseManager.noticeBoards.insert(newNoticeBoard, at: 0)
+                self.noticeBoards.insert(newNoticeBoard, at: 0)
                 self.delegate?.reloadData()
             }
         }
     }
 
     // MARK: - 데이터 읽기
-
-    func readNoticeBoard() {
-        let ref = Database.database().reference().child("noticeBoards")
+    func readNoticeBoard(clubID: String, completion: ((Bool) -> Void)? = nil) {
         
-        ref.observe(.value, with: { snapshot in
+        let ref = Database.database().reference().child("noticeBoards").child(clubID)
+        
+        ref.getData(completion: { (error, snapshot) in
             var newNoticeBoards: [NoticeBoard] = []
             
-            guard let value = snapshot.value as? [String: Any] else { return }
+            if let error = error {
+                print("Error getting data: \(error)")
+                completion?(false)
+                return
+            }
+            
+            guard let value = snapshot?.value as? [String: Any] else {
+                self.delegate?.reloadData()
+                completion?(false)
+                return
+            }
             
             for (_, item) in value {
                 if let itemDict = item as? [String: Any],
@@ -117,7 +130,7 @@ class FirebaseManager {
             self.noticeBoards = newNoticeBoards.sorted(by: { $0.createDate > $1.createDate })
             
             self.delegate?.reloadData()
-            print("오류 테스트")
+            completion?(true)
         })
     }
 
@@ -143,7 +156,7 @@ class FirebaseManager {
     func deleteNoticeBoard(at index: Int, completion: ((Bool) -> Void)? = nil) {
         if index >= 0, index < self.noticeBoards.count {
             let noticeBoardID = self.noticeBoards[index].id
-            let ref = Database.database().reference().child("noticeBoards").child(noticeBoardID)
+            let ref = Database.database().reference().child("noticeBoards").child(noticeBoards[index].clubID).child(noticeBoardID)
             
             ref.removeValue { error, _ in
                 if let error = error {
@@ -153,6 +166,7 @@ class FirebaseManager {
                 else {
                     print("Successfully deleted notice board.")
                     self.noticeBoards.remove(at: index)
+                    self.delegate?.reloadData()
                     completion?(true)
                 }
             }
