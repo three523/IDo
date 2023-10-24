@@ -12,6 +12,7 @@ import UIKit
 
 class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     let noticeBoardRef: DatabaseReference
+    let urlCache = FBURLCache()
     let storage = Storage.storage().reference()
     var currentIDoUser: IDoUser?
     var profileUpdate: ()->Void = {}
@@ -54,7 +55,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func getMyProfileImage(uid: String, completion: @escaping (UIImage?)->Void ) {
+    func getMyProfileImage(uid: String, imageSize: UserImageSize, completion: @escaping (UIImage?)->Void ) {
         let myProfileRef = Database.database().reference().child("Users").child(uid)
         myProfileRef.getData { error, dataSnapShot in
             if let error {
@@ -63,27 +64,28 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             guard let value = dataSnapShot?.value,
                 let idoUser: IDoUser = self.decodingSingleDataSnapshot(value: value) else { return }
             self.currentIDoUser = idoUser
-            self.getUserImage(referencePath: idoUser.profileImage) { profileImage in
+            self.getUserImage(referencePath: idoUser.profileImage, imageSize: imageSize) { profileImage in
                 completion(profileImage)
             }
         }
     }
     
-    func getUserImage(referencePath: String?, completion: @escaping(UIImage?) -> Void) {
+    func getUserImage(referencePath: String?, imageSize: UserImageSize, completion: @escaping(UIImage?) -> Void) {
         guard let referencePath else { return }
-        let imageRef = storage.child(referencePath)
+        let imageRef = storage.child(referencePath).child(imageSize.rawValue)
         imageRef.downloadURL { url, error in
             if let error {
                 print(error)
             }
             guard let url else { return }
-            URLSession.shared.dataTask(with: url) { data, _, error in
-                if let error {
+            self.urlCache.downloadURL(url: url) { result in
+                switch result {
+                case .success(let data):
+                    completion(UIImage(data: data))
+                case .failure(let error):
                     print(error.localizedDescription)
                 }
-                guard let data else { return }
-                completion(UIImage(data: data))
-            }.resume()
+            }
         }
     }
 }

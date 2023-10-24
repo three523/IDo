@@ -138,7 +138,7 @@ private extension NoticeBoardDetailViewController {
     }
     
     func addCommentSetup() {
-        firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid) { image in
+        firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid, imageSize: .small) { image in
             DispatchQueue.main.async {
                 self.addCommentStackView.profileImageView.imageView.image = image
                 self.myProfileImage = image
@@ -208,9 +208,11 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell,
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
+        if let defaultImage = UIImage(systemName: "person.fill") {
+            cell.setUserImage(profileImage: defaultImage)
+        }
         let comment = firebaseCommentManager.modelList[indexPath.row]
-        print(comment.writeUser.profileImageURL)
-        firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL) { image in
+        firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL, imageSize: .small) { image in
             guard let image else { return }
             cell.setUserImage(profileImage: image)
         }
