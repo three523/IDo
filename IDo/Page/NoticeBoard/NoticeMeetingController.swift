@@ -14,7 +14,7 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
-    var firebaseManager = FirebaseManager()
+    private let firebaseManager = FirebaseManager()
 
 
     private var club: Club

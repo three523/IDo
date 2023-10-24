@@ -123,6 +123,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row])
+        vc.delegate = self
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -152,5 +153,10 @@ extension NoticeBoardViewController: FirebaseManagerDelegate {
     func reloadData() {
         selectView()
         noticeBoardView.noticeBoardTableView.reloadData()
+    }
+    func updateComment(noticeBoardID: String, commentCount: String) {
+        guard let index = firebaseManager.noticeBoards.firstIndex(where: { $0.id == noticeBoardID }) else { return }
+        firebaseManager.noticeBoards[index].commentCount = commentCount
+        reloadData()
     }
 }

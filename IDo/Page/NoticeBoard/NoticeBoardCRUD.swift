@@ -13,6 +13,7 @@ import UIKit
 
 protocol FirebaseManagerDelegate: AnyObject {
     func reloadData()
+    func updateComment(noticeBoardID: String, commentCount: String)
 }
 
 // 매개변수를 noticBoard로 통일
