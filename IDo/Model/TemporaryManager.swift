@@ -10,15 +10,16 @@ import Foundation
 class TemporaryManager {
     static let shared = TemporaryManager()
     
-    var meetingIndex: Int?
-    var categoryData: String?
-    var categoryIndex: Int?
-    var selectedCategory: String?
-    var meetingImageUrls: [String] = []
-    var meetingTitle: [String] = []
-    var meetingDescription: String?
-    var meetingDate: [String] = []
-    var meetingId: String?
+    var meetingIndex: Int? //               NoticeMeetingController        NoticeHomeController          MeetingViewController
+    var categoryData: String? //            NoticeHomeController           CategoryViewController        MeetingViewController
+    var categoryIndex: Int? //              MeetingViewController
+    var selectedCategory: String? //        MeetingCreateViewController     MeetingManageViewController  CategoryViewController  MeetingViewController
+    var selectedMeetingId: String? //       MeetingManageViewController     NoticeMeetingController
+    var meetingImageUrls: [String] = [] //  MeetingViewController           NoticeMeetingController
+    var meetingTitle: [String] = [] //      MeetingViewController           NoticeMeetingController
+    var meetingDescription: String? //      MeetingManageViewController     NoticeMeetingController
+    var meetingDate: [String] = [] //       MeetingViewController           NoticeMeetingController
+//    var meetingId: String?
     
     private init() {}
 }
