@@ -94,9 +94,10 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
         guard let selectedIndex = TemporaryManager.shared.meetingIndex else { return }
         let updateNoticeBoardVC = MeetingManageViewController()
         // 데이터 전달
-        updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex]
+        updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex] //meetingmanageviewcontroller 가 이 속성이 있는데 이걸 인스턴스화 해서 meetingtitle 속성을 가지고 있음
         TemporaryManager.shared.meetingDescription = TemporaryManager.shared.meetingDate[selectedIndex]
         updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
+        TemporaryManager.shared.selectedMeetingId = club.id
 
         navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
     }
