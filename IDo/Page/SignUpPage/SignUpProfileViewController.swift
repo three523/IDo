@@ -125,8 +125,15 @@ private extension SignUpProfileViewController {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] authDataResult, error in
             guard let self = self else { return }
             if let error {
-                print(error.localizedDescription)
                 self.showAlert(message: "회원가입에 실패하였습니다.")
+//                let errorn = error as NSError
+//                let errorCode = AuthErrorCode(_nsError: errorn)
+//                switch errorCode {
+//                case .emailAlreadyInUse:
+//                }
+//                print(errorn.code)
+//                print(errorn)
+//                self.showAlert(message: "회원가입에 실패하였습니다.")
                 return
             }
             guard let authDataResult = authDataResult else { return }
@@ -167,15 +174,48 @@ private extension SignUpProfileViewController {
     }
 
     func imageUpload(uid: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let imageData = profileImageView.image?.jpegData(compressionQuality: 0.5) else { return }
+        guard let image = profileImageView.image else { return }
+        if image == UIImage(systemName: "camera.circle.fill") { return }
+        guard let smaillImageData = resizeImage(image: image, targetSize: CGSize(width: 30, height: 30)).pngData(),
+              let mediumImageData = resizeImage(image: image, targetSize: CGSize(width: 90, height: 90)).pngData() else { return }
+        
         let storageRef = Storage.storage().reference().child("UserProfileImages/\(uid)")
-        storageRef.putData(imageData) { _, error in
+        let storageSmallRef = storageRef.child(UserImageSize.small.rawValue)
+        let storageMediumRef = storageRef.child(UserImageSize.medium.rawValue)
+        storageSmallRef.putData(smaillImageData) { _, error in
             if let error {
                 completion(.failure(error))
             }
-            print(storageRef.fullPath)
             completion(.success(storageRef.fullPath))
         }
+        storageMediumRef.putData(mediumImageData) { _, error in
+            if let error {
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+
+        var newSize: CGSize
+
+        if widthRatio > heightRatio {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        }
+
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
     }
 }
 
