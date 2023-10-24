@@ -13,10 +13,24 @@ class CategoryViewController: UICollectionViewController {
     let categoryImage = UIImage(systemName: "pencil.circle")
 
     init() {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 120, height: 150)
-        layout.minimumInteritemSpacing = 10
-        layout.minimumLineSpacing = 10
+        let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            // 아이템 크기
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1 / 3), heightDimension: .absolute(150))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            // 그룹 크기
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 3)
+            group.interItemSpacing = .fixed(10) // 아이템 간 간격
+
+            // 섹션
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 10 // 그룹 간 간격
+            section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10) // 섹션의 인셋
+
+            return section
+        }
+
         super.init(collectionViewLayout: layout)
     }
 
@@ -42,6 +56,12 @@ class CategoryViewController: UICollectionViewController {
         cell.label.text = categoryData[indexPath.row]
         cell.categoryImageView.image = categoryImage
         return cell
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        collectionView.collectionViewLayout.invalidateLayout()
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {

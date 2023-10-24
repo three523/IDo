@@ -39,6 +39,11 @@ extension CommentTableViewCell {
     func setDate(dateText: String) {
         writeInfoView.writerTimeLabel.text = dateText
     }
+    func setUserImage(profileImage: UIImage) {
+        DispatchQueue.main.async {
+            self.writeInfoView.writerImageView.imageView.image = profileImage
+        }
+    }
 }
 
 private extension CommentTableViewCell {

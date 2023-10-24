@@ -25,6 +25,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var addCommentViewBottomConstraint: Constraint? = nil
     private var firebaseCommentManager: FirebaseCommentManaer
     private var currentUser: User?
+    private var myProfileImage: UIImage?
     private let noticeBoard: NoticeBoard
     
     init(noticeBoard: NoticeBoard) {
@@ -32,6 +33,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         self.firebaseCommentManager = FirebaseCommentManaer(refPath: ["CommentList",noticeBoard.id], noticeBoard: noticeBoard)
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
+        guard let currentUser else { return }
     }
     
     required init?(coder: NSCoder) {
@@ -136,12 +138,19 @@ private extension NoticeBoardDetailViewController {
     }
     
     func addCommentSetup() {
+        firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid) { image in
+            DispatchQueue.main.async {
+                self.addCommentStackView.profileImageView.imageView.image = image
+                self.myProfileImage = image
+            }
+        }
+        
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
-            if let user = Auth.auth().currentUser {
-                let user = UserSummary(id: user.uid, nickName: "test")
+            if let iDoUser = firebaseCommentManager.currentIDoUser {
+                let user = UserSummary(id: iDoUser.id, profileImageURL: iDoUser.profileImage, nickName: iDoUser.nickName)
                 let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
-                firebaseCommentManager.addData(data: comment)
+                firebaseCommentManager.appendData(data: comment)
             } else {
                 //TODO: 사용자 로그인이 필요하다는 경고창과 함꼐 로그인 화면으로 넘기기
             }
@@ -200,6 +209,11 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
         let comment = firebaseCommentManager.modelList[indexPath.row]
+        print(comment.writeUser.profileImageURL)
+        firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL) { image in
+            guard let image else { return }
+            cell.setUserImage(profileImage: image)
+        }
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
         cell.writeInfoView.writerNameLabel.text = comment.writeUser.nickName

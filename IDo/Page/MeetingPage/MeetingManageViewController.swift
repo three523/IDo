@@ -213,15 +213,18 @@ class MeetingManageViewController: UIViewController {
     
     private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
         guard let category = TemporaryManager.shared.selectedCategory else { return }
+        guard let selectedMeetingId = TemporaryManager.shared.selectedMeetingId else { // 임시로 사용
+            print("선택된 모임의 ID를 불러오지 못했습니다")
+            return
+        }
         
-        let ref = Database.database().reference().child(category).child("meetings")
-        let safeMeetingTitle = name.replacingOccurrences(of: "\\W", with: "", options: .regularExpression)
+        let ref = Database.database().reference().child(category).child("meetings").child(selectedMeetingId)
         
-        let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(safeMeetingTitle).png")
+        let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(selectedMeetingId).png")
         
         storageRef.putData(imageData, metadata: nil) { (metadata, error) in
             if let error = error {
-                print("Failed to upload image to Firebase Storage:", error)
+                print("파이어베이스 저장소에 이미지를 업로드하지 못했습니다", error)
                 return
             }
             
@@ -229,19 +232,19 @@ class MeetingManageViewController: UIViewController {
                 guard let imageUrl = url?.absoluteString else { return }
                 
                 let meetingData: [String: Any] = [
-                    "id": safeMeetingTitle,
                     "title": name,
                     "description": description,
                     "imageUrl": imageUrl
                 ]
                 
-                ref.child(safeMeetingTitle).setValue(meetingData) { [weak self] (error, _) in
+                // 여기서 updateChildValues를 사용하여 업데이트
+                ref.updateChildValues(meetingData) { [weak self] (error, _) in
                     if let error = error {
-                        print("Data could not be saved: \(error).")
+                        print("데이터 업데이트 실패: \(error).")
                     } else {
-                        print("Data saved successfully!")
+                        print("데이터 수정 성공")
                         
-                        let alert = UIAlertController(title: "완료", message: "수정되었습니다.", preferredStyle: .alert)
+                        let alert = UIAlertController(title: "완료", message: "모임 정보가 수정되었습니다.", preferredStyle: .alert)
                         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
                             self?.navigationController?.popViewController(animated: true)
                         }))
@@ -252,6 +255,7 @@ class MeetingManageViewController: UIViewController {
         }
     }
 }
+
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {

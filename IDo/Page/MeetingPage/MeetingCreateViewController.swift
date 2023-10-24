@@ -83,63 +83,62 @@ class MeetingCreateViewController: UIViewController {
 
 
     @objc private func createMeeting() {
-        guard let name = meetingNameField.text, !name.isEmpty,
-              let description = meetingDescriptionField.text, !description.isEmpty else {
-            print("모임의 이름과 설명은 필수 입력 항목입니다.")
-            return
+            guard let name = meetingNameField.text, !name.isEmpty,
+                  let description = meetingDescriptionField.text, !description.isEmpty else {
+                print("모임의 이름과 설명은 필수 입력 항목입니다.")
+                return
+            }
+
+            var imageData: Data? = nil
+            if let image = profileImageButton.image(for: .normal) {
+                imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
+            }
+
+            saveMeetingToFirebase(name: name, description: description, imageData: imageData)
         }
 
-        var imageData: Data? = nil
-        if let image = profileImageButton.image(for: .normal) {
-            imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
-        }
+        private func saveMeetingToFirebase(name: String, description: String, imageData: Data?) {
+            guard let category = TemporaryManager.shared.selectedCategory else { return }
 
-        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
-    }
+            let ref = Database.database().reference().child(category).child("meetings")
+            let newMeetingRef = ref.childByAutoId() // 자동으로
+            
+            if let imageData = imageData {
+                let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(newMeetingRef.key!).png")
 
-    private func saveMeetingToFirebase(name: String, description: String, imageData: Data?) {
-        guard let category = TemporaryManager.shared.selectedCategory else { return }
-        //
-        let ref = Database.database().reference().child(category).child("meetings")
-        let safeMeetingTitle = name.replacingOccurrences(of: "\\W", with: "", options: .regularExpression)
+                storageRef.putData(imageData, metadata: nil) { (metadata, error) in
+                    if let error = error {
+                        print("Failed to upload image to Firebase Storage:", error)
+                        return
+                    }
 
-        if let imageData = imageData {
-            // 이미지 업로드
-            let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(safeMeetingTitle).png")
+                    storageRef.downloadURL { (url, error) in
+                        guard let imageUrl = url?.absoluteString else { return }
 
-            storageRef.putData(imageData, metadata: nil) { (metadata, error) in
-                if let error = error {
-                    print("Failed to upload image to Firebase Storage:", error)
-                    return
-                }
+                        let data: [String: Any] = [
+                            "id": newMeetingRef.key!,
+                            "title": name,
+                            "description": description,
+                            "imageUrl": imageUrl
+                        ]
 
-                storageRef.downloadURL { (url, error) in
-                    guard let imageUrl = url?.absoluteString else { return }
-
-                    // 데이터에 해당 키로 저장
-                    let data: [String: Any] = [
-                        "id": safeMeetingTitle,
-                        "title": name,
-                        "description": description,
-                        "imageUrl": imageUrl
-                    ]
-
-                    ref.child(safeMeetingTitle).setValue(data) { [weak self] (error, _) in
-                        if let error = error {
-                            print("Data could not be saved: \(error).")
-                        } else {
-                            print("Data saved successfully!")
-                            let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-                                self?.navigationController?.popViewController(animated: true)
-                            }))
-                            self?.present(alert, animated: true, completion: nil)
+                        newMeetingRef.setValue(data) { [weak self] (error, _) in
+                            if let error = error {
+                                print("데이터 저장 실패 \(error).")
+                            } else {
+                                print("데이터 저장 성공")
+                                let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
+                                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                                    self?.navigationController?.popViewController(animated: true)
+                                }))
+                                self?.present(alert, animated: true, completion: nil)
+                            }
                         }
                     }
                 }
             }
         }
-    }
+
 
 
  
