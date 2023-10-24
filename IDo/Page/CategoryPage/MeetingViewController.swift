@@ -17,7 +17,6 @@ class MeetingViewController: UIViewController {
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
     private var clubList: [Club] = []
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        loadDataFromFirebase()
