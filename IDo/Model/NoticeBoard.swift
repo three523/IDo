@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct NoticeBoard: Codable {
+struct NoticeBoard: Codable, Identifier {
     let id: String
     let rootUser: UserSummary
     let createDate: Date
@@ -15,5 +15,5 @@ struct NoticeBoard: Codable {
     var title: String
     var content: String
     var imageList: [String]
-    var commentList: [Comment]?
+    var commentCount: String
 }

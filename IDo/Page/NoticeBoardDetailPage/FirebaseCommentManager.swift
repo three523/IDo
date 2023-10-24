@@ -6,8 +6,16 @@
 //
 
 import Foundation
+import FirebaseDatabase
 
 class FirebaseCommentManaer: FBDatabaseManager<Comment> {
+    let noticeBoardRef: DatabaseReference
+
+    init(refPath: [String], noticeBoard: NoticeBoard) {
+        self.noticeBoardRef = Database.database().reference().child("noticeBoards").child("\(noticeBoard.id)")
+        super.init(refPath: refPath)
+    }
+    
     override func readDatas(completion: @escaping (Result<[Comment], Error>) -> Void = {_ in}) {
         ref.getData { error, dataSnapshot in
             if let error {
@@ -30,6 +38,14 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             let dataList: [Comment] = self.decodingDataSnapshot(value: value).sorted(by: { $0.createDate <= $1.createDate })
             self.viewState = .loaded
             self.modelList = dataList
+        }
+    }
+    
+    func noticeBoardUpdate(completion: ((Bool) -> Void)? = nil) {
+        noticeBoardRef.updateChildValues(["commentCount": "\(modelList.count)"]) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+            }
         }
     }
 }
