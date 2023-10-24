@@ -14,6 +14,7 @@ import UIKit
 class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
+    var firebaseManager = FirebaseManager()
 
 
     private var club: Club
@@ -50,7 +51,7 @@ class NoticeMeetingController: TabmanViewController {
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 
-        let titleVC = NoticeBoardViewController(club: club)
+        let titleVC = NoticeBoardViewController(club: club, firebaseManager: firebaseManager)
 
         viewControllers.append(HomeVC)
         viewControllers.append(titleVC)
@@ -86,7 +87,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     @objc func moveCreateVC() {
-        let createNoticeBoardVC = CreateNoticeBoardViewController(club: club)
+        let createNoticeBoardVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
 
