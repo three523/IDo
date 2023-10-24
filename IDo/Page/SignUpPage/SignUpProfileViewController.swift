@@ -122,7 +122,8 @@ private extension SignUpProfileViewController {
             guard let authDataResult else { return }
             let uid = authDataResult.user.uid
             var user = IDoUser(id: uid, nickName: self.nickName, hobbyList: self.selectedCategorys)
-            self.fbUserDatabaseManager.addData(data: user)
+            self.fbUserDatabaseManager.model = user
+            self.fbUserDatabaseManager.appendData(data: user)
             self.firebaseLogin()
             self.imageUpload(uid: uid) { result in
                 switch result {
@@ -147,7 +148,7 @@ private extension SignUpProfileViewController {
     }
     
     func imageUpload(uid: String, completion: @escaping (Result<String,Error>)->Void) {
-        guard let imageData = profileImageView.image?.pngData() else { return }
+        guard let imageData = profileImageView.image?.jpegData(compressionQuality: 0.5) else { return }
         let storageRef = Storage.storage().reference().child("UserProfileImages/\(uid)")
         storageRef.putData(imageData) { metaData, error in
             if let error {

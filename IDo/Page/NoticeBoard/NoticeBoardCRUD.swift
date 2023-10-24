@@ -79,6 +79,7 @@ class FirebaseManager {
             }
         }
     }
+
     // MARK: - 데이터 읽기
 
     func readNoticeBoard() {

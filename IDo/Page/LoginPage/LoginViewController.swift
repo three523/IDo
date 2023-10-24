@@ -145,7 +145,7 @@ private extension LoginViewController {
             else {
                 guard let user = authResult?.user else { return }
                 let idoUser = IDoUser(id: user.uid, nickName: "name", hobbyList: [], myClubList: [], myNoticeBoardList: [], myCommentList: [])
-                self.fbUserDatabaseManager.addData(data: idoUser)
+                self.fbUserDatabaseManager.appendData(data: idoUser)
                 self.loginFirebase(email: email, password: password)
             }
         }
