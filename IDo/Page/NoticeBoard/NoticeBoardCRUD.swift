@@ -67,17 +67,24 @@ class FirebaseManager {
     // 임시 작성 유저 정보
     let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
 
-    func createNoticeBoard(title: String, content: String, clubID: String, completion: ((Bool) -> Void)? = nil) {
+    func createNoticeBoard(title: String, content: String, clubID: String, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
-        let createDate = Date()
-
-        let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: [], commentCount: "0")
         
-        self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
+        self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
-                self.noticeBoards.insert(newNoticeBoard, at: 0)
-                self.delegate?.reloadData()
+                let createDate = Date()
+                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: self.currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
+                
+                self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
+                    if success {
+                        self.noticeBoards.insert(newNoticeBoard, at: 0)
+                        self.delegate?.reloadData()
+                    }
+                    completion(success)
+                }
+            } else {
+                completion(false)
             }
         }
     }
@@ -177,21 +184,21 @@ class FirebaseManager {
     
     // MARK: - 이미지 업로드 & 다운로드
 
-    func uploadImages(clubID: String, _ images: [UIImage], completion: @escaping ([String]) -> Void) {
-        let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child("images")
+    func uploadImages(clubID: String, noticeBoardID: String, imageList: [UIImage], completion: @escaping (Bool, [String]?) -> Void) {
+        let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child(noticeBoardID).child("images")
         var imageURLs: [String] = []
         
         let dispatchGroup = DispatchGroup()
         
-        for image in images {
+        for image in imageList {
             dispatchGroup.enter()
             let imageName = UUID().uuidString
             let ref = storageRef.child(imageName)
             
             if let uploadData = image.jpegData(compressionQuality: 0.5) {
                 ref.putData(uploadData, metadata: nil) { _, error in
-                    if error != nil {
-                        print("Failed to upload image:", error!)
+                    if let error = error {
+                        print("Failed to upload image:", error)
                         dispatchGroup.leave()
                         return
                     }
@@ -207,7 +214,7 @@ class FirebaseManager {
         }
         
         dispatchGroup.notify(queue: .main) {
-            completion(imageURLs)
+            completion(imageURLs.count == imageList.count, imageURLs)
         }
     }
 }

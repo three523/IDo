@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 protocol RemoveDelegate: AnyObject {
     func removeCell(_ indexPath: IndexPath)
@@ -120,12 +121,17 @@ private extension CreateNoticeBoardViewController {
     @objc func finishButtonTappedNew() {
         
         if isTitleTextViewEdited && isContentTextViewEdited {
-            
             guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
             guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
-            // 메모 추가 코드 필요
-            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id)
+            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id) { success in
+                if success {
+                    print("게시판 생성 성공")
+                }
+                else {
+                    print("게시판 생성 실패")
+                }
+            }
         }
         
         navigationController?.popViewController(animated: true)
@@ -248,18 +254,6 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 //                cell.createNoticeBoardImagePicker.galleryImageView.image = image
 //            }
             firebaseManager.selectedImage.append(image)
-            // 이미지 업로드
-            firebaseManager.uploadImages(clubID: club.id, firebaseManager.selectedImage) { imageURLs in
-                
-                print("Uploaded Image URLs: \(imageURLs)")
-                
-                // 이미지 업로드가 성공했는지 확인
-                if imageURLs.count == self.firebaseManager.selectedImage.count {
-                    print("All images have been successfully uploaded.")
-                } else {
-                    print("Some images failed to upload.")
-                }
-            }
             // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
             createNoticeBoardView.galleryCollectionView.reloadData()
             
@@ -318,11 +312,5 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
         } completion: { (_) in
             self.createNoticeBoardView.galleryCollectionView.reloadData()
         }
-    }
-}
-
-extension CreateNoticeBoardView: UITabBarControllerDelegate {
-    private func tabBarController(_ tabBarController: UITabBarController, didselect viewController: UIViewController) -> Bool {
-        <#code#>
     }
 }
