@@ -178,7 +178,7 @@ private extension SignUpProfileViewController {
         if image == UIImage(systemName: "camera.circle.fill") { return }
         guard let smaillImageData = resizeImage(image: image, targetSize: CGSize(width: 30, height: 30)).pngData(),
               let mediumImageData = resizeImage(image: image, targetSize: CGSize(width: 90, height: 90)).pngData() else { return }
-        
+
         let storageRef = Storage.storage().reference().child("UserProfileImages/\(uid)")
         let storageSmallRef = storageRef.child(UserImageSize.small.rawValue)
         let storageMediumRef = storageRef.child(UserImageSize.medium.rawValue)
@@ -194,7 +194,7 @@ private extension SignUpProfileViewController {
             }
         }
     }
-    
+
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
         let size = image.size
         let widthRatio = targetSize.width / size.width
