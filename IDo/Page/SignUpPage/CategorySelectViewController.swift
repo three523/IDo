@@ -5,8 +5,9 @@
 //  Created by 김도현 on 2023/10/20.
 //
 
+import FirebaseAuth
+import FirebaseDatabase
 import UIKit
-
 final class CategorySelectViewController: UIViewController {
     private let selectedCountLabel: UILabel = {
         let label = UILabel()
@@ -64,6 +65,9 @@ final class CategorySelectViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        navigationItem.hidesBackButton = true
+        let backBarButtonItem = UIBarButtonItem(title: "back", style: .plain, target: self, action: #selector(deleteButton))
+        navigationItem.leftBarButtonItem = backBarButtonItem
     }
 }
 
@@ -108,6 +112,21 @@ private extension CategorySelectViewController {
     @objc func nextButtonClcik() {
         let vc = SignUpProfileViewController(email: email, password: password, selectedCategorys: selectedCategorys)
         navigationController?.pushViewController(vc, animated: true)
+    }
+
+    @objc func deleteButton() {
+        let user = Auth.auth().currentUser
+
+        user?.delete { [weak self] error in
+            if let error = error {
+                print("사용자 삭제 실패: \(error.localizedDescription)")
+
+            } else {
+                print("사용자가 성공적으로 삭제되었습니다.")
+                let SignUpViewController = SignUpViewController()
+                self?.navigationController?.pushViewController(SignUpViewController, animated: true)
+            }
+        }
     }
 }
 
