@@ -27,7 +27,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
             window.rootViewController = LoginViewController()
         }
-
         window.backgroundColor = .white
 
         // 카카오 로그인 토큰이 있는지 여부 확인

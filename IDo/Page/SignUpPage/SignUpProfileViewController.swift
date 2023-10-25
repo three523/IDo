@@ -122,10 +122,10 @@ private extension SignUpProfileViewController {
             showAlert(message: "닉네임을 입력해주세요")
             return
         }
-        Auth.auth().createUser(withEmail: email, password: password) { [weak self] authDataResult, error in
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] authDataResult, error in
             guard let self = self else { return }
             if let error {
-                self.showAlert(message: "회원가입에 실패하였습니다.")
+                self.showAlert(message: "로그인에 실패하였습니다.")
 //                let errorn = error as NSError
 //                let errorCode = AuthErrorCode(_nsError: errorn)
 //                switch errorCode {
