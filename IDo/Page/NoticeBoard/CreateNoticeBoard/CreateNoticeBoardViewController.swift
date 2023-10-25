@@ -13,8 +13,6 @@ protocol RemoveDelegate: AnyObject {
 
 class CreateNoticeBoardViewController: UIViewController {
     
-    var selectedImages: [UIImage] = []
-    
     private let createNoticeBoardView = CreateNoticeBoardView()
     
     private var isTitleTextViewEdited = false
@@ -28,7 +26,7 @@ class CreateNoticeBoardViewController: UIViewController {
     private var editingMemoIndex: Int?
     
     var firebaseManager: FirebaseManager
-    private let club: Club
+    var club: Club
     
     init(club: Club, firebaseManager: FirebaseManager) {
         self.club = club
@@ -249,7 +247,19 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 //            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
 //                cell.createNoticeBoardImagePicker.galleryImageView.image = image
 //            }
-            selectedImages.append(image)
+            firebaseManager.selectedImage.append(image)
+            // 이미지 업로드
+            firebaseManager.uploadImages(clubID: club.id, firebaseManager.selectedImage) { imageURLs in
+                
+                print("Uploaded Image URLs: \(imageURLs)")
+                
+                // 이미지 업로드가 성공했는지 확인
+                if imageURLs.count == self.firebaseManager.selectedImage.count {
+                    print("All images have been successfully uploaded.")
+                } else {
+                    print("Some images failed to upload.")
+                }
+            }
             // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
             createNoticeBoardView.galleryCollectionView.reloadData()
             
@@ -261,12 +271,12 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return selectedImages.count
+        return firebaseManager.selectedImage.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
-        cell.createNoticeBoardImagePicker.galleryImageView.image = selectedImages[indexPath.row]
+        cell.createNoticeBoardImagePicker.galleryImageView.image = firebaseManager.selectedImage[indexPath.row]
         cell.removeCellDelegate = self
         cell.indexPath = indexPath
         return cell
@@ -303,10 +313,16 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            selectedImages.remove(at: indexPath.row)
+            firebaseManager.selectedImage.remove(at: indexPath.row)
             createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { (_) in
             self.createNoticeBoardView.galleryCollectionView.reloadData()
         }
+    }
+}
+
+extension CreateNoticeBoardView: UITabBarControllerDelegate {
+    private func tabBarController(_ tabBarController: UITabBarController, didselect viewController: UIViewController) -> Bool {
+        <#code#>
     }
 }

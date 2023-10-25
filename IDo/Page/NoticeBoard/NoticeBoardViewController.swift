@@ -13,8 +13,8 @@ class NoticeBoardViewController: UIViewController {
     private let noticeBoardView = NoticeBoardView()
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
     
-    private let firebaseManager: FirebaseManager
-    private let club: Club
+    var firebaseManager: FirebaseManager
+    var club: Club
     
     init(club: Club, firebaseManager: FirebaseManager) {
         self.club = club

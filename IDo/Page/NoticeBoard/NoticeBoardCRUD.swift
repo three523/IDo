@@ -23,7 +23,7 @@ class FirebaseManager {
     weak var delegate: FirebaseManagerDelegate?
 
     var noticeBoards: [NoticeBoard] = []
-    var selectedImage: [String] = []
+    var selectedImage: [UIImage] = []
     
     // MARK: - 데이터 저장
 
@@ -177,8 +177,8 @@ class FirebaseManager {
     
     // MARK: - 이미지 업로드 & 다운로드
 
-    func uploadImages(_ images: [UIImage], completion: @escaping ([String]) -> Void) {
-        let storageRef = Storage.storage().reference().child("images")
+    func uploadImages(clubID: String, _ images: [UIImage], completion: @escaping ([String]) -> Void) {
+        let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child("images")
         var imageURLs: [String] = []
         
         let dispatchGroup = DispatchGroup()
