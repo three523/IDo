@@ -12,7 +12,7 @@ import UIKit
 
 class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     let noticeBoardRef: DatabaseReference
-    let urlCache = FBURLCache()
+    let urlCache = FBURLCache.shared
     let storage = Storage.storage().reference()
     var currentIDoUser: IDoUser?
     var profileUpdate: ()->Void = {}

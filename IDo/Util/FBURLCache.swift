@@ -8,10 +8,11 @@
 import Foundation
 
 class FBURLCache {
-    let urlCache: URLCache
-    let urlSesstion: URLSession = URLSession.shared
+    static let shared = FBURLCache()
+    private let urlCache: URLCache
+    private let urlSesstion: URLSession = URLSession.shared
     
-    init() {
+    private init() {
         let cacheSizeMemory = 100 * 1024 * 1024
         let cacheSizeDisk = 100 * 1024 * 1024
         let cache = URLCache(memoryCapacity: cacheSizeMemory, diskCapacity: cacheSizeDisk, diskPath: "UserProfileImage")
