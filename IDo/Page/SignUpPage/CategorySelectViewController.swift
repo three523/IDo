@@ -123,8 +123,8 @@ private extension CategorySelectViewController {
 
             } else {
                 print("사용자가 성공적으로 삭제되었습니다.")
-                let categoryVC = SignUpViewController()
-                self?.navigationController?.pushViewController(categoryVC, animated: true)
+                let SignUpViewController = SignUpViewController()
+                self?.navigationController?.pushViewController(SignUpViewController, animated: true)
             }
         }
     }

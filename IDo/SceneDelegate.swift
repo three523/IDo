@@ -21,13 +21,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
 
-        try? Auth.auth().signOut()
+//        try? Auth.auth().signOut()
         if Auth.auth().currentUser != nil {
             window.rootViewController = TabBarController()
         } else {
             window.rootViewController = LoginViewController()
         }
-        
+
         window.backgroundColor = .white
 
         // 카카오 로그인 토큰이 있는지 여부 확인
