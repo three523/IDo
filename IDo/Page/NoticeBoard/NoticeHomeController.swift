@@ -5,10 +5,10 @@
 //  Created by t2023-m0053 on 2023/10/12.
 //
 
+import FirebaseAuth
 import FirebaseDatabase
 import SnapKit
 import UIKit
-import FirebaseAuth
 
 class NoticeHomeController: UIViewController {
     var meetingId: String?
@@ -17,7 +17,6 @@ class NoticeHomeController: UIViewController {
     var club: Club
     let fbUserDatabaseManager: FirebaseUserDatabaseManager
     
-
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.image = UIImage(named: "MeetingProfileImage")
@@ -78,6 +77,7 @@ class NoticeHomeController: UIViewController {
         }
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -157,19 +157,17 @@ class NoticeHomeController: UIViewController {
                    let title = meetingData["title"] as? String,
                    let description = meetingData["description"] as? String,
                    let imageUrlString = meetingData["imageUrl"] as? String,
-                   let imageUrl = URL(string: imageUrlString) {
-                    
+                   let imageUrl = URL(string: imageUrlString)
+                {
                     if index == TemporaryManager.shared.meetingIndex {
                         DispatchQueue.main.async {
                             self?.label.text = title
                             self?.textLabel.text = description
                             
-                    
                             if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
                                 self?.imageView.image = cachedImage
                             } else {
-                                
-                                URLSession.shared.dataTask(with: imageUrl) { (data, response, error) in
+                                URLSession.shared.dataTask(with: imageUrl) { data, _, error in
                                     if let error = error {
                                         print("이미지 로딩 실패", error.localizedDescription)
                                         return
