@@ -6,6 +6,8 @@
 //
 
 import FirebaseAuth
+import FirebaseCore
+import FirebaseDatabase
 import UIKit
 
 final class SignUpViewController: UIViewController {
@@ -49,6 +51,16 @@ final class SignUpViewController: UIViewController {
         setup()
         // Do any additional setup after loading the view.
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
 }
 
 private extension SignUpViewController {
@@ -87,6 +99,7 @@ private extension SignUpViewController {
 
     func setupButton() {
         nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
+
         backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
     }
 
@@ -94,18 +107,33 @@ private extension SignUpViewController {
         guard let email = emailTextField.text,
               let password = passwordTextField.text else { return }
 
-        if !isValidEmail(email) {
-            showAlertDialog(title: "경고", message: "올바른 이메일 형식을 입력해주세요.")
-            return
-        }
-
         if password.count < 6 {
             showAlertDialog(title: "경고", message: "비밀번호는 6자 이상이어야 합니다.")
             return
         }
 
-        let categoryVC = CategorySelectViewController(email: email, password: password)
-        navigationController?.pushViewController(categoryVC, animated: true)
+        Auth.auth().createUser(withEmail: email, password: password) { [weak self] _, error in
+            if let error = error {
+                let nsError = error as NSError
+                let errorCode = AuthErrorCode(_nsError: nsError)
+                print(errorCode)
+                switch errorCode.code {
+                case .emailAlreadyInUse:
+                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다.")
+                    return
+                case .weakPassword:
+                    self?.showAlertDialog(title: "경고", message: "안정성이 낮은 비밀번호입니다.")
+                case .invalidEmail:
+                    self?.showAlertDialog(title: "경고", message: "이메일 주소의 형식이 잘못되었습니다.")
+                default:
+                    self?.showAlertDialog(title: "오류", message: error.localizedDescription)
+                    return
+                }
+            } else {
+                let categoryVC = CategorySelectViewController(email: email, password: password)
+                self?.navigationController?.pushViewController(categoryVC, animated: true)
+            }
+        }
     }
 
     func isValidEmail(_ email: String) -> Bool {
