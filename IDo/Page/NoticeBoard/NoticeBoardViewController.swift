@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import FirebaseAuth
 
 class NoticeBoardViewController: UIViewController {
     
@@ -124,24 +125,33 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let deleteNoticeBoardAction = UIContextualAction(style: .normal, title: nil) { (action, view, completion) in
-            self.firebaseManager.deleteNoticeBoard(at: indexPath.row) { success in
-                if success {
-                    //tableView.deleteRows(at: [indexPath], with: .automatic)
-                    // 삭제 예정(-> 삭제 후 저장이 되었는지 확인 필요)
-                    self.firebaseManager.readNoticeBoard(clubID: self.club.id)
-                }
-            }
-            completion(true)
+        
+        let currentNoticeBoard = firebaseManager.noticeBoards[indexPath.row]
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return nil
         }
         
-        deleteNoticeBoardAction.backgroundColor = .systemRed
-        deleteNoticeBoardAction.image = UIImage(systemName: "trash.fill")
-        
-        let configuration = UISwipeActionsConfiguration(actions: [deleteNoticeBoardAction])
-        configuration.performsFirstActionWithFullSwipe = false
-        
-        return configuration
+        if currentNoticeBoard.rootUser.id == currentUserID {
+            let deleteNoticeBoardAction = UIContextualAction(style: .normal, title: nil) { (action, view, completion) in
+                self.firebaseManager.deleteNoticeBoard(at: indexPath.row) { success in
+                    if success {
+                        self.firebaseManager.readNoticeBoard(clubID: self.club.id)
+                    }
+                }
+                completion(true)
+            }
+            
+            deleteNoticeBoardAction.backgroundColor = .systemRed
+            deleteNoticeBoardAction.image = UIImage(systemName: "trash.fill")
+            
+            let configuration = UISwipeActionsConfiguration(actions: [deleteNoticeBoardAction])
+            configuration.performsFirstActionWithFullSwipe = false
+            return configuration
+        } else {
+            // 게시글 작성자와 현재 사용자가 다를 때
+            return UISwipeActionsConfiguration(actions: [])
+        }
     }
 }
 
