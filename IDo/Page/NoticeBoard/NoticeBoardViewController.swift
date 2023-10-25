@@ -12,8 +12,8 @@ class NoticeBoardViewController: UIViewController {
     
     private let noticeBoardView = NoticeBoardView()
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
-    private let firebaseManager: FirebaseManager
     
+    private let firebaseManager: FirebaseManager
     private let club: Club
     
     init(club: Club, firebaseManager: FirebaseManager) {
@@ -25,7 +25,7 @@ class NoticeBoardViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -43,11 +43,6 @@ class NoticeBoardViewController: UIViewController {
         super.viewWillAppear(animated)
         
         firebaseManager.delegate = self
-//        if firebaseManager.noticeBoards.isEmpty {
-//            view.addSubview(noticeBoardEmptyView)
-//            setupView(for: noticeBoardEmptyView)
-//        }
-//        selectView()
 //        firebaseManager.readNoticeBoard(clubID: club.id)
         
     }
@@ -59,7 +54,8 @@ class NoticeBoardViewController: UIViewController {
                 view.addSubview(noticeBoardEmptyView)
                 setupView(for: noticeBoardEmptyView)
             }
-        } else {
+        }
+        else {
             noticeBoardEmptyView.removeFromSuperview()
             if noticeBoardView.superview == nil {
                 view.addSubview(noticeBoardView)

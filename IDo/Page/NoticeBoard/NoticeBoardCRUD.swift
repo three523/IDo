@@ -16,7 +16,6 @@ protocol FirebaseManagerDelegate: AnyObject {
     func updateComment(noticeBoardID: String, commentCount: String)
 }
 
-// 매개변수를 noticBoard로 통일
 // completion을 escaping으로 바꾸기
 // image URL 업로드
 

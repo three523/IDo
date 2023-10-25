@@ -16,7 +16,6 @@ class CreateNoticeBoardViewController: UIViewController {
     var selectedImages: [UIImage] = []
     
     private let createNoticeBoardView = CreateNoticeBoardView()
-    var firebaseManager: FirebaseManager
     
     private var isTitleTextViewEdited = false
     private var isContentTextViewEdited = false
@@ -28,6 +27,7 @@ class CreateNoticeBoardViewController: UIViewController {
     
     private var editingMemoIndex: Int?
     
+    var firebaseManager: FirebaseManager
     private let club: Club
     
     init(club: Club, firebaseManager: FirebaseManager) {
