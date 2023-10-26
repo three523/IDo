@@ -36,7 +36,6 @@ class FirebaseManager {
             "id": noticeBoard.rootUser.id,
             "profileImage": noticeBoard.rootUser.profileImageURL,
             "nickName": noticeBoard.rootUser.nickName,
-            "description": noticeBoard.rootUser.description
         ]
         
         // NoticeBoard
@@ -71,7 +70,7 @@ class FirebaseManager {
         
         guard let currentUserID = Auth.auth().currentUser?.uid else { return }
         
-        let currentUser = UserSummary(id: currentUserID, profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
+        let currentUser = UserSummary(id: currentUserID, profileImageURL: nil, nickName: "파이브 아이즈")
         
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
@@ -126,7 +125,7 @@ class FirebaseManager {
                 {
                     let profileImageString = rootUserDict["profileImage"] as? String
                     
-                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
+                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName)
                     
                     let imageList = itemDict["imageList"] as? [String] ?? []
                     
@@ -144,16 +143,30 @@ class FirebaseManager {
 
     // MARK: - 데이터 업데이트
 
-    func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String) {
+    func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String, completion: @escaping (Bool) -> Void) {
         if index >= 0, index < self.noticeBoards.count {
             var updatedNoticeBoard = self.noticeBoards[index]
             updatedNoticeBoard.title = newTitle
             updatedNoticeBoard.content = newContent
             
-            self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
+//            self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
+//                if success {
+//                    self.noticeBoards[index] = updatedNoticeBoard
+//                    self.delegate?.reloadData()
+//                }
+//            }
+            self.uploadImages(clubID: self.noticeBoards[index].clubID, noticeBoardID: self.noticeBoards[index].id, imageList: self.selectedImage) { success, imageURLs in
                 if success {
-                    self.noticeBoards[index] = updatedNoticeBoard
-                    self.delegate?.reloadData()
+                    
+                    self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
+                        if success {
+                            self.noticeBoards[index] = updatedNoticeBoard
+                            self.delegate?.reloadData()
+                        }
+                        completion(success)
+                    }
+                } else {
+                    completion(false)
                 }
             }
         }
@@ -217,4 +230,36 @@ class FirebaseManager {
             completion(imageURLs.count == imageList.count, imageURLs)
         }
     }
+    
+    // MARK: - 이미지 다운로드
+
+    func downloadImages(imagePaths: [String], completion: @escaping ([UIImage]?) -> Void) {
+        let storageRef = Storage.storage().reference()
+        var downloadedImages: [UIImage] = []
+        
+        let dispatchGroup = DispatchGroup()
+        
+        for path in imagePaths {
+            dispatchGroup.enter()
+            let ref = storageRef.child(path)
+            
+            ref.getData(maxSize: 1 * 1024 * 1024) { data, error in  // 각 이미지 당 1MB
+                if let error = error {
+                    print("이미지 다운로드 중 에러 발생: \(error)")
+                    dispatchGroup.leave()
+                } else if let data = data, let image = UIImage(data: data) {
+                    downloadedImages.append(image)
+                    dispatchGroup.leave()
+                }
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            if !downloadedImages.isEmpty {
+                self.selectedImage = downloadedImages
+            }
+            completion(downloadedImages.isEmpty ? nil : downloadedImages)
+        }
+    }
+
 }

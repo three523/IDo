@@ -146,7 +146,11 @@ private extension CreateNoticeBoardViewController {
            let index = editingMemoIndex {
             
             // 해당 인덱스의 메모 수정 코드 필요
-            firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent)
+            firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent) { success in
+                if success {
+                    print("업데이트 완료")
+                }
+            }
             
             // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
             (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
