@@ -11,6 +11,7 @@ import UIKit
 class CategoryViewController: UICollectionViewController {
     let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
     let categoryImage = UIImage(systemName: "pencil.circle")
+    
 
     init() {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
@@ -65,11 +66,13 @@ class CategoryViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         let selectedCategory = categoryData[indexPath.row]
-
-        let meetingVC = MeetingViewController()
+        let meetingsData = MeetingsData(category: selectedCategory)
+        let meetingVC = MeetingViewController(meetingsData: meetingsData)
         TemporaryManager.shared.categoryData = selectedCategory
-
+        
+        
         navigationController?.pushViewController(meetingVC, animated: true)
     }
 }

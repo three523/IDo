@@ -17,9 +17,23 @@ class MeetingViewController: UIViewController {
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
     private var clubList: [Club] = []
+    private var meetingsData: MeetingsData
+    init(meetingsData: MeetingsData) {
+        self.meetingsData = meetingsData
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        loadDataFromFirebase()
+        meetingsData.update = {[weak self] in
+            self?.tableView.reloadData()
+        }
+        meetingsData.readClub()
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -113,7 +127,7 @@ class MeetingViewController: UIViewController {
     
     @objc
     func setBtnTap() {
-        let createMeetingVC = MeetingCreateViewController()
+        let createMeetingVC = MeetingCreateViewController(meetingsData: meetingsData)
         TemporaryManager.shared.selectedCategory = TemporaryManager.shared.categoryData
         navigationController?.pushViewController(createMeetingVC, animated: true)
     }
@@ -160,31 +174,51 @@ class MeetingViewController: UIViewController {
 
 extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TemporaryManager.shared.meetingTitle.count
+        return meetingsData.clubs.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
-        cell.titleLabel.text = TemporaryManager.shared.meetingTitle[indexPath.row]
-        cell.aboutLabel.text = TemporaryManager.shared.meetingDate[indexPath.row]
+        let club = meetingsData.clubs[indexPath.row]
+        cell.titleLabel.text = club.title
+        cell.aboutLabel.text = club.description
+        cell.basicImageView.image = UIImage(named: "MeetingProfileImage")
         
-        let imageUrl = TemporaryManager.shared.meetingImageUrls[indexPath.row]
-        
-        if let cachedImage = ImageCache.shared.getImage(for: imageUrl) {
-            cell.basicImageView.image = cachedImage
-        } else {
-            URLSession.shared.dataTask(with: URL(string: imageUrl)!) { data, _, _ in
-                if let data = data, let image = UIImage(data: data) {
+        if let imageURL = club.imageURL {
+            meetingsData.loadImage(storagePath: imageURL) { result in
+                switch result {
+                case .success(let data):
+                    let image = UIImage(data: data)
                     DispatchQueue.main.async {
                         cell.basicImageView.image = image
-                        ImageCache.shared.cacheImage(image, for: imageUrl)
                     }
+                    
+                case .failure(let error):
+                    print(error)
+                    
                 }
-            }.resume()
+            }
         }
+            return cell
+        }
+    
 
-        return cell
-    }
+//        let imageUrl = TemporaryManager.shared.meetingImageUrls[indexPath.row]
+        
+//        if let cachedImage = ImageCache.shared.getImage(for: imageUrl) {
+//            cell.basicImageView.image = cachedImage
+//        } else {
+//            URLSession.shared.dataTask(with: URL(string: imageUrl)!) { data, _, _ in
+//                if let data = data, let image = UIImage(data: data) {
+//                    DispatchQueue.main.async {
+//                        cell.basicImageView.image = image
+//                        ImageCache.shared.cacheImage(image, for: imageUrl)
+//                    }
+//                }
+//            }.resume()
+//        }
+
+       
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         TemporaryManager.shared.meetingIndex = indexPath.row

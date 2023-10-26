@@ -83,6 +83,7 @@
 		7FA208612AD6A191005C66ED /* MeetingCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */; };
 		7FA208632AD6A1BC005C66ED /* MeetingManageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */; };
 		7FA208662AD6A89F005C66ED /* MeetingProfileImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */; };
+		7FA613F52AE9280C00735891 /* MeetingsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA613F42AE9280C00735891 /* MeetingsData.swift */; };
 		7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185C2AD796AF0052E950 /* BasicCell.swift */; };
 		7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */; };
 		7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185E2AD796AF0052E950 /* BasicImageView.swift */; };
@@ -167,6 +168,7 @@
 		7FA208602AD6A191005C66ED /* MeetingCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCreateViewController.swift; sourceTree = "<group>"; };
 		7FA208622AD6A1BC005C66ED /* MeetingManageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingManageViewController.swift; sourceTree = "<group>"; };
 		7FA208652AD6A89F005C66ED /* MeetingProfileImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingProfileImage.swift; sourceTree = "<group>"; };
+		7FA613F42AE9280C00735891 /* MeetingsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingsData.swift; sourceTree = "<group>"; };
 		7FBE185C2AD796AF0052E950 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyMessageStackView.swift; sourceTree = "<group>"; };
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
@@ -445,6 +447,7 @@
 				18B12CB12ADFBDC700FB325F /* UserSummary.swift */,
 				18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */,
 				7FE072A72ADFE21200966916 /* TemporaryManager.swift */,
+				7FA613F42AE9280C00735891 /* MeetingsData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -627,6 +630,7 @@
 				7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */,
 				18CCC17F2ADD039B000D092C /* Date.swift in Sources */,
 				E73D73E02AD7E5FA00EF9554 /* NoticeHomeController.swift in Sources */,
+				7FA613F52AE9280C00735891 /* MeetingsData.swift in Sources */,
 				18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */,
 				18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */,
 				7FBE18602AD796AF0052E950 /* EmptyMessageStackView.swift in Sources */,
