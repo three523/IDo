@@ -35,8 +35,7 @@ class FirebaseManager {
         let userSummaryDict: [String: Any?] = [
             "id": noticeBoard.rootUser.id,
             "profileImage": noticeBoard.rootUser.profileImageURL,
-            "nickName": noticeBoard.rootUser.nickName,
-            "description": noticeBoard.rootUser.description
+            "nickName": noticeBoard.rootUser.nickName
         ]
         
         // NoticeBoard
@@ -66,7 +65,7 @@ class FirebaseManager {
     // MARK: - 데이터 생성
 
     // 임시 작성 유저 정보
-    let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
+    let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈")
 
     func createNoticeBoard(title: String, content: String, clubID: String, completion: ((Bool) -> Void)? = nil) {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
@@ -118,7 +117,7 @@ class FirebaseManager {
                 {
                     let profileImageString = rootUserDict["profileImage"] as? String
                     
-                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName, description: rootUserDict["description"] as? String)
+                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName)
                     
                     let imageList = itemDict["imageList"] as? [String] ?? []
                     
