@@ -17,9 +17,23 @@ class MeetingViewController: UIViewController {
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
     private var clubList: [Club] = []
+    private var meetingsData: MeetingsData
+    init(meetingsData: MeetingsData) {
+        self.meetingsData = meetingsData
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 //        loadDataFromFirebase()
+        meetingsData.update = {[weak self] in
+            self?.tableView.reloadData()
+        }
+        meetingsData.readClub()
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -36,7 +50,6 @@ class MeetingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadDataFromFirebase()
     }
 
 
@@ -57,41 +70,7 @@ class MeetingViewController: UIViewController {
         navigationItem.titleView = titleLabel
     }
     
-    func loadDataFromFirebase() {
-        guard let category = TemporaryManager.shared.categoryData else { return }
-        
-        let ref = Database.database().reference().child(category).child("meetings")
-        
-        ref.observe(.value) { [weak self] snapshot in
-            guard let strongSelf = self else { return }
-            
-            var newTitles: [String] = []
-            var newDates: [String] = []
-            var newImageUrls: [String] = []
-            strongSelf.clubList.removeAll()
-            
-            for child in snapshot.children {
-                if let childSnapshot = child as? DataSnapshot,
-                   let meetingData = childSnapshot.value as? [String: Any],
-                   let title = meetingData["title"] as? String,
-                   let description = meetingData["description"] as? String,
-                   let imageUrlString = meetingData["imageUrl"] as? String
-                {
-                    let club = Club(id: childSnapshot.key, title: title, imageURL: imageUrlString, description: description)
-                    strongSelf.clubList.append(club)
-                    
-                    newTitles.append(title)
-                    newDates.append(description)
-                    newImageUrls.append(imageUrlString)
-                }
-            }
-            
-            TemporaryManager.shared.meetingTitle = newTitles
-            TemporaryManager.shared.meetingDate = newDates
-            TemporaryManager.shared.meetingImageUrls = newImageUrls
-            strongSelf.tableView.reloadData()
-        }
-    }
+    
 
     
     func setupTableView() {
@@ -113,7 +92,7 @@ class MeetingViewController: UIViewController {
     
     @objc
     func setBtnTap() {
-        let createMeetingVC = MeetingCreateViewController()
+        let createMeetingVC = MeetingCreateViewController(meetingsData: meetingsData)
         TemporaryManager.shared.selectedCategory = TemporaryManager.shared.categoryData
         navigationController?.pushViewController(createMeetingVC, animated: true)
     }
@@ -160,36 +139,42 @@ class MeetingViewController: UIViewController {
 
 extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return TemporaryManager.shared.meetingTitle.count
+        return meetingsData.clubs.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
-        cell.titleLabel.text = TemporaryManager.shared.meetingTitle[indexPath.row]
-        cell.aboutLabel.text = TemporaryManager.shared.meetingDate[indexPath.row]
+        let club = meetingsData.clubs[indexPath.row]
+        cell.titleLabel.text = club.title
+        cell.aboutLabel.text = club.description
+        cell.basicImageView.image = UIImage(named: "MeetingProfileImage")
         
-        let imageUrl = TemporaryManager.shared.meetingImageUrls[indexPath.row]
-        
-        if let cachedImage = ImageCache.shared.getImage(for: imageUrl) {
-            cell.basicImageView.image = cachedImage
-        } else {
-            URLSession.shared.dataTask(with: URL(string: imageUrl)!) { data, _, _ in
-                if let data = data, let image = UIImage(data: data) {
+        if let imageURL = club.imageURL {
+            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
+                switch result {
+                case .success(let image):
                     DispatchQueue.main.async {
                         cell.basicImageView.image = image
-                        ImageCache.shared.cacheImage(image, for: imageUrl)
                     }
+                    
+                case .failure(let error):
+                    print(error)
+                    
                 }
-            }.resume()
+            }
         }
-
-        return cell
-    }
+            return cell
+        }
+    
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         TemporaryManager.shared.meetingIndex = indexPath.row
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
-        let club = clubList[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
+        let club = meetingsData.clubs[indexPath.row]
+        var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
+        print(meetingsData.clubImages)
+        
         
         guard let currentUser = Auth.auth().currentUser else { return }
         let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users",currentUser.uid])
@@ -201,8 +186,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
                 if let myClubList = idoUser.myClubList {
                     isJoin = myClubList.contains(where: { $0.id == club.id })
                 }
-                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin)
-                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+                    let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
+                    self.navigationController?.pushViewController(noticeBoardVC, animated: true)
             case .failure(let error):
                 print(error)
             }
