@@ -119,9 +119,28 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row])
-        vc.delegate = self
-        navigationController?.pushViewController(vc, animated: true)
+//        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row])
+//        vc.delegate = self
+        let createVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
+        createVC.editingTitleText = firebaseManager.noticeBoards[indexPath.row].title
+        createVC.editingContentText = firebaseManager.noticeBoards[indexPath.row].content
+        
+        firebaseManager.downloadImages(imagePaths: firebaseManager.noticeBoards[indexPath.row].imageList) { downloadedImages in
+            if let images = downloadedImages {
+                // 이미지 다운로드 성공
+                print("다운로드된 이미지 개수: \(images.count)")
+                //self.firebaseManager.selectedImage = images
+                createVC.createNoticeBoardView.galleryCollectionView.reloadData()
+            }
+            else {
+                // 이미지 다운로드 실패
+                print("이미지를 다운로드하지 못했습니다.")
+            }
+        }
+        
+        createVC.editingMemoIndex = indexPath.row
+        createVC.isEditingMode = true
+        navigationController?.pushViewController(createVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {

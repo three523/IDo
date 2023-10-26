@@ -197,69 +197,98 @@ class FirebaseManager {
         }
     }
     
-    // MARK: - 이미지 업로드 & 다운로드
-
+    // MARK: - 이미지 업로드
     func uploadImages(clubID: String, noticeBoardID: String, imageList: [UIImage], completion: @escaping (Bool, [String]?) -> Void) {
         let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child(noticeBoardID).child("images")
         var imageURLs: [String] = []
         
         let dispatchGroup = DispatchGroup()
         
-        for image in imageList {
+        for (index, image) in imageList.enumerated() {
             dispatchGroup.enter()
-            let imageName = UUID().uuidString
+            let imageName = "\(index)_\(UUID().uuidString)"
             let ref = storageRef.child(imageName)
             
             if let uploadData = image.jpegData(compressionQuality: 0.5) {
                 ref.putData(uploadData, metadata: nil) { _, error in
                     if let error = error {
                         print("Failed to upload image:", error)
-                        dispatchGroup.leave()
-                        return
+                    } else {
+                        // fullPath 속성을 사용하여 참조 경로를 저장
+                        let fullPath = ref.fullPath
+                        imageURLs.append(fullPath)
                     }
-                    
-                    // fullPath 속성을 사용하여 참조 경로를 저장
-                    let fullPath = ref.fullPath
-                    imageURLs.append(fullPath)
                     dispatchGroup.leave()
                 }
+            } else {
+                dispatchGroup.leave()
             }
         }
         
         dispatchGroup.notify(queue: .main) {
-            completion(imageURLs.count == imageList.count, imageURLs)
+            completion(imageURLs.count == imageList.count, imageURLs.sorted())
         }
     }
     
     // MARK: - 이미지 다운로드
-
     func downloadImages(imagePaths: [String], completion: @escaping ([UIImage]?) -> Void) {
         let storageRef = Storage.storage().reference()
         var downloadedImages: [UIImage] = []
+        var imageDict: [String: UIImage] = [:]
         
+        let sortedPaths = imagePaths.sorted()
         let dispatchGroup = DispatchGroup()
         
-        for path in imagePaths {
+        for path in sortedPaths {
             dispatchGroup.enter()
             let ref = storageRef.child(path)
             
-            ref.getData(maxSize: 1 * 1024 * 1024) { data, error in  // 각 이미지 당 1MB
+            ref.downloadURL { url, error in
                 if let error = error {
-                    print("이미지 다운로드 중 에러 발생: \(error)")
+                    print("URL 가져오기 실패: \(error)")
                     dispatchGroup.leave()
-                } else if let data = data, let image = UIImage(data: data) {
-                    downloadedImages.append(image)
-                    dispatchGroup.leave()
+                } else if let url = url {
+                    FBURLCache.shared.downloadURL(url: url) { result in
+                        switch result {
+                        case .success(let image):
+                            imageDict[path] = image
+                        case .failure(let error):
+                            print("이미지 다운로드 실패: \(error)")
+                        }
+                        dispatchGroup.leave()
+                    }
                 }
             }
         }
         
         dispatchGroup.notify(queue: .main) {
+            for path in sortedPaths {
+                if let image = imageDict[path] {
+                    downloadedImages.append(image)
+                }
+            }
+            
             if !downloadedImages.isEmpty {
                 self.selectedImage = downloadedImages
+                self.delegate?.reloadData()
             }
             completion(downloadedImages.isEmpty ? nil : downloadedImages)
         }
     }
-
+    
+    // MARK: - 이미지 삭제
+    func deleteImage(imagePath: String, completion: @escaping (Bool, Error?) -> Void) {
+        let storageRef = Storage.storage().reference()
+        let ref = storageRef.child(imagePath)
+        
+        ref.delete { error in
+            if let error = error {
+                print("이미지 삭제 실패: \(error)")
+                completion(false, error)
+            } else {
+                print("이미지 삭제 성공")
+                completion(true, nil)
+            }
+        }
+    }
 }

@@ -30,6 +30,11 @@ class GalleryCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        createNoticeBoardImagePicker.galleryImageView.image = nil
+    }
+    
     private func addSubView() {
         contentView.addSubview(createNoticeBoardImagePicker)
     }

@@ -14,17 +14,17 @@ protocol RemoveDelegate: AnyObject {
 
 class CreateNoticeBoardViewController: UIViewController {
     
-    private let createNoticeBoardView = CreateNoticeBoardView()
+    let createNoticeBoardView = CreateNoticeBoardView()
     
     private var isTitleTextViewEdited = false
     private var isContentTextViewEdited = false
     
-    private var isEditingMode = false
+    var isEditingMode = false
     
-    private var editingTitleText: String?
-    private var editingContentText: String?
+    var editingTitleText: String?
+    var editingContentText: String?
     
-    private var editingMemoIndex: Int?
+    var editingMemoIndex: Int?
     
     var firebaseManager: FirebaseManager
     var club: Club
@@ -81,6 +81,8 @@ private extension CreateNoticeBoardViewController {
         // 수정 할 때
         if isEditingMode {
             if let editingTitleText = editingTitleText, let editingContentText = editingContentText {
+                isTitleTextViewEdited = true
+                isContentTextViewEdited = true
                 
                 // 제목 textView
                 createNoticeBoardView.titleTextView.text = editingTitleText
@@ -312,7 +314,8 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
 extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         isEditingMode = false
-        firebaseManager.selectedImage.removeAll()
+        // 원인
+        //firebaseManager.selectedImage.removeAll()
     }
 }
 
@@ -322,6 +325,14 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
             firebaseManager.selectedImage.remove(at: indexPath.row)
             createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { (_) in
+//            self.firebaseManager.deleteImage(imagePath: )) { success, error in
+//                if success {
+//                    print("이미지 삭제 성공")
+//                }
+//                else {
+//                    print("이미지 삭제 실패"
+//                }
+//            }
             self.createNoticeBoardView.galleryCollectionView.reloadData()
         }
     }
