@@ -19,9 +19,10 @@ final class MyProfile {
     
     private init() {}
     
-    func getUserProfile(uid: String) {
+    func getUserProfile(uid: String, completion: ((Bool) -> Void)? = nil) {
         if let currentUser = fileCache.getFile(uid: uid) {
             self.myUserInfo = currentUser
+            completion?(true)
         }
         firebaseManager = FBDatabaseManager(refPath: ["Users",uid])
         firebaseManager.readData { result in
@@ -29,13 +30,18 @@ final class MyProfile {
             case .success(let idoUser):
                 if let currentUpdateAt = self.myUserInfo?.updateAt,
                    let serverUpdateAt = idoUser.updateAt {
-                    if currentUpdateAt >= serverUpdateAt { return }
+                    if currentUpdateAt >= serverUpdateAt {
+                        completion?(true)
+                        return
+                    }
                 }
                 self.myUserInfo = idoUser.toMyUserInfo
                 if let profilePath = idoUser.profileImage {
                     self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)
+                    completion?(true)
                 }
             case .failure(let error):
+                completion?(false)
                 print(error.localizedDescription)
             }
         }

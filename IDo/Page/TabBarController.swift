@@ -10,19 +10,14 @@ import FirebaseAuth
 
 class TabBarController: UITabBarController {
     
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.setupCurrentUser()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBarSetting()
-        self.viewControllerSetting()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        MyProfile.shared.getUserProfile(uid: uid) { _ in
+            self.tabBarSetting()
+            self.viewControllerSetting()
+        }
+        
     }
 
     private func tabBarSetting() {
@@ -60,9 +55,5 @@ class TabBarController: UITabBarController {
                 items[index].selectedImage = UIImage(systemName: selectedImageName)
             }
         }
-    }
-    private func setupCurrentUser() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        MyProfile.shared.getUserProfile(uid: uid)
     }
 }

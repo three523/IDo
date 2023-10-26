@@ -86,11 +86,6 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.delegate = self
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print("Test:\(MyProfile.shared.myUserInfo)")
-    }
-    
     func setLayout() {
         view.addSubview(profileImage)
         view.addSubview(profileName)
