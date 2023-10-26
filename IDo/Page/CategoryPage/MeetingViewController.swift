@@ -5,14 +5,15 @@
 //  Created by t2023-m0053 on 2023/10/11.
 //
 
-import FirebaseDatabase
 import FirebaseAuth
+import FirebaseDatabase
 import Foundation
 import SnapKit
 import UIKit
 
 class MeetingViewController: UIViewController {
     let meetingImage = UIImage(systemName: "camera.circle")
+    private var emptyMessageView: EmptyMessageStackView = .init(messageType: .clubEmpty)
     private var tableView: UITableView!
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
@@ -23,6 +24,7 @@ class MeetingViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -30,8 +32,9 @@ class MeetingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        loadDataFromFirebase()
-        meetingsData.update = {[weak self] in
+        meetingsData.update = { [weak self] in
             self?.tableView.reloadData()
+            self?.updateNoMeetingsViewVisibility()
         }
         meetingsData.readClub()
         navigationController?.navigationBar.tintColor = UIColor.black
@@ -40,20 +43,20 @@ class MeetingViewController: UIViewController {
         navigationItem()
         setupNoMeetingsView()
         if let data = TemporaryManager.shared.categoryData, // 카테고리 Index에 따른 제목 표시
-                 let index = TemporaryManager.shared.categoryIndex,
-                 index < TemporaryManager.shared.meetingTitle.count && index < TemporaryManager.shared.meetingDate.count
-              {
-                  navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
-                  navigationItem.titleView?.addSubview(createTitleLabel(with: data))
-              }
+           let index = TemporaryManager.shared.categoryIndex,
+           index < TemporaryManager.shared.meetingTitle.count && index < TemporaryManager.shared.meetingDate.count
+        {
+            navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
+            navigationItem.titleView?.addSubview(createTitleLabel(with: data))
+        }
+        setupEmptyMessageView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        updateNoMeetingsViewVisibility()
     }
 
-
-    
     private func createTitleLabel(with data: String) -> UILabel {
         let titleLabel = UILabel()
         titleLabel.text = "\(data)"
@@ -69,10 +72,25 @@ class MeetingViewController: UIViewController {
         
         navigationItem.titleView = titleLabel
     }
-    
-    
 
-    
+    private func setupEmptyMessageView() {
+        view.addSubview(emptyMessageView)
+        emptyMessageView.isHidden = true
+        emptyMessageView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.left.right.equalToSuperview().inset(Constant.margin3)
+        }
+    }
+
+    private func updateNoMeetingsViewVisibility() {
+        if meetingsData.clubs.isEmpty {
+            noMeetingsView.isHidden = true // 기존 noMeetingsView를 숨깁니다.
+            emptyMessageView.isHidden = false // EmptyMessageStackView를 보입니다.
+        } else {
+            emptyMessageView.isHidden = true // 회의가 있으면 EmptyMessageStackView를 숨깁니다.
+        }
+    }
+
     func setupTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.delegate = self
@@ -159,14 +177,12 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
                     
                 case .failure(let error):
                     print(error)
-                    
                 }
             }
         }
-            return cell
-        }
+        return cell
+    }
     
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         TemporaryManager.shared.meetingIndex = indexPath.row
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
@@ -175,9 +191,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
         print(meetingsData.clubImages)
         
-        
         guard let currentUser = Auth.auth().currentUser else { return }
-        let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users",currentUser.uid])
+        let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
         
         fbDatabaseUserManager.readData { result in
             switch result {
@@ -186,8 +201,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
                 if let myClubList = idoUser.myClubList {
                     isJoin = myClubList.contains(where: { $0.id == club.id })
                 }
-                    let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
-                    self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
+                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
             case .failure(let error):
                 print(error)
             }
