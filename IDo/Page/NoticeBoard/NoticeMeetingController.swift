@@ -20,11 +20,13 @@ class NoticeMeetingController: TabmanViewController {
     private var currentUser: User
     private var isJoin: Bool
     private let fbUserDatabaseManager: FirebaseUserDatabaseManager
-
-    init(club: Club, currentUser: User, isJoin: Bool) {
+    private let clubImage: UIImage
+    
+    init(club: Club, currentUser: User, isJoin: Bool, clubImage: UIImage) {
         self.club = club
         self.currentUser = currentUser
         self.isJoin = isJoin
+        self.clubImage = clubImage
         self.fbUserDatabaseManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
         super.init(nibName: nil, bundle: nil)
         fbUserDatabaseManager.readData()
@@ -47,7 +49,7 @@ class NoticeMeetingController: TabmanViewController {
             make.height.equalTo(30)
         }
 
-        let HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager)
+        let HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager, clubImage: clubImage)
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 

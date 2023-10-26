@@ -1,19 +1,21 @@
 import Foundation
 import FirebaseDatabase
 import FirebaseStorage
+import UIKit
 
 class MeetingsData {
     var clubs: [Club] = []
     let category: String
     private let defaultRef: DatabaseReference
     var update: () -> Void = {}
+    var clubImages: [String: UIImage] = [:] // 딕셔너리
     
     init(category: String) {
         self.category = category
         
         self.defaultRef = Database.database().reference().child(category).child("meetings")
     }
-    
+    // 새로 추가될 때 리로드 되는거 나중에 수정
     func addClub(club: Club, imageData: Data?, completion: @escaping (Bool) -> Void) {
         let ref = defaultRef.child(club.id)
         
@@ -27,12 +29,11 @@ class MeetingsData {
                 completion(isSuccess)
                 
             }
-//            self.update()
         }
     }
     
     
-    func readClub() {
+    func readClub(completion: ((Bool) -> Void)? = nil) {
         defaultRef.getData { error, datasnapshot in
             if let error = error {
                 print(error.localizedDescription)
@@ -54,6 +55,7 @@ class MeetingsData {
                 
                 
             }
+            completion?(true)
             self.update()
         }
         
@@ -88,7 +90,7 @@ class MeetingsData {
         }
     }
     
-    func loadImage(storagePath: String, completion: @escaping (Result<Data, Error>) -> Void) {
+    func loadImage(storagePath: String, clubId: String ,completion: @escaping (Result<UIImage, Error>) -> Void) {
         let storageRef =
         Storage.storage().reference().child(storagePath)
         storageRef.downloadURL { url, error in
@@ -99,8 +101,9 @@ class MeetingsData {
             guard let url = url else { return }
             FBURLCache.shared.downloadURL(url: url) { result in
                 switch result {
-                case .success(let data):
-                    completion(.success(data))
+                case .success(let image):
+                    self.clubImages[clubId] = image
+                    completion(.success(image))
                 case .failure(let error):
                     completion(.failure(error))
                 }

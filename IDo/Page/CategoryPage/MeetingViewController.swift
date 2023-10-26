@@ -50,7 +50,6 @@ class MeetingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        loadDataFromFirebase()
     }
 
 
@@ -71,41 +70,7 @@ class MeetingViewController: UIViewController {
         navigationItem.titleView = titleLabel
     }
     
-    func loadDataFromFirebase() {
-        guard let category = TemporaryManager.shared.categoryData else { return }
-        
-        let ref = Database.database().reference().child(category).child("meetings")
-        
-        ref.observe(.value) { [weak self] snapshot in
-            guard let strongSelf = self else { return }
-            
-            var newTitles: [String] = []
-            var newDates: [String] = []
-            var newImageUrls: [String] = []
-            strongSelf.clubList.removeAll()
-            
-            for child in snapshot.children {
-                if let childSnapshot = child as? DataSnapshot,
-                   let meetingData = childSnapshot.value as? [String: Any],
-                   let title = meetingData["title"] as? String,
-                   let description = meetingData["description"] as? String,
-                   let imageUrlString = meetingData["imageUrl"] as? String
-                {
-                    let club = Club(id: childSnapshot.key, title: title, imageURL: imageUrlString, description: description)
-                    strongSelf.clubList.append(club)
-                    
-                    newTitles.append(title)
-                    newDates.append(description)
-                    newImageUrls.append(imageUrlString)
-                }
-            }
-            
-            TemporaryManager.shared.meetingTitle = newTitles
-            TemporaryManager.shared.meetingDate = newDates
-            TemporaryManager.shared.meetingImageUrls = newImageUrls
-            strongSelf.tableView.reloadData()
-        }
-    }
+    
 
     
     func setupTableView() {
@@ -185,10 +150,9 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.basicImageView.image = UIImage(named: "MeetingProfileImage")
         
         if let imageURL = club.imageURL {
-            meetingsData.loadImage(storagePath: imageURL) { result in
+            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
                 switch result {
-                case .success(let data):
-                    let image = UIImage(data: data)
+                case .success(let image):
                     DispatchQueue.main.async {
                         cell.basicImageView.image = image
                     }
@@ -203,27 +167,14 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         }
     
 
-//        let imageUrl = TemporaryManager.shared.meetingImageUrls[indexPath.row]
-        
-//        if let cachedImage = ImageCache.shared.getImage(for: imageUrl) {
-//            cell.basicImageView.image = cachedImage
-//        } else {
-//            URLSession.shared.dataTask(with: URL(string: imageUrl)!) { data, _, _ in
-//                if let data = data, let image = UIImage(data: data) {
-//                    DispatchQueue.main.async {
-//                        cell.basicImageView.image = image
-//                        ImageCache.shared.cacheImage(image, for: imageUrl)
-//                    }
-//                }
-//            }.resume()
-//        }
-
-       
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         TemporaryManager.shared.meetingIndex = indexPath.row
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
-        let club = clubList[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
+        let club = meetingsData.clubs[indexPath.row]
+        var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
+        print(meetingsData.clubImages)
+        
         
         guard let currentUser = Auth.auth().currentUser else { return }
         let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users",currentUser.uid])
@@ -235,8 +186,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
                 if let myClubList = idoUser.myClubList {
                     isJoin = myClubList.contains(where: { $0.id == club.id })
                 }
-                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin)
-                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+                    let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
+                    self.navigationController?.pushViewController(noticeBoardVC, animated: true)
             case .failure(let error):
                 print(error)
             }
