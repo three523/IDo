@@ -157,7 +157,7 @@ class FirebaseManager {
 //            }
             self.uploadImages(clubID: self.noticeBoards[index].clubID, noticeBoardID: self.noticeBoards[index].id, imageList: self.selectedImage) { success, imageURLs in
                 if success {
-                    
+                    updatedNoticeBoard.imageList = imageURLs ?? []
                     self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                         if success {
                             self.noticeBoards[index] = updatedNoticeBoard

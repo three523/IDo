@@ -60,6 +60,14 @@ class CreateNoticeBoardViewController: UIViewController {
         navigationController?.delegate = self
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if isMovingFromParent {
+            firebaseManager.selectedImage.removeAll()
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.createNoticeBoardView.titleTextView.resignFirstResponder()
         self.createNoticeBoardView.contentTextView.resignFirstResponder()
@@ -314,8 +322,6 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
 extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         isEditingMode = false
-        // 원인
-        //firebaseManager.selectedImage.removeAll()
     }
 }
 
