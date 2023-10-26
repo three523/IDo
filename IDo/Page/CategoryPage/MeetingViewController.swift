@@ -36,7 +36,10 @@ class MeetingViewController: UIViewController {
             self?.tableView.reloadData()
             self?.updateNoMeetingsViewVisibility()
         }
-        meetingsData.readClub()
+        meetingsData.readClub { _ in
+            self.setupEmptyMessageView()
+            self.updateNoMeetingsViewVisibility()
+        }
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -49,7 +52,6 @@ class MeetingViewController: UIViewController {
             navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
             navigationItem.titleView?.addSubview(createTitleLabel(with: data))
         }
-        setupEmptyMessageView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
