@@ -229,7 +229,6 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL, imageSize: .small) { image in
             guard let image else { return }
             cell.setUserImage(profileImage: image)
-            cell.setNeedsLayout()
         }
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content

@@ -11,5 +11,4 @@ struct UserSummary: Codable, Identifier {
     let id: String
     var profileImageURL: String?
     var nickName: String
-    var description: String?
 }

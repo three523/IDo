@@ -15,7 +15,7 @@ class SignUpProfileViewController: UIViewController {
     private let password: String
     private let selectedCategorys: [String]
     private var user: IDoUser?
-    private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
+    private let fbUserDatabaseManager: FirebaseCreateUserManager = FirebaseCreateUserManager(refPath: ["Users"])
     private let imagePickerViewController: UIImagePickerController = .init()
 
     private let profileImageView: UIImageView = .init(image: UIImage(systemName: "camera.circle.fill"))
@@ -126,14 +126,6 @@ private extension SignUpProfileViewController {
             guard let self = self else { return }
             if let error {
                 self.showAlert(message: "로그인에 실패하였습니다.")
-//                let errorn = error as NSError
-//                let errorCode = AuthErrorCode(_nsError: errorn)
-//                switch errorCode {
-//                case .emailAlreadyInUse:
-//                }
-//                print(errorn.code)
-//                print(errorn)
-//                self.showAlert(message: "회원가입에 실패하였습니다.")
                 return
             }
             guard let authDataResult = authDataResult else { return }
@@ -141,16 +133,8 @@ private extension SignUpProfileViewController {
             var user = IDoUser(id: uid, nickName: self.nickName, hobbyList: self.selectedCategorys)
             self.fbUserDatabaseManager.model = user
             self.fbUserDatabaseManager.appendData(data: user)
+            self.fbUserDatabaseManager.addImage(uid: uid, image: profileImageView.image)
             self.firebaseLogin()
-            self.imageUpload(uid: uid) { result in
-                switch result {
-                case .success(let path):
-                    user = IDoUser(id: uid, profileImage: path, nickName: self.nickName)
-                    self.fbUserDatabaseManager.updateModel(data: user)
-                case .failure(let error):
-                    print(error)
-                }
-            }
         }
     }
 
@@ -171,51 +155,6 @@ private extension SignUpProfileViewController {
             }
             (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(TabBarController(), animated: true)
         }
-    }
-
-    func imageUpload(uid: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let image = profileImageView.image else { return }
-        if image == UIImage(systemName: "camera.circle.fill") { return }
-        guard let smaillImageData = resizeImage(image: image, targetSize: CGSize(width: 30, height: 30)).pngData(),
-              let mediumImageData = resizeImage(image: image, targetSize: CGSize(width: 90, height: 90)).pngData() else { return }
-
-        let storageRef = Storage.storage().reference().child("UserProfileImages/\(uid)")
-        let storageSmallRef = storageRef.child(UserImageSize.small.rawValue)
-        let storageMediumRef = storageRef.child(UserImageSize.medium.rawValue)
-        storageSmallRef.putData(smaillImageData) { _, error in
-            if let error {
-                completion(.failure(error))
-            }
-            completion(.success(storageRef.fullPath))
-        }
-        storageMediumRef.putData(mediumImageData) { _, error in
-            if let error {
-                completion(.failure(error))
-            }
-        }
-    }
-
-    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
-        let widthRatio = targetSize.width / size.width
-        let heightRatio = targetSize.height / size.height
-
-        var newSize: CGSize
-
-        if widthRatio > heightRatio {
-            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
-        } else {
-            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
-        }
-
-        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
-
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
-        image.draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return newImage!
     }
 }
 
