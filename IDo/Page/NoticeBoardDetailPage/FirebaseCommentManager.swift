@@ -58,7 +58,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func getMyProfileImage(uid: String, imageSize: UserImageSize, completion: @escaping (UIImage?)->Void ) {
+    func getMyProfileImage(uid: String, imageSize: ImageSize, completion: @escaping (UIImage?)->Void ) {
         let myProfileRef = Database.database().reference().child("Users").child(uid)
         myProfileRef.getData { error, dataSnapShot in
             if let error {
@@ -73,7 +73,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func getUserImage(referencePath: String?, imageSize: UserImageSize, completion: @escaping(UIImage?) -> Void) {
+    func getUserImage(referencePath: String?, imageSize: ImageSize, completion: @escaping(UIImage?) -> Void) {
         guard let referencePath else { return }
         let imageRef = storage.child(referencePath).child(imageSize.rawValue)
         imageRef.downloadURL { url, error in
