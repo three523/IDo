@@ -35,7 +35,7 @@ class FirebaseManager {
         let userSummaryDict: [String: Any?] = [
             "id": noticeBoard.rootUser.id,
             "profileImage": noticeBoard.rootUser.profileImageURL,
-            "nickName": noticeBoard.rootUser.nickName,
+            "nickName": noticeBoard.rootUser.nickName
         ]
         
         // NoticeBoard
