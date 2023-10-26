@@ -13,6 +13,7 @@ import UIKit
 
 class MeetingViewController: UIViewController {
     let meetingImage = UIImage(systemName: "camera.circle")
+    private var emptyMessageView: EmptyMessageStackView = .init(messageType: .clubEmpty)
     private var tableView: UITableView!
     private var emptyStateLabel: UILabel!
     private var noMeetingsView: UIView!
@@ -48,7 +49,7 @@ class MeetingViewController: UIViewController {
             navigationItem.titleView?.subviews.forEach { $0.removeFromSuperview() }
             navigationItem.titleView?.addSubview(createTitleLabel(with: data))
         }
-        updateNoMeetingsViewVisibility()
+        setupEmptyMessageView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,22 +64,6 @@ class MeetingViewController: UIViewController {
         
         return titleLabel
     }
-
-    // 모임이 없을 시
-    private func updateNoMeetingsViewVisibility() {
-        if meetingsData.clubs.isEmpty {
-            noMeetingsView.isHidden = false
-            if let category = TemporaryManager.shared.categoryData {
-                noMeetingsView.subviews.forEach { subview in
-                    if let messageLabel = subview as? UILabel {
-                        messageLabel.text = "\(category) 카테고리의 모임이 없습니다.\n참여가 있는 모임에 참여하시거나\n새로운 모임을 만들어보세요."
-                    }
-                }
-            }
-        } else {
-            noMeetingsView.isHidden = true
-        }
-    }
     
     private func setupNavigationBar() {
         let titleLabel = UILabel()
@@ -87,7 +72,25 @@ class MeetingViewController: UIViewController {
         
         navigationItem.titleView = titleLabel
     }
-    
+
+    private func setupEmptyMessageView() {
+        view.addSubview(emptyMessageView)
+        emptyMessageView.isHidden = true
+        emptyMessageView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.left.right.equalToSuperview().inset(Constant.margin3)
+        }
+    }
+
+    private func updateNoMeetingsViewVisibility() {
+        if meetingsData.clubs.isEmpty {
+            noMeetingsView.isHidden = true // 기존 noMeetingsView를 숨깁니다.
+            emptyMessageView.isHidden = false // EmptyMessageStackView를 보입니다.
+        } else {
+            emptyMessageView.isHidden = true // 회의가 있으면 EmptyMessageStackView를 숨깁니다.
+        }
+    }
+
     func setupTableView() {
         tableView = UITableView(frame: view.bounds, style: .plain)
         tableView.delegate = self
