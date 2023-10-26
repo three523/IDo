@@ -91,7 +91,7 @@ private extension LoginView {
 //            make.height.equalTo(45)
 //        }
         emailTextField.snp.makeConstraints { make in
-            make.centerY.equalTo(safeAreaLayoutGuide)
+            make.bottom.equalTo(snp.centerY).inset(60)
             make.left.right.equalToSuperview().inset(Constant.margin3)
         }
         passwordTextField.snp.makeConstraints { make in

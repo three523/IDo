@@ -13,7 +13,6 @@ import UIKit
 
 class LoginViewController: UIViewController {
     private let loginView = LoginView()
-    private let mainBarController = TabBarController()
     private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
     
     var kakaoEmail: String = ""
@@ -154,7 +153,6 @@ private extension LoginViewController {
     // MARK: - Firebase 로그인
 
     private func loginFirebase(email: String, password: String) {
-        print(email, password)
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             // Error(등록 실패)
             if let e = error {
@@ -163,7 +161,8 @@ private extension LoginViewController {
             }
             // Success(등록 성공)
             else {
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(self.mainBarController, animated: true)
+                let mainBarController = TabBarController()
+                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(mainBarController, animated: true)
             }
         }
     }

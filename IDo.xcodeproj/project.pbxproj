@@ -60,6 +60,9 @@
 		18C26A062AD941AF00899A6F /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 18C26A052AD941AF00899A6F /* FirebaseStorage */; };
 		18C65F322AEA0656006A3A79 /* FirebaseCreateUserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C65F312AEA0656006A3A79 /* FirebaseCreateUserManager.swift */; };
 		18C65F342AEA1CAA006A3A79 /* UIImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C65F332AEA1CAA006A3A79 /* UIImage.swift */; };
+		18C65F362AEA5AA7006A3A79 /* MyProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C65F352AEA5AA7006A3A79 /* MyProfile.swift */; };
+		18C65F382AEA84D5006A3A79 /* ProfileImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C65F372AEA84D5006A3A79 /* ProfileImageCache.swift */; };
+		18C65F3A2AEAB33D006A3A79 /* MyUserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C65F392AEAB33D006A3A79 /* MyUserInfo.swift */; };
 		18C6BC7A2AE78DC7000E4D3F /* ImageSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C6BC792AE78DC7000E4D3F /* ImageSize.swift */; };
 		18C6BC7C2AE7C564000E4D3F /* FBURLCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C6BC7B2AE7C564000E4D3F /* FBURLCache.swift */; };
 		18CCC1752ADD00D7000D092C /* EmptyCountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC16C2ADD00D7000D092C /* EmptyCountTableViewCell.swift */; };
@@ -147,6 +150,9 @@
 		18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		18C65F312AEA0656006A3A79 /* FirebaseCreateUserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCreateUserManager.swift; sourceTree = "<group>"; };
 		18C65F332AEA1CAA006A3A79 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
+		18C65F352AEA5AA7006A3A79 /* MyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfile.swift; sourceTree = "<group>"; };
+		18C65F372AEA84D5006A3A79 /* ProfileImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageCache.swift; sourceTree = "<group>"; };
+		18C65F392AEAB33D006A3A79 /* MyUserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyUserInfo.swift; sourceTree = "<group>"; };
 		18C6BC792AE78DC7000E4D3F /* ImageSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSize.swift; sourceTree = "<group>"; };
 		18C6BC7B2AE7C564000E4D3F /* FBURLCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBURLCache.swift; sourceTree = "<group>"; };
 		18CCC16C2ADD00D7000D092C /* EmptyCountTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyCountTableViewCell.swift; sourceTree = "<group>"; };
@@ -365,6 +371,8 @@
 				18CCC1802ADD03C4000D092C /* Reusable.swift */,
 				18B12CB92ADFDD1700FB325F /* Identifier.swift */,
 				18C6BC7B2AE7C564000E4D3F /* FBURLCache.swift */,
+				18C65F352AEA5AA7006A3A79 /* MyProfile.swift */,
+				18C65F372AEA84D5006A3A79 /* ProfileImageCache.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -454,6 +462,7 @@
 				18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */,
 				7FE072A72ADFE21200966916 /* TemporaryManager.swift */,
 				7FA613F42AE9280C00735891 /* MeetingsData.swift */,
+				18C65F392AEAB33D006A3A79 /* MyUserInfo.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -610,6 +619,7 @@
 				18A6A70C2AE269130086B37D /* SignUpViewController.swift in Sources */,
 				187108632AE121B7006B9DEB /* FirebaseUserDatabaseManager.swift in Sources */,
 				18CCC1752ADD00D7000D092C /* EmptyCountTableViewCell.swift in Sources */,
+				18C65F3A2AEAB33D006A3A79 /* MyUserInfo.swift in Sources */,
 				10C265B22AD55BBF002BA40A /* AppDelegate.swift in Sources */,
 				10CBA04E2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift in Sources */,
 				7B6D8C652AE0D0B100FF2194 /* HomeViewcell.swift in Sources */,
@@ -647,6 +657,7 @@
 				18CE9C292AD8ED0B00C921D5 /* NoticeBoard.swift in Sources */,
 				18B230AD2AE296DA00E51270 /* CategoryCollectionViewCell.swift in Sources */,
 				18A6A70E2AE269FB0086B37D /* CategorySelectViewController.swift in Sources */,
+				18C65F382AEA84D5006A3A79 /* ProfileImageCache.swift in Sources */,
 				E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */,
 				7FBE185F2AD796AF0052E950 /* BasicCell.swift in Sources */,
 				18C65F342AEA1CAA006A3A79 /* UIImage.swift in Sources */,
@@ -656,6 +667,7 @@
 				7B6D8C632ADFD6CA00FF2194 /* MyProfileViewCell.swift in Sources */,
 				E79223C62AE656AA00867FAF /* APIKey.swift in Sources */,
 				18CCC1782ADD00D7000D092C /* CommentStackView.swift in Sources */,
+				18C65F362AEA5AA7006A3A79 /* MyProfile.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
 				10CBA04C2AD666F700F1DA37 /* NoticeBoardView.swift in Sources */,
 				10B565BE2ADD2385006DED66 /* LoginView.swift in Sources */,

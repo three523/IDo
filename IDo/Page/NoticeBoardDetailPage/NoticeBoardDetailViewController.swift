@@ -42,10 +42,9 @@ final class NoticeBoardDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         firebaseCommentManager.update = { [weak self] in
             guard let self else { return }
-//            self.commentTableView.reloadData()
             self.firebaseCommentManager.noticeBoardUpdate()
             self.delegate?.updateComment(noticeBoardID: self.noticeBoard.id, commentCount: "\(self.firebaseCommentManager.modelList.count)")
         }
