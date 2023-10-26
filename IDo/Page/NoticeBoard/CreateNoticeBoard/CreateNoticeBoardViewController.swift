@@ -135,6 +135,7 @@ private extension CreateNoticeBoardViewController {
         }
         
         navigationController?.popViewController(animated: true)
+        firebaseManager.selectedImage.removeAll()
     }
     
     // 메모 내용 수정
@@ -154,6 +155,7 @@ private extension CreateNoticeBoardViewController {
         // 수정 모드 종료
         isEditingMode = false
         navigationController?.popViewController(animated: true)
+        firebaseManager.selectedImage.removeAll()
     }
 }
 
@@ -220,7 +222,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == createNoticeBoardView.titleTextView {
-            createNoticeBoardView.titleCountLabel.text = "(\(chagedText.count)/15)"
+            createNoticeBoardView.titleCountLabel.text = "(\(chagedText.count)/16)"
             return chagedText.count <= 15
         }
         
@@ -240,10 +242,15 @@ private extension CreateNoticeBoardViewController {
     }
     
     @objc func addPicture() {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
+        if firebaseManager.selectedImage.count < 10 {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = .photoLibrary
+            present(imagePicker, animated: true, completion: nil)
+        }
+        else {
+            AlertManager.showAlert(on: self, title: "알림", message: "10장의 사진까지 게시 할 수 있습니다.")
+        }
     }
 }
 
@@ -301,6 +308,7 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
 extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
     func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
         isEditingMode = false
+        firebaseManager.selectedImage.removeAll()
     }
 }
 

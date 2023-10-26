@@ -7,6 +7,7 @@
 
 import FirebaseDatabase
 import FirebaseStorage
+import FirebaseAuth
 import Foundation
 import UIKit
 
@@ -64,17 +65,18 @@ class FirebaseManager {
     
     // MARK: - 데이터 생성
 
-    // 임시 작성 유저 정보
-    let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
-
     func createNoticeBoard(title: String, content: String, clubID: String, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
         
+        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+        
+        let currentUser = UserSummary(id: currentUserID, profileImageURL: nil, nickName: "파이브 아이즈", description: "This is the current user.")
+        
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
                 let createDate = Date()
-                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: self.currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
+                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
                 
                 self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
                     if success {
@@ -203,12 +205,10 @@ class FirebaseManager {
                         return
                     }
                     
-                    ref.downloadURL { url, _ in
-                        if let imageUrl = url?.absoluteString {
-                            imageURLs.append(imageUrl)
-                        }
-                        dispatchGroup.leave()
-                    }
+                    // fullPath 속성을 사용하여 참조 경로를 저장
+                    let fullPath = ref.fullPath
+                    imageURLs.append(fullPath)
+                    dispatchGroup.leave()
                 }
             }
         }
