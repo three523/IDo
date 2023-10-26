@@ -40,8 +40,8 @@ class FBDatabaseManager<T: Codable & Identifier> {
                 completion?(false)
                 return
             }
+            self.modelList.insert(data, at: 0)
             completion?(true)
-            self.modelList.append(data)
         }
         
     }
@@ -138,13 +138,13 @@ class FBDatabaseManager<T: Codable & Identifier> {
     }
     
     func deleteData(data: T, completion: @escaping (isDatabaseActionComplete) -> Void = {_ in}) {
-        modelList.removeAll(where: { $0.id == data.id })
         ref.updateChildValues([data.id: nil]) { error, _ in
             if let error {
                 print(error.localizedDescription)
                 completion(false)
                 return
             }
+            self.modelList.removeAll(where: { $0.id == data.id })
             completion(true)
         }
     }

@@ -29,6 +29,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
                 if nsError.code == 1 { self.viewState = .error(true) }
                 else { self.viewState = .error(false) }
                 self.update()
+                completion(.failure(error))
                 return
             }
             guard let dataSnapshot else {
@@ -39,11 +40,13 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             guard let value = dataSnapshot.value as? [String: Any] else {
                 self.viewState = .loaded
                 self.modelList = []
+                completion(.success(self.modelList))
                 return
             }
-            let dataList: [Comment] = self.decodingDataSnapshot(value: value).sorted(by: { $0.createDate <= $1.createDate })
+            let dataList: [Comment] = self.decodingDataSnapshot(value: value).sorted(by: { $0.createDate >= $1.createDate })
             self.viewState = .loaded
             self.modelList = dataList
+            completion(.success(dataList))
         }
     }
     
@@ -80,8 +83,8 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             guard let url else { return }
             self.urlCache.downloadURL(url: url) { result in
                 switch result {
-                case .success(let data):
-                    completion(UIImage(data: data))
+                case .success(let image):
+                    completion(image)
                 case .failure(let error):
                     print(error.localizedDescription)
                 }

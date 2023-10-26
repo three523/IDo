@@ -34,7 +34,6 @@ final class NoticeBoardDetailViewController: UIViewController {
         self.firebaseCommentManager = FirebaseCommentManaer(refPath: ["CommentList",noticeBoard.id], noticeBoard: noticeBoard)
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
-        guard let currentUser else { return }
     }
     
     required init?(coder: NSCoder) {
@@ -46,11 +45,18 @@ final class NoticeBoardDetailViewController: UIViewController {
         
         firebaseCommentManager.update = { [weak self] in
             guard let self else { return }
-            self.commentTableView.reloadData()
+//            self.commentTableView.reloadData()
             self.firebaseCommentManager.noticeBoardUpdate()
             self.delegate?.updateComment(noticeBoardID: self.noticeBoard.id, commentCount: "\(self.firebaseCommentManager.modelList.count)")
         }
-        firebaseCommentManager.readDatas()
+        firebaseCommentManager.readDatas { result in
+            switch result {
+            case .success(_):
+                self.commentTableView.reloadData()
+            case .failure(_):
+                self.commentTableView.reloadData()
+            }
+        }
         setup()
     }
 
@@ -148,7 +154,17 @@ private extension NoticeBoardDetailViewController {
             if let iDoUser = firebaseCommentManager.currentIDoUser {
                 let user = UserSummary(id: iDoUser.id, profileImageURL: iDoUser.profileImage, nickName: iDoUser.nickName)
                 let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
-                firebaseCommentManager.appendData(data: comment)
+                firebaseCommentManager.appendData(data: comment) { isComplete in
+                    if isComplete {
+                        if self.firebaseCommentManager.modelList.count == 1 {
+                            self.commentTableView.reloadData()
+                        } else {
+                            self.commentTableView.beginUpdates()
+                            self.commentTableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: .none)
+                            self.commentTableView.endUpdates()
+                        }
+                    }
+                }
             } else {
                 //TODO: 사용자 로그인이 필요하다는 경고창과 함꼐 로그인 화면으로 넘기기
             }
@@ -213,6 +229,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL, imageSize: .small) { image in
             guard let image else { return }
             cell.setUserImage(profileImage: image)
+            cell.setNeedsLayout()
         }
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
@@ -254,8 +271,18 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         let comment = firebaseCommentManager.modelList[indexPath.row]
         guard comment.writeUser.id == currentUser.uid else { return nil }
         let deleteAction = UIContextualAction(style: .normal, title: "삭제", handler: {(action, view, completionHandler) in
+            
             let comment = self.firebaseCommentManager.modelList[indexPath.row]
-            self.firebaseCommentManager.deleteData(data: comment)
+            self.firebaseCommentManager.deleteData(data: comment) { isComplete in
+                if self.firebaseCommentManager.modelList.isEmpty {
+                    tableView.reloadData()
+                } else {
+                    tableView.beginUpdates()
+                    tableView.deleteRows(at: [indexPath], with: .none)
+                    tableView.endUpdates()
+                }
+            }
+            
         })
         let updateAction = UIContextualAction(style: .normal, title: "수정", handler: {(action, view, completionHandler) in
             let comment = self.firebaseCommentManager.modelList[indexPath.row]
