@@ -35,9 +35,15 @@ class FBURLCache {
                 guard let url else { return }
                 let request = URLRequest(url: url)
                 if let cachedResponse = self.urlCache.cachedResponse(for: request) {
-                    let localDataHash = cachedResponse.data.sha256Hash
-                    if let storageDataHash = metadata?.customMetadata?["hash"],
-                       localDataHash != storageDataHash {
+                    let localDataHash = cachedResponse.data.md5Hash
+                    if let storageDataHash = metadata?.md5Hash,
+                       localDataHash == storageDataHash {
+                        if let image = UIImage(data: cachedResponse.data) {
+                            completion(.success(image))
+                        } else {
+                            print("image Data를 읽을수 없습니다.")
+                        }
+                    } else {
                         self.downloadImageData(request: request) { result in
                             switch result {
                             case .success(let data):
@@ -49,12 +55,6 @@ class FBURLCache {
                             case .failure(let error):
                                 completion(.failure(error))
                             }
-                        }
-                    } else {
-                        if let image = UIImage(data: cachedResponse.data) {
-                            completion(.success(image))
-                        } else {
-                            print("image Data를 읽을수 없습니다.")
                         }
                     }
                 } else {

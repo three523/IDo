@@ -9,8 +9,8 @@ import Foundation
 import CryptoKit
 
 extension Data {
-    var sha256Hash: String {
-        let hash = SHA256.hash(data: self)
-        return hash.compactMap { String(format: "%02x", $0) }.joined()
+    var md5Hash: String {
+        let hash = Insecure.MD5.hash(data: self)
+        return Data(hash).base64EncodedString()
     }
 }
