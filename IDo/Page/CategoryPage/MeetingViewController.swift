@@ -56,7 +56,9 @@ class MeetingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        updateNoMeetingsViewVisibility()
+        meetingsData.readClub { _ in
+            self.updateNoMeetingsViewVisibility()
+        }
     }
 
     private func createTitleLabel(with data: String) -> UILabel {

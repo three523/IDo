@@ -15,12 +15,12 @@ class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
     private var tempView: UIView!
     private let firebaseManager = FirebaseManager()
-
     private var club: Club
     private var currentUser: User
     private var isJoin: Bool
     private let fbUserDatabaseManager: FirebaseUserDatabaseManager
     private let clubImage: UIImage
+    private let HomeVC: NoticeHomeController
     
     init(club: Club, currentUser: User, isJoin: Bool, clubImage: UIImage) {
         self.club = club
@@ -28,6 +28,7 @@ class NoticeMeetingController: TabmanViewController {
         self.isJoin = isJoin
         self.clubImage = clubImage
         self.fbUserDatabaseManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
+        self.HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager, clubImage: clubImage)
         super.init(nibName: nil, bundle: nil)
         fbUserDatabaseManager.readData()
     }
@@ -49,7 +50,6 @@ class NoticeMeetingController: TabmanViewController {
             make.height.equalTo(30)
         }
 
-        let HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager, clubImage: clubImage)
         TemporaryManager.shared.meetingIndex = TemporaryManager.shared.meetingIndex
         TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
 
@@ -105,12 +105,15 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     @objc func moveUpdateVC() {
-        guard let selectedIndex = TemporaryManager.shared.meetingIndex else { return }
-        let updateNoticeBoardVC = MeetingManageViewController()
+        
+        let updateNoticeBoardVC = MeetingManageViewController(club: club, clubImage: clubImage)
+        updateNoticeBoardVC.updateHandler = {[weak self] club, data in
+            self?.HomeVC.update(club: club, imageData: data) 
+        }
         // 데이터 전달
-        updateNoticeBoardVC.meetingTitle = TemporaryManager.shared.meetingTitle[selectedIndex] // meetingmanageviewcontroller 가 이 속성이 있는데 이걸 인스턴스화 해서 meetingtitle 속성을 가지고 있음
-        TemporaryManager.shared.meetingDescription = TemporaryManager.shared.meetingDate[selectedIndex]
-        updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
+//        updateNoticeBoardVC.meetingTitle =  TemporaryManager.shared.meetingTitle[selectedIndex] // meetingmanageviewcontroller 가 이 속성이 있는데 이걸 인스턴스화 해서 meetingtitle 속성을 가지고 있음
+//        TemporaryManager.shared.meetingDescription = TemporaryManager.shared.meetingDate[selectedIndex]
+//        updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
         TemporaryManager.shared.selectedMeetingId = club.id
 
         navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
