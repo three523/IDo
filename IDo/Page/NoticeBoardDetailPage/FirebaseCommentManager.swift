@@ -75,19 +75,13 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     
     func getUserImage(referencePath: String?, imageSize: ImageSize, completion: @escaping(UIImage?) -> Void) {
         guard let referencePath else { return }
-        let imageRef = storage.child(referencePath).child(imageSize.rawValue)
-        imageRef.downloadURL { url, error in
-            if let error {
-                print(error)
-            }
-            guard let url else { return }
-            self.urlCache.downloadURL(url: url) { result in
-                switch result {
-                case .success(let image):
-                    completion(image)
-                case .failure(let error):
-                    print(error.localizedDescription)
-                }
+        let imageRefPath = storage.child(referencePath).child(imageSize.rawValue).fullPath
+        self.urlCache.downloadURL(storagePath: imageRefPath) { result in
+            switch result {
+            case .success(let image):
+                completion(image)
+            case .failure(let error):
+                print(error.localizedDescription)
             }
         }
     }

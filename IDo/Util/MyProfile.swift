@@ -50,22 +50,15 @@ final class MyProfile {
     private func loadImage(defaultPath: String, paths: [ImageSize]) {
         let defaultStorageRef = Storage.storage().reference().child(defaultPath)
         paths.forEach { path in
-            let storageRef = defaultStorageRef.child(path.rawValue)
-            storageRef.downloadURL { url, error in
-                if let error {
+            let storageRefPath = defaultStorageRef.child(path.rawValue).fullPath
+            FBURLCache.shared.downloadURL(storagePath: storageRefPath) { result in
+                switch result {
+                case .success(let image):
+                    self.myUserInfo?.profileImage[path.rawValue] = image.pngData()
+                    guard let myUserInfo = self.myUserInfo else { return }
+                    self.fileCache.storeFile(myUserInfo: myUserInfo)
+                case .failure(let error):
                     print(error.localizedDescription)
-                    return
-                }
-                guard let url else { return }
-                FBURLCache.shared.downloadURL(url: url) { result in
-                    switch result {
-                    case .success(let image):
-                        self.myUserInfo?.profileImage[path.rawValue] = image.pngData()
-                        guard let myUserInfo = self.myUserInfo else { return }
-                        self.fileCache.storeFile(myUserInfo: myUserInfo)
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    }
                 }
             }
         }

@@ -91,22 +91,15 @@ class MeetingsData {
     }
     
     func loadImage(storagePath: String, clubId: String ,completion: @escaping (Result<UIImage, Error>) -> Void) {
-        let storageRef =
-        Storage.storage().reference().child(storagePath)
-        storageRef.downloadURL { url, error in
-            if let error = error {
+        let storageRefPath =
+        Storage.storage().reference().child(storagePath).fullPath
+        FBURLCache.shared.downloadURL(storagePath: storageRefPath) { result in
+            switch result {
+            case .success(let image):
+                self.clubImages[clubId] = image
+                completion(.success(image))
+            case .failure(let error):
                 completion(.failure(error))
-                return
-            }
-            guard let url = url else { return }
-            FBURLCache.shared.downloadURL(url: url) { result in
-                switch result {
-                case .success(let image):
-                    self.clubImages[clubId] = image
-                    completion(.success(image))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
             }
         }
     }

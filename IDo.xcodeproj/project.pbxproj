@@ -50,6 +50,7 @@
 		18B12CB82ADFDB0900FB325F /* FBDatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */; };
 		18B12CBA2ADFDD1700FB325F /* Identifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B12CB92ADFDD1700FB325F /* Identifier.swift */; };
 		18B230AD2AE296DA00E51270 /* CategoryCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B230AC2AE296DA00E51270 /* CategoryCollectionViewCell.swift */; };
+		18B819812AEB5E9800E284AC /* Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B819802AEB5E9800E284AC /* Data.swift */; };
 		18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */; };
 		18C055222ADE6EF9003D26E4 /* CommentUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */; };
 		18C055252ADE8AA3003D26E4 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055242ADE8AA3003D26E4 /* ViewState.swift */; };
@@ -144,6 +145,7 @@
 		18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDatabaseManager.swift; sourceTree = "<group>"; };
 		18B12CB92ADFDD1700FB325F /* Identifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identifier.swift; sourceTree = "<group>"; };
 		18B230AC2AE296DA00E51270 /* CategoryCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionViewCell.swift; sourceTree = "<group>"; };
+		18B819802AEB5E9800E284AC /* Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Data.swift; sourceTree = "<group>"; };
 		18BD1A902AE0C92B004BC2B1 /* FirebaseCommentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseCommentManager.swift; sourceTree = "<group>"; };
 		18C055212ADE6EF9003D26E4 /* CommentUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentUpdateViewController.swift; sourceTree = "<group>"; };
 		18C055242ADE8AA3003D26E4 /* ViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewState.swift; sourceTree = "<group>"; };
@@ -446,6 +448,7 @@
 				18CCC17E2ADD039B000D092C /* Date.swift */,
 				18B12CB32ADFC01000FB325F /* Encodable.swift */,
 				18C65F332AEA1CAA006A3A79 /* UIImage.swift */,
+				18B819802AEB5E9800E284AC /* Data.swift */,
 			);
 			path = Extenstion;
 			sourceTree = "<group>";
@@ -683,6 +686,7 @@
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				18C6BC7C2AE7C564000E4D3F /* FBURLCache.swift in Sources */,
 				18CCC1792ADD00D7000D092C /* EmptyAbleTableVIew.swift in Sources */,
+				18B819812AEB5E9800E284AC /* Data.swift in Sources */,
 				18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */,
 				E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */,
 				10A7A8D32AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift in Sources */,
