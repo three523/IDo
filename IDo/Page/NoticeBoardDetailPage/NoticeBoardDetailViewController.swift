@@ -108,6 +108,12 @@ private extension NoticeBoardDetailViewController {
     }
     
     func noticeBoardSetup() {
+        if let dateString = noticeBoard.createDate.diffrenceDate {
+            noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
+        }
+        noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
+        noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
+        noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
             let updateHandler: (UIAlertAction) -> Void = { _ in

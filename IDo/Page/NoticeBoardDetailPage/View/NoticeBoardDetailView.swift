@@ -11,7 +11,7 @@ import UIKit
 final class NoticeBoardDetailView: UIStackView {
     
     let writerInfoView: WriterStackView = WriterStackView()
-    private let contentTitleLabel: UILabel = {
+    let contentTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .bold)
         label.text = "제목 입니다."
@@ -19,7 +19,7 @@ final class NoticeBoardDetailView: UIStackView {
         label.textColor = UIColor(color: .textStrong)
         return label
     }()
-    private let contentDescriptionLabel: UILabel = {
+    let contentDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
         label.text = """
