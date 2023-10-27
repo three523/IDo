@@ -15,7 +15,7 @@ class CommentTableViewCell: UITableViewCell, Reusable {
         let label = UILabel()
         label.font = .bodyFont(.small, weight: .regular)
         label.text = "텍스트 입니다"
-        label.numberOfLines = 1
+        label.numberOfLines = 0
         return label
     }()
     var moreButtonTapHandler: () -> Void = {}
@@ -64,7 +64,7 @@ private extension CommentTableViewCell {
         contentLabel.snp.makeConstraints { make in
             make.top.equalTo(writeInfoView.snp.bottom).offset(Constant.margin2)
             make.left.right.equalTo(contentView)
-            make.bottom.equalTo(contentView).inset(Constant.margin2)
+            make.bottom.equalTo(contentView.snp.bottom).inset(Constant.margin2)
         }
     }
     func writeStackViewSetup() {
