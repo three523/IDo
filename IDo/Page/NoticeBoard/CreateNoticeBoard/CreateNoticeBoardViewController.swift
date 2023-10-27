@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 protocol RemoveDelegate: AnyObject {
     func removeCell(_ indexPath: IndexPath)
@@ -13,22 +14,20 @@ protocol RemoveDelegate: AnyObject {
 
 class CreateNoticeBoardViewController: UIViewController {
     
-    var selectedImages: [UIImage] = []
-    
-    private let createNoticeBoardView = CreateNoticeBoardView()
-    var firebaseManager: FirebaseManager
+    let createNoticeBoardView = CreateNoticeBoardView()
     
     private var isTitleTextViewEdited = false
     private var isContentTextViewEdited = false
     
-    private var isEditingMode = false
+    var isEditingMode = false
     
-    private var editingTitleText: String?
-    private var editingContentText: String?
+    var editingTitleText: String?
+    var editingContentText: String?
     
-    private var editingMemoIndex: Int?
+    var editingMemoIndex: Int?
     
-    private let club: Club
+    var firebaseManager: FirebaseManager
+    var club: Club
     
     init(club: Club, firebaseManager: FirebaseManager) {
         self.club = club
@@ -61,6 +60,16 @@ class CreateNoticeBoardViewController: UIViewController {
         navigationController?.delegate = self
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if isMovingFromParent {
+            firebaseManager.selectedImage.removeAll()
+            firebaseManager.newSelectedImage.removeAll()
+            isEditingMode = false
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.createNoticeBoardView.titleTextView.resignFirstResponder()
         self.createNoticeBoardView.contentTextView.resignFirstResponder()
@@ -82,6 +91,8 @@ private extension CreateNoticeBoardViewController {
         // 수정 할 때
         if isEditingMode {
             if let editingTitleText = editingTitleText, let editingContentText = editingContentText {
+                isTitleTextViewEdited = true
+                isContentTextViewEdited = true
                 
                 // 제목 textView
                 createNoticeBoardView.titleTextView.text = editingTitleText
@@ -122,15 +133,21 @@ private extension CreateNoticeBoardViewController {
     @objc func finishButtonTappedNew() {
         
         if isTitleTextViewEdited && isContentTextViewEdited {
-            
             guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
             guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
-            // 메모 추가 코드 필요
-            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id)
+            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id) { success in
+                if success {
+                    print("게시판 생성 성공")
+                }
+                else {
+                    print("게시판 생성 실패")
+                }
+            }
         }
         
         navigationController?.popViewController(animated: true)
+        firebaseManager.selectedImage.removeAll()
     }
     
     // 메모 내용 수정
@@ -141,7 +158,11 @@ private extension CreateNoticeBoardViewController {
            let index = editingMemoIndex {
             
             // 해당 인덱스의 메모 수정 코드 필요
-            firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent)
+            firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent) { success in
+                if success {
+                    print("업데이트 완료")
+                }
+            }
             
             // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
             (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
@@ -150,6 +171,7 @@ private extension CreateNoticeBoardViewController {
         // 수정 모드 종료
         isEditingMode = false
         navigationController?.popViewController(animated: true)
+        firebaseManager.selectedImage.removeAll()
     }
 }
 
@@ -216,7 +238,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == createNoticeBoardView.titleTextView {
-            createNoticeBoardView.titleCountLabel.text = "(\(chagedText.count)/15)"
+            createNoticeBoardView.titleCountLabel.text = "(\(chagedText.count)/16)"
             return chagedText.count <= 15
         }
         
@@ -236,20 +258,29 @@ private extension CreateNoticeBoardViewController {
     }
     
     @objc func addPicture() {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: true, completion: nil)
+        if firebaseManager.selectedImage.count < 10 {
+            let imagePicker = UIImagePickerController()
+            imagePicker.delegate = self
+            imagePicker.sourceType = .photoLibrary
+            present(imagePicker, animated: true, completion: nil)
+        }
+        else {
+            AlertManager.showAlert(on: self, title: "알림", message: "10장의 사진까지 게시 할 수 있습니다.")
+        }
     }
 }
 
 extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
-//            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-//                cell.createNoticeBoardImagePicker.galleryImageView.image = image
-//            }
-            selectedImages.append(image)
+            
+            if isEditingMode {
+                firebaseManager.newSelectedImage.append(image)
+            }
+            else {
+                firebaseManager.selectedImage.append(image)
+            }
+            firebaseManager.selectedImage += firebaseManager.newSelectedImage
             // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
             createNoticeBoardView.galleryCollectionView.reloadData()
             
@@ -261,12 +292,12 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return selectedImages.count
+        return firebaseManager.selectedImage.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
-        cell.createNoticeBoardImagePicker.galleryImageView.image = selectedImages[indexPath.row]
+        cell.createNoticeBoardImagePicker.galleryImageView.image = firebaseManager.selectedImage[indexPath.row]
         cell.removeCellDelegate = self
         cell.indexPath = indexPath
         return cell
@@ -295,17 +326,24 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - Navigation 관련
 extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        isEditingMode = false
-    }
+
 }
 
+// MARK: - 사진 삭제 관련
 extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            selectedImages.remove(at: indexPath.row)
+            firebaseManager.selectedImage.remove(at: indexPath.row)
             createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { (_) in
+//            self.firebaseManager.deleteImage(imagePath: )) { success, error in
+//                if success {
+//                    print("이미지 삭제 성공")
+//                }
+//                else {
+//                    print("이미지 삭제 실패"
+//                }
+//            }
             self.createNoticeBoardView.galleryCollectionView.reloadData()
         }
     }
