@@ -33,9 +33,9 @@ class CreateNoticeBoardImagePicker: UIView {
         imageView.clipsToBounds = true
         imageView.image = UIImage(systemName: "photo")
         imageView.layer.cornerRadius = 5
-        imageView.layer.borderWidth = 2
+        imageView.layer.borderWidth = 1.5
         imageView.layer.borderColor = UIColor(color: .main).cgColor
-        imageView.layoutMargins = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        imageView.layoutMargins = UIEdgeInsets(top: 18, left: 18, bottom: 18, right: 18)
         return imageView
     }()
     
@@ -43,10 +43,9 @@ class CreateNoticeBoardImagePicker: UIView {
         let button = UIButton()
         button.setImage(UIImage(systemName: "x.circle.fill"), for: .normal)
         button.imageView?.tintColor = UIColor(color: .negative)
-        button.imageView?.backgroundColor = UIColor.white
-        DispatchQueue.main.async {
-            button.layer.cornerRadius = self.frame.size.width/2
-        }
+        button.backgroundColor = UIColor.white
+        button.layer.cornerRadius = 15 / 2
+        button.clipsToBounds = true
         button.addTarget(self, action: #selector(tapDeleteButton), for: .touchUpInside)
         return button
     }()
@@ -73,15 +72,13 @@ private extension CreateNoticeBoardImagePicker {
     func autoLayout() {
         
         galleryImageView.snp.makeConstraints { make in
-            make.top.equalTo(snp.top).offset(8)
-            make.leading.equalTo(snp.leading).offset(8)
-            make.trailing.equalTo(snp.trailing).offset(-8)
-            make.bottom.equalTo(snp.bottom).offset(-8)
+            make.top.left.equalToSuperview().offset(4)
+            make.right.bottom.equalToSuperview().offset(-4)
         }
         
         deleteButton.snp.makeConstraints { make in
-            make.top.equalTo(snp.top).offset(5)
-            make.trailing.equalTo(snp.trailing).offset(-5)
+            make.top.equalToSuperview()
+            make.trailing.equalToSuperview()
             make.width.height.equalTo(15)
         }
     }

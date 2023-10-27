@@ -7,6 +7,7 @@
 
 import FirebaseDatabase
 import FirebaseStorage
+import FirebaseAuth
 import Foundation
 import UIKit
 
@@ -16,7 +17,6 @@ protocol FirebaseManagerDelegate: AnyObject {
     func updateComment(noticeBoardID: String, commentCount: String)
 }
 
-// 매개변수를 noticBoard로 통일
 // completion을 escaping으로 바꾸기
 // image URL 업로드
 
@@ -24,7 +24,10 @@ class FirebaseManager {
     weak var delegate: FirebaseManagerDelegate?
 
     var noticeBoards: [NoticeBoard] = []
-    var selectedImage: [String] = []
+    
+    var selectedImage: [UIImage] = []
+    var newSelectedImage: [UIImage] = []
+    //var updateImage: [UIImage] = []
     
     // MARK: - 데이터 저장
 
@@ -64,20 +67,28 @@ class FirebaseManager {
     
     // MARK: - 데이터 생성
 
-    // 임시 작성 유저 정보
-    let currentUser = UserSummary(id: "currentUser", profileImageURL: nil, nickName: "파이브 아이즈")
-
-    func createNoticeBoard(title: String, content: String, clubID: String, completion: ((Bool) -> Void)? = nil) {
+    func createNoticeBoard(title: String, content: String, clubID: String, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
-        let createDate = Date()
-
-        let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: [], commentCount: "0")
         
-        self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
+        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+        
+        let currentUser = UserSummary(id: currentUserID, profileImageURL: nil, nickName: "파이브 아이즈")
+        
+        self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
-                self.noticeBoards.insert(newNoticeBoard, at: 0)
-                self.delegate?.reloadData()
+                let createDate = Date()
+                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
+                
+                self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
+                    if success {
+                        self.noticeBoards.insert(newNoticeBoard, at: 0)
+                        self.delegate?.reloadData()
+                    }
+                    completion(success)
+                }
+            } else {
+                completion(false)
             }
         }
     }
@@ -134,17 +145,27 @@ class FirebaseManager {
     }
 
     // MARK: - 데이터 업데이트
-
-    func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String) {
+    func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String, completion: @escaping (Bool) -> Void) {
         if index >= 0, index < self.noticeBoards.count {
             var updatedNoticeBoard = self.noticeBoards[index]
             updatedNoticeBoard.title = newTitle
             updatedNoticeBoard.content = newContent
             
-            self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
+            // 먼저 새로운 이미지를 업로드합니다.
+            self.uploadImages(clubID: updatedNoticeBoard.clubID, noticeBoardID: updatedNoticeBoard.id, imageList: self.selectedImage) { success, newImageURLs in
                 if success {
-                    self.noticeBoards[index] = updatedNoticeBoard
-                    self.delegate?.reloadData()
+                    // 기존 이미지 목록에 새로운 이미지 URL을 추가합니다.
+                    updatedNoticeBoard.imageList += newImageURLs ?? []
+                    // 업데이트된 게시글을 저장합니다.
+                    self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
+                        if success {
+                            self.noticeBoards[index] = updatedNoticeBoard
+                            self.delegate?.reloadData()
+                        }
+                        completion(success)
+                    }
+                } else {
+                    completion(false)
                 }
             }
         }
@@ -175,30 +196,63 @@ class FirebaseManager {
         }
     }
     
-    // MARK: - 이미지 업로드 & 다운로드
-
-    func uploadImages(_ images: [UIImage], completion: @escaping ([String]) -> Void) {
-        let storageRef = Storage.storage().reference().child("images")
+    // MARK: - 이미지 업로드
+    func uploadImages(clubID: String, noticeBoardID: String, imageList: [UIImage], completion: @escaping (Bool, [String]?) -> Void) {
+        let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child(noticeBoardID).child("images")
         var imageURLs: [String] = []
         
         let dispatchGroup = DispatchGroup()
         
-        for image in images {
+        for (index, image) in imageList.enumerated() {
             dispatchGroup.enter()
-            let imageName = UUID().uuidString
+            let imageName = "\(index)_\(UUID().uuidString)"
             let ref = storageRef.child(imageName)
             
             if let uploadData = image.jpegData(compressionQuality: 0.5) {
                 ref.putData(uploadData, metadata: nil) { _, error in
-                    if error != nil {
-                        print("Failed to upload image:", error!)
-                        dispatchGroup.leave()
-                        return
+                    if let error = error {
+                        print("Failed to upload image:", error)
+                    } else {
+                        // fullPath 속성을 사용하여 참조 경로를 저장
+                        let fullPath = ref.fullPath
+                        imageURLs.append(fullPath)
                     }
-                    
-                    ref.downloadURL { url, _ in
-                        if let imageUrl = url?.absoluteString {
-                            imageURLs.append(imageUrl)
+                    dispatchGroup.leave()
+                }
+            } else {
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            completion(imageURLs.count == imageList.count, imageURLs.sorted())
+        }
+    }
+    
+    // MARK: - 이미지 다운로드
+    func downloadImages(imagePaths: [String], completion: @escaping ([UIImage]?) -> Void) {
+        let storageRef = Storage.storage().reference()
+        var downloadedImages: [UIImage] = []
+        var imageDict: [String: UIImage] = [:]
+        
+        let sortedPaths = imagePaths.sorted()
+        let dispatchGroup = DispatchGroup()
+        
+        for path in sortedPaths {
+            dispatchGroup.enter()
+            let ref = storageRef.child(path)
+            
+            ref.downloadURL { url, error in
+                if let error = error {
+                    print("URL 가져오기 실패: \(error)")
+                    dispatchGroup.leave()
+                } else if let url = url {
+                    FBURLCache.shared.downloadURL(url: url) { result in
+                        switch result {
+                        case .success(let image):
+                            imageDict[path] = image
+                        case .failure(let error):
+                            print("이미지 다운로드 실패: \(error)")
                         }
                         dispatchGroup.leave()
                     }
@@ -207,7 +261,36 @@ class FirebaseManager {
         }
         
         dispatchGroup.notify(queue: .main) {
-            completion(imageURLs)
+            for path in sortedPaths {
+                if let image = imageDict[path] {
+                    downloadedImages.append(image)
+                }
+            }
+            
+            if !downloadedImages.isEmpty {
+                self.selectedImage = downloadedImages
+                self.delegate?.reloadData()
+            }
+            completion(downloadedImages.isEmpty ? nil : downloadedImages)
         }
     }
+    
+    // MARK: - 이미지 삭제
+//    func deleteImage(imagePath: String, completion: @escaping (Bool, Error?) -> Void) {
+//        let storageRef = Storage.storage().reference()
+//        let ref = storageRef.child(imagePath)
+//        
+//        ref.delete { error in
+//            if let error = error {
+//                print("이미지 삭제 실패: \(error)")
+//                completion(false, error)
+//            } else {
+//                print("이미지 삭제 성공")
+//                completion(true, nil)
+//            }
+//        }
+//    }
+    
+    // 이미지 삭제함수 -> 단일
+    // 이미지 삭제함수 -> 전체
 }
