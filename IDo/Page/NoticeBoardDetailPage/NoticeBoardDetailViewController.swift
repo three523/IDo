@@ -235,28 +235,48 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         cell.moreButtonTapHandler = { [weak self] in
             //TODO: 같이 LongPress할때와 똑같이 작동함 함수로 뺄 필요가 있음
             guard let self else { return }
-            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                            
-            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-            let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
-                self.firebaseCommentManager.modelList.remove(at: indexPath.row)
-            }
-            let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
+            
+            let updateHandler: (UIAlertAction) -> Void = { _ in
                 let comment = self.firebaseCommentManager.modelList[indexPath.row]
                 let vc = CommentUpdateViewController(comment: comment)
                 vc.commentUpdate = { [weak self] comment in
                     guard let self else { return }
-                    self.firebaseCommentManager.updateDatas(data: comment)
+                    self.firebaseCommentManager.updateDatas(data: comment) { _ in
+                        self.commentTableView.reloadRows(at: [indexPath], with: .none)
+                    }
                 }
                 vc.hidesBottomBarWhenPushed = true
                 vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
                 self.navigationController?.pushViewController(vc, animated: true)
             }
+            let deleteHandler: (UIAlertAction) -> Void = { _ in
+                self.firebaseCommentManager.modelList.remove(at: indexPath.row)
+            }
             
-            alert.addAction(cancelAction)
-            alert.addAction(updateAction)
-            alert.addAction(removeAction)
-            present(alert, animated: true)
+            AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
+            
+//            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+//                            
+//            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+//            let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
+//                self.firebaseCommentManager.modelList.remove(at: indexPath.row)
+//            }
+//            let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
+//                let comment = self.firebaseCommentManager.modelList[indexPath.row]
+//                let vc = CommentUpdateViewController(comment: comment)
+//                vc.commentUpdate = { [weak self] comment in
+//                    guard let self else { return }
+//                    self.firebaseCommentManager.updateDatas(data: comment)
+//                }
+//                vc.hidesBottomBarWhenPushed = true
+//                vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
+//                self.navigationController?.pushViewController(vc, animated: true)
+//            }
+            
+//            alert.addAction(cancelAction)
+//            alert.addAction(updateAction)
+//            alert.addAction(removeAction)
+//            present(alert, animated: true)
         }
         guard let dateText = comment.createDate.diffrenceDate else { return cell }
         cell.setDate(dateText: dateText)

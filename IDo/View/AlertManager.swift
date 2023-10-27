@@ -15,5 +15,16 @@ class AlertManager {
         alertController.addAction(okAction)
         viewController.present(alertController, animated: true, completion: nil)
     }
+    
+    static func showUpdateAlert(on viewController: UIViewController, title: String? = nil, message: String? = nil, updateHandler: ((UIAlertAction) -> Void)? = nil, deleteHandler: ((UIAlertAction) -> Void)? = nil, cancelHandelr: ((UIAlertAction) -> Void)? = nil) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let updateAction = UIAlertAction(title: "수정", style: .default, handler: updateHandler)
+        let deleteAction = UIAlertAction(title: "삭제", style: .destructive, handler: deleteHandler)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: cancelHandelr)
+        alertController.addAction(updateAction)
+        alertController.addAction(deleteAction)
+        alertController.addAction(cancelAction)
+        viewController.present(alertController, animated: true, completion: nil)
+    }
 }
 
