@@ -10,10 +10,8 @@ import FirebaseDatabase
 
 class FBDatabaseManager<T: Codable & Identifier> {
     
-    enum DataType {
-        case single
-        case array
-    }
+    typealias isDatabaseActionComplete = Bool
+    
     var ref: DatabaseReference
     var viewState: ViewState = .loading
     var update: () -> Void = {}
@@ -22,7 +20,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
             update()
         }
     }
-    var dataList: [T] = [] {
+    var modelList: [T] = [] {
         didSet {
             update()
         }
@@ -35,9 +33,21 @@ class FBDatabaseManager<T: Codable & Identifier> {
         }
     }
     
-    func addData(data: T) {
-        ref.child(data.id).setValue(data.dictionary)
-        dataList.append(data)
+    func appendData(data: T, completion: ((Bool) -> Void)? = nil) {
+        ref.child(data.id).setValue(data.dictionary) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                completion?(false)
+                return
+            }
+            self.modelList.insert(data, at: 0)
+            completion?(true)
+        }
+        
+    }
+    
+    func setData(data: T) {
+        model = data
     }
     
     func readDatas(completion: @escaping (Result<[T],Error>)->Void = {_ in}) {
@@ -57,14 +67,14 @@ class FBDatabaseManager<T: Codable & Identifier> {
             }
             guard let value = dataSnapshot.value as? [String: Any] else {
                 self.viewState = .loaded
-                self.dataList = []
+                self.modelList = []
                 return
             }
             
             let dataList: [T] = self.decodingDataSnapshot(value: value)
             completion(.success(dataList))
             
-            self.dataList = dataList
+            self.modelList = dataList
             self.viewState = .loaded
         }
     }
@@ -86,7 +96,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
             }
             guard let value = dataSnapshot.value as? [String: Any] else {
                 self.viewState = .loaded
-                self.dataList = []
+                self.modelList = []
                 return
             }
             
@@ -101,21 +111,42 @@ class FBDatabaseManager<T: Codable & Identifier> {
         }
     }
     
-    func updateDatas(data: T) {
-        guard let index = dataList.firstIndex(where: { $0.id == data.id }) else { return }
-        dataList[index] = data
-        ref.updateChildValues([data.id: data.dictionary])
+    func updateDatas(data: T, completion: @escaping (isDatabaseActionComplete) -> Void = {_ in}) {
+        guard let index = modelList.firstIndex(where: { $0.id == data.id }) else { return }
+        modelList[index] = data
+        ref.updateChildValues([data.id: data.dictionary]) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                completion(false)
+                return
+            }
+            completion(true)
+        }
     }
     
-    func updateModel(data: T) {
+    func updateModel(data: T, completion: @escaping (isDatabaseActionComplete) -> Void = {_ in}) {
         guard var model else { return }
         self.model = data
-        ref.setValue([data.id: data.dictionary])
+        ref.updateChildValues([data.id: data.dictionary]) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                completion(false)
+                return
+            }
+            completion(true)
+        }
     }
     
-    func deleteData(data: T) {
-        dataList.removeAll(where: { $0.id == data.id })
-        ref.updateChildValues([data.id: nil])
+    func deleteData(data: T, completion: @escaping (isDatabaseActionComplete) -> Void = {_ in}) {
+        ref.updateChildValues([data.id: nil]) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                completion(false)
+                return
+            }
+            self.modelList.removeAll(where: { $0.id == data.id })
+            completion(true)
+        }
     }
     
     func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
@@ -132,7 +163,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
         return data
     }
     
-    private func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
+    func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
         let decoder = JSONDecoder()
         guard let data = try? JSONSerialization.data(withJSONObject: value) else { return nil }
         return try? decoder.decode(T.self, from: data)

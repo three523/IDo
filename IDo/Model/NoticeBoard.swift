@@ -7,12 +7,13 @@
 
 import Foundation
 
-struct NoticeBoard: Codable {
+struct NoticeBoard: Codable, Identifier {
     let id: String
-    let rootUser: IDoUser
+    let rootUser: UserSummary
     let createDate: Date
     let clubID: String
+    var title: String
     var content: String
-    var imageList: [Data]
-    var commentList: [Comment]?
+    var imageList: [String]
+    var commentCount: String
 }

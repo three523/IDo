@@ -14,12 +14,11 @@ class TemporaryManager {
     var categoryData: String?
     var categoryIndex: Int?
     var selectedCategory: String?
+    var selectedMeetingId: String?
     var meetingImageUrls: [String] = []
     var meetingTitle: [String] = []
     var meetingDescription: String?
     var meetingDate: [String] = []
-    var meetingId: String?
-    
     private init() {}
 }
 

@@ -11,12 +11,27 @@ import UIKit
 class CategoryViewController: UICollectionViewController {
     let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
     let categoryImage = UIImage(systemName: "pencil.circle")
+    
 
     init() {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: 120, height: 150)
-        layout.minimumInteritemSpacing = 10
-        layout.minimumLineSpacing = 10
+        let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            // 아이템 크기
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1 / 3), heightDimension: .absolute(150))
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            // 그룹 크기
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 3)
+            group.interItemSpacing = .fixed(10) // 아이템 간 간격
+
+            // 섹션
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 10 // 그룹 간 간격
+            section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10) // 섹션의 인셋
+
+            return section
+        }
+
         super.init(collectionViewLayout: layout)
     }
 
@@ -44,12 +59,20 @@ class CategoryViewController: UICollectionViewController {
         return cell
     }
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        collectionView.collectionViewLayout.invalidateLayout()
+    }
+
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         let selectedCategory = categoryData[indexPath.row]
-
-        let meetingVC = MeetingViewController()
+        let meetingsData = MeetingsData(category: selectedCategory)
+        let meetingVC = MeetingViewController(meetingsData: meetingsData)
         TemporaryManager.shared.categoryData = selectedCategory
-
+        
+        
         navigationController?.pushViewController(meetingVC, animated: true)
     }
 }

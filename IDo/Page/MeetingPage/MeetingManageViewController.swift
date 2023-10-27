@@ -1,10 +1,30 @@
 import UIKit
 import FirebaseDatabase
+import FirebaseStorage
 
 class MeetingManageViewController: UIViewController {
     
     var meetingTitle: String?
     var meetingImageURL: String?
+    var ref: DatabaseReference?
+    let storage = Storage.storage()
+    lazy var storageRef = storage.reference()
+    private var meetingsData: MeetingsData
+    private var club: Club
+    private let clubImage: UIImage
+    var updateHandler: ((Club, Data) -> Void)?
+    
+    init(club: Club, clubImage: UIImage) {
+        self.club = club
+        self.clubImage = clubImage
+        self.meetingsData = MeetingsData(category: club.category)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     var profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
@@ -82,44 +102,41 @@ class MeetingManageViewController: UIViewController {
     }()
     
     private let manageFinishButton = FinishButton(title: "수정 완료")
-
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(meetingDescriptionField)
         view.addSubview(placeholderLabel)
         configureUI()
+        meetingNameField.text = club.title
+        meetingDescriptionField.text = club.description
+        profileImageButton.setImage(clubImage, for: .normal)
+        //            // 캐시에서 이미지 확인
+        //            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
+        //                if let resizedImage = cachedImage.resized(to: CGSize(width: 120, height: 120)) {
+        //                    self.profileImageButton.setImage(resizedImage, for: .normal)
+        //                }
+        //            } else {
+        //                // 캐시에 이미지 없는 경우
+        //                if let url = URL(string: imageUrlString) {
+        //                    URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+        //                        if let data = data, let image = UIImage(data: data) {
+        //                            if let resizedImage = image.resized(to: CGSize(width: 120, height: 120)) {
+        //                                DispatchQueue.main.async {
+        //                                    self?.profileImageButton.setImage(resizedImage, for: .normal)
+        //                                    ImageCache.shared.cacheImage(resizedImage, for: imageUrlString)
+        //                                }
+        //                            }
+        //                        }
+        //                    }.resume()
+        //                }
+        //            }
+        //        }
         
-        if let title = meetingTitle {
-                    meetingNameField.text = title
-                }
-        if let description = TemporaryManager.shared.meetingDescription {
-                    meetingDescriptionField.text = description
-                }
-        if let imageUrlString = meetingImageURL {
-            // 캐시에서 이미지 확인
-            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
-                if let resizedImage = cachedImage.resized(to: CGSize(width: 120, height: 120)) {
-                    self.profileImageButton.setImage(resizedImage, for: .normal)
-                }
-            } else {
-                // 캐시에 이미지 없는 경우
-                if let url = URL(string: imageUrlString) {
-                    URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-                        if let data = data, let image = UIImage(data: data) {
-                            if let resizedImage = image.resized(to: CGSize(width: 120, height: 120)) {
-                                DispatchQueue.main.async {
-                                    self?.profileImageButton.setImage(resizedImage, for: .normal)
-                                    ImageCache.shared.cacheImage(resizedImage, for: imageUrlString)
-                                }
-                            }
-                        }
-                    }.resume()
-                }
-            }
-        }
-
-            }
+        ref = Database.database().reference()
+        manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
+    }
     
     private func configureUI() {
         // UI 설정
@@ -134,6 +151,8 @@ class MeetingManageViewController: UIViewController {
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
             make.centerX.equalToSuperview()
+            make.width.equalTo(120)
+            make.height.equalTo(120)
         }
         
         imageSetLabel.snp.makeConstraints { (make) in
@@ -190,8 +209,45 @@ class MeetingManageViewController: UIViewController {
         profileImageButton.openImagePicker(in: self)
     }
     
+    @objc func manageFinishButtonTapped() {
+        guard let name = meetingNameField.text, !name.isEmpty,
+              let description = meetingDescriptionField.text, let meetingImage = profileImageButton.imageView?.image else {
+            
+            return
+        }
+        
+        guard let imageData = meetingImage.jpegData(compressionQuality: 0.8) else {
+            
+            return
+        }
+        
+        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
+    }
     
-}
+    private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
+        club.title = name
+        club.description = description
+        meetingsData.updateClub(club: club, imagaData: imageData) { isSuccess in
+            if isSuccess {
+                print("데이터 수정 성공")
+                
+                let alert = UIAlertController(title: "완료", message: "모임 정보가 수정되었습니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                self.updateHandler?(self.club, imageData)
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                print("데아터 수정 실패")
+            }
+        }
+        }
+    }
+
+
+
+
+
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {

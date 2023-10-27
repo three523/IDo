@@ -4,6 +4,7 @@ import FirebaseStorage
 
 class MeetingCreateViewController: UIViewController {
     
+    private let meetingsData: MeetingsData
     let profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
@@ -62,13 +63,17 @@ class MeetingCreateViewController: UIViewController {
         return label
     }()
     
-    func shakeAnimation(for view: UIView) {
-        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: .linear)
-        animation.duration = 0.5
-        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
-        view.layer.add(animation, forKey: "shake")
+    init(meetingsData: MeetingsData) {
+        self.meetingsData = meetingsData
+        super.init(nibName: nil, bundle: nil)
     }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    
     
     
     let placeholderLabel: UILabel = {
@@ -79,70 +84,41 @@ class MeetingCreateViewController: UIViewController {
         return label
     }()
     
+    func shakeAnimation(for view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
+        view.layer.add(animation, forKey: "shake")
+    }
+    
     private let createFinishButton = FinishButton()
 
 
     @objc private func createMeeting() {
-        guard let title = meetingNameField.text, !title.isEmpty,
-              let description = meetingDescriptionField.text, !description.isEmpty else {
-            print("모임의 이름과 설명은 필수 입력 항목입니다.")
-            return
-        }
-        
-        var imageData: Data? = nil
+            guard let name = meetingNameField.text, !name.isEmpty,
+                  let description = meetingDescriptionField.text, !description.isEmpty else {
+                print("모임의 이름과 설명은 필수 입력 항목입니다.")
+                return
+            }
+
+            var imageData: Data? = nil
             if let image = profileImageButton.image(for: .normal) {
                 imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
             }
 
-            saveMeetingToFirebase(name: title, description: description, imageData: imageData)
-        }
-
-
-    private func saveMeetingToFirebase(name: String, description: String, imageData: Data?) {
-        guard let category = TemporaryManager.shared.selectedCategory else { return }
-        //
-        let ref = Database.database().reference().child(category).child("meetings")
-        let newMeetingID = ref.childByAutoId().key ?? ""
-        
-        if let imageData = imageData {
-            // 이미지 업로드
-            let storageRef = Storage.storage().reference().child("\(TemporaryManager.shared.selectedCategory ?? "default_category")").child("meeting_images").child("\(newMeetingID).png")
-
-            storageRef.putData(imageData, metadata: nil) { (metadata, error) in
-                if let error = error {
-                    print("Failed to upload image to Firebase Storage:", error)
-                    return
-                }
-                
-                storageRef.downloadURL { (url, error) in
-                    guard let imageUrl = url?.absoluteString else { return }
-                    
-                    // 데이터에 해당 키로 저장
-                    let data: [String: Any] = [
-                        "id": newMeetingID,
-                        "title": name,
-                        "description": description,
-                        "imageUrl": imageUrl
-                    ]
-                    
-                    ref.child(newMeetingID).setValue(data) { [weak self] (error, _) in
-                        if let error = error {
-                            print("Data could not be saved: \(error).")
-                        } else {
-                            print("Data saved successfully!")
-                            let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
-                            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-                                self?.navigationController?.popViewController(animated: true)
-                            }))
-                            self?.present(alert, animated: true, completion: nil)
-                        }
-                    }
-                }
+        let club = Club(id: UUID().uuidString, title: name, imageURL: nil, description: description, category: meetingsData.category)
+        meetingsData.addClub(club: club, imageData: imageData) { isSuccess in
+            if isSuccess {
+                let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                self.present(alert, animated: true, completion: nil)
             }
         }
     }
-
-
+    
 
  
 
