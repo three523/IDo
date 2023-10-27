@@ -41,9 +41,9 @@ class FirebaseCreateUserManager: FBDatabaseManager<IDoUser> {
         
         for index in 0..<imageSizes.count {
             let imageSize = imageSizes[index]
-            let image = datas[index]
+            let imageData = datas[index]
             let storageSizeRef = storageRef.child(imageSize.rawValue)
-            storageSizeRef.putData(image) { _, error in
+            storageSizeRef.putData(imageData) { _, error in
                 if let error {
                     print(error.localizedDescription)
                     return
