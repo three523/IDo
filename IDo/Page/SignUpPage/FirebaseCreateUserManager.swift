@@ -18,6 +18,12 @@ class FirebaseCreateUserManager: FBDatabaseManager<IDoUser> {
               let mediumImageData = image.resizeImage(targetSize: CGSize(width: 480, height: 480)).pngData() else { return }
         let datas = [smallImageData, mediumImageData]
         imageUpload(datas: datas, uid: uid)
+        if let model {
+            var myUserInfo = model.toMyUserInfo
+            myUserInfo.profileImage[ImageSize.small.rawValue] = smallImageData
+            myUserInfo.profileImage[ImageSize.medium.rawValue] = mediumImageData
+            MyProfile.shared.saveMyUserInfo(myUserInfo: myUserInfo)
+        }
     }
     
     private func imageUpload(datas: [Data], uid: String) {

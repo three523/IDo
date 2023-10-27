@@ -6,12 +6,18 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class TabBarController: UITabBarController {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBarSetting()
-        self.viewControllerSetting()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        MyProfile.shared.getUserProfile(uid: uid) { _ in
+            self.tabBarSetting()
+            self.viewControllerSetting()
+        }
+        
     }
 
     private func tabBarSetting() {
