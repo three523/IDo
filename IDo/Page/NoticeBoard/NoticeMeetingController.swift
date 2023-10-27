@@ -21,7 +21,7 @@ class NoticeMeetingController: TabmanViewController {
     private let fbUserDatabaseManager: FirebaseUserDatabaseManager
     private let clubImage: UIImage
     private let HomeVC: NoticeHomeController
-    
+
     init(club: Club, currentUser: User, isJoin: Bool, clubImage: UIImage) {
         self.club = club
         self.currentUser = currentUser
@@ -31,6 +31,9 @@ class NoticeMeetingController: TabmanViewController {
         self.HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager, clubImage: clubImage)
         super.init(nibName: nil, bundle: nil)
         fbUserDatabaseManager.readData()
+        HomeVC.signUpButtonUpdate = { [weak self] in
+            self?.isJoin = true
+        }
     }
 
     @available(*, unavailable)
@@ -105,10 +108,9 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
     }
 
     @objc func moveUpdateVC() {
-        
         let updateNoticeBoardVC = MeetingManageViewController(club: club, clubImage: clubImage)
-        updateNoticeBoardVC.updateHandler = {[weak self] club, data in
-            self?.HomeVC.update(club: club, imageData: data) 
+        updateNoticeBoardVC.updateHandler = { [weak self] club, data in
+            self?.HomeVC.update(club: club, imageData: data)
         }
         // 데이터 전달
 //        updateNoticeBoardVC.meetingTitle =  TemporaryManager.shared.meetingTitle[selectedIndex] // meetingmanageviewcontroller 가 이 속성이 있는데 이걸 인스턴스화 해서 meetingtitle 속성을 가지고 있음
