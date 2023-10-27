@@ -13,7 +13,8 @@ struct Club: Codable, Identifier {
     var title: String
     var imageURL: String?
     var description: String
-    var category: [Category]?
+    var category: String
     var noticeBoardList: [NoticeBoard]?
     var userList: [IDoUser]?
+//    var createDate: String // 만든 날짜로 정렬 ..
 }

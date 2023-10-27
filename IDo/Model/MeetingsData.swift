@@ -44,17 +44,20 @@ class MeetingsData {
                 completion?(false)
                 return
             }
+            var tempClubs = [Club]()
             for (_, item) in value {
                 if let itemDict = item as? [String: Any],
                    let id = itemDict["id"] as? String,
                    let description = itemDict["description"] as? String,
                    let title = itemDict["title"] as? String,
-                   let imageURL = itemDict["imageURL"] as? String
+                   let imageURL = itemDict["imageURL"] as? String,
+                    let category = itemDict["category"] as? String
                 {
-                    let club = Club(id: id, title: title, imageURL: imageURL, description: description)
-                    self.clubs.append(club)
+                    let club = Club(id: id, title: title, imageURL: imageURL, description: description, category: category)
+                    tempClubs.append(club)
                 }
             }
+            self.clubs = tempClubs.sorted(by: {$0.title.count < $1.title.count})
             completion?(true)
             self.update()
         }
@@ -72,6 +75,22 @@ class MeetingsData {
                 }
                 self.updateImageURL(club: club, storageRef: storageRef.fullPath)
                 completion(true)
+            }
+        }
+    }
+    
+    func updateClub(club: Club, imagaData: Data?, completion: @escaping (Bool) -> Void) {
+        
+        defaultRef.updateChildValues([club.id: club.dictionary]) { error, _ in
+            if let error = error {
+                print(error)
+                return
+            }
+            self.saveImage(imageData: imagaData, club: club) { isSuccess in
+                if isSuccess {
+                    completion(true)
+                    print("업데이트 성공?") 
+                }
             }
         }
     }

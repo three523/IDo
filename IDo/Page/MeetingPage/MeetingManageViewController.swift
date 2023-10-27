@@ -9,7 +9,22 @@ class MeetingManageViewController: UIViewController {
     var ref: DatabaseReference?
     let storage = Storage.storage()
     lazy var storageRef = storage.reference()
+    private var meetingsData: MeetingsData
+    private var club: Club
+    private let clubImage: UIImage
+    var updateHandler: ((Club, Data) -> Void)?
     
+    init(club: Club, clubImage: UIImage) {
+        self.club = club
+        self.clubImage = clubImage
+        self.meetingsData = MeetingsData(category: club.category)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     var profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
@@ -94,35 +109,31 @@ class MeetingManageViewController: UIViewController {
         view.addSubview(meetingDescriptionField)
         view.addSubview(placeholderLabel)
         configureUI()
+        meetingNameField.text = club.title
+        meetingDescriptionField.text = club.description
+        profileImageButton.setImage(clubImage, for: .normal)
+        //            // 캐시에서 이미지 확인
+        //            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
+        //                if let resizedImage = cachedImage.resized(to: CGSize(width: 120, height: 120)) {
+        //                    self.profileImageButton.setImage(resizedImage, for: .normal)
+        //                }
+        //            } else {
+        //                // 캐시에 이미지 없는 경우
+        //                if let url = URL(string: imageUrlString) {
+        //                    URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+        //                        if let data = data, let image = UIImage(data: data) {
+        //                            if let resizedImage = image.resized(to: CGSize(width: 120, height: 120)) {
+        //                                DispatchQueue.main.async {
+        //                                    self?.profileImageButton.setImage(resizedImage, for: .normal)
+        //                                    ImageCache.shared.cacheImage(resizedImage, for: imageUrlString)
+        //                                }
+        //                            }
+        //                        }
+        //                    }.resume()
+        //                }
+        //            }
+        //        }
         
-        if let title = meetingTitle {
-            meetingNameField.text = title
-        }
-        if let description = TemporaryManager.shared.meetingDescription {
-            meetingDescriptionField.text = description
-        }
-        if let imageUrlString = meetingImageURL {
-            // 캐시에서 이미지 확인
-            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
-                if let resizedImage = cachedImage.resized(to: CGSize(width: 120, height: 120)) {
-                    self.profileImageButton.setImage(resizedImage, for: .normal)
-                }
-            } else {
-                // 캐시에 이미지 없는 경우
-                if let url = URL(string: imageUrlString) {
-                    URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-                        if let data = data, let image = UIImage(data: data) {
-                            if let resizedImage = image.resized(to: CGSize(width: 120, height: 120)) {
-                                DispatchQueue.main.async {
-                                    self?.profileImageButton.setImage(resizedImage, for: .normal)
-                                    ImageCache.shared.cacheImage(resizedImage, for: imageUrlString)
-                                }
-                            }
-                        }
-                    }.resume()
-                }
-            }
-        }
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
     }
@@ -140,6 +151,8 @@ class MeetingManageViewController: UIViewController {
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
             make.centerX.equalToSuperview()
+            make.width.equalTo(120)
+            make.height.equalTo(120)
         }
         
         imageSetLabel.snp.makeConstraints { (make) in
@@ -212,49 +225,28 @@ class MeetingManageViewController: UIViewController {
     }
     
     private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
-        guard let category = TemporaryManager.shared.selectedCategory else { return }
-        guard let selectedMeetingId = TemporaryManager.shared.selectedMeetingId else { // 임시로 사용
-            print("선택된 모임의 ID를 불러오지 못했습니다")
-            return
+        club.title = name
+        club.description = description
+        meetingsData.updateClub(club: club, imagaData: imageData) { isSuccess in
+            if isSuccess {
+                print("데이터 수정 성공")
+                
+                let alert = UIAlertController(title: "완료", message: "모임 정보가 수정되었습니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                self.updateHandler?(self.club, imageData)
+                self.present(alert, animated: true, completion: nil)
+            } else {
+                print("데아터 수정 실패")
+            }
         }
-        
-        let ref = Database.database().reference().child(category).child("meetings").child(selectedMeetingId)
-        
-        let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(selectedMeetingId).png")
-        
-        storageRef.putData(imageData, metadata: nil) { (metadata, error) in
-            if let error = error {
-                print("파이어베이스 저장소에 이미지를 업로드하지 못했습니다", error)
-                return
-            }
-            
-            storageRef.downloadURL { (url, error) in
-                guard let imageUrl = url?.absoluteString else { return }
-                
-                let meetingData: [String: Any] = [
-                    "title": name,
-                    "description": description,
-                    "imageUrl": imageUrl
-                ]
-                
-                // 여기서 updateChildValues를 사용하여 업데이트
-                ref.updateChildValues(meetingData) { [weak self] (error, _) in
-                    if let error = error {
-                        print("데이터 업데이트 실패: \(error).")
-                    } else {
-                        print("데이터 수정 성공")
-                        
-                        let alert = UIAlertController(title: "완료", message: "모임 정보가 수정되었습니다.", preferredStyle: .alert)
-                        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
-                            self?.navigationController?.popViewController(animated: true)
-                        }))
-                        self?.present(alert, animated: true, completion: nil)
-                    }
-                }
-            }
         }
     }
-}
+
+
+
+
 
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

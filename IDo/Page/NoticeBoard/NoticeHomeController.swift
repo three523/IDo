@@ -153,4 +153,12 @@ class NoticeHomeController: UIViewController {
 //        scrollStackViewContainer.addArrangedSubview(label)
 //        scrollStackViewContainer.addArrangedSubview(textLabel)
     }
+
+    func update(club: Club, imageData: Data) {
+        DispatchQueue.main.async {
+            self.label.text = club.title
+            self.textLabel.text = club.description
+            self.imageView.image = UIImage(data: imageData)
+        }
+    }
 }
