@@ -27,11 +27,15 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var currentUser: User?
     private var myProfileImage: UIImage?
     private let noticeBoard: NoticeBoard
+    private let club: Club
+    private let firebaseNoticeBoardManager: FirebaseManager
     weak var delegate: FirebaseManagerDelegate?
     
-    init(noticeBoard: NoticeBoard) {
+    init(noticeBoard: NoticeBoard, club: Club, firebaseNoticeBoardManager: FirebaseManager) {
         self.noticeBoard = noticeBoard
         self.firebaseCommentManager = FirebaseCommentManaer(refPath: ["CommentList",noticeBoard.id], noticeBoard: noticeBoard)
+        self.club = club
+        self.firebaseNoticeBoardManager = firebaseNoticeBoardManager
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
     }
@@ -77,6 +81,7 @@ private extension NoticeBoardDetailViewController {
         autoLayoutSetup()
         tableViewSetup()
         addCommentSetup()
+        noticeBoardSetup()
     }
     func addViews() {
         view.addSubview(commentPositionView)
@@ -101,6 +106,22 @@ private extension NoticeBoardDetailViewController {
         }
         
     }
+    
+    func noticeBoardSetup() {
+        noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
+            guard let self else { return }
+            let updateHandler: (UIAlertAction) -> Void = { _ in
+                let createNoticeVC = CreateNoticeBoardViewController(club: self.club, firebaseManager: self.firebaseNoticeBoardManager)
+                self.navigationController?.pushViewController(createNoticeVC, animated: true)
+            }
+            let deleteHandler: (UIAlertAction) -> Void = { _ in
+                //MARK: 게시판 삭제 로직 구현
+            }
+            
+            AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
+        }
+    }
+    
     func tableViewSetup() {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(commentLongPress))
         commentTableView.addGestureRecognizer(longPress)
@@ -254,29 +275,6 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
             }
             
             AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
-            
-//            let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//                            
-//            let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-//            let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
-//                self.firebaseCommentManager.modelList.remove(at: indexPath.row)
-//            }
-//            let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
-//                let comment = self.firebaseCommentManager.modelList[indexPath.row]
-//                let vc = CommentUpdateViewController(comment: comment)
-//                vc.commentUpdate = { [weak self] comment in
-//                    guard let self else { return }
-//                    self.firebaseCommentManager.updateDatas(data: comment)
-//                }
-//                vc.hidesBottomBarWhenPushed = true
-//                vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
-//                self.navigationController?.pushViewController(vc, animated: true)
-//            }
-            
-//            alert.addAction(cancelAction)
-//            alert.addAction(updateAction)
-//            alert.addAction(removeAction)
-//            present(alert, animated: true)
         }
         guard let dateText = comment.createDate.diffrenceDate else { return cell }
         cell.setDate(dateText: dateText)
