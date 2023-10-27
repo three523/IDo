@@ -15,6 +15,7 @@ class NoticeHomeController: UIViewController {
     var categoryData: String?
     var meetingIndex: Int?
     var club: Club
+    var signUpButtonUpdate: (() -> Void)?
     let fbUserDatabaseManager: FirebaseUserDatabaseManager
     let clubImage: UIImage
     
@@ -99,7 +100,10 @@ class NoticeHomeController: UIViewController {
         print("Sign Up button tapped!")
         
         if fbUserDatabaseManager.model == nil { return }
-        fbUserDatabaseManager.updateAddClub(club: club)
+        fbUserDatabaseManager.updateAddClub(club: club) {
+            self.signUpButtonUpdate?()
+            self.signUpButton.isHidden = true
+        }
     }
 
     func setup() {
