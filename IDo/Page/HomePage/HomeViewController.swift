@@ -72,7 +72,7 @@ class HomeViewController : UIViewController {
         
     
         joinClub.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(100)
+            make.top.equalToSuperview().offset(85)
             make.left.equalToSuperview().offset(20)
         }
         suggestClub.snp.makeConstraints { make in
