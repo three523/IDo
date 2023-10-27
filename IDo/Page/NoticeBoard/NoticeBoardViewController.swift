@@ -44,8 +44,6 @@ class NoticeBoardViewController: UIViewController {
         super.viewWillAppear(animated)
         
         firebaseManager.delegate = self
-//        firebaseManager.readNoticeBoard(clubID: club.id)
-        
     }
     
     private func selectView() {

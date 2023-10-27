@@ -24,7 +24,10 @@ class FirebaseManager {
     weak var delegate: FirebaseManagerDelegate?
 
     var noticeBoards: [NoticeBoard] = []
+    
     var selectedImage: [UIImage] = []
+    var newSelectedImage: [UIImage] = []
+    //var updateImage: [UIImage] = []
     
     // MARK: - 데이터 저장
 
@@ -142,22 +145,18 @@ class FirebaseManager {
     }
 
     // MARK: - 데이터 업데이트
-
     func updateNoticeBoard(at index: Int, title newTitle: String, content newContent: String, completion: @escaping (Bool) -> Void) {
         if index >= 0, index < self.noticeBoards.count {
             var updatedNoticeBoard = self.noticeBoards[index]
             updatedNoticeBoard.title = newTitle
             updatedNoticeBoard.content = newContent
             
-//            self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
-//                if success {
-//                    self.noticeBoards[index] = updatedNoticeBoard
-//                    self.delegate?.reloadData()
-//                }
-//            }
-            self.uploadImages(clubID: self.noticeBoards[index].clubID, noticeBoardID: self.noticeBoards[index].id, imageList: self.selectedImage) { success, imageURLs in
+            // 먼저 새로운 이미지를 업로드합니다.
+            self.uploadImages(clubID: updatedNoticeBoard.clubID, noticeBoardID: updatedNoticeBoard.id, imageList: self.selectedImage) { success, newImageURLs in
                 if success {
-                    updatedNoticeBoard.imageList = imageURLs ?? []
+                    // 기존 이미지 목록에 새로운 이미지 URL을 추가합니다.
+                    updatedNoticeBoard.imageList += newImageURLs ?? []
+                    // 업데이트된 게시글을 저장합니다.
                     self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                         if success {
                             self.noticeBoards[index] = updatedNoticeBoard
@@ -277,18 +276,21 @@ class FirebaseManager {
     }
     
     // MARK: - 이미지 삭제
-    func deleteImage(imagePath: String, completion: @escaping (Bool, Error?) -> Void) {
-        let storageRef = Storage.storage().reference()
-        let ref = storageRef.child(imagePath)
-        
-        ref.delete { error in
-            if let error = error {
-                print("이미지 삭제 실패: \(error)")
-                completion(false, error)
-            } else {
-                print("이미지 삭제 성공")
-                completion(true, nil)
-            }
-        }
-    }
+//    func deleteImage(imagePath: String, completion: @escaping (Bool, Error?) -> Void) {
+//        let storageRef = Storage.storage().reference()
+//        let ref = storageRef.child(imagePath)
+//        
+//        ref.delete { error in
+//            if let error = error {
+//                print("이미지 삭제 실패: \(error)")
+//                completion(false, error)
+//            } else {
+//                print("이미지 삭제 성공")
+//                completion(true, nil)
+//            }
+//        }
+//    }
+    
+    // 이미지 삭제함수 -> 단일
+    // 이미지 삭제함수 -> 전체
 }

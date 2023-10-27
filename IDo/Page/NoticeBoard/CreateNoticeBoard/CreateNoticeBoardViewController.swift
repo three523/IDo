@@ -65,6 +65,8 @@ class CreateNoticeBoardViewController: UIViewController {
 
         if isMovingFromParent {
             firebaseManager.selectedImage.removeAll()
+            firebaseManager.newSelectedImage.removeAll()
+            isEditingMode = false
         }
     }
     
@@ -271,10 +273,14 @@ private extension CreateNoticeBoardViewController {
 extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
-//            if let cell = createNoticeBoardView.galleryCollectionView.visibleCells.first as? GalleryCollectionViewCell {
-//                cell.createNoticeBoardImagePicker.galleryImageView.image = image
-//            }
-            firebaseManager.selectedImage.append(image)
+            
+            if isEditingMode {
+                firebaseManager.newSelectedImage.append(image)
+            }
+            else {
+                firebaseManager.selectedImage.append(image)
+            }
+            firebaseManager.selectedImage += firebaseManager.newSelectedImage
             // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
             createNoticeBoardView.galleryCollectionView.reloadData()
             
@@ -320,11 +326,10 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - Navigation 관련
 extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
-    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
-        isEditingMode = false
-    }
+
 }
 
+// MARK: - 사진 삭제 관련
 extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         createNoticeBoardView.galleryCollectionView.performBatchUpdates {
