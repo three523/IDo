@@ -242,21 +242,14 @@ class FirebaseManager {
             dispatchGroup.enter()
             let ref = storageRef.child(path)
             
-            ref.downloadURL { url, error in
-                if let error = error {
-                    print("URL 가져오기 실패: \(error)")
-                    dispatchGroup.leave()
-                } else if let url = url {
-                    FBURLCache.shared.downloadURL(url: url) { result in
-                        switch result {
-                        case .success(let image):
-                            imageDict[path] = image
-                        case .failure(let error):
-                            print("이미지 다운로드 실패: \(error)")
-                        }
-                        dispatchGroup.leave()
-                    }
+            FBURLCache.shared.downloadURL(storagePath: ref.fullPath) { result in
+                switch result {
+                case .success(let image):
+                    imageDict[path] = image
+                case .failure(let error):
+                    print("이미지 다운로드 실패: \(error)")
                 }
+                dispatchGroup.leave()
             }
         }
         
