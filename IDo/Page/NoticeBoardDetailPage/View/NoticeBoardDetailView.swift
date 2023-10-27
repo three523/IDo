@@ -10,7 +10,7 @@ import UIKit
 
 final class NoticeBoardDetailView: UIStackView {
     
-    private let writerInfoView: WriterStackView = WriterStackView()
+    let writerInfoView: WriterStackView = WriterStackView()
     private let contentTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .bold)
