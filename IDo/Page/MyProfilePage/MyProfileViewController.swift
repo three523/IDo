@@ -85,6 +85,7 @@ class MyProfileViewController: UIViewController {
         navigationBarButtonAction()
         selfInfoDetail.delegate = self
     }
+    
     func setLayout() {
         view.addSubview(profileImage)
         view.addSubview(profileName)

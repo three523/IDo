@@ -130,7 +130,7 @@ private extension SignUpProfileViewController {
             }
             guard let authDataResult = authDataResult else { return }
             let uid = authDataResult.user.uid
-            var user = IDoUser(id: uid, nickName: self.nickName, hobbyList: self.selectedCategorys)
+            var user = IDoUser(id: uid, updateAt: Date().toString(), nickName: self.nickName, hobbyList: self.selectedCategorys)
             self.fbUserDatabaseManager.model = user
             self.fbUserDatabaseManager.appendData(data: user)
             self.fbUserDatabaseManager.addImage(uid: uid, image: profileImageView.image)

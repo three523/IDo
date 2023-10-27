@@ -16,6 +16,7 @@ class NoticeHomeController: UIViewController {
     var meetingIndex: Int?
     var club: Club
     let fbUserDatabaseManager: FirebaseUserDatabaseManager
+    let clubImage: UIImage
     
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
@@ -65,7 +66,8 @@ class NoticeHomeController: UIViewController {
         return view
     }()
     
-    init(club: Club, isJoin: Bool, fbUserDatabaseManager: FirebaseUserDatabaseManager) {
+    init(club: Club, isJoin: Bool, fbUserDatabaseManager: FirebaseUserDatabaseManager, clubImage: UIImage) {
+        self.clubImage = clubImage
         self.club = club
         self.fbUserDatabaseManager = fbUserDatabaseManager
         super.init(nibName: nil, bundle: nil)
@@ -145,52 +147,10 @@ class NoticeHomeController: UIViewController {
     }
 
     func loadDataFromFirebase() {
-        guard let category = TemporaryManager.shared.categoryData else { return }
-        
-        let ref = Database.database().reference().child(category).child("meetings")
-        
-        ref.observe(.value) { [weak self] snapshot in
-            var index = 0
-            for child in snapshot.children {
-                if let childSnapshot = child as? DataSnapshot,
-                   let meetingData = childSnapshot.value as? [String: Any],
-                   let title = meetingData["title"] as? String,
-                   let description = meetingData["description"] as? String,
-                   let imageUrlString = meetingData["imageUrl"] as? String,
-                   let imageUrl = URL(string: imageUrlString)
-                {
-                    if index == TemporaryManager.shared.meetingIndex {
-                        DispatchQueue.main.async {
-                            self?.label.text = title
-                            self?.textLabel.text = description
-                            
-                            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
-                                self?.imageView.image = cachedImage
-                            } else {
-                                URLSession.shared.dataTask(with: imageUrl) { data, _, error in
-                                    if let error = error {
-                                        print("이미지 로딩 실패", error.localizedDescription)
-                                        return
-                                    }
-                                    
-                                    guard let data = data, let image = UIImage(data: data) else { return }
-                                    
-                                    // 이미지 캐시 저장
-                                    ImageCache.shared.cacheImage(image, for: imageUrlString)
-                                    
-                                    DispatchQueue.main.async {
-                                        self?.imageView.image = image
-                                    }
-                                }.resume()
-                            }
-                        }
-                        break
-                    }
-                    index += 1
-                }
-            }
-        }
-        scrollStackViewContainer.addArrangedSubview(label)
-        scrollStackViewContainer.addArrangedSubview(textLabel)
+        label.text = club.title
+        textLabel.text = club.description
+        imageView.image = clubImage
+//        scrollStackViewContainer.addArrangedSubview(label)
+//        scrollStackViewContainer.addArrangedSubview(textLabel)
     }
 }
