@@ -239,7 +239,6 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				7FE072A52ADFA30A00966916 /* APIKey.swift */,
 				E76A3FC52AE61526005751AD /* APIKey.swift */,
 			);
 			path = IDo;
