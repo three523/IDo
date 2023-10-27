@@ -95,6 +95,7 @@
 		7FBE18612AD796AF0052E950 /* BasicImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FBE185E2AD796AF0052E950 /* BasicImageView.swift */; };
 		7FE072A42ADF82E900966916 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A32ADF82E900966916 /* ImageCache.swift */; };
 		7FE072A82ADFE21200966916 /* TemporaryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FE072A72ADFE21200966916 /* TemporaryManager.swift */; };
+		E727D5122AEA633300B3090E /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E727D5112AEA633300B3090E /* APIKey.swift */; };
 		E73D73D92AD7BD2300EF9554 /* NoticeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		E73D73DE2AD7DEA200EF9554 /* NoticeMeetingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */; };
@@ -102,7 +103,6 @@
 		E74C58E92AD65E1200C2DEF5 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */; };
 		E74C58EF2AD6B1B300C2DEF5 /* MeetingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */; };
 		E76A3FC82AE6159A005751AD /* CategoryCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */; };
-		E79223C62AE656AA00867FAF /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79223C52AE656AA00867FAF /* APIKey.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -186,13 +186,13 @@
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
 		7FE072A32ADF82E900966916 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		7FE072A72ADFE21200966916 /* TemporaryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryManager.swift; sourceTree = "<group>"; };
+		E727D5112AEA633300B3090E /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeMeetingController.swift; sourceTree = "<group>"; };
 		E73D73DF2AD7E5FA00EF9554 /* NoticeHomeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeHomeController.swift; sourceTree = "<group>"; };
 		E74C58E82AD65E1100C2DEF5 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		E74C58EE2AD6B1B300C2DEF5 /* MeetingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingViewController.swift; sourceTree = "<group>"; };
 		E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCollectionCell.swift; sourceTree = "<group>"; };
-		E79223C52AE656AA00867FAF /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,7 +269,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				E79223C52AE656AA00867FAF /* APIKey.swift */,
+				E727D5112AEA633300B3090E /* APIKey.swift */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -668,7 +668,6 @@
 				18CE9C272AD8ECAB00C921D5 /* Club.swift in Sources */,
 				18C6BC7A2AE78DC7000E4D3F /* ImageSize.swift in Sources */,
 				7B6D8C632ADFD6CA00FF2194 /* MyProfileViewCell.swift in Sources */,
-				E79223C62AE656AA00867FAF /* APIKey.swift in Sources */,
 				18CCC1782ADD00D7000D092C /* CommentStackView.swift in Sources */,
 				18C65F362AEA5AA7006A3A79 /* MyProfile.swift in Sources */,
 				180C336A2AD642B6000979F7 /* Color.swift in Sources */,
@@ -685,6 +684,7 @@
 				7FE072A82ADFE21200966916 /* TemporaryManager.swift in Sources */,
 				18CE9C2B2AD8ED5E00C921D5 /* Comment.swift in Sources */,
 				18C6BC7C2AE7C564000E4D3F /* FBURLCache.swift in Sources */,
+				E727D5122AEA633300B3090E /* APIKey.swift in Sources */,
 				18CCC1792ADD00D7000D092C /* EmptyAbleTableVIew.swift in Sources */,
 				18B819812AEB5E9800E284AC /* Data.swift in Sources */,
 				18BD1A912AE0C92B004BC2B1 /* FirebaseCommentManager.swift in Sources */,
