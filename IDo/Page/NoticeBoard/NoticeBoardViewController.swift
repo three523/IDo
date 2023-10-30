@@ -68,7 +68,6 @@ class NoticeBoardViewController: UIViewController {
             make.top.leading.trailing.bottom.equalToSuperview()
         }
     }
-
 }
 
 
@@ -83,20 +82,22 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         cell.titleLabel.text = firebaseManager.noticeBoards[indexPath.row].title
         cell.contentLabel.text = firebaseManager.noticeBoards[indexPath.row].content
         cell.timeLabel.text = firebaseManager.noticeBoards[indexPath.row].createDate.diffrenceDate ?? firebaseManager.noticeBoards[indexPath.row].createDate.dateToString
-//        if let profileImageURL = MyProfile.shared.myUserInfo?.profileImageURL {
-//            firebaseManager.downloadImages(imagePaths: [profileImageURL]) { downloadedImages in
-//                if let images = downloadedImages, let image = images.first {
-//                    cell.profileImageView.image = image
-//                }
-//            }
-//        }
+        if let profileImageURL = MyProfile.shared.myUserInfo?.profileImageURL {
+            firebaseManager.getUserImage(referencePath: profileImageURL, imageSize: .medium) { downloadedImage in
+                if let image = downloadedImage {
+                    DispatchQueue.main.async {
+                        cell.profileImageView.image = image
+                    }
+                }
+            }
+        }
         cell.nameLabel.text = firebaseManager.noticeBoards[indexPath.row].rootUser.nickName
         cell.commentLabel.text = firebaseManager.noticeBoards[indexPath.row].commentCount
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], club: club, firebaseNoticeBoardManager: firebaseManager)
+        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], club: club, firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
         vc.delegate = self
 //        let createVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
 //        createVC.editingTitleText = firebaseManager.noticeBoards[indexPath.row].title
