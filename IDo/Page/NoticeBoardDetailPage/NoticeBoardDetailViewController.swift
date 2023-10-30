@@ -119,7 +119,9 @@ private extension NoticeBoardDetailViewController {
         firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
             let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
             self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)
-            self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+            DispatchQueue.main.async {
+                self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+            }
         }
         
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
