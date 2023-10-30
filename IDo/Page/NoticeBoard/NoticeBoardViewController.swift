@@ -71,34 +71,6 @@ class NoticeBoardViewController: UIViewController {
 
 }
 
-// Navigation 관련 extension
-//private extension NoticeBoardViewController {
-//    
-//    func navigationControllerSet() {
-//        
-//        // 네비게이션 LargeTitle 비활성화 및 title 입력
-//        navigationController?.navigationBar.prefersLargeTitles = false
-//        navigationItem.title = "Team.첫사랑(하늬바람)"
-//    }
-//    
-//    func navigationBarButtonAction() {
-//        
-//        // 네비게이션 오른쪽 버튼 생성
-//        let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
-//        self.navigationItem.rightBarButtonItems = [ createButton ]
-//        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
-//        
-//        let backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
-//        backBarButtonItem.tintColor = UIColor(color: .main)
-//        self.navigationItem.backBarButtonItem = backBarButtonItem
-//    }
-//    
-//    // 메모 생성 페이지 이동
-//    @objc func moveCreateVC() {
-//        let createNoticeBoardVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
-//        navigationController?.pushViewController(createNoticeBoardVC, animated: true)
-//    }
-//}
 
 extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource {
     
@@ -111,6 +83,13 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         cell.titleLabel.text = firebaseManager.noticeBoards[indexPath.row].title
         cell.contentLabel.text = firebaseManager.noticeBoards[indexPath.row].content
         cell.timeLabel.text = firebaseManager.noticeBoards[indexPath.row].createDate.diffrenceDate ?? firebaseManager.noticeBoards[indexPath.row].createDate.dateToString
+//        if let profileImageURL = MyProfile.shared.myUserInfo?.profileImageURL {
+//            firebaseManager.downloadImages(imagePaths: [profileImageURL]) { downloadedImages in
+//                if let images = downloadedImages, let image = images.first {
+//                    cell.profileImageView.image = image
+//                }
+//            }
+//        }
         cell.nameLabel.text = firebaseManager.noticeBoards[indexPath.row].rootUser.nickName
         cell.commentLabel.text = firebaseManager.noticeBoards[indexPath.row].commentCount
         return cell

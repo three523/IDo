@@ -331,20 +331,32 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 
 // MARK: - 사진 삭제 관련
 extension CreateNoticeBoardViewController: RemoveDelegate {
+//    func removeCell(_ indexPath: IndexPath) {
+//        createNoticeBoardView.galleryCollectionView.performBatchUpdates {
+//            firebaseManager.selectedImage.remove(at: indexPath.row)
+//            createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
+//        } completion: { (_) in
+//
+//            self.createNoticeBoardView.galleryCollectionView.reloadData()
+//        }
+//    }
     func removeCell(_ indexPath: IndexPath) {
-        createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            firebaseManager.selectedImage.remove(at: indexPath.row)
-            createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
-        } completion: { (_) in
-//            self.firebaseManager.deleteImage(imagePath: )) { success, error in
-//                if success {
-//                    print("이미지 삭제 성공")
-//                }
-//                else {
-//                    print("이미지 삭제 실패"
-//                }
-//            }
-            self.createNoticeBoardView.galleryCollectionView.reloadData()
+        // 선택한 이미지의 Storage 경로를 가져옴
+        let imagePath = firebaseManager.noticeBoards[editingMemoIndex!].imageList[indexPath.row]
+        
+        // Firebase Storage에서 이미지를 삭제
+        firebaseManager.deleteImage(clubID: club.id, noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex!].id, imagePaths: [imagePath]) { success in
+            if success {
+                // 로컬에서 이미지를 삭제하고 Collection View를 업데이트
+                self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {
+                    self.firebaseManager.selectedImage.remove(at: indexPath.row)
+                    self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
+                } completion: { (_) in
+                    self.createNoticeBoardView.galleryCollectionView.reloadData()
+                }
+            } else {
+                print("Firebase Storage에서 이미지 삭제 실패")
+            }
         }
     }
 }
