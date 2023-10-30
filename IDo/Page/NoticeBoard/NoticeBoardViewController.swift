@@ -97,8 +97,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], club: club, firebaseNoticeBoardManager: firebaseManager)
-        vc.editIndex = indexPath.row
+        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], club: club, firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
         vc.delegate = self
 //        let createVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
 //        createVC.editingTitleText = firebaseManager.noticeBoards[indexPath.row].title
