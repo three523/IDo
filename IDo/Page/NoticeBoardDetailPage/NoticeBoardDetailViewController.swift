@@ -116,8 +116,15 @@ private extension NoticeBoardDetailViewController {
         noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
+            
+            // MARK: - 게시판 업데이트 로직
             let updateHandler: (UIAlertAction) -> Void = { _ in
                 let createNoticeVC = CreateNoticeBoardViewController(club: self.club, firebaseManager: self.firebaseNoticeBoardManager)
+                
+                createNoticeVC.editingTitleText = self.noticeBoard.title
+                createNoticeVC.editingContentText = self.noticeBoard.content
+                createNoticeVC.isEditingMode = true
+                
                 self.navigationController?.pushViewController(createNoticeVC, animated: true)
             }
             let deleteHandler: (UIAlertAction) -> Void = { _ in
