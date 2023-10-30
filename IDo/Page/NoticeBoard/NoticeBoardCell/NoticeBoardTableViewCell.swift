@@ -35,7 +35,6 @@ class NoticeBoardTableViewCell: UITableViewCell {
         addContentView()
         addStackView()
         autoLayout()
-        profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
     }
     
     required init?(coder: NSCoder) {
@@ -48,7 +47,7 @@ class NoticeBoardTableViewCell: UITableViewCell {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.alignment = .fill
-        stackView.distribution = .fillProportionally
+        stackView.distribution = .fill
         stackView.spacing = 8
         return stackView
     }()
@@ -57,6 +56,7 @@ class NoticeBoardTableViewCell: UITableViewCell {
     private(set) lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
+        imageView.layer.cornerRadius = 15
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "person.circle.fill")
         imageView.tintColor = UIColor(color: .main)
