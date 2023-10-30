@@ -134,6 +134,8 @@ private extension NoticeBoardDetailViewController {
             let updateHandler: (UIAlertAction) -> Void = { _ in
                 let createNoticeVC = CreateNoticeBoardViewController(club: self.club, firebaseManager: self.firebaseNoticeBoardManager, index: self.editIndex, images: self.firebaseCommentManager.noticeBoardImages)
                 
+                self.firebaseNoticeBoardManager.selectedImage = self.firebaseCommentManager.noticeBoardImages
+                
                 createNoticeVC.editingTitleText = self.noticeBoard.title
                 createNoticeVC.editingContentText = self.noticeBoard.content
                 
@@ -153,7 +155,7 @@ private extension NoticeBoardDetailViewController {
 //                createNoticeVC.editingMemoIndex = self.editIndex
 //                createNoticeVC.isEditingMode = true
                 
-            
+                
                 
                 self.navigationController?.pushViewController(createNoticeVC, animated: true)
             }

@@ -156,7 +156,7 @@ class FirebaseManager {
             self.uploadImages(clubID: updatedNoticeBoard.clubID, noticeBoardID: updatedNoticeBoard.id, imageList: self.selectedImage) { success, newImageURLs in
                 if success {
                     // 기존 이미지 목록에 새로운 이미지 URL을 추가
-                    updatedNoticeBoard.imageList += newImageURLs ?? []
+                    updatedNoticeBoard.imageList = newImageURLs ?? []
                     // 업데이트된 게시글을 저장
                     self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                         if success {
@@ -206,8 +206,9 @@ class FirebaseManager {
         
         for (index, image) in imageList {
             dispatchGroup.enter()
-            let imageName = "\(index)_\(UUID().uuidString)"
-            let ref = storageRef.child(index).child(imageName)
+//            let imageName = "\(index)_\(UUID().uuidString)"
+//            let ref = storageRef.child(index).child(imageName)
+            let ref = storageRef.child(index)
             
             if let uploadData = image.jpegData(compressionQuality: 0.5) {
                 ref.putData(uploadData, metadata: nil) { _, error in
@@ -302,6 +303,7 @@ class FirebaseManager {
                 if let error = error {
                     print("이미지 삭제 중 오류 발생: \(error)")
                 } else {
+                    
                     print("이미지가 성공적으로 삭제되었습니다.")
                 }
                 dispatchGroup.leave()
