@@ -104,6 +104,7 @@
 		7B226F162AEBD85900EAED75 /* MyProfileViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */; };
 		7B226F1B2AEBD85900EAED75 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B226EC32AEBD1B000EAED75 /* APIKey.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
+		E7C7D25A2AEFEBC500636732 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = E7C7D2592AEFEBC500636732 /* SwiftSMTP */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -205,6 +206,7 @@
 			files = (
 				10B565B32ADD1439006DED66 /* KakaoSDKCert in Frameworks */,
 				10B565B72ADD1439006DED66 /* KakaoSDKCommon in Frameworks */,
+				E7C7D25A2AEFEBC500636732 /* SwiftSMTP in Frameworks */,
 				18C26A042AD941AF00899A6F /* FirebaseDatabase in Frameworks */,
 				10B565B52ADD1439006DED66 /* KakaoSDKCertCore in Frameworks */,
 				10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */,
@@ -559,6 +561,7 @@
 				10B565B22ADD1439006DED66 /* KakaoSDKCert */,
 				10B565B42ADD1439006DED66 /* KakaoSDKCertCore */,
 				10B565B62ADD1439006DED66 /* KakaoSDKCommon */,
+				E7C7D2592AEFEBC500636732 /* SwiftSMTP */,
 			);
 			productName = IDo;
 			productReference = 10C265AE2AD55BBF002BA40A /* IDo.app */;
@@ -593,6 +596,7 @@
 				E73D73DA2AD7D14000EF9554 /* XCRemoteSwiftPackageReference "Tabman" */,
 				18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				10B565AD2ADD1439006DED66 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				E7C7D2582AEFEBC500636732 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
 			);
 			productRefGroup = 10C265AF2AD55BBF002BA40A /* Products */;
 			projectDirPath = "";
@@ -954,6 +958,14 @@
 				minimumVersion = 3.0.2;
 			};
 		};
+		E7C7D2582AEFEBC500636732 /* XCRemoteSwiftPackageReference "Swift-SMTP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/IBM-Swift/Swift-SMTP";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1011,6 +1023,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E73D73DA2AD7D14000EF9554 /* XCRemoteSwiftPackageReference "Tabman" */;
 			productName = Tabman;
+		};
+		E7C7D2592AEFEBC500636732 /* SwiftSMTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7C7D2582AEFEBC500636732 /* XCRemoteSwiftPackageReference "Swift-SMTP" */;
+			productName = SwiftSMTP;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
