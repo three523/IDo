@@ -77,10 +77,9 @@ private extension NoticeBoardDetailView {
 }
 
 extension NoticeBoardDetailView {
-    func addNoticeBoardImages(images: [UIImage]) {
-        print(images)
-        images.forEach { image in
-            let imageView = createImageView(image: image)
+    func loadingNoticeBoardImages(imageCount: Int) {
+        for index in 0..<imageCount {
+            let imageView = createLodingImageView()
             DispatchQueue.main.async {
                 self.imageStackView.addArrangedSubview(imageView)
                 imageView.snp.makeConstraints { make in
@@ -89,10 +88,21 @@ extension NoticeBoardDetailView {
             }
         }
     }
-    private func createImageView(image: UIImage) -> UIImageView {
-        let imageview = UIImageView(image: image)
-        imageview.layer.cornerRadius = 5
-        imageview.layer.masksToBounds = true
-        return imageview
+    func addNoticeBoardImages(images: [UIImage]) {
+        for index in 0..<images.count {
+            guard let imageView = imageStackView.arrangedSubviews[index] as? LodingImageView else { continue }
+            DispatchQueue.main.async {
+                imageView.image = images[index]
+                imageView.viewState = .loaded
+            }
+        }
+    }
+    private func createLodingImageView() -> LodingImageView {
+        let imageView = LodingImageView()
+        imageView.layer.cornerRadius = 5
+        imageView.layer.masksToBounds = true
+        imageView.viewState = .loading
+        imageView.backgroundColor = UIColor(color: .backgroundSecondary)
+        return imageView
     }
 }
