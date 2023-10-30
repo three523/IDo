@@ -10,7 +10,7 @@ import UIKit
 
 class CategoryViewController: UICollectionViewController {
     let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
-    let categoryImage = UIImage(systemName: "pencil.circle")
+    let categoryImage = [UIImage(named: "develop"), UIImage(named: "photo"), UIImage(named: "music"), UIImage(named: "game"), UIImage(named: "travel"), UIImage(named: "dance"), UIImage(named: "animal"), UIImage(named: "fishing"), UIImage(named: "exercise")]
     
 
     init() {
@@ -55,7 +55,7 @@ class CategoryViewController: UICollectionViewController {
             fatalError()
         }
         cell.label.text = categoryData[indexPath.row]
-        cell.categoryImageView.image = categoryImage
+        cell.categoryImageView.image = categoryImage[indexPath.row]
         return cell
     }
 

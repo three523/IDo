@@ -156,6 +156,7 @@ private extension LoginViewController {
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             // Error(등록 실패)
             if let e = error {
+                AlertManager.showAlert(on: self, title: "알림", message: "이메일과 비밀번호를 다시 확인해주세요.")
                 print(e.localizedDescription)
                 return
             }

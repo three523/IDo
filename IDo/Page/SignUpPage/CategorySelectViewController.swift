@@ -13,7 +13,7 @@ final class CategorySelectViewController: UIViewController {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
-        label.text = "0개 선택되었습니다."
+        label.text = "0개 선택되었습니다. (최대 3개)"
         return label
     }()
 
@@ -45,7 +45,7 @@ final class CategorySelectViewController: UIViewController {
         didSet {
             print(selectedCategorys)
             if selectedCategorys.count <= 3 {
-                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다"
+                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다. (최대 3개)"
                 nextButton.isEnabled = !selectedCategorys.isEmpty
             }
         }
@@ -143,23 +143,17 @@ extension CategorySelectViewController: UICollectionViewDelegate, UICollectionVi
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return }
-
-        let selectedItems = collectionView.indexPathsForSelectedItems ?? []
-        selectedCategorys = selectedItems.compactMap { categoryData[$0.row] }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedCategorys.append(categoryData[indexPath.row])
     }
 
-    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool { // 클릭되고 난 순간
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return false }
-        let selectedItems = collectionView.indexPathsForSelectedItems ?? []
-        selectedCategorys = selectedItems.compactMap { categoryData[$0.row] }
-        print(selectedCategorys.count)
-        if selectedCategorys.count <= 3 {
-            selectedCategorys.append(categoryData[indexPath.row])
-            return true
-        } else {
-            return false
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        if let index = selectedCategorys.firstIndex(of: categoryData[indexPath.row]) {
+            selectedCategorys.remove(at: index)
         }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        return selectedCategorys.count < 3
     }
 }
