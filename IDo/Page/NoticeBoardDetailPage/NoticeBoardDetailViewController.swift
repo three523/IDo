@@ -119,6 +119,8 @@ private extension NoticeBoardDetailViewController {
         noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
         noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
         
+        noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList.count)
+        
         firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
             let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
             self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)

@@ -90,15 +90,15 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     func getNoticeBoardImages(noticeBoard: NoticeBoard, completion: @escaping ([String: UIImage]) -> Void) {
         let storageRef = Storage.storage().reference()
         let imagePaths = noticeBoard.imageList
-        //var images = [String: UIImage]()
         for index in 0..<imagePaths.count {
             let imageRef = storageRef.child(imagePaths[index])
-            print("test:\(imageRef.fullPath)")
             urlCache.downloadURL(storagePath: imageRef.fullPath) { result in
                 switch result {
                 case .success(let image):
                     self.noticeBoardImages[String(index)] = image
-                    completion(self.noticeBoardImages)
+                    if self.noticeBoardImages.count == imagePaths.count {
+                        completion(self.noticeBoardImages)
+                    }
                 case .failure(let error):
                     print(error)
                 }
