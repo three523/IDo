@@ -8,9 +8,12 @@
 import FirebaseAuth
 import FirebaseCore
 import FirebaseDatabase
+// import SwiftSMTP
 import UIKit
-
 final class SignUpViewController: UIViewController {
+//    var smtp: SMTP!
+//    var verificationCode: String?
+       
     var eyeButton: UIButton = {
         let button = UIButton(type: .custom)
         button.contentEdgeInsets = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
@@ -66,11 +69,11 @@ final class SignUpViewController: UIViewController {
         return label
     }()
     
-    private let emailLable: UILabel = {
-        let label = UILabel()
-        label.text = "이메일 인증"
-        return label
-    }()
+//    private let emailLable: UILabel = {
+//        let label = UILabel()
+//        label.text = "이메일 인증"
+//        return label
+//    }()
     
     private let emailTextField: UITextField = {
         let textField = UITextField()
@@ -104,45 +107,45 @@ final class SignUpViewController: UIViewController {
         return textField
     }()
     
-    private let emailAuthorizationTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "유효한 이메일을 입력해주세요."
-        textField.font = .bodyFont(.medium, weight: .regular)
-        textField.textColor = UIColor(color: .textStrong)
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
-    
-    private let authenticationNumberTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "인증번호"
-        textField.font = .bodyFont(.medium, weight: .regular)
-        textField.textColor = UIColor(color: .textStrong)
-        textField.borderStyle = .roundedRect
-        return textField
-    }()
-
-    private let emailAuthorizationButton: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("인증", for: .normal)
-        btn.setTitleColor(UIColor(color: .text2), for: .normal)
-        btn.backgroundColor = UIColor(color: .contentPrimary)
-        btn.layer.cornerRadius = 5
-        return btn
-    }()
-    
-    private let authenticationNumberButton: UIButton = {
-        let btn = UIButton()
-        btn.setTitle("확인", for: .normal)
-        btn.setTitleColor(UIColor(color: .text2), for: .normal)
-        btn.backgroundColor = UIColor(color: .contentPrimary)
-        btn.layer.cornerRadius = 5
-        return btn
-    }()
+//    private let emailAuthorizationTextField: UITextField = {
+//        let textField = UITextField()
+//        textField.placeholder = "유효한 이메일을 입력해주세요."
+//        textField.font = .bodyFont(.medium, weight: .regular)
+//        textField.textColor = UIColor(color: .textStrong)
+//        textField.borderStyle = .roundedRect
+//        return textField
+//    }()
+//
+//    private let authenticationNumberTextField: UITextField = {
+//        let textField = UITextField()
+//        textField.placeholder = "인증번호"
+//        textField.font = .bodyFont(.medium, weight: .regular)
+//        textField.textColor = UIColor(color: .textStrong)
+//        textField.borderStyle = .roundedRect
+//        return textField
+//    }()
+//
+//    private let emailAuthorizationButton: UIButton = {
+//        let btn = UIButton()
+//        btn.setTitle("인증", for: .normal)
+//        btn.setTitleColor(UIColor(color: .text2), for: .normal)
+//        btn.backgroundColor = UIColor(color: .contentPrimary)
+//        btn.layer.cornerRadius = 5
+//        return btn
+//    }()
+//
+//    private let authenticationNumberButton: UIButton = {
+//        let btn = UIButton()
+//        btn.setTitle("확인", for: .normal)
+//        btn.setTitleColor(UIColor(color: .text2), for: .normal)
+//        btn.backgroundColor = UIColor(color: .contentPrimary)
+//        btn.layer.cornerRadius = 5
+//        return btn
+//    }()
 
     private let nextButton: UIButton = {
         let button = UIButton()
-        button.setTitle("다음", for: .normal)
+        button.setTitle("회원가입", for: .normal)
         button.setTitleColor(UIColor(color: .white), for: .normal)
         button.backgroundColor = UIColor(color: .contentPrimary)
         button.layer.cornerRadius = 5
@@ -185,11 +188,11 @@ private extension SignUpViewController {
         view.addSubview(passwordConfirmLable)
         view.addSubview(passwordTextField)
         view.addSubview(passwordConfirmTextField)
-        view.addSubview(emailLable)
-        view.addSubview(emailAuthorizationTextField)
-        view.addSubview(emailAuthorizationButton)
-        view.addSubview(authenticationNumberTextField)
-        view.addSubview(authenticationNumberButton)
+//        view.addSubview(emailLable)
+//        view.addSubview(emailAuthorizationTextField)
+//        view.addSubview(emailAuthorizationButton)
+//        view.addSubview(authenticationNumberTextField)
+//        view.addSubview(authenticationNumberButton)
     }
     
     func autolayoutSetup() {
@@ -235,34 +238,34 @@ private extension SignUpViewController {
             make.top.equalTo(passwordConfirmLable.snp.bottom).offset(Constant.margin2)
             make.left.right.equalToSuperview().inset(Constant.margin3)
         }
-        emailLable.snp.makeConstraints { make in
-            make.top.equalTo(passwordConfirmTextField.snp.bottom).offset(Constant.margin2)
-            make.left.right.equalToSuperview().inset(Constant.margin3)
-        }
-        emailAuthorizationTextField.snp.makeConstraints { make in
-            make.top.equalTo(emailLable.snp.bottom).offset(Constant.margin2)
-            make.left.equalToSuperview().inset(Constant.margin3)
-            make.width.equalTo(280)
-        }
-        
-        emailAuthorizationButton.snp.makeConstraints { make in
-            make.centerY.equalTo(emailAuthorizationTextField)
-            make.right.equalToSuperview().inset(Constant.margin3)
-            make.width.equalTo(60)
-        }
-        authenticationNumberTextField.snp.makeConstraints { make in
-            make.top.equalTo(emailAuthorizationTextField.snp.bottom).offset(Constant.margin2)
-            make.left.equalToSuperview().inset(Constant.margin3)
-            make.width.equalTo(280)
-        }
-        
-        authenticationNumberButton.snp.makeConstraints { make in
-            make.centerY.equalTo(authenticationNumberTextField)
-            make.right.equalToSuperview().inset(Constant.margin3)
-            make.width.equalTo(60)
-        }
+//        emailLable.snp.makeConstraints { make in
+//            make.top.equalTo(passwordConfirmTextField.snp.bottom).offset(Constant.margin2)
+//            make.left.right.equalToSuperview().inset(Constant.margin3)
+//        }
+//        emailAuthorizationTextField.snp.makeConstraints { make in
+//            make.top.equalTo(emailLable.snp.bottom).offset(Constant.margin2)
+//            make.left.equalToSuperview().inset(Constant.margin3)
+//            make.width.equalTo(280)
+//        }
+//
+//        emailAuthorizationButton.snp.makeConstraints { make in
+//            make.centerY.equalTo(emailAuthorizationTextField)
+//            make.right.equalToSuperview().inset(Constant.margin3)
+//            make.width.equalTo(60)
+//        }
+//        authenticationNumberTextField.snp.makeConstraints { make in
+//            make.top.equalTo(emailAuthorizationTextField.snp.bottom).offset(Constant.margin2)
+//            make.left.equalToSuperview().inset(Constant.margin3)
+//            make.width.equalTo(280)
+//        }
+//
+//        authenticationNumberButton.snp.makeConstraints { make in
+//            make.centerY.equalTo(authenticationNumberTextField)
+//            make.right.equalToSuperview().inset(Constant.margin3)
+//            make.width.equalTo(60)
+//        }
         nextButton.snp.makeConstraints { make in
-            make.top.equalTo(authenticationNumberTextField.snp.bottom).offset(Constant.margin3)
+            make.top.equalTo(passwordConfirmTextField.snp.bottom).offset(Constant.margin3)
             make.left.right.equalToSuperview().inset(Constant.margin3)
         }
     }
@@ -277,6 +280,8 @@ private extension SignUpViewController {
         confirmEyeButton.addTarget(self, action: #selector(confirmEyeClickButton), for: .touchUpInside)
         
         linkButton.addTarget(self, action: #selector(clickLinkButton), for: .touchUpInside)
+            
+//        emailAuthorizationButton.addTarget(self, action: #selector(addSMTPButton), for: .touchUpInside)
     }
     
     @objc func clickNextButton() {
@@ -324,6 +329,21 @@ private extension SignUpViewController {
         present(alert, animated: true, completion: nil)
     }
 
+//    @objc func addSMTPButton() {
+//        let smtp = SMTP(hostname: "smtp.gmail.com", email: "ido348822@gmail.com", password: "muzzdbnfsgxaoprk")
+//
+//        let drLight = Mail.User(name: "iDo", email: "ido348822@gmail.com")
+//        let megaman = Mail.User(name: "User", email: emailAuthorizationTextField.text!)
+//
+//        let mail = Mail(from: drLight, to: [megaman], subject: "[iDo] e-mail 인증", text: "인증 번호를 입력해주세요")
+//
+//        smtp.send(mail) { error in
+//            if let error = error {
+//                print(error)
+//            }
+//        }
+//    }
+
     @objc func eyeClickButton() {
         passwordTextField.isSecureTextEntry.toggle()
         eyeButton.isSelected.toggle()
@@ -367,3 +387,11 @@ private extension SignUpViewController {
         })
     }
 }
+
+// extension String {
+//    func isValidEmail() -> Bool {
+//        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.(com|co\\.kr|net)"
+//        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
+//        return emailTest.evaluate(with: self)
+//    }
+// }
