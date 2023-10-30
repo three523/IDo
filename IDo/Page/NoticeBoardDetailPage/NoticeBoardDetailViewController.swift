@@ -18,6 +18,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         tableView.backgroundColor = UIColor(color: .backgroundPrimary)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.sectionHeaderHeight = UITableView.automaticDimension
+        tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
     private let commentPositionView: UIView = UIView()
@@ -114,6 +115,13 @@ private extension NoticeBoardDetailViewController {
         noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
         noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
         noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
+        
+        firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
+            let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
+            self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)
+            self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+        }
+        
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
             
@@ -173,7 +181,7 @@ private extension NoticeBoardDetailViewController {
             }
         }
     }
-    
+        
     func addCommentSetup() {
         firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid, imageSize: .small) { image in
             DispatchQueue.main.async {
