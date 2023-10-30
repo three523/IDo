@@ -32,6 +32,14 @@ final class NoticeBoardDetailView: UIStackView {
         label.textColor = UIColor(color: .textStrong)
         return label
     }()
+    private let imageStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 8
+        return stackView
+    }()
     var updateEnable: Bool = false {
         didSet {
             writerInfoView.moreImageView.isHidden = !updateEnable
@@ -64,5 +72,25 @@ private extension NoticeBoardDetailView {
         addArrangedSubview(writerInfoView)
         addArrangedSubview(contentTitleLabel)
         addArrangedSubview(contentDescriptionLabel)
+        addArrangedSubview(imageStackView)
+    }
+}
+
+extension NoticeBoardDetailView {
+    func addNoticeBoardImages(images: [UIImage]) {
+        images.forEach { image in
+            let imageView = createImageView(image: image)
+            imageStackView.addArrangedSubview(imageView)
+            imageView.snp.makeConstraints { make in
+                make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
+            }
+        }
+    }
+    private func createImageView(image: UIImage) -> UIImageView {
+        let imageview = UIImageView(image: image)
+        imageview.layer.cornerRadius = 5
+        imageview.layer.masksToBounds = true
+//        imageview.contentMode = .scaleAspectFit
+        return imageview
     }
 }
