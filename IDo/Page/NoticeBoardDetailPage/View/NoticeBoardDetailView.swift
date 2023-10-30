@@ -78,11 +78,14 @@ private extension NoticeBoardDetailView {
 
 extension NoticeBoardDetailView {
     func addNoticeBoardImages(images: [UIImage]) {
+        print(images)
         images.forEach { image in
             let imageView = createImageView(image: image)
-            imageStackView.addArrangedSubview(imageView)
-            imageView.snp.makeConstraints { make in
-                make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
+            DispatchQueue.main.async {
+                self.imageStackView.addArrangedSubview(imageView)
+                imageView.snp.makeConstraints { make in
+                    make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
+                }
             }
         }
     }
@@ -90,7 +93,6 @@ extension NoticeBoardDetailView {
         let imageview = UIImageView(image: image)
         imageview.layer.cornerRadius = 5
         imageview.layer.masksToBounds = true
-//        imageview.contentMode = .scaleAspectFit
         return imageview
     }
 }
