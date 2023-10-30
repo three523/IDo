@@ -13,7 +13,7 @@ final class CategorySelectViewController: UIViewController {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
-        label.text = "0개 선택되었습니다."
+        label.text = "0개 선택되었습니다. (최대 3개)"
         return label
     }()
 
@@ -45,7 +45,7 @@ final class CategorySelectViewController: UIViewController {
         didSet {
             print(selectedCategorys)
             if selectedCategorys.count <= 3 {
-                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다"
+                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다. (최대 3개)"
                 nextButton.isEnabled = !selectedCategorys.isEmpty
             }
         }
