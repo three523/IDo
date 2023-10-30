@@ -27,7 +27,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var firebaseCommentManager: FirebaseCommentManaer
     private var currentUser: User?
     private var myProfileImage: UIImage?
-    private let noticeBoard: NoticeBoard
+    private var noticeBoard: NoticeBoard
     private let club: Club
     private let firebaseNoticeBoardManager: FirebaseManager
     weak var delegate: FirebaseManagerDelegate?
@@ -42,6 +42,17 @@ final class NoticeBoardDetailViewController: UIViewController {
         self.editIndex = editIndex
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
+        guard let profileImageURL = noticeBoard.rootUser.profileImageURL  else { return }
+        FBURLCache.shared.downloadURL(storagePath: profileImageURL + "/\(ImageSize.small.rawValue)") { result in
+            switch result {
+            case .success(let image):
+                DispatchQueue.main.async {
+                    self.noticeBoardDetailView.setupUserImage(image: image)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -70,6 +81,10 @@ final class NoticeBoardDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        guard let noticeBoard = firebaseNoticeBoardManager.noticeBoards.first(where: { $0.id == noticeBoard.id }) else { return }
+        self.noticeBoard = noticeBoard
+        print(noticeBoard)
+        commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -217,6 +232,8 @@ private extension NoticeBoardDetailViewController {
         firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid, imageSize: .small) { image in
             DispatchQueue.main.async {
                 self.addCommentStackView.profileImageView.imageView.image = image
+                self.addCommentStackView.profileImageView.backgroundColor = UIColor(color: .white)
+                self.addCommentStackView.profileImageView.contentMargin = 0
                 self.myProfileImage = image
             }
         }

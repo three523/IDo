@@ -90,8 +90,8 @@ extension NoticeBoardDetailView {
     }
     func addNoticeBoardImages(images: [UIImage]) {
         for index in 0..<images.count {
-            guard let imageView = imageStackView.arrangedSubviews[index] as? LodingImageView else { continue }
             DispatchQueue.main.async {
+                guard let imageView = self.imageStackView.arrangedSubviews[index] as? LodingImageView else { return }
                 imageView.image = images[index]
                 imageView.viewState = .loaded
             }
@@ -104,5 +104,10 @@ extension NoticeBoardDetailView {
         imageView.viewState = .loading
         imageView.backgroundColor = UIColor(color: .backgroundSecondary)
         return imageView
+    }
+    func setupUserImage(image: UIImage) {
+        writerInfoView.writerImageView.imageView.image = image
+        writerInfoView.writerImageView.contentMargin = 0
+        writerInfoView.writerImageView.backgroundColor = UIColor(color: .white)
     }
 }

@@ -79,11 +79,12 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: NoticeBoardTableViewCell.identifier, for: indexPath) as? NoticeBoardTableViewCell else { return UITableViewCell() }
-        cell.titleLabel.text = firebaseManager.noticeBoards[indexPath.row].title
-        cell.contentLabel.text = firebaseManager.noticeBoards[indexPath.row].content
-        cell.timeLabel.text = firebaseManager.noticeBoards[indexPath.row].createDate.diffrenceDate ?? firebaseManager.noticeBoards[indexPath.row].createDate.dateToString
-        if let profileImageURL = MyProfile.shared.myUserInfo?.profileImageURL {
-            firebaseManager.getUserImage(referencePath: profileImageURL, imageSize: .medium) { downloadedImage in
+        let noticeBoard = firebaseManager.noticeBoards[indexPath.row]
+        cell.titleLabel.text = noticeBoard.title
+        cell.contentLabel.text = noticeBoard.content
+        cell.timeLabel.text = noticeBoard.createDate.diffrenceDate ?? noticeBoard.createDate.dateToString
+        if let profileImageURL = noticeBoard.rootUser.profileImageURL {
+            firebaseManager.getUserImage(referencePath: profileImageURL + "/\(ImageSize.small.rawValue)", imageSize: .medium) { downloadedImage in
                 if let image = downloadedImage {
                     DispatchQueue.main.async {
                         cell.profileImageView.image = image
