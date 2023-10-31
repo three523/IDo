@@ -82,9 +82,9 @@ extension NoticeBoardDetailView {
             let imageView = createLodingImageView()
             DispatchQueue.main.async {
                 self.imageStackView.addArrangedSubview(imageView)
-                imageView.snp.makeConstraints { make in
-                    make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
-                }
+            }
+            imageView.snp.makeConstraints { make in
+                make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
             }
         }
     }

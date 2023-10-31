@@ -23,6 +23,9 @@ class FBURLCache {
     
     //TODO: 코드를 메서드를 어떻게 줄일지 생각해보기
     func downloadURL(storagePath: String, completion: @escaping (Result<UIImage,Error>) -> Void) {
+        if let image = imageCache.object(forKey: storagePath as NSString) {
+            completion(.success(image))
+        }
         let storage = Storage.storage().reference(withPath: storagePath)
         storage.getMetadata { metadata, error in
             if let error {
@@ -44,7 +47,7 @@ class FBURLCache {
                             print("image Data를 읽을수 없습니다.")
                         }
                     } else {
-                        self.downloadImageData(request: request) { result in
+                        self.downloadImageData(request: request, storagePath: storagePath) { result in
                             switch result {
                             case .success(let data):
                                 if let image = UIImage(data: data) {
@@ -58,7 +61,7 @@ class FBURLCache {
                         }
                     }
                 } else {
-                    self.downloadImageData(request: request) { result in
+                    self.downloadImageData(request: request, storagePath: storagePath) { result in
                         switch result {
                         case .success(let data):
                             if let image = UIImage(data: data) {
@@ -75,7 +78,7 @@ class FBURLCache {
         }
     }
     
-    private func downloadImageData(request: URLRequest, completion: @escaping (Result<Data,Error>) -> Void) {
+    private func downloadImageData(request: URLRequest, storagePath: String, completion: @escaping (Result<Data,Error>) -> Void) {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error {
                 completion(.failure(error))
@@ -85,6 +88,9 @@ class FBURLCache {
             let cachedData = CachedURLResponse(response: response, data: data)
             URLCache.shared.storeCachedResponse(cachedData, for: request)
             completion(.success(data))
+            if let image = UIImage(data: data) {
+                self.imageCache.setObject(image, forKey: storagePath as NSString)
+            }
         }.resume()
     }
 }

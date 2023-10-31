@@ -156,24 +156,6 @@ private extension NoticeBoardDetailViewController {
                 createNoticeVC.editingTitleText = self.noticeBoard.title
                 createNoticeVC.editingContentText = self.noticeBoard.content
                 
-//                self.firebaseNoticeBoardManager.downloadImages(imagePaths: self.noticeBoard.imageList) { downloadedImages in
-//                    if let images = downloadedImages {
-//                        // 이미지 다운로드 성공
-//                        print("다운로드된 이미지 개수: \(images.count)")
-//                        createNoticeVC.createNoticeBoardView.galleryCollectionView.reloadData()
-//                    }
-//                    else {
-//                        // 이미지 다운로드 실패
-//                        print("이미지를 다운로드하지 못했습니다.")
-//                    }
-//                }
-                
-                
-//                createNoticeVC.editingMemoIndex = self.editIndex
-//                createNoticeVC.isEditingMode = true
-                
-                
-                
                 self.navigationController?.pushViewController(createNoticeVC, animated: true)
             }
             let deleteHandler: (UIAlertAction) -> Void = { _ in
