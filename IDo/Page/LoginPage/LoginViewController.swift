@@ -14,10 +14,10 @@ import UIKit
 class LoginViewController: UIViewController {
     private let loginView = LoginView()
     private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
-    
+
     var kakaoEmail: String = ""
     var kakaoPassword: String = ""
-    
+
     override func loadView() {
         view = loginView
     }
@@ -36,17 +36,17 @@ private extension LoginViewController {
     func clickSignupButton() {
         loginView.signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
     }
-    
+
     @objc func signUp() {
         let signUpVC = UINavigationController(rootViewController: SignUpViewController())
         signUpVC.modalPresentationStyle = .fullScreen
         present(signUpVC, animated: true)
     }
-    
+
     func clickDefaultLoginButton() {
         loginView.loginButton.addTarget(self, action: #selector(firebaseLogin), for: .touchUpInside)
     }
-    
+
     @objc func firebaseLogin() {
         guard let email = loginView.emailTextField.text, !email.isEmpty else {
             showAlert(message: "이메일을 입력해주세요")
@@ -69,7 +69,7 @@ private extension LoginViewController {
     func clickLoginButton() {
         loginView.kakaoLoginButton.addTarget(self, action: #selector(kakaoLogin), for: .touchUpInside)
     }
-    
+
     @objc func kakaoLogin() {
         // MARK: - 카카오톡 앱으로 로그인
 
@@ -83,12 +83,12 @@ private extension LoginViewController {
 
                     // do something
                     _ = oauthToken
-                    
+
                     self.getUserInfo()
                 }
             }
         }
-        
+
         // MARK: - 카카오톡 계정으로 로그인
 
         else {
@@ -98,16 +98,16 @@ private extension LoginViewController {
                 }
                 else {
                     print("loginWithKakaoAccount() success.")
-                    
+
                     // do something
                     _ = oauthToken
-                    
+
                     self.getUserInfo()
                 }
             }
         }
     }
-    
+
     // MARK: - 카카오로 로그인한 사용자 정보 가져오기
 
     private func getUserInfo() {
@@ -117,7 +117,7 @@ private extension LoginViewController {
             }
             else {
                 print("me() success.")
-                
+
                 // do something
                 _ = user
                 if let email = user?.kakaoAccount?.email {
@@ -130,7 +130,7 @@ private extension LoginViewController {
             }
         }
     }
-    
+
     // MARK: - Firebase 등록
 
     private func regiSterFirebase(email: String, password: String) {
@@ -139,23 +139,24 @@ private extension LoginViewController {
             if let e = error {
                 print(e.localizedDescription)
             }
-            
+
             // Success(등록 성공)
             else {
                 guard let user = authResult?.user else { return }
-                let idoUser = IDoUser(id: user.uid, nickName: "name", hobbyList: [], myClubList: [], myNoticeBoardList: [], myCommentList: [])
+                let idoUser = IDoUser(id: user.uid, email: email, nickName: "name", hobbyList: [], myClubList: [], myNoticeBoardList: [], myCommentList: [])
                 self.fbUserDatabaseManager.appendData(data: idoUser)
                 self.loginFirebase(email: email, password: password)
             }
         }
     }
-    
+
     // MARK: - Firebase 로그인
 
     private func loginFirebase(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { _, error in
             // Error(등록 실패)
             if let e = error {
+                AlertManager.showAlert(on: self, title: "알림", message: "이메일과 비밀번호를 다시 확인해주세요.")
                 print(e.localizedDescription)
                 return
             }

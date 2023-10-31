@@ -16,6 +16,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     let storage = Storage.storage().reference()
     var currentIDoUser: IDoUser?
     var profileUpdate: ()->Void = {}
+    var noticeBoardImages: [String: UIImage] = [:]
 
     init(refPath: [String], noticeBoard: NoticeBoard) {
         self.noticeBoardRef = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child("\(noticeBoard.id)")
@@ -82,6 +83,25 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
                 completion(image)
             case .failure(let error):
                 print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func getNoticeBoardImages(noticeBoard: NoticeBoard, completion: @escaping ([String: UIImage]) -> Void) {
+        let storageRef = Storage.storage().reference()
+        let imagePaths = noticeBoard.imageList
+        for index in 0..<imagePaths.count {
+            let imageRef = storageRef.child(imagePaths[index])
+            urlCache.downloadURL(storagePath: imageRef.fullPath) { result in
+                switch result {
+                case .success(let image):
+                    self.noticeBoardImages[String(index)] = image
+                    if self.noticeBoardImages.count == imagePaths.count {
+                        completion(self.noticeBoardImages)
+                    }
+                case .failure(let error):
+                    print(error)
+                }
             }
         }
     }

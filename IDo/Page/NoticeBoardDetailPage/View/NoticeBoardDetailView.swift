@@ -11,7 +11,7 @@ import UIKit
 final class NoticeBoardDetailView: UIStackView {
     
     let writerInfoView: WriterStackView = WriterStackView()
-    private let contentTitleLabel: UILabel = {
+    let contentTitleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .bold)
         label.text = "제목 입니다."
@@ -19,7 +19,7 @@ final class NoticeBoardDetailView: UIStackView {
         label.textColor = UIColor(color: .textStrong)
         return label
     }()
-    private let contentDescriptionLabel: UILabel = {
+    let contentDescriptionLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
         label.text = """
@@ -31,6 +31,14 @@ final class NoticeBoardDetailView: UIStackView {
         label.numberOfLines = 0
         label.textColor = UIColor(color: .textStrong)
         return label
+    }()
+    private let imageStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        stackView.spacing = 8
+        return stackView
     }()
     var updateEnable: Bool = false {
         didSet {
@@ -64,5 +72,37 @@ private extension NoticeBoardDetailView {
         addArrangedSubview(writerInfoView)
         addArrangedSubview(contentTitleLabel)
         addArrangedSubview(contentDescriptionLabel)
+        addArrangedSubview(imageStackView)
+    }
+}
+
+extension NoticeBoardDetailView {
+    func loadingNoticeBoardImages(imageCount: Int) {
+        for index in 0..<imageCount {
+            let imageView = createLodingImageView()
+            DispatchQueue.main.async {
+                self.imageStackView.addArrangedSubview(imageView)
+                imageView.snp.makeConstraints { make in
+                    make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
+                }
+            }
+        }
+    }
+    func addNoticeBoardImages(images: [UIImage]) {
+        for index in 0..<images.count {
+            guard let imageView = imageStackView.arrangedSubviews[index] as? LodingImageView else { continue }
+            DispatchQueue.main.async {
+                imageView.image = images[index]
+                imageView.viewState = .loaded
+            }
+        }
+    }
+    private func createLodingImageView() -> LodingImageView {
+        let imageView = LodingImageView()
+        imageView.layer.cornerRadius = 5
+        imageView.layer.masksToBounds = true
+        imageView.viewState = .loading
+        imageView.backgroundColor = UIColor(color: .backgroundSecondary)
+        return imageView
     }
 }

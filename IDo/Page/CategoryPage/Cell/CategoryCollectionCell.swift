@@ -31,7 +31,7 @@ class CategoryCollectionCell: UICollectionViewCell {
         categoryImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10)
             make.centerX.equalToSuperview()
-            make.height.width.equalTo(100)
+            make.height.width.equalTo(80)
         }
           
         label.textAlignment = .center

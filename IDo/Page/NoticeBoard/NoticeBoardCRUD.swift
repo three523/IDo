@@ -25,7 +25,7 @@ class FirebaseManager {
 
     var noticeBoards: [NoticeBoard] = []
     
-    var selectedImage: [UIImage] = []
+    var selectedImage: [String: UIImage] = [:]
     var newSelectedImage: [UIImage] = []
     //var updateImage: [UIImage] = []
     
@@ -66,14 +66,15 @@ class FirebaseManager {
     }
     
     // MARK: - 데이터 생성
-
     func createNoticeBoard(title: String, content: String, clubID: String, completion: @escaping (Bool) -> Void) {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
         let newNoticeBoardID = ref.childByAutoId().key ?? ""
         
-        guard let currentUserID = Auth.auth().currentUser?.uid else { return }
+        guard let currentUserID = MyProfile.shared.myUserInfo?.id else { return }
+        guard let currentUserNickName = MyProfile.shared.myUserInfo?.nickName else { return }
+        guard let currentUserProfileURL = MyProfile.shared.myUserInfo?.profileImageURL else { return }
         
-        let currentUser = UserSummary(id: currentUserID, profileImageURL: nil, nickName: "파이브 아이즈")
+        let currentUser = UserSummary(id: currentUserID, profileImageURL: currentUserProfileURL, nickName: currentUserNickName)
         
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
@@ -151,12 +152,12 @@ class FirebaseManager {
             updatedNoticeBoard.title = newTitle
             updatedNoticeBoard.content = newContent
             
-            // 먼저 새로운 이미지를 업로드합니다.
+            // 먼저 새로운 이미지를 업로드
             self.uploadImages(clubID: updatedNoticeBoard.clubID, noticeBoardID: updatedNoticeBoard.id, imageList: self.selectedImage) { success, newImageURLs in
                 if success {
-                    // 기존 이미지 목록에 새로운 이미지 URL을 추가합니다.
-                    updatedNoticeBoard.imageList += newImageURLs ?? []
-                    // 업데이트된 게시글을 저장합니다.
+                    // 기존 이미지 목록에 새로운 이미지 URL을 추가
+                    updatedNoticeBoard.imageList = newImageURLs ?? []
+                    // 업데이트된 게시글을 저장
                     self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                         if success {
                             self.noticeBoards[index] = updatedNoticeBoard
@@ -197,16 +198,17 @@ class FirebaseManager {
     }
     
     // MARK: - 이미지 업로드
-    func uploadImages(clubID: String, noticeBoardID: String, imageList: [UIImage], completion: @escaping (Bool, [String]?) -> Void) {
+    func uploadImages(clubID: String, noticeBoardID: String, imageList: [String: UIImage], completion: @escaping (Bool, [String]?) -> Void) {
         let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child(noticeBoardID).child("images")
         var imageURLs: [String] = []
         
         let dispatchGroup = DispatchGroup()
         
-        for (index, image) in imageList.enumerated() {
+        for (index, image) in imageList {
             dispatchGroup.enter()
-            let imageName = "\(index)_\(UUID().uuidString)"
-            let ref = storageRef.child(imageName)
+//            let imageName = "\(index)_\(UUID().uuidString)"
+//            let ref = storageRef.child(index).child(imageName)
+            let ref = storageRef.child(index)
             
             if let uploadData = image.jpegData(compressionQuality: 0.5) {
                 ref.putData(uploadData, metadata: nil) { _, error in
@@ -232,58 +234,84 @@ class FirebaseManager {
     // MARK: - 이미지 다운로드
     func downloadImages(imagePaths: [String], completion: @escaping ([UIImage]?) -> Void) {
         let storageRef = Storage.storage().reference()
-        var downloadedImages: [UIImage] = []
-        var imageDict: [String: UIImage] = [:]
+//        var downloadedImages: [UIImage] = []
+//        var imageDict: [String: UIImage] = [:]
         
-        let sortedPaths = imagePaths.sorted()
+//        let sortedPaths = imagePaths.sorted()
         let dispatchGroup = DispatchGroup()
         
-        for path in sortedPaths {
-            dispatchGroup.enter()
-            let ref = storageRef.child(path)
+        for index in 0..<imagePaths.count {
+            //dispatchGroup.enter()
+            let ref = storageRef.child(imagePaths[index])
             
             FBURLCache.shared.downloadURL(storagePath: ref.fullPath) { result in
                 switch result {
                 case .success(let image):
-                    imageDict[path] = image
+//                    imageDict[String(index)] = image
+                    self.selectedImage[String(index)] = image
+                    self.delegate?.reloadData()
                 case .failure(let error):
                     print("이미지 다운로드 실패: \(error)")
+                }
+                //dispatchGroup.leave()
+            }
+        }
+        
+        // 모든 이미지를 가지고 난 후, 테이블 뷰 다시 그리기
+        
+//        dispatchGroup.notify(queue: .main) {
+//            for path in imagePaths {
+//                if let image = imageDict[path] {
+//                    downloadedImages.append(image)
+//                }
+//            }
+//            
+//            if !downloadedImages.isEmpty {
+//                self.selectedImage = downloadedImages
+//                self.delegate?.reloadData()
+//            }
+//            completion(downloadedImages.isEmpty ? nil : downloadedImages)
+//        }
+    }
+    
+    // MARK: - 프로필 다운로드
+    func getUserImage(referencePath: String?, imageSize: ImageSize, completion: @escaping(UIImage?) -> Void) {
+        guard let referencePath else { return }
+        let imageRefPath = Storage.storage().reference().child(referencePath).child(imageSize.rawValue).fullPath
+        FBURLCache.shared.downloadURL(storagePath: imageRefPath) { result in
+            switch result {
+            case .success(let image):
+                completion(image)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
+    }
+
+    // MARK: - 이미지 삭제
+    func deleteImage(clubID: String, noticeBoardID: String, imagePaths: [String], completion: @escaping (Bool) -> Void) {
+//        let storageRef = Storage.storage().reference().child("noticeBoards").child(clubID).child(noticeBoardID).child("images")
+        let storageRef = Storage.storage().reference()
+        
+        let dispatchGroup = DispatchGroup()
+        
+        for imagePath in imagePaths {
+            dispatchGroup.enter()
+            let ref = storageRef.child(imagePath)
+            
+            ref.delete { error in
+                if let error = error {
+                    print("이미지 삭제 중 오류 발생: \(error)")
+                } else {
+                    
+                    print("이미지가 성공적으로 삭제되었습니다.")
                 }
                 dispatchGroup.leave()
             }
         }
         
         dispatchGroup.notify(queue: .main) {
-            for path in sortedPaths {
-                if let image = imageDict[path] {
-                    downloadedImages.append(image)
-                }
-            }
-            
-            if !downloadedImages.isEmpty {
-                self.selectedImage = downloadedImages
-                self.delegate?.reloadData()
-            }
-            completion(downloadedImages.isEmpty ? nil : downloadedImages)
+            completion(true)
         }
     }
-    
-    // MARK: - 이미지 삭제
-//    func deleteImage(imagePath: String, completion: @escaping (Bool, Error?) -> Void) {
-//        let storageRef = Storage.storage().reference()
-//        let ref = storageRef.child(imagePath)
-//        
-//        ref.delete { error in
-//            if let error = error {
-//                print("이미지 삭제 실패: \(error)")
-//                completion(false, error)
-//            } else {
-//                print("이미지 삭제 성공")
-//                completion(true, nil)
-//            }
-//        }
-//    }
-    
-    // 이미지 삭제함수 -> 단일
-    // 이미지 삭제함수 -> 전체
 }

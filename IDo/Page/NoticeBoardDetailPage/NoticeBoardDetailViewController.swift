@@ -18,6 +18,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         tableView.backgroundColor = UIColor(color: .backgroundPrimary)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.sectionHeaderHeight = UITableView.automaticDimension
+        tableView.showsVerticalScrollIndicator = false
         return tableView
     }()
     private let commentPositionView: UIView = UIView()
@@ -31,11 +32,14 @@ final class NoticeBoardDetailViewController: UIViewController {
     private let firebaseNoticeBoardManager: FirebaseManager
     weak var delegate: FirebaseManagerDelegate?
     
-    init(noticeBoard: NoticeBoard, club: Club, firebaseNoticeBoardManager: FirebaseManager) {
+    private var editIndex: Int
+    
+    init(noticeBoard: NoticeBoard, club: Club, firebaseNoticeBoardManager: FirebaseManager, editIndex: Int) {
         self.noticeBoard = noticeBoard
         self.firebaseCommentManager = FirebaseCommentManaer(refPath: ["CommentList",noticeBoard.id], noticeBoard: noticeBoard)
         self.club = club
         self.firebaseNoticeBoardManager = firebaseNoticeBoardManager
+        self.editIndex = editIndex
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
     }
@@ -108,14 +112,62 @@ private extension NoticeBoardDetailViewController {
     }
     
     func noticeBoardSetup() {
+        if let dateString = noticeBoard.createDate.diffrenceDate {
+            noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
+        }
+        noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
+        noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
+        noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
+        
+        noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList.count)
+        
+        firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
+            let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
+            self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)
+            DispatchQueue.main.async {
+                self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+            }
+        }
+        
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
+            
+            // MARK: - 게시판 업데이트 로직
             let updateHandler: (UIAlertAction) -> Void = { _ in
-                let createNoticeVC = CreateNoticeBoardViewController(club: self.club, firebaseManager: self.firebaseNoticeBoardManager)
+                let createNoticeVC = CreateNoticeBoardViewController(club: self.club, firebaseManager: self.firebaseNoticeBoardManager, index: self.editIndex, images: self.firebaseCommentManager.noticeBoardImages)
+                
+                self.firebaseNoticeBoardManager.selectedImage = self.firebaseCommentManager.noticeBoardImages
+                
+                createNoticeVC.editingTitleText = self.noticeBoard.title
+                createNoticeVC.editingContentText = self.noticeBoard.content
+                
+//                self.firebaseNoticeBoardManager.downloadImages(imagePaths: self.noticeBoard.imageList) { downloadedImages in
+//                    if let images = downloadedImages {
+//                        // 이미지 다운로드 성공
+//                        print("다운로드된 이미지 개수: \(images.count)")
+//                        createNoticeVC.createNoticeBoardView.galleryCollectionView.reloadData()
+//                    }
+//                    else {
+//                        // 이미지 다운로드 실패
+//                        print("이미지를 다운로드하지 못했습니다.")
+//                    }
+//                }
+                
+                
+//                createNoticeVC.editingMemoIndex = self.editIndex
+//                createNoticeVC.isEditingMode = true
+                
+                
+                
                 self.navigationController?.pushViewController(createNoticeVC, animated: true)
             }
             let deleteHandler: (UIAlertAction) -> Void = { _ in
                 //MARK: 게시판 삭제 로직 구현
+                self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
+                    if success {
+                        self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                    }
+                }
             }
             
             AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
@@ -160,7 +212,7 @@ private extension NoticeBoardDetailViewController {
             }
         }
     }
-    
+        
     func addCommentSetup() {
         firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid, imageSize: .small) { image in
             DispatchQueue.main.async {

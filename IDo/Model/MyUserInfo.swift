@@ -18,7 +18,7 @@ struct MyUserInfo: Codable {
     var myClubList: [Club]?
     var myNoticeBoardList: [NoticeBoard]?
     var myCommentList: [Comment]?
-    
+
     var toIDoUser: IDoUser {
         return IDoUser(id: id, updateAt: updateAt, profileImage: profileImageURL, nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
     }
