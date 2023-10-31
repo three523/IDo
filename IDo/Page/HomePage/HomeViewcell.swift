@@ -5,7 +5,7 @@ import UIKit
 class HomeViewcell: UITableViewCell {
     let clubname1: UILabel = {
         let label = UILabel()
-        label.font = .bodyFont(.medium , weight: .semibold)
+        label.font = .bodyFont(.small , weight: .bold)
         return label
     }()
     let clubname2: UILabel = {
@@ -38,16 +38,16 @@ class HomeViewcell: UITableViewCell {
         contentView.addSubview(clubView)
         
         clubname1.snp.makeConstraints { make in
-            make.leading.equalTo(clubView.snp.trailing).offset(10)
+            make.leading.equalTo(clubView.snp.trailing).offset(5)
             make.top.equalToSuperview().offset(10)
         }
         clubname2.snp.makeConstraints { make in
             make.top.equalTo(clubname1.snp.bottom).offset(2)
-            make.leading.equalTo(clubView.snp.trailing).offset(10)
+            make.leading.equalTo(clubView.snp.trailing).offset(5)
         }
         clubname3.snp.makeConstraints { make in
             make.top.equalTo(clubname2.snp.bottom).offset(2)
-            make.leading.equalTo(clubView.snp.trailing).offset(10)
+            make.leading.equalTo(clubView.snp.trailing).offset(5)
         }
         clubView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(5)
