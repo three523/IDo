@@ -102,7 +102,7 @@ private extension EmptyMessageStackView {
     }
 
     func imageViewSetup() {
-        basicImageView.backgroundColor = UIColor(color: .contentBackground)
+        basicImageView.backgroundColor = UIColor(color: .contentPrimary)
         basicImageView.layer.cornerRadius = imageSize / 2
     }
 
@@ -119,22 +119,19 @@ private extension EmptyMessageStackView {
         switch type {
         case .networkError:
             basicImageView.imageView.image = UIImage(systemName: "wifi.exclamationmark")
-            setColor(color: UIColor(color: .negative).withAlphaComponent(0.5))
+            setColor(color: UIColor(color: .negative))
             titleLabel.text = "인터넷 연결이 불안정 합니다"
             descriptionLabel.text = "인터넷을 연결하고 다시시도해주세요"
         case .noticeBoardEmpty:
             setImage(image: UIImage(systemName: "list.bullet.clipboard.fill"))
-            setColor(color: UIColor(color: .contentBackground))
             titleLabel.text = "게시판이 존재하지 않습니다."
             descriptionLabel.text = "게시글 작성을 통해 사람들과 내용을 공유하세요"
         case .commentEmpty:
             setImage(image: UIImage(systemName: "bubble.right.fill"))
-            setColor(color: UIColor(color: .contentBackground))
             titleLabel.text = "댓글이 없습니다."
             descriptionLabel.text = "댓글을 작성해주세요"
         case .clubEmpty:
             setImage(image: UIImage(systemName: "person.2.fill"))
-            setColor(color: UIColor(color: .contentBackground))
             titleLabel.text = "선택한 카테고리의 모임이 없습니다"
             descriptionLabel.text = """
              취미가 맞는 모임에 참여하시고
