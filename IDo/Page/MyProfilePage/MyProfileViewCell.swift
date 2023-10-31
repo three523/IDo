@@ -5,7 +5,7 @@ import UIKit
 class WriteMeTableViewCell: UITableViewCell {
     let write: UILabel = {
         let label = UILabel()
-        label.font = .bodyFont(.medium , weight: .semibold)
+        label.font = .bodyFont(.medium , weight: .medium)
         return label
     }()
     let write2: UILabel = {

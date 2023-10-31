@@ -26,7 +26,7 @@ class CreateNoticeBoardView: UIView {
     private(set) lazy var titleTextView: UITextView = {
         var textView = UITextView()
         textView.backgroundColor = UIColor(color: .backgroundSecondary)
-        textView.font = UIFont.bodyFont(.large, weight: .semibold)
+        textView.font = UIFont.bodyFont(.large, weight: .medium)
         textView.layer.cornerRadius = 5
         return textView
     }()
@@ -101,39 +101,39 @@ private extension CreateNoticeBoardView {
     func autoLayout() {
         titleTextView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.leading.equalTo(snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
             make.height.equalTo(40)
         }
         
         titleCountLabel.snp.makeConstraints { make in
             make.top.equalTo(titleTextView.snp.bottom).offset(Constant.margin1)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
         }
         
         contentTextView.snp.makeConstraints { make in
-            make.top.equalTo(titleCountLabel.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.top.equalTo(titleCountLabel.snp.bottom).offset(Constant.margin4)
+            make.leading.equalTo(snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
             make.height.equalTo(320)
         }
         
         contentCountLabel.snp.makeConstraints { make in
             make.top.equalTo(contentTextView.snp.bottom).offset(Constant.margin1)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
         }
         
         addPictureButton.snp.makeConstraints { make in
-            make.top.equalTo(contentCountLabel.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.top.equalTo(contentCountLabel.snp.bottom).offset(Constant.margin4)
+            make.leading.equalTo(snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
             make.height.equalTo(30)
         }
         
         galleryCollectionView.snp.makeConstraints { make in
             make.top.equalTo(addPictureButton.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin3)
+            make.leading.equalTo(snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-Constant.margin3)
         }
     }
