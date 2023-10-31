@@ -42,6 +42,8 @@ extension CommentTableViewCell {
     func setUserImage(profileImage: UIImage) {
         DispatchQueue.main.async {
             self.writeInfoView.writerImageView.imageView.image = profileImage
+            self.writeInfoView.writerImageView.imageView.backgroundColor = UIColor(color: .white)
+            self.writeInfoView.writerImageView.contentMargin = 0
         }
     }
 }

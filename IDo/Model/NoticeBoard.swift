@@ -14,6 +14,6 @@ struct NoticeBoard: Codable, Identifier {
     let clubID: String
     var title: String
     var content: String
-    var imageList: [String]
+    var imageList: [String]?
     var commentCount: String
 }

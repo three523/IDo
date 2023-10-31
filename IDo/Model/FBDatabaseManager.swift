@@ -137,6 +137,18 @@ class FBDatabaseManager<T: Codable & Identifier> {
         }
     }
     
+    func updateValue<V: Codable>(value: V, completion: ((isDatabaseActionComplete) -> Void)? = nil) {
+        guard let dict = value.dictionary else { return }
+        ref.updateChildValues(dict) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                completion?(false)
+                return
+            }
+            completion?(true)
+        }
+    }
+    
     func deleteData(data: T, completion: @escaping (isDatabaseActionComplete) -> Void = {_ in}) {
         ref.updateChildValues([data.id: nil]) { error, _ in
             if let error {
@@ -166,6 +178,27 @@ class FBDatabaseManager<T: Codable & Identifier> {
     func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
         let decoder = JSONDecoder()
         guard let data = try? JSONSerialization.data(withJSONObject: value) else { return nil }
-        return try? decoder.decode(T.self, from: data)
+        do {
+            let data = try JSONSerialization.data(withJSONObject: value)
+            let result = try decoder.decode(T.self, from: data)
+            
+            return result
+        } catch DecodingError.dataCorrupted(let context) {
+            // 데이터가 손상된 경우 처리
+            print("Data Corrupted: \(context.debugDescription)")
+        } catch DecodingError.keyNotFound(let key, let context) {
+            // 키를 찾을 수 없는 경우 처리
+            print("Key Not Found: \(key.stringValue) in \(context.debugDescription)")
+        } catch DecodingError.typeMismatch(_, let context) {
+            // 타입 불일치 오류 처리
+            print("Type Mismatch: \(context.debugDescription)")
+        } catch DecodingError.valueNotFound(_, let context) {
+            // 값을 찾을 수 없는 경우 처리
+            print("Value Not Found: \(context.debugDescription)")
+        } catch {
+            // 기타 디코딩 오류 처리
+            print("Error decoding JSON: \(error)")
+        }
+        return nil
     }
 }

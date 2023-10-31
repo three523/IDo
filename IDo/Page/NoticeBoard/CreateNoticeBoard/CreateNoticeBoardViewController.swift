@@ -401,7 +401,7 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
 //    }
     func removeCell(_ indexPath: IndexPath) {
         // 선택한 이미지의 Storage 경로를 가져옴
-        let imagePath = firebaseManager.noticeBoards[editingMemoIndex!].imageList[indexPath.row]
+        let imagePath = firebaseManager.noticeBoards[editingMemoIndex!].imageList![indexPath.row]
         
         // Firebase Storage에서 이미지를 삭제
         firebaseManager.deleteImage(clubID: club.id, noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex!].id, imagePaths: [imagePath]) { success in

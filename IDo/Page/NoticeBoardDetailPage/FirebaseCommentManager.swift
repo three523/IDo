@@ -51,12 +51,16 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func noticeBoardUpdate(completion: ((Bool) -> Void)? = nil) {
+    func updateNoticeBoard(completion: ((Bool) -> Void)? = nil) {
         noticeBoardRef.updateChildValues(["commentCount": "\(modelList.count)"]) { error, _ in
             if let error {
                 print(error.localizedDescription)
             }
         }
+    }
+    
+    func updateMyCommentList() {
+        MyProfile.shared.update(myCommentList: modelList)
     }
     
     func getMyProfileImage(uid: String, imageSize: ImageSize, completion: @escaping (UIImage?)->Void ) {
@@ -89,7 +93,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     
     func getNoticeBoardImages(noticeBoard: NoticeBoard, completion: @escaping ([String: UIImage]) -> Void) {
         let storageRef = Storage.storage().reference()
-        let imagePaths = noticeBoard.imageList
+        let imagePaths = noticeBoard.imageList ?? []
         for index in 0..<imagePaths.count {
             let imageRef = storageRef.child(imagePaths[index])
             urlCache.downloadURL(storagePath: imageRef.fullPath) { result in
