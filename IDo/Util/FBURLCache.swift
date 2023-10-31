@@ -43,6 +43,7 @@ class FBURLCache {
                        localDataHash == storageDataHash {
                         if let image = UIImage(data: cachedResponse.data) {
                             completion(.success(image))
+                            self.imageCache.setObject(image, forKey: storagePath as NSString)
                         } else {
                             print("image Data를 읽을수 없습니다.")
                         }

@@ -64,7 +64,8 @@ final class NoticeBoardDetailViewController: UIViewController {
                 
         firebaseCommentManager.update = { [weak self] in
             guard let self else { return }
-            self.firebaseCommentManager.noticeBoardUpdate()
+            self.firebaseCommentManager.updateNoticeBoard()
+            self.firebaseCommentManager.updateMyCommentList()
             self.delegate?.updateComment(noticeBoardID: self.noticeBoard.id, commentCount: "\(self.firebaseCommentManager.modelList.count)")
         }
         firebaseCommentManager.readDatas { result in
@@ -111,7 +112,8 @@ private extension NoticeBoardDetailViewController {
         let safeArea = view.safeAreaLayoutGuide
         
         commentTableView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(safeArea).inset(Constant.margin3)
+            make.top.equalTo(safeArea).inset(Constant.margin3)
+            make.left.right.equalTo(safeArea).inset(Constant.margin4)
             make.bottom.equalTo(commentPositionView.snp.top).offset(Constant.margin3)
         }
         
@@ -134,7 +136,7 @@ private extension NoticeBoardDetailViewController {
         noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
         noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
         
-        noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList.count)
+        noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList?.count ?? 0)
         
         firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
             let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }

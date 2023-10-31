@@ -69,7 +69,7 @@ final class MyProfile {
         fileCache.storeFile(myUserInfo: myUserInfo)
     }
     
-    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]?, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil) {
+    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil) {
         if let nickName {
             self.myUserInfo?.nickName = nickName
         }
@@ -99,6 +99,8 @@ final class MyProfile {
         if let myCommentList {
             self.myUserInfo?.myCommentList = myCommentList
         }
+        guard let idoUser = self.myUserInfo?.toIDoUser else { return }
+        firebaseManager.updateValue(value: idoUser)
     }
     
     private func uploadProfileImage(imageData: Data, imageSize: ImageSize) {
