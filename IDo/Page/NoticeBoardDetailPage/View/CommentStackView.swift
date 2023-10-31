@@ -19,6 +19,7 @@ class CommentStackView: UIStackView {
         let imageView = BasicImageView(image: UIImage(systemName: "person.fill"))
         imageView.contentMargin = 4
         imageView.backgroundColor = UIColor(color: .contentPrimary)
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     private let sendStackView: UIStackView = {

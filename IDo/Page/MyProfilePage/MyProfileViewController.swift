@@ -43,7 +43,7 @@ class MyProfileViewController: UIViewController {
         profileName.text = "애라링"
         profileName.textAlignment = .center
         profileName.textColor = .black
-        profileName.font = UIFont.headFont(.xSmall , weight: .semibold)
+        profileName.font = UIFont.headFont(.xSmall , weight: .medium)
         profileName.isUserInteractionEnabled = false
     }
     func makeChoiceEnjoy() {
@@ -54,7 +54,7 @@ class MyProfileViewController: UIViewController {
         choiceEnjoy.text = totalText
         choiceEnjoy.textColor = UIColor(color: .borderSelected)
         choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
-        choiceEnjoy.font = UIFont.bodyFont(.small, weight:.semibold)
+        choiceEnjoy.font = UIFont.bodyFont(.small, weight:.medium)
         choiceEnjoy.layer.cornerRadius = 10 // 원하는 값으로 설정
         choiceEnjoy.layer.borderWidth = 5 // 원하는 두께로 설정
         choiceEnjoy.layer.borderColor = UIColor(color: .contentBackground).cgColor //원하는 테두리 색상으로 설정
@@ -65,7 +65,7 @@ class MyProfileViewController: UIViewController {
     func makeSelfInfo() {
         selfInfo.text = "자기소개"
         selfInfo.textColor = .black
-        selfInfo.font = UIFont.bodyFont(.large, weight: .semibold)
+        selfInfo.font = UIFont.bodyFont(.large, weight: .medium)
     }
     func makeSelfInfoDetail() {
         selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
@@ -79,7 +79,7 @@ class MyProfileViewController: UIViewController {
     func makeWriteMe() {
         writeMe.text = "작성한 글"
         writeMe.textColor = .black
-        writeMe.font = UIFont.bodyFont(.large, weight: .semibold)
+        writeMe.font = UIFont.bodyFont(.large, weight: .medium)
     }
     func makeWriteMeTableView() {
         writeMeTableView.register(WriteMeTableViewCell.self, forCellReuseIdentifier: "Cell")

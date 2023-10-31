@@ -83,6 +83,7 @@ class FirebaseManager {
                 
                 self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
                     if success {
+                        self.addMyNoticeBoard(noticeBoard: newNoticeBoard)
                         self.noticeBoards.insert(newNoticeBoard, at: 0)
                         self.delegate?.reloadData()
                     }
@@ -160,6 +161,7 @@ class FirebaseManager {
                     // 업데이트된 게시글을 저장
                     self.saveNoticeBoard(noticeBoard: updatedNoticeBoard) { success in
                         if success {
+                            self.updateMyNoticeBoard(noticeBoard: updatedNoticeBoard)
                             self.noticeBoards[index] = updatedNoticeBoard
                             self.delegate?.reloadData()
                         }
@@ -186,6 +188,7 @@ class FirebaseManager {
                 }
                 else {
                     print("Successfully deleted notice board.")
+                    self.removeMyNoticeBoard(noticeBoard: self.noticeBoards[index])
                     self.noticeBoards.remove(at: index)
                     self.delegate?.reloadData()
                     completion?(true)
@@ -313,5 +316,43 @@ class FirebaseManager {
         dispatchGroup.notify(queue: .main) {
             completion(true)
         }
+    }
+    
+    //MARK: 내 정보에 게시판 추가
+    func addMyNoticeBoard(noticeBoard: NoticeBoard, completion: (() -> Void)? = nil) {
+        guard var myInfo = MyProfile.shared.myUserInfo else { return }
+        let ref = Database.database().reference().child("Users").child(myInfo.id)
+        var noticeBoardList = [NoticeBoard]()
+        if let myNoticeBoardList = myInfo.myNoticeBoardList {
+            noticeBoardList = myNoticeBoardList
+        }
+        if noticeBoardList.contains(where: { $0.id == noticeBoard.id }) { return }
+        noticeBoardList.insert(noticeBoard, at: 0)
+        MyProfile.shared.update(myNoticeBoardList: noticeBoardList)
+    }
+    
+    //MARK: 내 정보에 게시판 추가
+    func updateMyNoticeBoard(noticeBoard: NoticeBoard, completion: (() -> Void)? = nil) {
+        guard var myInfo = MyProfile.shared.myUserInfo else { return }
+        let ref = Database.database().reference().child("Users").child(myInfo.id)
+        var noticeBoardList = [NoticeBoard]()
+        if let myNoticeBoardList = myInfo.myNoticeBoardList {
+            noticeBoardList = myNoticeBoardList
+        }
+        guard let index = noticeBoardList.firstIndex(where: { $0.id == noticeBoard.id }) else { return }
+        noticeBoardList[index] = noticeBoard
+        MyProfile.shared.update(myNoticeBoardList: noticeBoardList)
+    }
+    
+    //MARK: 내 정보에 게시판 추가
+    func removeMyNoticeBoard(noticeBoard: NoticeBoard, completion: (() -> Void)? = nil) {
+        guard var myInfo = MyProfile.shared.myUserInfo else { return }
+        let ref = Database.database().reference().child("Users").child(myInfo.id)
+        var noticeBoardList = [NoticeBoard]()
+        if let myNoticeBoardList = myInfo.myNoticeBoardList {
+            noticeBoardList = myNoticeBoardList
+        }
+        noticeBoardList.removeAll(where: { $0.id == noticeBoard.id })
+        MyProfile.shared.update(myNoticeBoardList: noticeBoardList)
     }
 }

@@ -20,6 +20,8 @@ final class WriterStackView: UIStackView {
         let imageView = BasicImageView(image: UIImage(systemName: "person.fill"))
         imageView.backgroundColor = UIColor(color: .contentPrimary)
         imageView.contentMargin = 4
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     let moreImageView: UIImageView = {
@@ -65,7 +67,7 @@ final class WriterStackView: UIStackView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        writerImageView.layer.cornerRadius = writerImageView.bounds.width / 2
+        writerImageView.layer.cornerRadius = writerImageView.bounds.height / 2
     }
 }
 
