@@ -4,12 +4,6 @@ import FirebaseStorage
 
 class MeetingCreateViewController: UIViewController {
     
-    
-    private let scrollView: UIScrollView = {
-        let v = UIScrollView()
-        v.translatesAutoresizingMaskIntoConstraints = false
-        return v
-    }()
 
     private let meetingsData: MeetingsData
     let profileImageButton: MeetingProfileImageButton = {
@@ -17,14 +11,6 @@ class MeetingCreateViewController: UIViewController {
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
         return button
     }()
-    
-//    let imageSetLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "대표 사진"
-//        label.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
-//        label.textAlignment = .center
-//        return label
-//    }()
     
     let meetingNameField: UITextField = {
         let textField = UITextField()
@@ -79,10 +65,6 @@ class MeetingCreateViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
-    
-    
-    
     let placeholderLabel: UILabel = {
         let label = UILabel()
         label.text = "모임에 대한 소개를 해주세요."
@@ -135,66 +117,58 @@ class MeetingCreateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(scrollView)
-           scrollView.snp.makeConstraints { (make) in
-               make.edges.equalTo(view)
-           }
 
         setupCreateButton()
         updateFinishButtonState()
         configureUI()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        print("키보드 호출")
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        print("키보드 사라짐")
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-
     @objc func keyboardWillShow(notification: NSNotification) {
-        guard let userInfo = notification.userInfo,
-              let keyboardFrame: CGRect = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-
-        let keyboardHeight = keyboardFrame.height
-        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
-        scrollView.scrollIndicatorInsets = scrollView.contentInset
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            createFinishButton.snp.updateConstraints { (make) in
+                make.bottom.equalToSuperview().offset(-keyboardHeight)
+            }
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-        scrollView.contentInset = UIEdgeInsets.zero
-        scrollView.scrollIndicatorInsets = UIEdgeInsets.zero
+        createFinishButton.snp.updateConstraints { (make) in
+            make.bottom.equalToSuperview().offset(-120)
+        }
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     
     private func configureUI() {
         // UI 설정
-        scrollView.addSubview(profileImageButton)
+        view.addSubview(profileImageButton)
 //        scrollView.addSubview(imageSetLabel)
-        scrollView.addSubview(meetingNameField)
+        view.addSubview(meetingNameField)
         meetingNameField.delegate = self
-        scrollView.addSubview(countMeetingNameField)
-        scrollView.addSubview(createFinishButton)
-        scrollView.addSubview(countDescriptionField)
-        scrollView.addSubview(meetingDescriptionField)
-        scrollView.addSubview(placeholderLabel)
+        view.addSubview(countMeetingNameField)
+        view.addSubview(createFinishButton)
+        view.addSubview(countDescriptionField)
+        view.addSubview(meetingDescriptionField)
+        view.addSubview(placeholderLabel)
         
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
             make.centerX.equalToSuperview()
         }
         
-//        imageSetLabel.snp.makeConstraints { (make) in
-//            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
-//            make.centerX.equalToSuperview()
-//        }
+
         
         meetingNameField.snp.makeConstraints { (make) in
             make.top.equalTo(profileImageButton.snp.bottom).offset(12)
@@ -218,19 +192,20 @@ class MeetingCreateViewController: UIViewController {
             make.width.equalTo(361)
             make.height.equalTo(250)
         }
-        
+        meetingDescriptionField.delegate = self
         placeholderLabel.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField).offset(12)
             make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
         }
-        meetingDescriptionField.delegate = self
+        
         
         createFinishButton.snp.makeConstraints { (make) in
                 make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
                 make.centerX.equalToSuperview()
                 make.width.equalTo(140)
                 make.height.equalTo(44)
-                make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom) // 추가된 코드
+            make.bottom.equalToSuperview().offset(-120)
+            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-8)
             }
         
         countDescriptionField.snp.makeConstraints { (make) in
@@ -258,12 +233,12 @@ class MeetingCreateViewController: UIViewController {
 
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let circularImage = selectedImage.circularImage(size: profileImageButton.bounds.size)
-            profileImageButton.setImage(circularImage, for: .normal)
+            if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                let roundedImage = selectedImage.resizedAndRoundedImage()
+                profileImageButton.setImage(roundedImage, for: .normal)
+            }
+            picker.dismiss(animated: true, completion: nil)
         }
-        picker.dismiss(animated: true, completion: nil)
-    }
 }
 
 
