@@ -27,12 +27,12 @@ class NoticeMeetingController: TabmanViewController {
         self.currentUser = currentUser
         self.isJoin = isJoin
         self.clubImage = clubImage
-        self.fbUserDatabaseManager = FirebaseUserDatabaseManager(refPath: [club.category,"meetings",club.id])
+        self.fbUserDatabaseManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
         self.HomeVC = NoticeHomeController(club: club, isJoin: isJoin, fbUserDatabaseManager: fbUserDatabaseManager, clubImage: clubImage)
         super.init(nibName: nil, bundle: nil)
         fbUserDatabaseManager.readData()
-        HomeVC.signUpButtonUpdate = { [weak self] isJoin in
-            self?.isJoin = isJoin
+        HomeVC.signUpButtonUpdate = { [weak self] in
+            self?.isJoin = true
         }
     }
 
