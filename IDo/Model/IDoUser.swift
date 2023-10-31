@@ -1,4 +1,4 @@
-    //
+//
 //  User.swift
 //  IDo
 //
@@ -6,10 +6,11 @@
 //
 
 import Foundation
- 
+
 struct IDoUser: Codable, Identifier {
     let id: String
     var updateAt: String?
+    var email: String?
     var profileImage: String?
     var nickName: String
     var description: String?
@@ -17,7 +18,7 @@ struct IDoUser: Codable, Identifier {
     var myClubList: [Club]?
     var myNoticeBoardList: [NoticeBoard]?
     var myCommentList: [Comment]?
-    
+
     var toMyUserInfo: MyUserInfo {
         return MyUserInfo(id: id, updateAt: updateAt, profileImageURL: profileImage, profileImage: [:], nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
     }
