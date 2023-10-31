@@ -24,6 +24,13 @@ class MyProfileViewController: UIViewController {
     var writeMeDate = ["yyyy-mm-dd","yyyy-mm-dd"]
     var writeMeTableView = UITableView()
     
+    //로그아웃
+//    var logout = UIButton()
+    
+    //회원탈퇴
+//    var deleteID = UIButton()
+    
+    
     var isEdit = false
     
     func makeProfileImage() {
@@ -36,11 +43,10 @@ class MyProfileViewController: UIViewController {
         profileName.text = "애라링"
         profileName.textAlignment = .center
         profileName.textColor = .black
-        profileName.font = UIFont.headFont(.xSmall , weight: .semibold)
+        profileName.font = UIFont.headFont(.xSmall , weight: .medium)
         profileName.isUserInteractionEnabled = false
     }
     func makeChoiceEnjoy() {
-        let makeChoiceEnjoy = choiceEnjoy
         let firstText = "낚시/캠핑"
         let secondText = "맛집/여행"
         let thirdText = "운동/스포츠"
@@ -48,7 +54,7 @@ class MyProfileViewController: UIViewController {
         choiceEnjoy.text = totalText
         choiceEnjoy.textColor = UIColor(color: .borderSelected)
         choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
-        choiceEnjoy.font = UIFont.bodyFont(.small, weight:.semibold)
+        choiceEnjoy.font = UIFont.bodyFont(.small, weight:.medium)
         choiceEnjoy.layer.cornerRadius = 10 // 원하는 값으로 설정
         choiceEnjoy.layer.borderWidth = 5 // 원하는 두께로 설정
         choiceEnjoy.layer.borderColor = UIColor(color: .contentBackground).cgColor //원하는 테두리 색상으로 설정
@@ -59,7 +65,7 @@ class MyProfileViewController: UIViewController {
     func makeSelfInfo() {
         selfInfo.text = "자기소개"
         selfInfo.textColor = .black
-        selfInfo.font = UIFont.bodyFont(.large, weight: .semibold)
+        selfInfo.font = UIFont.bodyFont(.large, weight: .medium)
     }
     func makeSelfInfoDetail() {
         selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
@@ -73,13 +79,16 @@ class MyProfileViewController: UIViewController {
     func makeWriteMe() {
         writeMe.text = "작성한 글"
         writeMe.textColor = .black
-        writeMe.font = UIFont.bodyFont(.large, weight: .semibold)
+        writeMe.font = UIFont.bodyFont(.large, weight: .medium)
     }
     func makeWriteMeTableView() {
         writeMeTableView.register(WriteMeTableViewCell.self, forCellReuseIdentifier: "Cell")
         writeMeTableView.dataSource = self
         writeMeTableView.delegate = self
     }
+//    func makeLogout() {
+//        logout.setTitle("로그아웃", for: .normal)
+//    }
     //로딩되는 뷰
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,6 +99,7 @@ class MyProfileViewController: UIViewController {
         makeSelfInfoDetail()
         makeWriteMe()
         makeWriteMeTableView()
+//        makeLogout()
         setLayout()
         profileEditControllerSet()
         navigationBarButtonAction()
@@ -118,7 +128,7 @@ class MyProfileViewController: UIViewController {
         view.addSubview(writeMeTableView)
         
         profileImage.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(90)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(100)
         }
@@ -129,7 +139,7 @@ class MyProfileViewController: UIViewController {
             make.height.equalTo(40)
         }
         choiceEnjoy.snp.makeConstraints { make in
-            make.top.equalTo(profileName.snp.bottom).offset(10)
+            make.top.equalTo(profileName.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(80)
             make.width.equalTo(60)
             make.height.equalTo(35)
@@ -139,7 +149,7 @@ class MyProfileViewController: UIViewController {
             make.left.equalToSuperview().offset(30)
         }
         selfInfoDetail.snp.makeConstraints { make in
-            make.top.equalTo(selfInfo.snp.bottom).offset(10)
+            make.top.equalTo(selfInfo.snp.bottom).offset(5)
             make.left.equalToSuperview().offset(30)
             make.width.equalTo(330)
             make.height.equalTo(130)
@@ -149,16 +159,22 @@ class MyProfileViewController: UIViewController {
             make.left.equalToSuperview().offset(30)
         }
         writeMeTableView.snp.makeConstraints { make in
-            make.top.equalTo(writeMe.snp.bottom).offset(5)
+            make.top.equalTo(writeMe.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
         }
-    }
+//        logout.snp.makeConstraints { make in
+//            make.top.equalTo(writeMeTableView.snp.bottom).offset(0)
+//            make.leading.trailing.equalToSuperview().inset(20)
+        }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-}
+    }
+    
 
+
+//자기소개 300자 제한
 extension MyProfileViewController : UITextViewDelegate {
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
@@ -173,6 +189,7 @@ extension MyProfileViewController : UITextViewDelegate {
     }
 }
 
+//테이블뷰 설정
 extension MyProfileViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
@@ -194,6 +211,7 @@ extension MyProfileViewController : UITableViewDelegate, UITableViewDataSource {
     }
 }
 
+//네이게이션 바
 private extension MyProfileViewController {
     
     func profileEditControllerSet() {
@@ -228,16 +246,22 @@ private extension MyProfileViewController {
             choiceEnjoy.isUserInteractionEnabled = true
             selfInfoDetail.isUserInteractionEnabled = true
             
+            writeMe.isHidden = true // "작성한글" title Label 숨기기
+            writeMeTableView.isHidden = true // 작성한글 리스트 숨기기
+            
             //isEdit = false인 상태의 실행 코드
         } else {
             navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
             profileName.isUserInteractionEnabled = false
             choiceEnjoy.isUserInteractionEnabled = false
             selfInfoDetail.isUserInteractionEnabled = false
+            
+            writeMe.isHidden = false // 작성한글 title Label 나타내기
+            writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
         }
     }
 }
-
+// 프로필이미지 버튼 눌렀을때 Action
 extension MyProfileViewController: UINavigationControllerDelegate {
 }
 private extension MyProfileViewController {
@@ -253,7 +277,7 @@ private extension MyProfileViewController {
         present(imagePicker1, animated: true, completion: nil)
     }
 }
-
+// 프로필이미지 버튼 버른 후 변경된 이미지 저장 및 갤러리 dismiss
 extension MyProfileViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let image = info[.originalImage] as? UIImage {
@@ -263,9 +287,3 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         picker.dismiss(animated: true, completion: nil)
     }
 }
-
-
-
-
-
-

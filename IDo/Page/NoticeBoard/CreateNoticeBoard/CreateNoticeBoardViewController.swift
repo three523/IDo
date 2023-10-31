@@ -109,6 +109,14 @@ private extension CreateNoticeBoardViewController {
                 // 내용 textView
                 createNoticeBoardView.contentTextView.text = editingContentText
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
+                
+                // 제목 글자 수 반영
+                createNoticeBoardView.titleCountLabel.text = "(\(editingTitleText.count)/16)"
+                createNoticeBoardView.titleCountLabel.textColor = .black
+                
+                // 제목 글자 수 반영
+                createNoticeBoardView.contentCountLabel.text = "(\(editingContentText.count)/500)"
+                createNoticeBoardView.contentCountLabel.textColor = .black
             }
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
@@ -186,6 +194,15 @@ private extension CreateNoticeBoardViewController {
 // MARK: - TextView 관련
 extension CreateNoticeBoardViewController: UITextViewDelegate {
     
+    // 애니메이션 함수
+    func shakeAnimation(for view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
+        view.layer.add(animation, forKey: "shake")
+    }
+    
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
         
@@ -210,6 +227,28 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
+        
+        if textView == createNoticeBoardView.titleTextView {
+            let textCount = textView.text.count
+            createNoticeBoardView.titleCountLabel.text = "(\(textCount)/16)"
+            
+            if textCount == 0 {
+                createNoticeBoardView.titleCountLabel.textColor = UIColor(color: .placeholder)
+            } else {
+                createNoticeBoardView.titleCountLabel.textColor = UIColor.black
+            }
+        }
+        
+        if textView == createNoticeBoardView.contentTextView {
+            let textCount = textView.text.count
+            createNoticeBoardView.contentCountLabel.text = "(\(textCount)/500)"
+            
+            if textCount == 0 {
+                createNoticeBoardView.contentCountLabel.textColor = UIColor(color: .placeholder)
+            } else {
+                createNoticeBoardView.contentCountLabel.textColor = UIColor.black
+            }
+        }
         
         // 제목 textView에 내용이 있는 경우
         if createNoticeBoardView.titleTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0, createNoticeBoardView.titleTextView.textColor == UIColor.black {
@@ -243,16 +282,24 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         let currentText = textView.text ?? ""
         guard let stringRange = Range(range, in: currentText) else { return false }
         
-        let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
+        let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == createNoticeBoardView.titleTextView {
-            createNoticeBoardView.titleCountLabel.text = "(\(chagedText.count)/16)"
-            return chagedText.count <= 15
+            if changedText.count > 16 {
+                createNoticeBoardView.titleCountLabel.textColor = UIColor.red
+                shakeAnimation(for: createNoticeBoardView.titleCountLabel)
+                return false
+            }
+            return true
         }
         
         if textView == createNoticeBoardView.contentTextView {
-            createNoticeBoardView.contentCountLabel.text = "(\(chagedText.count)/500)"
-            return chagedText.count <= 499
+            if changedText.count > 16 {
+                createNoticeBoardView.contentCountLabel.textColor = UIColor.red
+                shakeAnimation(for: createNoticeBoardView.contentCountLabel)
+                return false
+            }
+            return true
         }
         return true
     }
