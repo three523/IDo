@@ -109,6 +109,14 @@ private extension CreateNoticeBoardViewController {
                 // 내용 textView
                 createNoticeBoardView.contentTextView.text = editingContentText
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
+                
+                // 제목 글자 수 반영
+                createNoticeBoardView.titleCountLabel.text = "(\(editingTitleText.count)/16)"
+                createNoticeBoardView.titleCountLabel.textColor = .black
+                
+                // 제목 글자 수 반영
+                createNoticeBoardView.contentCountLabel.text = "(\(editingContentText.count)/500)"
+                createNoticeBoardView.contentCountLabel.textColor = .black
             }
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
