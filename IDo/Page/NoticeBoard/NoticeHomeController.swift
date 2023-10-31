@@ -15,7 +15,7 @@ class NoticeHomeController: UIViewController {
     var categoryData: String?
     var meetingIndex: Int?
     var club: Club
-    var signUpButtonUpdate: (() -> Void)?
+    var signUpButtonUpdate: ((Bool) -> Void)?
     let fbUserDatabaseManager: FirebaseUserDatabaseManager
     let clubImage: UIImage
     
@@ -75,8 +75,9 @@ class NoticeHomeController: UIViewController {
         signUpButton.isHidden = isJoin
         self.fbUserDatabaseManager.update = { [weak self] in
             guard let self else { return }
-            guard let myClubList = self.fbUserDatabaseManager.model?.myClubList else { return }
-            self.signUpButton.isHidden = myClubList.contains(where: { $0.id == self.club.id })
+            guard let userInfo = MyProfile.shared.myUserInfo,
+                  let joinUserList = self.fbUserDatabaseManager.model?.userList else { return }
+            self.signUpButton.isHidden = joinUserList.contains(where: { $0.id == userInfo.id })
         }
     }
     
@@ -98,11 +99,21 @@ class NoticeHomeController: UIViewController {
     
     @objc func handleSignUp() {
         print("Sign Up button tapped!")
-        
-        if fbUserDatabaseManager.model == nil { return }
-        fbUserDatabaseManager.updateAddClub(club: club) {
-            self.signUpButtonUpdate?()
-            self.signUpButton.isHidden = true
+        addUser()
+        addMyClubList()
+    }
+    
+    private func addUser() {
+        guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+        fbUserDatabaseManager.appendUser(idoUser: user)
+    }
+    
+    private func addMyClubList() {
+        var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+        myClubList.append(club)
+        MyProfile.shared.update(myClubList: myClubList) { isCompleted in
+            if isCompleted { self.signUpButton.isHidden = isCompleted }
+            self.signUpButtonUpdate?(isCompleted)
         }
     }
 
