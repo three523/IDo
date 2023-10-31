@@ -97,7 +97,7 @@ class NoticeBoardTableViewCell: UITableViewCell {
     private(set) lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "같이 합주 할 사람!!!"
-        label.font = UIFont.bodyFont(.large, weight: .semibold)
+        label.font = UIFont.bodyFont(.large, weight: .medium)
         return label
     }()
     
