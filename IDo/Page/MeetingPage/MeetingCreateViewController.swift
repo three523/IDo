@@ -4,6 +4,13 @@ import FirebaseStorage
 
 class MeetingCreateViewController: UIViewController {
     
+    
+    private let scrollView: UIScrollView = {
+        let v = UIScrollView()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }()
+
     private let meetingsData: MeetingsData
     let profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
@@ -128,22 +135,56 @@ class MeetingCreateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.addSubview(scrollView)
+           scrollView.snp.makeConstraints { (make) in
+               make.edges.equalTo(view)
+           }
+
         setupCreateButton()
         updateFinishButtonState()
-        view.addSubview(meetingDescriptionField)
-        view.addSubview(placeholderLabel)
         configureUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        print("키보드 호출")
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        print("키보드 사라짐")
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame: CGRect = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+
+        let keyboardHeight = keyboardFrame.height
+        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+        scrollView.scrollIndicatorInsets = scrollView.contentInset
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.contentInset = UIEdgeInsets.zero
+        scrollView.scrollIndicatorInsets = UIEdgeInsets.zero
+    }
+
+    
     private func configureUI() {
         // UI 설정
-        view.addSubview(profileImageButton)
-        view.addSubview(imageSetLabel)
-        view.addSubview(meetingNameField)
+        scrollView.addSubview(profileImageButton)
+        scrollView.addSubview(imageSetLabel)
+        scrollView.addSubview(meetingNameField)
         meetingNameField.delegate = self
-        view.addSubview(countMeetingNameField)
-        view.addSubview(createFinishButton)
-        view.addSubview(countDescriptionField)
+        scrollView.addSubview(countMeetingNameField)
+        scrollView.addSubview(createFinishButton)
+        scrollView.addSubview(countDescriptionField)
+        scrollView.addSubview(meetingDescriptionField)
+        scrollView.addSubview(placeholderLabel)
         
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
@@ -185,12 +226,12 @@ class MeetingCreateViewController: UIViewController {
         meetingDescriptionField.delegate = self
         
         createFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(140)
-            make.height.equalTo(44)
-        }
-        
+                make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
+                make.centerX.equalToSuperview()
+                make.width.equalTo(140)
+                make.height.equalTo(44)
+                make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom) // 추가된 코드
+            }
         
         countDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField.snp.bottom).offset(4)
