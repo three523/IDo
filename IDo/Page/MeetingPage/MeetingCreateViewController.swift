@@ -18,13 +18,13 @@ class MeetingCreateViewController: UIViewController {
         return button
     }()
     
-    let imageSetLabel: UILabel = {
-        let label = UILabel()
-        label.text = "대표 사진"
-        label.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textAlignment = .center
-        return label
-    }()
+//    let imageSetLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = "대표 사진"
+//        label.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
+//        label.textAlignment = .center
+//        return label
+//    }()
     
     let meetingNameField: UITextField = {
         let textField = UITextField()
@@ -177,7 +177,7 @@ class MeetingCreateViewController: UIViewController {
     private func configureUI() {
         // UI 설정
         scrollView.addSubview(profileImageButton)
-        scrollView.addSubview(imageSetLabel)
+//        scrollView.addSubview(imageSetLabel)
         scrollView.addSubview(meetingNameField)
         meetingNameField.delegate = self
         scrollView.addSubview(countMeetingNameField)
@@ -191,13 +191,13 @@ class MeetingCreateViewController: UIViewController {
             make.centerX.equalToSuperview()
         }
         
-        imageSetLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
-        }
+//        imageSetLabel.snp.makeConstraints { (make) in
+//            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
+//            make.centerX.equalToSuperview()
+//        }
         
         meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(imageSetLabel.snp.bottom).offset(12)
+            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
             make.width.equalTo(361)
             make.height.equalTo(37)
