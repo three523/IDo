@@ -76,6 +76,11 @@ class MeetingViewController: UIViewController {
         titleLabel.textAlignment = .center
         
         navigationItem.titleView = titleLabel
+        
+        // 백 버튼 아이템 생성 및 설정
+        let backBarButtonItem = UIBarButtonItem(title: titleLabel.text, style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
     }
 
     private func setupEmptyMessageView() {
@@ -101,6 +106,10 @@ class MeetingViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(BasicCell.self, forCellReuseIdentifier: "Cell")
+        tableView.rowHeight = UITableView.automaticDimension
+        
+        // 왼쪽 공백 없애기
+        tableView.separatorInset.left = 0
         
         view.addSubview(tableView)
     }
@@ -170,7 +179,9 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         let club = meetingsData.clubs[indexPath.row]
         cell.titleLabel.text = club.title
         cell.aboutLabel.text = club.description
-        cell.basicImageView.image = UIImage(named: "MeetingProfileImage")
+        cell.memberLabel.text = "멤버 \(club.userList?.count ?? 0)"
+        cell.basicImageView.backgroundColor = UIColor(color: .contentBackground)
+        cell.basicImageView.image = nil
         
         if let imageURL = club.imageURL {
             meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
