@@ -43,6 +43,11 @@ private extension LoginViewController {
         present(signUpVC, animated: true)
     }
 
+    // 화면 터치 시 키보드 내려가게 구현
+    override internal func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+
     func clickDefaultLoginButton() {
         loginView.loginButton.addTarget(self, action: #selector(firebaseLogin), for: .touchUpInside)
     }
