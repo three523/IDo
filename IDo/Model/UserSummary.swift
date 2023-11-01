@@ -8,7 +8,7 @@
 import Foundation
 
 struct UserSummary: Codable, Identifier {
-    let id: String // id 로 루트유저 구분해서 클럽 만들때 받기
-    var profileImageURL: String?
+    let id: String
+    var profileImagePath: String?
     var nickName: String
 }

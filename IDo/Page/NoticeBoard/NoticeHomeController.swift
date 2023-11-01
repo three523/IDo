@@ -15,7 +15,7 @@ class NoticeHomeController: UIViewController {
     var categoryData: String?
     var meetingIndex: Int?
     var club: Club
-    var signUpButtonUpdate: (() -> Void)?
+    var signUpButtonUpdate: ((Bool) -> Void)?
     let fbUserDatabaseManager: FirebaseUserDatabaseManager
     let clubImage: UIImage
     
@@ -73,10 +73,11 @@ class NoticeHomeController: UIViewController {
         self.fbUserDatabaseManager = fbUserDatabaseManager
         super.init(nibName: nil, bundle: nil)
         signUpButton.isHidden = isJoin
+        guard let myInfo = MyProfile.shared.myUserInfo else { return }
         self.fbUserDatabaseManager.update = { [weak self] in
-            guard let self else { return }
-            guard let myClubList = self.fbUserDatabaseManager.model?.myClubList else { return }
-            self.signUpButton.isHidden = myClubList.contains(where: { $0.id == self.club.id })
+            guard let userInfo = MyProfile.shared.myUserInfo,
+                  let joinUserList = self?.fbUserDatabaseManager.model?.userList else { return }
+            self?.signUpButton.isHidden = joinUserList.contains(where: { $0.id == userInfo.id })
         }
     }
     
@@ -97,12 +98,22 @@ class NoticeHomeController: UIViewController {
     }
     
     @objc func handleSignUp() {
-        print("Sign Up button tapped!")
-        
-        if fbUserDatabaseManager.model == nil { return }
-        fbUserDatabaseManager.updateAddClub(club: club) {
-            self.signUpButtonUpdate?()
-            self.signUpButton.isHidden = true
+        print("Sign Up button tapped!.")
+        addUser()
+        addMyClubList()
+    }
+    
+    private func addUser() {
+        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+        fbUserDatabaseManager.appendUser(user: idoUser.toUserSummary)
+    }
+    
+    private func addMyClubList() {
+        var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+        myClubList.append(club)
+        MyProfile.shared.update(myClubList: myClubList) { isCompleted in
+            if isCompleted { self.signUpButton.isHidden = isCompleted }
+            self.signUpButtonUpdate?(isCompleted)
         }
     }
 
