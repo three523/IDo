@@ -14,6 +14,7 @@ final class SignUpViewController: UIViewController {
     var smtp: SMTP!
     var verificationCode: String?
     var isEmailChecked: Bool = false
+    var isButtonClicked: Bool = false
 
     var passwordErrorLabel: UILabel = {
         let label = UILabel()
@@ -345,7 +346,7 @@ private extension SignUpViewController {
                 case .emailAlreadyInUse:
                     self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다.")
                     self?.emailAuthorizationButton.isEnabled = true
-                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .text2), for: .normal)
+                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .white), for: .normal)
                     self?.emailAuthorizationButton.backgroundColor = UIColor(color: .contentPrimary)
                     return
                 case .weakPassword:
@@ -439,6 +440,10 @@ private extension SignUpViewController {
     }
 
     @objc func addSMTPButton() {
+        guard isButtonClicked else {
+            showAlertDialog(title: "경고", message: "중복확인 버튼을 눌러주세요.")
+            return
+        }
         guard let emailText = emailTextField.text,
               !emailText.isEmpty,
               emailText.isValidEmail()
@@ -519,6 +524,8 @@ private extension SignUpViewController {
     }
     
     @objc func clickLinkButton() {
+        isButtonClicked = true
+        print("중복 확인 버튼이 클릭되었습니다")
         guard let email = emailTextField.text, !email.isEmpty else {
             showAlertDialog(title: "경고", message: "이메일을 입력해주세요.")
             return
