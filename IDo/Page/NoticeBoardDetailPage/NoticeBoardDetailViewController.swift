@@ -129,7 +129,7 @@ private extension NoticeBoardDetailViewController {
     }
     
     func noticeBoardSetup() {
-        if let dateString = noticeBoard.createDate.diffrenceDate {
+        if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
             noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
         }
         noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName

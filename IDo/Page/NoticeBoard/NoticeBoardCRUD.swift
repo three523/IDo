@@ -48,7 +48,7 @@ class FirebaseManager {
             "rootUser": userSummaryDict,
             "title": noticeBoard.title,
             "content": noticeBoard.content,
-            "createDate": noticeBoard.createDate.dateToString,
+            "createDate": noticeBoard.createDate,
             "imageList": noticeBoard.imageList,
             "commentCount": noticeBoard.commentCount
         ]
@@ -79,7 +79,7 @@ class FirebaseManager {
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
                 let createDate = Date()
-                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
+                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate.dateToString, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
                 
                 self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
                     if success {
@@ -114,7 +114,8 @@ class FirebaseManager {
                 completion?(false)
                 return
             }
-            
+            let noticeBoards: [NoticeBoard] = DataModelCodable.decodingDataSnapshot(value: value)
+            print("Test: \(noticeBoards)")
             for (_, item) in value {
                 if let itemDict = item as? [String: Any],
                    let id = itemDict["id"] as? String,
@@ -134,7 +135,7 @@ class FirebaseManager {
                     
                     let imageList = itemDict["imageList"] as? [String] ?? []
                     
-                    let noticeBoard = NoticeBoard(id: id, rootUser: rootUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageList, commentCount: commentCount)
+                    let noticeBoard = NoticeBoard(id: id, rootUser: rootUser, createDate: createDate.dateToString, clubID: clubID, title: title, content: content, imageList: imageList, commentCount: commentCount)
                     newNoticeBoards.append(noticeBoard)
                 }
             }
