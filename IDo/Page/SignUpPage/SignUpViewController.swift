@@ -342,7 +342,7 @@ private extension SignUpViewController {
                 case .emailAlreadyInUse:
                     self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다.")
                     self?.emailAuthorizationButton.isEnabled = true
-                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .text2), for: .normal)
+                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .white), for: .normal)
                     self?.emailAuthorizationButton.backgroundColor = UIColor(color: .contentPrimary)
                     return
                 case .weakPassword:
