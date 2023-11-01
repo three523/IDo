@@ -179,7 +179,7 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         let club = meetingsData.clubs[indexPath.row]
         cell.titleLabel.text = club.title
         cell.aboutLabel.text = club.description
-        cell.memberLabel.text = "멤버"
+        cell.memberLabel.text = "멤버 \(club.userList?.count ?? 0)"
         cell.basicImageView.backgroundColor = UIColor(color: .contentBackground)
         cell.basicImageView.image = nil
         
