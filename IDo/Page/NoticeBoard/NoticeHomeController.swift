@@ -104,8 +104,8 @@ class NoticeHomeController: UIViewController {
     }
     
     private func addUser() {
-        guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
-        fbUserDatabaseManager.appendUser(idoUser: user)
+        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+        fbUserDatabaseManager.appendUser(user: idoUser.toUserSummary)
     }
     
     private func addMyClubList() {

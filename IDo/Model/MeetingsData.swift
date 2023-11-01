@@ -44,8 +44,7 @@ class MeetingsData {
                 completion?(false)
                 return
             }
-            let tempClubs: [Club] = DataModelCodable.decodingDataSnapshot(value: value)
-            self.clubs = tempClubs.sorted(by: {$0.title.count < $1.title.count})
+            self.clubs = DataModelCodable.decodingDataSnapshot(value: value)
             completion?(true)
             self.update()
         }
