@@ -14,7 +14,6 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     let noticeBoardRef: DatabaseReference
     let urlCache = FBURLCache.shared
     let storage = Storage.storage().reference()
-    var currentIDoUser: IDoUser?
     var profileUpdate: ()->Void = {}
     var noticeBoardImages: [String: UIImage] = [:]
 
@@ -63,17 +62,20 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         MyProfile.shared.update(myCommentList: modelList)
     }
     
-    func getMyProfileImage(uid: String, imageSize: ImageSize, completion: @escaping (UIImage?)->Void ) {
-        let myProfileRef = Database.database().reference().child("Users").child(uid)
-        myProfileRef.getData { error, dataSnapShot in
+    func deleteAllCommentList() {
+        ref.removeValue { error, _ in
             if let error {
                 print(error.localizedDescription)
+                return
             }
-            guard let value = dataSnapShot?.value,
-                  let idoUser: IDoUser = DataModelCodable.decodingSingleDataSnapshot(value: value) else { return }
-            self.currentIDoUser = idoUser
-            self.getUserImage(referencePath: idoUser.profileImagePath, imageSize: imageSize) { profileImage in
-                completion(profileImage)
+            self.modelList.removeAll()
+            if let myUserInfo = MyProfile.shared.myUserInfo {
+                let deleteMyCommentList = self.modelList.filter{ $0.writeUser.id == myUserInfo.id }
+                var myCommentList = MyProfile.shared.myUserInfo?.myCommentList
+                for deleteComment in deleteMyCommentList {
+                    myCommentList?.removeAll(where: { $0.id == deleteComment.id })
+                    MyProfile.shared.update(myCommentList: myCommentList)
+                }
             }
         }
     }
