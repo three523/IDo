@@ -15,6 +15,7 @@ class FirebaseUserDatabaseManager: FBDatabaseManager<Club> {
         userList.append(user)
         ref.updateChildValues(["userList":userList.asArrayDictionary()])
     }
+    
     func removeUser(user: UserSummary) {
         guard let model,
               var userList = model.userList else { return }

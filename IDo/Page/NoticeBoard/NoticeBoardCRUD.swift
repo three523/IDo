@@ -35,7 +35,7 @@ class FirebaseManager {
         let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
         
         guard let noticeBoardDict = noticeBoard.dictionary else { return }
-        
+                
         ref.setValue(noticeBoardDict) { error, _ in
             if let error = error {
                 print("Error saving notice board: \(error)")
@@ -62,8 +62,8 @@ class FirebaseManager {
         
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
-                let createDate = Date()
-                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate.dateToString, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
+                let createDate = Date().dateToString
+                let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
                 
                 self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
                     if success {
@@ -85,7 +85,6 @@ class FirebaseManager {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
         
         ref.getData(completion: { (error, snapshot) in
-            
             if let error = error {
                 print("Error getting data: \(error)")
                 completion?(false)
@@ -97,6 +96,7 @@ class FirebaseManager {
                 completion?(false)
                 return
             }
+            
             let newNoticeBoards: [NoticeBoard] = DataModelCodable.decodingDataSnapshot(value: value)
             
             self.noticeBoards = newNoticeBoards.sorted(by: { $0.createDate > $1.createDate })

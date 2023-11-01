@@ -98,7 +98,7 @@ class NoticeHomeController: UIViewController {
     }
     
     @objc func handleSignUp() {
-        print("Sign Up button tapped!")
+        print("Sign Up button tapped!.")
         addUser()
         addMyClubList()
     }

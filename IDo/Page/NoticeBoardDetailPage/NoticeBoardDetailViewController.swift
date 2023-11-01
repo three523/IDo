@@ -296,12 +296,12 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
         if let defaultImage = UIImage(systemName: "person.fill") {
-            cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentPrimary))
+            cell.setUserImage(profileImage: defaultImage)
         }
         let comment = firebaseCommentManager.modelList[indexPath.row]
         firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImagePath, imageSize: .small) { image in
             guard let image else { return }
-            cell.setUserImage(profileImage: image, color: UIColor(color: .white), margin: 0)
+            cell.setUserImage(profileImage: image)
         }
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
