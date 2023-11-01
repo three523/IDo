@@ -11,7 +11,7 @@ struct IDoUser: Codable, Identifier {
     let id: String
     var updateAt: String?
     var email: String?
-    var profileImagePath: String?
+    var profileImage: String?
     var nickName: String
     var description: String?
     var hobbyList: [String]?
@@ -20,9 +20,6 @@ struct IDoUser: Codable, Identifier {
     var myCommentList: [Comment]?
 
     var toMyUserInfo: MyUserInfo {
-        return MyUserInfo(id: id, updateAt: updateAt, profileImagePath: profileImagePath, profileImage: [:], nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
-    }
-    var toUserSummary: UserSummary {
-        return UserSummary(id: id, profileImageURL: profileImagePath, nickName: nickName)
+        return MyUserInfo(id: id, updateAt: updateAt, profileImageURL: profileImage, profileImage: [:], nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
     }
 }

@@ -44,7 +44,22 @@ class MeetingsData {
                 completion?(false)
                 return
             }
-            self.clubs = DataModelCodable.decodingDataSnapshot(value: value)
+//            var tempClubs = [Club]()
+            let tempClubs: [Club] = DataModelCodable.decodingDataSnapshot(value: value)
+//            for (_, item) in value {
+//                if let itemDict = item as? [String: Any],
+//                   let id = itemDict["id"] as? String,
+//                   let description = itemDict["description"] as? String,
+//                   let title = itemDict["title"] as? String,
+//                   let imageURL = itemDict["imageURL"] as? String,
+//                    let category = itemDict["category"] as? String
+//                {
+//                    let club = Club(id: id, title: title, imageURL: imageURL, description: description, category: category)
+//                    tempClubs.append(club)
+//                }
+//            }
+            tempClubs.map { print($0.userList) }
+            self.clubs = tempClubs.sorted(by: {$0.title.count < $1.title.count})
             completion?(true)
             self.update()
         }
