@@ -116,3 +116,8 @@ final class MyProfile {
         }
     }
 }
+extension MyUserInfo {
+    var toUserSummary: UserSummary {
+        return UserSummary(id: self.id, nickName: self.nickName)
+    }
+}
