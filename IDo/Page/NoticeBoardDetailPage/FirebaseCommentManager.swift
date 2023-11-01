@@ -44,7 +44,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
                 completion(.success(self.modelList))
                 return
             }
-            let dataList: [Comment] = self.decodingDataSnapshot(value: value).sorted(by: { $0.createDate >= $1.createDate })
+            let dataList: [Comment] = DataModelCodable.decodingDataSnapshot(value: value).sorted(by: { $0.createDate >= $1.createDate })
             self.viewState = .loaded
             self.modelList = dataList
             completion(.success(dataList))
@@ -70,7 +70,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
                 print(error.localizedDescription)
             }
             guard let value = dataSnapShot?.value,
-                let idoUser: IDoUser = self.decodingSingleDataSnapshot(value: value) else { return }
+                  let idoUser: IDoUser = DataModelCodable.decodingSingleDataSnapshot(value: value) else { return }
             self.currentIDoUser = idoUser
             self.getUserImage(referencePath: idoUser.profileImage, imageSize: imageSize) { profileImage in
                 completion(profileImage)
