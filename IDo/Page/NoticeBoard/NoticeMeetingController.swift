@@ -75,7 +75,7 @@ class NoticeMeetingController: TabmanViewController {
         bar.buttons.customize { (button) in
             
             // 비활성화된 탭의 색상
-            button.tintColor = UIColor(color: .contentBackground)
+            button.tintColor = UIColor(color: .contentDisable)
             
             // 활성화된 탭의 색상
             button.selectedTintColor = UIColor(color: .main)
