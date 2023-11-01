@@ -43,6 +43,10 @@ private extension LoginViewController {
         present(signUpVC, animated: true)
     }
 
+    internal override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+
     func clickDefaultLoginButton() {
         loginView.loginButton.addTarget(self, action: #selector(firebaseLogin), for: .touchUpInside)
     }
