@@ -195,29 +195,21 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
         print(meetingsData.clubImages)
         
-        if let myInfo = MyProfile.shared.myUserInfo,
-           let currentUser = Auth.auth().currentUser {
-            let isJoin = club.userList?.contains(where: { $0.id == myInfo.id }) ?? false
-            let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
-            self.navigationController?.pushViewController(noticeBoardVC, animated: true)
-        }
-
+        guard let currentUser = Auth.auth().currentUser else { return }
+        let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
         
-//        guard let currentUser = Auth.auth().currentUser else { return }
-//        let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
-//        fbDatabaseUserManager.readData { result in
-//            switch result {
-//            case .success(let club):
-//                var isJoin = false
-//                if let userList = club.userList,
-//                   let myInfo = MyProfile.shared.myUserInfo {
-//                    isJoin = userList.contains(where: { $0.id == myInfo.id })
-//                }
-//                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
-//                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
-//            case .failure(let error):
-//                print(error)
-//            }
-//        }
+        fbDatabaseUserManager.readData { result in
+            switch result {
+            case .success(let idoUser):
+                var isJoin = false
+                if let myClubList = idoUser.myClubList {
+                    isJoin = myClubList.contains(where: { $0.id == club.id })
+                }
+                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
+                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }

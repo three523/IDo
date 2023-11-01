@@ -69,43 +69,38 @@ final class MyProfile {
         fileCache.storeFile(myUserInfo: myUserInfo)
     }
     
-    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil, completion: ((Bool) -> Void)? = nil) {
-        guard let myUserInfo else { return }
-        var userInfo = MyUserInfo(id: myUserInfo.id, profileImage: myUserInfo.profileImage, nickName: myUserInfo.nickName)
+    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil) {
         if let nickName {
-            userInfo.nickName = nickName
+            self.myUserInfo?.nickName = nickName
         }
         if let updateProfileImage {
             let smallImage = updateProfileImage.resizeImage(targetSize: CGSize(width: 90, height: 90))
             let mediumImage = updateProfileImage.resizeImage(targetSize: CGSize(width: 480, height: 480))
             if let smallImageData = smallImage.pngData(),
                let mediumImageData = mediumImage.pngData() {
-                userInfo.profileImage[ImageSize.small.rawValue] = smallImageData
-                userInfo.profileImage[ImageSize.small.rawValue] = mediumImageData
+                myUserInfo?.profileImage[ImageSize.small.rawValue] = smallImageData
+                myUserInfo?.profileImage[ImageSize.small.rawValue] = mediumImageData
                 uploadProfileImage(imageData: smallImageData, imageSize: .small)
                 uploadProfileImage(imageData: mediumImageData, imageSize: .medium)
             }
         }
         if let description {
-            userInfo.description = description
+            self.myUserInfo?.description = description
         }
         if let myClubList {
-            userInfo.myClubList = myClubList
+            self.myUserInfo?.myClubList = myClubList
         }
         if let hobbyList {
-            userInfo.hobbyList = hobbyList
+            self.myUserInfo?.hobbyList = hobbyList
         }
         if let myNoticeBoardList {
-            userInfo.myNoticeBoardList = myNoticeBoardList
+            self.myUserInfo?.myNoticeBoardList = myNoticeBoardList
         }
         if let myCommentList {
-            userInfo.myCommentList = myCommentList
+            self.myUserInfo?.myCommentList = myCommentList
         }
         guard let idoUser = self.myUserInfo?.toIDoUser else { return }
-        firebaseManager.updateValue(value: idoUser) { isCompleted in
-            completion?(isCompleted)
-            if isCompleted { self.myUserInfo = userInfo }
-        }
+        firebaseManager.updateValue(value: idoUser)
     }
     
     private func uploadProfileImage(imageData: Data, imageSize: ImageSize) {

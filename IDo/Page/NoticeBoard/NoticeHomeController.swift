@@ -15,7 +15,7 @@ class NoticeHomeController: UIViewController {
     var categoryData: String?
     var meetingIndex: Int?
     var club: Club
-    var signUpButtonUpdate: ((Bool) -> Void)?
+    var signUpButtonUpdate: (() -> Void)?
     let fbUserDatabaseManager: FirebaseUserDatabaseManager
     let clubImage: UIImage
     
@@ -75,9 +75,8 @@ class NoticeHomeController: UIViewController {
         signUpButton.isHidden = isJoin
         self.fbUserDatabaseManager.update = { [weak self] in
             guard let self else { return }
-            guard let userInfo = MyProfile.shared.myUserInfo,
-                  let joinUserList = self.fbUserDatabaseManager.model?.userList else { return }
-            self.signUpButton.isHidden = joinUserList.contains(where: { $0.id == userInfo.id })
+            guard let myClubList = self.fbUserDatabaseManager.model?.myClubList else { return }
+            self.signUpButton.isHidden = myClubList.contains(where: { $0.id == self.club.id })
         }
     }
     
