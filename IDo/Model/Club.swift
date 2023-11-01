@@ -9,12 +9,12 @@ import Foundation
 
 struct Club: Codable, Identifier {
     let id: String
-    var rootUser: UserSummary?
+    var rootUser: IDoUser?
     var title: String
     var imageURL: String?
     var description: String
     var category: String
     var noticeBoardList: [NoticeBoard]?
-    var userList: [UserSummary]?
+    var userList: [IDoUser]?
 //    var createDate: String // 만든 날짜로 정렬 ..
 }

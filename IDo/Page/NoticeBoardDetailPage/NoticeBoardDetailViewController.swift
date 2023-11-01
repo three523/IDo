@@ -129,7 +129,7 @@ private extension NoticeBoardDetailViewController {
     }
     
     func noticeBoardSetup() {
-        if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
+        if let dateString = noticeBoard.createDate.diffrenceDate {
             noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
         }
         noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
@@ -225,7 +225,7 @@ private extension NoticeBoardDetailViewController {
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
             if let iDoUser = firebaseCommentManager.currentIDoUser {
-                let user = UserSummary(id: iDoUser.id, profileImageURL: iDoUser.profileImagePath, nickName: iDoUser.nickName)
+                let user = UserSummary(id: iDoUser.id, profileImageURL: iDoUser.profileImage, nickName: iDoUser.nickName)
                 let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
                 firebaseCommentManager.appendData(data: comment) { isComplete in
                     if isComplete {
@@ -296,12 +296,12 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
         if let defaultImage = UIImage(systemName: "person.fill") {
-            cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentPrimary))
+            cell.setUserImage(profileImage: defaultImage)
         }
         let comment = firebaseCommentManager.modelList[indexPath.row]
         firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL, imageSize: .small) { image in
             guard let image else { return }
-            cell.setUserImage(profileImage: image, color: UIColor(color: .white), margin: 0)
+            cell.setUserImage(profileImage: image)
         }
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content

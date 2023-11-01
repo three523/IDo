@@ -72,7 +72,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
             guard let value = dataSnapShot?.value,
                   let idoUser: IDoUser = DataModelCodable.decodingSingleDataSnapshot(value: value) else { return }
             self.currentIDoUser = idoUser
-            self.getUserImage(referencePath: idoUser.profileImagePath, imageSize: imageSize) { profileImage in
+            self.getUserImage(referencePath: idoUser.profileImage, imageSize: imageSize) { profileImage in
                 completion(profileImage)
             }
         }
