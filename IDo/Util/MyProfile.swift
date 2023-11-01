@@ -36,7 +36,7 @@ final class MyProfile {
                     }
                 }
                 self.myUserInfo = idoUser.toMyUserInfo
-                if let profilePath = idoUser.profileImage {
+                if let profilePath = idoUser.profileImagePath {
                     self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)
                     completion?(true)
                 }
@@ -69,38 +69,44 @@ final class MyProfile {
         fileCache.storeFile(myUserInfo: myUserInfo)
     }
     
-    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil) {
+    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil, completion: ((Bool) -> Void)? = nil) {
+        var myInfo = self.myUserInfo
         if let nickName {
-            self.myUserInfo?.nickName = nickName
+            myInfo?.nickName = nickName
         }
         if let updateProfileImage {
             let smallImage = updateProfileImage.resizeImage(targetSize: CGSize(width: 90, height: 90))
             let mediumImage = updateProfileImage.resizeImage(targetSize: CGSize(width: 480, height: 480))
             if let smallImageData = smallImage.pngData(),
                let mediumImageData = mediumImage.pngData() {
-                myUserInfo?.profileImage[ImageSize.small.rawValue] = smallImageData
-                myUserInfo?.profileImage[ImageSize.small.rawValue] = mediumImageData
+                myInfo?.profileImage[ImageSize.small.rawValue] = smallImageData
+                myInfo?.profileImage[ImageSize.small.rawValue] = mediumImageData
                 uploadProfileImage(imageData: smallImageData, imageSize: .small)
                 uploadProfileImage(imageData: mediumImageData, imageSize: .medium)
             }
         }
         if let description {
-            self.myUserInfo?.description = description
+            myInfo?.description = description
         }
         if let myClubList {
-            self.myUserInfo?.myClubList = myClubList
+            myInfo?.myClubList = myClubList
         }
         if let hobbyList {
-            self.myUserInfo?.hobbyList = hobbyList
+            myInfo?.hobbyList = hobbyList
         }
         if let myNoticeBoardList {
-            self.myUserInfo?.myNoticeBoardList = myNoticeBoardList
+            myInfo?.myNoticeBoardList = myNoticeBoardList
         }
         if let myCommentList {
-            self.myUserInfo?.myCommentList = myCommentList
+            myInfo?.myCommentList = myCommentList
         }
         guard let idoUser = self.myUserInfo?.toIDoUser else { return }
-        firebaseManager.updateValue(value: idoUser)
+        firebaseManager.updateValue(value: idoUser) { isCompletion in
+            if isCompletion {
+                completion?(isCompletion)
+                self.myUserInfo = myInfo
+            }
+        }
     }
     
     private func uploadProfileImage(imageData: Data, imageSize: ImageSize) {

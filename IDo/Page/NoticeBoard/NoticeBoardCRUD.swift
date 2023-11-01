@@ -34,25 +34,8 @@ class FirebaseManager {
     func saveNoticeBoard(noticeBoard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
         let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
         
-        // UserSummary
-        let userSummaryDict: [String: Any?] = [
-            "id": noticeBoard.rootUser.id,
-            "profileImage": noticeBoard.rootUser.profileImageURL,
-            "nickName": noticeBoard.rootUser.nickName
-        ]
-        
-        // NoticeBoard
-        let noticeBoardDict: [String: Any] = [
-            "id": noticeBoard.id,
-            "clubID": noticeBoard.clubID,
-            "rootUser": userSummaryDict,
-            "title": noticeBoard.title,
-            "content": noticeBoard.content,
-            "createDate": noticeBoard.createDate.dateToString,
-            "imageList": noticeBoard.imageList,
-            "commentCount": noticeBoard.commentCount
-        ]
-        
+        guard let noticeBoardDict = noticeBoard.dictionary else { return }
+                
         ref.setValue(noticeBoardDict) { error, _ in
             if let error = error {
                 print("Error saving notice board: \(error)")
@@ -72,13 +55,14 @@ class FirebaseManager {
         
         guard let currentUserID = MyProfile.shared.myUserInfo?.id else { return }
         guard let currentUserNickName = MyProfile.shared.myUserInfo?.nickName else { return }
-        guard let currentUserProfileURL = MyProfile.shared.myUserInfo?.profileImageURL else { return }
-        
-        let currentUser = UserSummary(id: currentUserID, profileImageURL: currentUserProfileURL, nickName: currentUserNickName)
+        var currentUser = UserSummary(id: currentUserID, profileImagePath: nil, nickName: currentUserNickName)
+        if let currentUserProfileURL = MyProfile.shared.myUserInfo?.profileImagePath {
+            currentUser.profileImagePath = currentUserProfileURL
+        }
         
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
             if success {
-                let createDate = Date()
+                let createDate = Date().dateToString
                 let newNoticeBoard = NoticeBoard(id: newNoticeBoardID, rootUser: currentUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageURLs ?? [], commentCount: "0")
                 
                 self.saveNoticeBoard(noticeBoard: newNoticeBoard) { success in
@@ -101,8 +85,6 @@ class FirebaseManager {
         let ref = Database.database().reference().child("noticeBoards").child(clubID)
         
         ref.getData(completion: { (error, snapshot) in
-            var newNoticeBoards: [NoticeBoard] = []
-            
             if let error = error {
                 print("Error getting data: \(error)")
                 completion?(false)
@@ -115,29 +97,7 @@ class FirebaseManager {
                 return
             }
             
-            for (_, item) in value {
-                if let itemDict = item as? [String: Any],
-                   let id = itemDict["id"] as? String,
-                   let clubID = itemDict["clubID"] as? String,
-                   let rootUserDict = itemDict["rootUser"] as? [String: Any],
-                   let rootUserId = rootUserDict["id"] as? String,
-                   let rootUserNickName = rootUserDict["nickName"] as? String,
-                   let title = itemDict["title"] as? String,
-                   let content = itemDict["content"] as? String,
-                   let createDateStr = itemDict["createDate"] as? String,
-                   let createDate = createDateStr.toDate,
-                   let commentCount = itemDict["commentCount"] as? String
-                {
-                    let profileImageString = rootUserDict["profileImage"] as? String
-                    
-                    let rootUser = UserSummary(id: rootUserId, profileImageURL: profileImageString, nickName: rootUserNickName)
-                    
-                    let imageList = itemDict["imageList"] as? [String] ?? []
-                    
-                    let noticeBoard = NoticeBoard(id: id, rootUser: rootUser, createDate: createDate, clubID: clubID, title: title, content: content, imageList: imageList, commentCount: commentCount)
-                    newNoticeBoards.append(noticeBoard)
-                }
-            }
+            let newNoticeBoards: [NoticeBoard] = DataModelCodable.decodingDataSnapshot(value: value)
             
             self.noticeBoards = newNoticeBoards.sorted(by: { $0.createDate > $1.createDate })
             

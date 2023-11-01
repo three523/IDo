@@ -201,20 +201,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         print(meetingsData.clubImages)
         
         guard let currentUser = Auth.auth().currentUser else { return }
-        let fbDatabaseUserManager = FirebaseUserDatabaseManager(refPath: ["Users", currentUser.uid])
-        
-        fbDatabaseUserManager.readData { result in
-            switch result {
-            case .success(let idoUser):
-                var isJoin = false
-                if let myClubList = idoUser.myClubList {
-                    isJoin = myClubList.contains(where: { $0.id == club.id })
-                }
-                let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
-                self.navigationController?.pushViewController(noticeBoardVC, animated: true)
-            case .failure(let error):
-                print(error)
-            }
-        }
+        let isJoin = club.userList?.contains(where: { $0.id == currentUser.uid }) ?? false
+        let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
+        self.navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 }

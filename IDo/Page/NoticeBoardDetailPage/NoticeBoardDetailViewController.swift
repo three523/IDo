@@ -42,7 +42,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         self.editIndex = editIndex
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
-        guard let profileImageURL = noticeBoard.rootUser.profileImageURL  else { return }
+        guard let profileImageURL = noticeBoard.rootUser.profileImagePath  else { return }
         FBURLCache.shared.downloadURL(storagePath: profileImageURL + "/\(ImageSize.small.rawValue)") { result in
             switch result {
             case .success(let image):
@@ -129,7 +129,7 @@ private extension NoticeBoardDetailViewController {
     }
     
     func noticeBoardSetup() {
-        if let dateString = noticeBoard.createDate.diffrenceDate {
+        if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
             noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
         }
         noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
@@ -225,7 +225,7 @@ private extension NoticeBoardDetailViewController {
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
             if let iDoUser = firebaseCommentManager.currentIDoUser {
-                let user = UserSummary(id: iDoUser.id, profileImageURL: iDoUser.profileImage, nickName: iDoUser.nickName)
+                let user = UserSummary(id: iDoUser.id, profileImagePath: iDoUser.profileImagePath, nickName: iDoUser.nickName)
                 let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
                 firebaseCommentManager.appendData(data: comment) { isComplete in
                     if isComplete {
@@ -299,7 +299,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
             cell.setUserImage(profileImage: defaultImage)
         }
         let comment = firebaseCommentManager.modelList[indexPath.row]
-        firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImageURL, imageSize: .small) { image in
+        firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImagePath, imageSize: .small) { image in
             guard let image else { return }
             cell.setUserImage(profileImage: image)
         }
