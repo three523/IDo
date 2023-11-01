@@ -91,19 +91,20 @@ final class SignUpViewController: UIViewController {
     private let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "이메일을 입력해주세요"
-        textField.font = .bodyFont(.medium, weight: .regular)
+        textField.font = .bodyFont(.large, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
         textField.borderStyle = .roundedRect
         textField.autocapitalizationType = .none
-
+        
         return textField
     }()
 
     private let passwordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "비밀번호를 입력해주세요"
-        textField.font = .bodyFont(.medium, weight: .regular)
+        textField.font = .bodyFont(.large, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
+        textField.autocapitalizationType = .none
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         textField.textContentType = .oneTimeCode
@@ -113,8 +114,9 @@ final class SignUpViewController: UIViewController {
     private let passwordConfirmTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "비밀번호를 재입력해주세요"
-        textField.font = .bodyFont(.medium, weight: .regular)
+        textField.font = .bodyFont(.large, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
+        textField.autocapitalizationType = .none
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         textField.textContentType = .oneTimeCode
@@ -180,6 +182,7 @@ private extension SignUpViewController {
         autolayoutSetup()
         setupButton()
         passwordTextField.delegate = self
+        passwordConfirmTextField.delegate = self
     }
     
     func addViews() {
@@ -210,6 +213,7 @@ private extension SignUpViewController {
         
         passwordConfirmTextField.rightView = confirmEyeButton
         passwordConfirmTextField.rightViewMode = .always
+        let contentHeight = 48
         
         idLable.snp.makeConstraints { make in
             make.top.equalTo(backButton.snp.bottom).offset(Constant.margin3)
@@ -219,7 +223,7 @@ private extension SignUpViewController {
         emailTextField.snp.makeConstraints { make in
             make.top.equalTo(idLable.snp.bottom).offset(Constant.margin2)
             make.left.equalToSuperview().inset(Constant.margin4)
-            make.width.equalTo(280)
+            make.height.equalTo(contentHeight)
         }
         
         linkButton.snp.makeConstraints { make in
@@ -230,17 +234,21 @@ private extension SignUpViewController {
             make.centerY.equalTo(emailTextField)
             make.right.equalToSuperview().inset(Constant.margin4)
             make.width.equalTo(60)
+            make.height.equalTo(contentHeight)
+            make.left.equalTo(emailTextField.snp.right).offset(Constant.margin2)
         }
         authenticationNumberTextField.snp.makeConstraints { make in
             make.top.equalTo(emailTextField.snp.bottom).offset(Constant.margin2)
             make.left.equalToSuperview().inset(Constant.margin4)
-            make.width.equalTo(280)
+            make.height.equalTo(contentHeight)
         }
         
         authenticationNumberButton.snp.makeConstraints { make in
             make.centerY.equalTo(authenticationNumberTextField)
             make.right.equalToSuperview().inset(Constant.margin4)
             make.width.equalTo(60)
+            make.height.equalTo(contentHeight)
+            make.left.equalTo(authenticationNumberTextField.snp.right).offset(Constant.margin2)
         }
         
         passwordLable.snp.makeConstraints { make in
@@ -250,6 +258,7 @@ private extension SignUpViewController {
         passwordTextField.snp.makeConstraints { make in
             make.top.equalTo(passwordLable.snp.bottom).offset(Constant.margin2)
             make.left.right.equalToSuperview().inset(Constant.margin4)
+            make.height.equalTo(contentHeight)
         }
         passwordErrorLabel.snp.makeConstraints { make in
             make.top.equalTo(passwordTextField.snp.bottom).offset(Constant.margin1)
@@ -262,6 +271,7 @@ private extension SignUpViewController {
         passwordConfirmTextField.snp.makeConstraints { make in
             make.top.equalTo(passwordConfirmLable.snp.bottom).offset(Constant.margin2)
             make.left.right.equalToSuperview().inset(Constant.margin4)
+            make.height.equalTo(contentHeight)
         }
         passwordConfirmErrorLabel.snp.makeConstraints { make in
             make.top.equalTo(passwordConfirmTextField.snp.bottom).offset(Constant.margin1)
@@ -271,6 +281,7 @@ private extension SignUpViewController {
         nextButton.snp.makeConstraints { make in
             make.top.equalTo(passwordConfirmErrorLabel.snp.bottom).offset(Constant.margin3)
             make.left.right.equalToSuperview().inset(Constant.margin4)
+            make.height.equalTo(contentHeight)
         }
     }
     
@@ -514,33 +525,14 @@ extension String {
 }
 
 extension SignUpViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textFieldDidChangeSelection(_ textField: UITextField) {
         let currentText = textField.text ?? ""
-        let updatedText = (currentText as NSString).replacingCharacters(in: range, with: string)
-
+        
         if textField == passwordTextField {
             // passwordTextField의 유효성 검사
-            passwordErrorLabel.isHidden = updatedText.isValidPassword()
+            passwordErrorLabel.isHidden = currentText.isValidPassword()
+            validatePasswordConfirm()
         } else if textField == passwordConfirmTextField {
-            // passwordTextField의 현재 텍스트를 가져옴
-            let passwordText = passwordTextField.text ?? ""
-
-            // passwordConfirmTextField와 passwordTextField의 텍스트가 동일한지 검사
-            if updatedText == passwordText {
-                passwordConfirmErrorLabel.isHidden = true
-                passwordConfirmErrorLabel.text = ""
-            } else {
-                passwordConfirmErrorLabel.isHidden = false
-                passwordConfirmErrorLabel.text = "비밀번호가 일치하지 않습니다."
-            }
-        }
-
-        return true
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField == passwordTextField {
-            // passwordTextField의 편집이 끝났을 때 passwordConfirmTextField의 유효성 검사
             validatePasswordConfirm()
         }
     }
