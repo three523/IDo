@@ -15,7 +15,7 @@ class SignUpProfileViewController: UIViewController {
     private let password: String
     private let selectedCategorys: [String]
     private var user: IDoUser?
-    private let fbUserDatabaseManager: FirebaseCreateUserManager = FirebaseCreateUserManager(refPath: ["Users"])
+    private let fbUserDatabaseManager: FirebaseCreateUserManager = .init(refPath: ["Users"])
     private let imagePickerViewController: UIImagePickerController = .init()
 
     private let profileImageView: UIImageView = .init(image: UIImage(systemName: "camera.circle.fill"))
@@ -130,7 +130,7 @@ private extension SignUpProfileViewController {
             }
             guard let authDataResult = authDataResult else { return }
             let uid = authDataResult.user.uid
-            var user = IDoUser(id: uid, updateAt: Date().toString(), nickName: self.nickName, hobbyList: self.selectedCategorys)
+            var user = IDoUser(id: uid, updateAt: Date().toString(), email: email, nickName: self.nickName, hobbyList: self.selectedCategorys)
             self.fbUserDatabaseManager.model = user
             self.fbUserDatabaseManager.appendData(data: user)
             self.fbUserDatabaseManager.addImage(uid: uid, image: profileImageView.image)
