@@ -35,7 +35,7 @@ class FirebaseCreateUserManager: FBDatabaseManager<IDoUser> {
         
         let storageRef = Storage.storage().reference().child("UserProfileImages/\(uid)")
         let imageURL = storageRef.fullPath
-        model?.profileImage = imageURL
+        model?.profileImagePath = imageURL
         guard let model else { return }
         updateModel(data: model)
         

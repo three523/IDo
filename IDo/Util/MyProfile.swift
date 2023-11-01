@@ -36,7 +36,7 @@ final class MyProfile {
                     }
                 }
                 self.myUserInfo = idoUser.toMyUserInfo
-                if let profilePath = idoUser.profileImage {
+                if let profilePath = idoUser.profileImagePath {
                     self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)
                     completion?(true)
                 }
