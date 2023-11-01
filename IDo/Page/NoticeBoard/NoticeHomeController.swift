@@ -98,11 +98,21 @@ class NoticeHomeController: UIViewController {
     
     @objc func handleSignUp() {
         print("Sign Up button tapped!")
-        
-        if fbUserDatabaseManager.model == nil { return }
-        fbUserDatabaseManager.updateAddClub(club: club) {
-            self.signUpButtonUpdate?()
-            self.signUpButton.isHidden = true
+        addUser()
+        addMyClubList()
+    }
+    
+    private func addUser() {
+        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+        fbUserDatabaseManager.appendUser(user: idoUser.toUserSummary)
+    }
+    
+    private func addMyClubList() {
+        var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+        myClubList.append(club)
+        MyProfile.shared.update(myClubList: myClubList) { isCompleted in
+            if isCompleted { self.signUpButton.isHidden = isCompleted }
+            self.signUpButtonUpdate?(isCompleted)
         }
     }
 

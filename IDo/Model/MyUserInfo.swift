@@ -10,7 +10,7 @@ import UIKit
 struct MyUserInfo: Codable {
     let id: String
     var updateAt: String?
-    var profileImageURL: String?
+    var profileImagePath: String?
     var profileImage: [String: Data]
     var nickName: String
     var description: String?
@@ -20,6 +20,10 @@ struct MyUserInfo: Codable {
     var myCommentList: [Comment]?
 
     var toIDoUser: IDoUser {
-        return IDoUser(id: id, updateAt: updateAt, profileImage: profileImageURL, nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
+        return IDoUser(id: id, updateAt: updateAt, profileImagePath: profileImagePath, nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
+    }
+    
+    var toUserSummary: UserSummary {
+        return UserSummary(id: id, profileImageURL: profileImagePath, nickName: nickName)
     }
 }
