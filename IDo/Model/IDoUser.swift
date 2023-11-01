@@ -23,6 +23,6 @@ struct IDoUser: Codable, Identifier {
         return MyUserInfo(id: id, updateAt: updateAt, profileImagePath: profileImagePath, profileImage: [:], nickName: nickName, description: description, hobbyList: hobbyList, myClubList: myClubList, myNoticeBoardList: myNoticeBoardList, myCommentList: myCommentList)
     }
     var toUserSummary: UserSummary {
-        return UserSummary(id: id, profileImageURL: profileImagePath, nickName: nickName)
+        return UserSummary(id: id, profileImagePath: profileImagePath, nickName: nickName)
     }
 }

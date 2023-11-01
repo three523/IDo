@@ -83,7 +83,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         cell.titleLabel.text = noticeBoard.title
         cell.contentLabel.text = noticeBoard.content
         cell.timeLabel.text = noticeBoard.createDate.toDate?.diffrenceDate ?? noticeBoard.createDate
-        if let profileImageURL = noticeBoard.rootUser.profileImageURL {
+        if let profileImageURL = noticeBoard.rootUser.profileImagePath {
             firebaseManager.getUserImage(referencePath: profileImageURL, imageSize: .medium) { downloadedImage in
                 if let image = downloadedImage {
                     DispatchQueue.main.async {

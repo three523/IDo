@@ -55,9 +55,9 @@ class FirebaseManager {
         
         guard let currentUserID = MyProfile.shared.myUserInfo?.id else { return }
         guard let currentUserNickName = MyProfile.shared.myUserInfo?.nickName else { return }
-        var currentUser = UserSummary(id: currentUserID, profileImageURL: nil, nickName: currentUserNickName)
+        var currentUser = UserSummary(id: currentUserID, profileImagePath: nil, nickName: currentUserNickName)
         if let currentUserProfileURL = MyProfile.shared.myUserInfo?.profileImagePath {
-            currentUser.profileImageURL = currentUserProfileURL
+            currentUser.profileImagePath = currentUserProfileURL
         }
         
         self.uploadImages(clubID: clubID, noticeBoardID: newNoticeBoardID, imageList: self.selectedImage) { success, imageURLs in
