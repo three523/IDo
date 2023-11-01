@@ -57,7 +57,8 @@ final class SignUpViewController: UIViewController {
 
     private let backButton: UIButton = {
         let button = UIButton()
-        button.setTitle("back", for: .normal)
+        button.setTitle("〈 뒤로가기", for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.setTitleColor(UIColor(color: .contentPrimary), for: .normal)
         return button
     }()
@@ -167,6 +168,9 @@ final class SignUpViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 

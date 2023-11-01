@@ -31,7 +31,7 @@ private extension NoticeBoardEmptyView {
     
     // NoticeBoardEmptyView의 기본 UI 설정
     func configureUI() {
-        backgroundColor = UIColor.white
+        backgroundColor = UIColor(color: .backgroundPrimary)
         emptyMessageStackView.setImage(image: UIImage(systemName: "list.bullet.clipboard.fill"))
         emptyMessageStackView.titleLabel.text = "게시판이 존재하지 않습니다."
         emptyMessageStackView.descriptionLabel.text = "게시글 작성을 통해 사람들과 내용을 공유하세요"
