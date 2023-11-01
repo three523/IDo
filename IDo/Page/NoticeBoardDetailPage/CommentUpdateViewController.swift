@@ -73,7 +73,7 @@ private extension CommentUpdateViewController {
     }
 }
 
-extension CommentUpdateViewController: UITextViewDelegate {
+extension CommentUpdateViewController: UITextViewDelegate, UITextFieldDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let commentEmpty = textView.text.isEmpty
         navigationItem.rightBarButtonItem?.isEnabled = !commentEmpty

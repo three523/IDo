@@ -164,6 +164,7 @@ private extension NoticeBoardDetailViewController {
                 //MARK: 게시판 삭제 로직 구현
                 self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                     if success {
+                        self.firebaseCommentManager.deleteAllCommentList()
                         self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
                     }
                 }
@@ -213,19 +214,18 @@ private extension NoticeBoardDetailViewController {
     }
         
     func addCommentSetup() {
-        firebaseCommentManager.getMyProfileImage(uid: currentUser!.uid, imageSize: .small) { image in
-            DispatchQueue.main.async {
-                self.addCommentStackView.profileImageView.imageView.image = image
-                self.addCommentStackView.profileImageView.backgroundColor = UIColor(color: .white)
-                self.addCommentStackView.profileImageView.contentMargin = 0
-                self.myProfileImage = image
-            }
+        if let imageData = MyProfile.shared.myUserInfo?.profileImage[ImageSize.small.rawValue],
+           let image = UIImage(data: imageData) {
+            addCommentStackView.profileImageView.imageView.image = image
+            addCommentStackView.profileImageView.backgroundColor = UIColor(color: .white)
+            addCommentStackView.profileImageView.contentMargin = 0
+            myProfileImage = image
         }
         
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
-            if let iDoUser = firebaseCommentManager.currentIDoUser {
-                let user = UserSummary(id: iDoUser.id, profileImagePath: iDoUser.profileImagePath, nickName: iDoUser.nickName)
+            if let myUserInfo = MyProfile.shared.myUserInfo {
+                let user = UserSummary(id: myUserInfo.id, profileImagePath: myUserInfo.profileImagePath, nickName: myUserInfo.nickName)
                 let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
                 firebaseCommentManager.appendData(data: comment) { isComplete in
                     if isComplete {
@@ -296,12 +296,12 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
         if let defaultImage = UIImage(systemName: "person.fill") {
-            cell.setUserImage(profileImage: defaultImage)
+            cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentPrimary))
         }
         let comment = firebaseCommentManager.modelList[indexPath.row]
         firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImagePath, imageSize: .small) { image in
             guard let image else { return }
-            cell.setUserImage(profileImage: image)
+            cell.setUserImage(profileImage: image, color: UIColor(color: .white), margin: 0)
         }
         cell.updateEnable = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
