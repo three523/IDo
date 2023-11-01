@@ -75,6 +75,11 @@ class MeetingViewController: UIViewController {
         titleLabel.textAlignment = .center
         
         navigationItem.titleView = titleLabel
+        
+        // 백 버튼 아이템 생성 및 설정
+        let backBarButtonItem = UIBarButtonItem(title: titleLabel.text, style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
     }
 
     private func setupEmptyMessageView() {

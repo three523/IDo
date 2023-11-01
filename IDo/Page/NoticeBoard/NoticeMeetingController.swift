@@ -9,6 +9,7 @@ import FirebaseAuth
 import FirebaseDatabase
 import Pageboy
 import Tabman
+import SnapKit
 import UIKit
 
 class NoticeMeetingController: TabmanViewController {
@@ -47,7 +48,7 @@ class NoticeMeetingController: TabmanViewController {
         tempView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 50))
         view.addSubview(tempView)
         tempView.snp.makeConstraints { make in
-            make.top.equalTo(100)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.equalTo(view.snp.leading)
             make.trailing.equalTo(view.snp.trailing)
             make.height.equalTo(30)
@@ -66,8 +67,23 @@ class NoticeMeetingController: TabmanViewController {
 
         let bar = TMBar.ButtonBar()
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
+        
+        // 탭 바의 배경 색상 설정
         bar.backgroundView.style = .flat(color: .white)
-
+        
+        // 탭 아이템의 글자 색상 설정
+        bar.buttons.customize { (button) in
+            
+            // 비활성화된 탭의 색상
+            button.tintColor = UIColor(color: .contentBackground)
+            
+            // 활성화된 탭의 색상
+            button.selectedTintColor = UIColor(color: .main)
+        }
+        
+        // 선택된 탭 아래에 나타나는 인디케이터의 색상 설정
+        bar.indicator.tintColor = UIColor(color: .main)
+        
         addBar(bar, dataSource: self, at: .custom(view: tempView!, layout: nil))
     }
 }
@@ -104,6 +120,12 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
 
     @objc func moveCreateVC() {
         let createNoticeBoardVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
+        
+        // 네비게이션 백 버튼의 이름 설정
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
+        
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
 
@@ -118,6 +140,11 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
 //        updateNoticeBoardVC.meetingImageURL = TemporaryManager.shared.meetingImageUrls[selectedIndex]
         TemporaryManager.shared.selectedMeetingId = club.id
 
+        // 네비게이션 백 버튼의 이름 설정
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
+        
         navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
     }
 
