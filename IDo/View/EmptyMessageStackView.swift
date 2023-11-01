@@ -102,7 +102,7 @@ private extension EmptyMessageStackView {
     }
 
     func imageViewSetup() {
-        basicImageView.backgroundColor = UIColor(color: .contentPrimary)
+        basicImageView.backgroundColor = UIColor(color: .contentBackground)
         basicImageView.layer.cornerRadius = imageSize / 2
     }
 
@@ -119,7 +119,7 @@ private extension EmptyMessageStackView {
         switch type {
         case .networkError:
             basicImageView.imageView.image = UIImage(systemName: "wifi.exclamationmark")
-            setColor(color: UIColor(color: .negative))
+            setColor(color: UIColor(color: .negative).withAlphaComponent(0.5))
             titleLabel.text = "인터넷 연결이 불안정 합니다"
             descriptionLabel.text = "인터넷을 연결하고 다시시도해주세요"
         case .noticeBoardEmpty:
