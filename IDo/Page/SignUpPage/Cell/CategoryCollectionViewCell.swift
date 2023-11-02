@@ -1,13 +1,7 @@
-//
-//  CategoryCollectionViewCell.swift
-//  IDo
-//
-//  Created by 김도현 on 2023/10/20.
-//
-
 import UIKit
 
 final class CategoryCollectionViewCell: UICollectionViewCell, Reusable {
+    let categoryImageView = UIImageView()
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
@@ -40,12 +34,20 @@ private extension CategoryCollectionViewCell {
     }
 
     func addViews() {
+        contentView.addSubview(categoryImageView)
         contentView.addSubview(titleLabel)
     }
 
     func setupAutolayout() {
+        categoryImageView.snp.makeConstraints { make in
+            make.centerX.equalTo(contentView)
+            make.centerY.equalTo(contentView).offset(-20)
+            make.width.height.equalTo(80)
+        }
+
         titleLabel.snp.makeConstraints { make in
-            make.edges.equalTo(contentView).inset(Constant.margin2)
+            make.top.equalTo(categoryImageView.snp.bottom).offset(10)
+            make.centerX.equalTo(contentView)
         }
     }
 }
