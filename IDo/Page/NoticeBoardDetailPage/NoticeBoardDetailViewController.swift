@@ -59,7 +59,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         firebaseCommentManager.update = { [weak self] in
             guard let self else { return }
             self.firebaseCommentManager.updateNoticeBoard()
@@ -75,7 +75,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         }
         setup()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -89,7 +89,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
     }
-
+    
 }
 
 private extension NoticeBoardDetailViewController {
@@ -149,7 +149,7 @@ private extension NoticeBoardDetailViewController {
             if noticeBoard.rootUser.id == currentUser?.uid {
                 // MARK: - 게시판 업데이트 로직
                 let updateHandler: (UIAlertAction) -> Void = { _ in
-                    let createNoticeVC = CreateNoticeBoardViewController(club: self.club, firebaseManager: self.firebaseNoticeBoardManager, index: self.editIndex, images: self.firebaseCommentManager.noticeBoardImages)
+                    let createNoticeVC = CreateNoticeBoardViewController(club: self.firebaseNoticeBoardManager.club, firebaseManager: self.firebaseNoticeBoardManager, index: self.editIndex, images: self.firebaseCommentManager.noticeBoardImages)
                     
                     self.firebaseNoticeBoardManager.selectedImage = self.firebaseCommentManager.noticeBoardImages
                     
@@ -164,7 +164,7 @@ private extension NoticeBoardDetailViewController {
                     self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                         if success {
                             self.firebaseCommentManager.deleteAllCommentList()
-                            self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                            self.firebaseNoticeBoardManager.readNoticeBoard()
                         }
                     }
                 }
@@ -176,10 +176,15 @@ private extension NoticeBoardDetailViewController {
                 let declarationHandler: (UIAlertAction) -> Void = { _ in
                     let spamHandler: (UIAlertAction) -> Void = { _ in
                         let okHandler: (UIAlertAction) -> Void = { _ in
+                            
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
+                                    var declarationCount = self.noticeBoard.rootUser.declarationCount ?? 0
+                                    declarationCount += 1
+                                    
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -190,7 +195,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -201,7 +207,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -212,7 +219,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -223,7 +231,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -234,7 +243,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -245,7 +255,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -256,7 +267,8 @@ private extension NoticeBoardDetailViewController {
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
                                     self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard(clubID: self.club.id)
+                                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    self.navigationController?.popViewController(animated: true)
                                 }
                             }
                         }
@@ -284,7 +296,7 @@ private extension NoticeBoardDetailViewController {
             let touchPoint = sender.location(in: commentTableView)
             if let indexPath = commentTableView.indexPathForRow(at: touchPoint) {
                 let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                                
+                
                 let cancelAction = UIAlertAction(title: "취소", style: .cancel)
                 let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
                     let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
@@ -325,7 +337,7 @@ private extension NoticeBoardDetailViewController {
             }
         }
     }
-        
+    
     func addCommentSetup() {
         if let imageData = MyProfile.shared.myUserInfo?.profileImage[ImageSize.small.rawValue],
            let image = UIImage(data: imageData) {
@@ -368,7 +380,7 @@ private extension NoticeBoardDetailViewController {
         let safeAreaBottomHeight = view.safeAreaInsets.bottom
         self.addCommentViewBottomConstraint?.update(inset: keyboardHeight - safeAreaBottomHeight)
     }
-
+    
     @objc func keyBoardWillHide(notification: NSNotification) {
         self.addCommentViewBottomConstraint?.update(inset: 0)
     }

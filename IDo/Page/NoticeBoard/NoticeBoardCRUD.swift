@@ -311,7 +311,7 @@ class FirebaseManager {
         }
     }
     
-    //MARK: 내 정보에 게시판 추가
+    //MARK: - 내 정보에 게시판 추가
     func addMyNoticeBoard(noticeBoard: NoticeBoard, completion: (() -> Void)? = nil) {
         guard var myInfo = MyProfile.shared.myUserInfo else { return }
         let ref = Database.database().reference().child("Users").child(myInfo.id)
@@ -324,7 +324,7 @@ class FirebaseManager {
         MyProfile.shared.update(myNoticeBoardList: noticeBoardList)
     }
     
-    //MARK: 내 정보에 게시판 추가
+    //MARK: - 내 정보에 게시판 추가
     func updateMyNoticeBoard(noticeBoard: NoticeBoard, completion: (() -> Void)? = nil) {
         guard var myInfo = MyProfile.shared.myUserInfo else { return }
         let ref = Database.database().reference().child("Users").child(myInfo.id)
@@ -337,7 +337,7 @@ class FirebaseManager {
         MyProfile.shared.update(myNoticeBoardList: noticeBoardList)
     }
     
-    //MARK: 내 정보에 게시판 추가
+    //MARK: - 내 정보에 게시판 추가
     func removeMyNoticeBoard(noticeBoard: NoticeBoard, completion: (() -> Void)? = nil) {
         guard var myInfo = MyProfile.shared.myUserInfo else { return }
         let ref = Database.database().reference().child("Users").child(myInfo.id)
@@ -347,5 +347,23 @@ class FirebaseManager {
         }
         noticeBoardList.removeAll(where: { $0.id == noticeBoard.id })
         MyProfile.shared.update(myNoticeBoardList: noticeBoardList)
+    }
+    
+    // MARK: - 신고 횟수 저장(noticeBoard에서 진행)
+    func updateDeclarationCount(userId: String, newCount: Int, completion: @escaping (Bool) -> Void) {
+        
+//        guard let myInfo = MyProfile.shared.myUserInfo else { return }
+//        let ref = Database.database().reference().child("Users").child(myInfo.toUserSummary.declarationCount)
+//        
+//        // 데이터베이스에 새 declarationCount 값을 저장
+//        ref.setValue(newCount) { (error, _) in
+//            if let error = error {
+//                print("Data could not be saved: \(error).")
+//                completion(false)
+//            } else {
+//                print("Data saved successfully!")
+//                completion(true)
+//            }
+//        }
     }
 }

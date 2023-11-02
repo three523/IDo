@@ -11,4 +11,5 @@ struct UserSummary: Codable, Identifier {
     let id: String
     var profileImagePath: String?
     var nickName: String
+    var declarationCount: Int?
 }
