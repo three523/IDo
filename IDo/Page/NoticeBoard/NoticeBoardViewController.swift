@@ -42,6 +42,8 @@ class NoticeBoardViewController: UIViewController {
         super.viewWillAppear(animated)
         
         firebaseManager.delegate = self
+        
+        
     }
     
     private func selectView() {
@@ -118,6 +120,12 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
 //        
 //        createVC.editingMemoIndex = indexPath.row
 //        createVC.isEditingMode = true
+        
+        // 네비게이션 백 버튼의 이름 설정
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
+        
         navigationController?.pushViewController(vc, animated: true)
     }
     

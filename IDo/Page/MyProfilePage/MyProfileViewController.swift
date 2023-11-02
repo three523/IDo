@@ -25,10 +25,10 @@ class MyProfileViewController: UIViewController {
     var writeMeTableView = UITableView()
     
     //로그아웃
-//    var logout = UIButton()
+    var logout = UIButton()
     
     //회원탈퇴
-//    var deleteID = UIButton()
+    var deleteID = UIButton()
     
     
     var isEdit = false
@@ -65,7 +65,7 @@ class MyProfileViewController: UIViewController {
     func makeSelfInfo() {
         selfInfo.text = "자기소개"
         selfInfo.textColor = .black
-        selfInfo.font = UIFont.bodyFont(.large, weight: .medium)
+        selfInfo.font = UIFont.bodyFont(.medium, weight: .medium)
     }
     func makeSelfInfoDetail() {
         selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
@@ -79,16 +79,27 @@ class MyProfileViewController: UIViewController {
     func makeWriteMe() {
         writeMe.text = "작성한 글"
         writeMe.textColor = .black
-        writeMe.font = UIFont.bodyFont(.large, weight: .medium)
+        writeMe.font = UIFont.bodyFont(.medium, weight: .medium)
     }
     func makeWriteMeTableView() {
         writeMeTableView.register(WriteMeTableViewCell.self, forCellReuseIdentifier: "Cell")
         writeMeTableView.dataSource = self
         writeMeTableView.delegate = self
     }
-//    func makeLogout() {
-//        logout.setTitle("로그아웃", for: .normal)
-//    }
+    func makeLogout() {
+        logout.setTitle("로그아웃", for: .normal)
+        logout.titleLabel?.font = UIFont.bodyFont(.medium, weight: .medium)
+        logout.setTitleColor(.black, for: .normal)
+        logout.backgroundColor = .none
+        logout.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
+    }
+    func makeDeleteID() {
+        deleteID.setTitle("회원탈퇴", for: .normal)
+        deleteID.setTitleColor(.red, for: .normal)
+        deleteID.titleLabel?.font = UIFont.bodyFont(.medium, weight: .medium)
+        deleteID.backgroundColor = .none
+        deleteID.addTarget(self, action: #selector(deleteIDButtonTapped), for: .touchUpInside)
+    }
     //로딩되는 뷰
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -99,7 +110,8 @@ class MyProfileViewController: UIViewController {
         makeSelfInfoDetail()
         makeWriteMe()
         makeWriteMeTableView()
-//        makeLogout()
+        makeLogout()
+        makeDeleteID()
         setLayout()
         profileEditControllerSet()
         navigationBarButtonAction()
@@ -126,6 +138,8 @@ class MyProfileViewController: UIViewController {
         view.addSubview(selfInfoDetail)
         view.addSubview(writeMe)
         view.addSubview(writeMeTableView)
+        view.addSubview(logout)
+        view.addSubview(deleteID)
         
         profileImage.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
@@ -136,43 +150,50 @@ class MyProfileViewController: UIViewController {
             make.top.equalTo(profileImage.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
             make.width.equalTo(70)
-            make.height.equalTo(40)
+            make.height.equalTo(45)
         }
         choiceEnjoy.snp.makeConstraints { make in
-            make.top.equalTo(profileName.snp.bottom).offset(5)
+            make.top.equalTo(profileName.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(80)
             make.width.equalTo(60)
             make.height.equalTo(35)
         }
         selfInfo.snp.makeConstraints { make in
             make.top.equalTo(choiceEnjoy.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(30)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
         selfInfoDetail.snp.makeConstraints { make in
             make.top.equalTo(selfInfo.snp.bottom).offset(5)
-            make.left.equalToSuperview().offset(30)
-            make.width.equalTo(330)
-            make.height.equalTo(130)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.width.equalTo(360)
+            make.height.equalTo(110)
         }
         writeMe.snp.makeConstraints { make in
             make.top.equalTo(selfInfoDetail.snp.bottom).offset(20)
-            make.left.equalToSuperview().offset(30)
+            make.leading.trailing.equalToSuperview().inset(20)
         }
         writeMeTableView.snp.makeConstraints { make in
             make.top.equalTo(writeMe.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(200)
+            make.height.equalTo(150)
         }
-//        logout.snp.makeConstraints { make in
-//            make.top.equalTo(writeMeTableView.snp.bottom).offset(0)
-//            make.leading.trailing.equalToSuperview().inset(20)
+        logout.snp.makeConstraints { make in
+            make.top.equalTo(writeMeTableView.snp.bottom).offset(15)
+            make.leading.equalTo(writeMeTableView).offset(90)
+            make.width.equalTo(70)
+            make.height.equalTo(30)
         }
+        deleteID.snp.makeConstraints { make in
+            make.centerY.equalTo(logout)
+            make.leading.equalTo(logout.snp.trailing).offset(20)
+            make.width.equalTo(70)
+            make.height.equalTo(30)
+        }
+    }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-    }
-    
-
+}
 
 //자기소개 300자 제한
 extension MyProfileViewController : UITextViewDelegate {
@@ -286,4 +307,40 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         
         picker.dismiss(animated: true, completion: nil)
     }
+    
+    @objc func logoutButtonTapped() {
+        let alertController = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
+        
+        // 취소 버튼 추가
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        // 로그아웃 버튼 추가
+        let logoutAction = UIAlertAction(title: "로그아웃", style: .destructive) { _ in
+            // 로그아웃 동작을 수행할 함수 호출
+//            self.performLogout()
+        }
+        alertController.addAction(logoutAction)
+        
+        // 알림창 표시
+        present(alertController, animated: true, completion: nil)
+    }
+    @objc func deleteIDButtonTapped() {
+        let alertController = UIAlertController(title: "회원탈퇴", message: "회원 탈퇴를 진행하시겠습니까?", preferredStyle: .alert)
+        
+        // 취소 버튼 추가
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        // 로그아웃 버튼 추가
+        let deleteIDAction = UIAlertAction(title: "회원탈퇴", style: .destructive) { _ in
+            // 로그아웃 동작을 수행할 함수 호출
+//            self.performLogout()
+        }
+        alertController.addAction(deleteIDAction)
+        
+        // 알림창 표시
+        present(alertController, animated: true, completion: nil)
+    }
 }
+
