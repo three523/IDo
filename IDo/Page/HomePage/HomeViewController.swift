@@ -27,7 +27,7 @@ class HomeViewController : UIViewController {
     func makeSuggestClub() {
         suggestClub.text = "이런 모임은 어떠신가요?"
         suggestClub.textColor = .black
-        suggestClub.font = .bodyFont(.medium  , weight: .medium)
+        suggestClub.font = .bodyFont(.medium  , weight: .bold)
     }
     func makeLine() {
         line.backgroundColor = UIColor(color: .textStrong)
@@ -44,7 +44,7 @@ class HomeViewController : UIViewController {
     func makeJoinClub() {
         joinClub.text = "가입한 모임"
         joinClub.textColor = UIColor(color: .textStrong)
-        joinClub.font = .bodyFont(.medium  , weight: .medium)
+        joinClub.font = .bodyFont(.medium  , weight: .bold)
     }
     func makeTableView2() {
         joinClubTableView.register(HomeViewcell.self, forCellReuseIdentifier: "Cell")
@@ -148,7 +148,7 @@ private extension HomeViewController {
         // 네비게이션 라벨 생성
         let label = UILabel()
         label.text = "i들아 모여라"
-        label.font = UIFont.headFont(.xSmall , weight: .medium)
+        label.font = UIFont.headFont(.xSmall , weight: .bold)
         label.textColor = UIColor(color: .borderSelected)
         let containerView = UIView(); containerView.addSubview(label)
         label.snp.makeConstraints { make in
