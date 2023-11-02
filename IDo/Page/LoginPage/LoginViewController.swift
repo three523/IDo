@@ -14,7 +14,6 @@ import UIKit
 class LoginViewController: UIViewController {
     private let loginView = LoginView()
     private let fbUserDatabaseManager: FBDatabaseManager<IDoUser> = FBDatabaseManager(refPath: ["Users"])
-
     var kakaoEmail: String = ""
     var kakaoPassword: String = ""
 
@@ -24,6 +23,9 @@ class LoginViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        loginView.signUpRightLabel.isUserInteractionEnabled = true
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(signUp))
+        loginView.signUpRightLabel.addGestureRecognizer(tapGesture)
 
         // Do any additional setup after loading the view.
         clickLoginButton()

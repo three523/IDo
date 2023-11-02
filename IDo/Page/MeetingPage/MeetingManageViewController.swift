@@ -4,6 +4,18 @@ import FirebaseStorage
 
 class MeetingManageViewController: UIViewController {
     
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        return scrollView
+    }()
+    
+    private let containerView: UIView = {
+           let view = UIView()
+           return view
+       }()
+    
+    var originalY: CGFloat?
     var meetingTitle: String?
     var meetingImageURL: String?
     var ref: DatabaseReference?
@@ -98,8 +110,7 @@ class MeetingManageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(meetingDescriptionField)
-        view.addSubview(placeholderLabel)
+        
         configureUI()
         meetingNameField.text = club.title
         meetingDescriptionField.text = club.description
@@ -112,51 +123,68 @@ class MeetingManageViewController: UIViewController {
     
     
     @objc func keyboardWillShow(notification: NSNotification) {
+        if originalY == nil {
+            originalY = self.view.frame.origin.y
+        }
+        
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let keyboardHeight = keyboardSize.height
-            manageFinishButton.snp.updateConstraints { (make) in
-                make.bottom.equalToSuperview().offset(-keyboardHeight)
-            }
-            UIView.animate(withDuration: 0.3) {
-                self.view.layoutIfNeeded()
-            }
+            let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+            self.view.frame.origin.y = originalY! - adjustmentHeight
         }
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-        manageFinishButton.snp.updateConstraints { (make) in
-            make.bottom.equalToSuperview().offset(-120)
+        if let originalY = originalY {
+            self.view.frame.origin.y = originalY
         }
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
-        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
 
     
     private func configureUI() {
         // UI 설정
-        view.addSubview(profileImageButton)
-//        view.addSubview(imageSetLabel)
-        view.addSubview(meetingNameField)
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerView)
         meetingNameField.delegate = self
-        view.addSubview(countMeetingNameField)
-        view.addSubview(manageFinishButton)
-        view.addSubview(countDescriptionField)
+        containerView.addSubview(profileImageButton)
+        containerView.addSubview(meetingNameField)
+        containerView.addSubview(countMeetingNameField)
+        containerView.addSubview(manageFinishButton)
+        containerView.addSubview(countDescriptionField)
+        containerView.addSubview(meetingDescriptionField)
+        containerView.addSubview(placeholderLabel)
         
+        
+        scrollView.snp.makeConstraints { (make) in
+                make.edges.equalToSuperview()
+            }
+
+            containerView.snp.makeConstraints { (make) in
+                make.top.bottom.leading.trailing.equalTo(scrollView)
+                make.width.equalTo(scrollView)
+            }
+        
+
+        let desiredAspectRatio: CGFloat = 3.0 / 4.0
+                
         profileImageButton.snp.makeConstraints { (make) in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(360)
-            make.height.equalTo(240)
+            make.top.equalTo(containerView.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+            make.centerX.equalTo(containerView)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
-        
+                
         meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(361)
+            make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin4)
+            make.centerX.equalTo(containerView)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
             make.height.equalTo(37)
         }
-        
+              
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 6, height: meetingNameField.frame.height))
         meetingNameField.leftView = leftPaddingView
         meetingNameField.leftViewMode = .always
@@ -165,30 +193,28 @@ class MeetingManageViewController: UIViewController {
             make.top.equalTo(meetingNameField.snp.bottom).offset(4)
             make.right.equalTo(meetingNameField.snp.right)
         }
-        
+                
         meetingDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(361)
-            make.height.equalTo(250)
+            make.centerX.equalTo(containerView)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.height.equalTo(200)
         }
         meetingDescriptionField.delegate = self
+        
         placeholderLabel.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField).offset(12)
             make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
         }
-        
-        
-        
+                
         manageFinishButton.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
+            make.centerX.equalTo(containerView)
             make.width.equalTo(140)
             make.height.equalTo(44)
-            make.bottom.equalToSuperview().offset(-120)
+            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
         }
-        
-        
+                
         countDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField.snp.bottom).offset(4)
             make.right.equalTo(meetingDescriptionField.snp.right)
@@ -243,8 +269,8 @@ class MeetingManageViewController: UIViewController {
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                let roundedImage = selectedImage.resizedAndRoundedImage()
-                profileImageButton.setImage(roundedImage, for: .normal)
+//                let roundedImage = selectedImage.resizedAndRoundedImage()
+                profileImageButton.setImage(selectedImage, for: .normal)
             }
             picker.dismiss(animated: true, completion: nil)
         }
