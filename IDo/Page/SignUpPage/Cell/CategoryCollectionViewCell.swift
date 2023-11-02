@@ -1,18 +1,27 @@
 import UIKit
 
 final class CategoryCollectionViewCell: UICollectionViewCell, Reusable {
-    let categoryImageView = UIImageView()
+    static let identifier = "CategoryCollectionViewCell"
+
+    let categoryImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.alpha = 0.5
+        return imageView
+    }()
+
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.medium, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
+        label.textAlignment = .center
         return label
     }()
 
     override var isSelected: Bool {
         didSet {
-            contentView.backgroundColor = isSelected ? UIColor(color: .contentPrimary) : UIColor(color: .backgroundPrimary)
-            titleLabel.textColor = isSelected ? UIColor(color: .white) : UIColor(color: .textStrong)
+            categoryImageView.alpha = isSelected ? 1.0 : 0.5
+            titleLabel.alpha = isSelected ? 1.0 : 0.5
         }
     }
 

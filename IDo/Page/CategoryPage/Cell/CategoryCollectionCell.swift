@@ -10,30 +10,51 @@ import SnapKit
 import UIKit
 
 class CategoryCollectionCell: UICollectionViewCell {
-    let categoryImageView = UIImageView()
-    let label = UILabel()
-      
+    static let identifier = "CategoryCollectionViewCell"
+
+    let categoryImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.alpha = 0.5
+        return imageView
+    }()
+
+    let label: UILabel = {
+        let label = UILabel()
+        label.font = .bodyFont(.medium, weight: .regular)
+        label.textColor = UIColor(color: .textStrong)
+        label.textAlignment = .center
+        return label
+    }()
+
+    override var isSelected: Bool {
+        didSet {
+            categoryImageView.alpha = isSelected ? 1.0 : 0.5
+            label.alpha = isSelected ? 1.0 : 0.5
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
     }
-      
+
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError()
     }
-      
+
     func setupViews() {
         addSubview(categoryImageView)
         addSubview(label)
-          
+
         categoryImageView.contentMode = .scaleAspectFit
         categoryImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(10).offset(70)
             make.centerX.equalToSuperview()
             make.height.width.equalTo(80)
         }
-          
+
         label.textAlignment = .center
         label.snp.makeConstraints { make in
             make.top.equalTo(categoryImageView.snp.bottom).offset(20)
