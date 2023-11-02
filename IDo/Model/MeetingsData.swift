@@ -29,6 +29,10 @@ class MeetingsData {
                 self.update()
                 completion(isSuccess)
             }
+            guard let myInfo = MyProfile.shared.myUserInfo else { return }
+            var myClubList = myInfo.myClubList ?? []
+            myClubList.append(club)
+            MyProfile.shared.update(myClubList: myClubList)
         }
     }
     

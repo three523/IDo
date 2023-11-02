@@ -9,7 +9,7 @@ import Foundation
 
 struct Club: Codable, Identifier {
     let id: String
-    var rootUser: UserSummary?
+    var rootUser: UserSummary
     var title: String
     var imageURL: String?
     var description: String

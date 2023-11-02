@@ -36,10 +36,6 @@ class MeetingViewController: UIViewController {
             self?.tableView.reloadData()
             self?.updateNoMeetingsViewVisibility()
         }
-//        meetingsData.readClub { _ in
-//            self.setupEmptyMessageView()
-//            self.updateNoMeetingsViewVisibility()
-//        }
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -200,15 +196,12 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        TemporaryManager.shared.meetingIndex = indexPath.row
-        TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
         let club = meetingsData.clubs[indexPath.row]
         var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
-        print(meetingsData.clubImages)
         
-        guard let currentUser = Auth.auth().currentUser else { return }
-        let isJoin = club.userList?.contains(where: { $0.id == currentUser.uid }) ?? false
+        guard let currentUser = MyProfile.shared.myUserInfo else { return }
+        let isJoin = club.userList?.contains(where: { $0.id == currentUser.id }) ?? false
         let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
         self.navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
