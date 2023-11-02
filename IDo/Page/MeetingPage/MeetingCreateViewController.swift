@@ -6,8 +6,11 @@ class MeetingCreateViewController: UIViewController {
     
 
     private let meetingsData: MeetingsData
+    
     let profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
+        
+         // contentmode 종류 봐보기
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
         return button
     }()
@@ -91,6 +94,13 @@ class MeetingCreateViewController: UIViewController {
                 return
             }
 
+        if !profileImageButton.profileImageChanged {
+                let alert = UIAlertController(title: "알림", message: "대표 사진은 필수입니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+        
         guard let myUserInfo = MyProfile.shared.myUserInfo else {
             print("현재 사용자 정보를 가져오지 못했습니다.")
             return
@@ -170,17 +180,21 @@ class MeetingCreateViewController: UIViewController {
         view.addSubview(meetingDescriptionField)
         view.addSubview(placeholderLabel)
         
+        let desiredAspectRatio: CGFloat = 3.0 / 4.0
+        
         profileImageButton.snp.makeConstraints { (make) in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
             make.centerX.equalToSuperview()
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin4)
+            make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
         
 
         
         meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
+            make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin4)
             make.centerX.equalToSuperview()
-            make.width.equalTo(361)
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin4)
             make.height.equalTo(37)
         }
         
@@ -196,8 +210,8 @@ class MeetingCreateViewController: UIViewController {
         meetingDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
             make.centerX.equalToSuperview()
-            make.width.equalTo(361)
-            make.height.equalTo(250)
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin4)
+            make.height.equalTo(200)
         }
         meetingDescriptionField.delegate = self
         placeholderLabel.snp.makeConstraints { (make) in
@@ -241,8 +255,9 @@ class MeetingCreateViewController: UIViewController {
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                let roundedImage = selectedImage.resizedAndRoundedImage()
-                profileImageButton.setImage(roundedImage, for: .normal)
+//                let roundedImage = selectedImage.resizedAndRoundedImage()
+                profileImageButton.setImage(selectedImage, for: .normal)
+                profileImageButton.profileImageChanged = true
             }
             picker.dismiss(animated: true, completion: nil)
         }

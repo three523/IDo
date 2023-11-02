@@ -143,17 +143,21 @@ class MeetingManageViewController: UIViewController {
         view.addSubview(manageFinishButton)
         view.addSubview(countDescriptionField)
         
+//        var imageWidth = UIScreen.main.bounds.width-40
+//        var imageHeight = UIScreen
+        let desiredAspectRatio: CGFloat = 3.0 / 4.0
+        
         profileImageButton.snp.makeConstraints { (make) in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
+            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
             make.centerX.equalToSuperview()
-            make.width.equalTo(360)
-            make.height.equalTo(240)
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin4)
+            make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
         
         meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
+            make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin4)
             make.centerX.equalToSuperview()
-            make.width.equalTo(361)
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin4)
             make.height.equalTo(37)
         }
         
@@ -169,8 +173,8 @@ class MeetingManageViewController: UIViewController {
         meetingDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
             make.centerX.equalToSuperview()
-            make.width.equalTo(361)
-            make.height.equalTo(250)
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin4)
+            make.height.equalTo(200)
         }
         meetingDescriptionField.delegate = self
         placeholderLabel.snp.makeConstraints { (make) in
@@ -243,8 +247,8 @@ class MeetingManageViewController: UIViewController {
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                let roundedImage = selectedImage.resizedAndRoundedImage()
-                profileImageButton.setImage(roundedImage, for: .normal)
+//                let roundedImage = selectedImage.resizedAndRoundedImage()
+                profileImageButton.setImage(selectedImage, for: .normal)
             }
             picker.dismiss(animated: true, completion: nil)
         }
