@@ -20,11 +20,9 @@ enum AuthState {
 
 final class NoticeMeetingController: TabmanViewController {
     private var viewControllers: [UIViewController] = []
-    private var tempView: UIView!
+    private var tempView: UIView = UIView()
     private let firebaseManager: FirebaseManager
     private var club: Club
-    private var isJoin: Bool
-    private var isRootUser: Bool = false
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     private let clubImage: UIImage
     private let HomeVC: NoticeHomeController
@@ -35,13 +33,14 @@ final class NoticeMeetingController: TabmanViewController {
         }
     }
 
-    init(club: Club, currentUser: MyUserInfo, isJoin: Bool, clubImage: UIImage) {
+    init(club: Club, currentUser: MyUserInfo, clubImage: UIImage) {
         self.club = club
         self.firebaseManager = FirebaseManager(club: club)
-        self.isRootUser = currentUser.id == club.rootUser.id
-        self.isJoin = isJoin
         self.clubImage = clubImage
         self.firebaseClubDatabaseManager = FirebaseClubDatabaseManager(refPath: [club.category,"meetings",club.id])
+        
+        let isJoin = club.userList?.contains(where: { $0.id == currentUser.id }) ?? false
+        
         self.HomeVC = NoticeHomeController(club: club, isJoin: isJoin, firebaseClubDataManager: firebaseClubDatabaseManager, clubImage: clubImage)
         super.init(nibName: nil, bundle: nil)
         firebaseClubDatabaseManager.readData()
@@ -58,32 +57,36 @@ final class NoticeMeetingController: TabmanViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         authCheck()
-        tempView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 50))
+        setupTabman()
+    }
+    
+    func setupTabman() {
         view.addSubview(tempView)
+        
         tempView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.equalTo(view.snp.leading)
             make.trailing.equalTo(view.snp.trailing)
             make.height.equalTo(30)
         }
-
-        let titleVC = NoticeBoardViewController(firebaseManager: firebaseManager)
-
-        viewControllers.append(HomeVC)
-        viewControllers.append(titleVC)
-
+        
+        setupTabmanViewController()
+        setupTabmanBar()
+        
         bounces = false
         dataSource = self
-
+        isScrollEnabled = false
+        
+    }
+    
+    private func setupTabmanBar() {
         let bar = TMBar.ButtonBar()
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
         
         // 탭 바의 배경 색상 설정
         bar.backgroundView.style = .flat(color: .white)
-        
         // 탭 아이템의 글자 색상 설정
         bar.buttons.customize { (button) in
-            
             // 비활성화된 탭의 색상
             button.tintColor = UIColor(color: .contentDisable)
             
@@ -94,48 +97,18 @@ final class NoticeMeetingController: TabmanViewController {
         // 선택된 탭 아래에 나타나는 인디케이터의 색상 설정
         bar.indicator.tintColor = UIColor(color: .main)
         
-        addBar(bar, dataSource: self, at: .custom(view: tempView!, layout: nil))
+        addBar(bar, dataSource: self, at: .custom(view: tempView, layout: nil))
+    }
+    
+    private func setupTabmanViewController() {
+        let titleVC = NoticeBoardViewController(firebaseManager: firebaseManager)
+
+        viewControllers.append(HomeVC)
+        viewControllers.append(titleVC)
     }
 }
 
-extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSource {
-    func numberOfViewControllers(in pageboyViewController: PageboyViewController) -> Int {
-        return viewControllers.count
-    }
-
-    func viewController(for pageboyViewController: PageboyViewController,
-                        at index: PageboyViewController.PageIndex) -> UIViewController?
-    {
-//        if index == 1 {
-//            if !isJoin {
-//                showAlert()
-//                return nil
-//            } else {
-//                let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC)) // 게시글 수정 페이지
-//                navigationItem.rightBarButtonItem = createButton
-//            }
-//        } else if isRootUser {
-//            let moreButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(moreAlert))
-//            navigationItem.rightBarButtonItem = moreButton
-//        } else if isJoin {
-//            let outButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .plain, target: self, action: #selector(outAlert))
-//            outButton.tintColor = UIColor(color: .negative)
-//            navigationItem.rightBarButtonItem = outButton // 모임 수정 페이지
-//        } else {
-//            navigationItem.rightBarButtonItem = nil
-//        }
-        if index == 1 {
-            if authState == .notMember {
-                showAlert()
-                return nil
-            }
-            let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
-            navigationItem.rightBarButtonItem = createButton
-        } else {
-            updateNavigationItme()
-        }
-        return viewControllers[index]
-    }
+extension NoticeMeetingController {
     
     private func authCheck() {
         guard let currentUser = MyProfile.shared.myUserInfo else { return }
@@ -148,7 +121,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
         }
     }
     
-    func updateNavigationItme() {
+    private func updateNavigationItme() {
         switch authState {
         case .root:
             let moreButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(moreAlert))
@@ -161,7 +134,7 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
             navigationItem.rightBarButtonItem = nil
         }
     }
-
+    
     func showAlert() {
         let alertController = UIAlertController(title: "알림", message: "모임에 가입한 회원만 이용 가능합니다.", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
@@ -245,6 +218,28 @@ extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSou
         navigationItem.backBarButtonItem = backBarButtonItem
         
         navigationController?.pushViewController(updateNoticeBoardVC, animated: true) // 모임 수정 페이지
+    }
+}
+
+extension NoticeMeetingController: PageboyViewControllerDataSource, TMBarDataSource {
+    func numberOfViewControllers(in pageboyViewController: PageboyViewController) -> Int {
+        return viewControllers.count
+    }
+
+    func viewController(for pageboyViewController: PageboyViewController,
+                        at index: PageboyViewController.PageIndex) -> UIViewController?
+    {
+        if index == 1 {
+            if authState == .notMember {
+                showAlert()
+                return nil
+            }
+            let createButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(moveCreateVC))
+            navigationItem.rightBarButtonItem = createButton
+        } else {
+            updateNavigationItme()
+        }
+        return viewControllers[index]
     }
 
     func defaultPage(for pageboyViewController: PageboyViewController) -> PageboyViewController.Page? {

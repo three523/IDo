@@ -24,6 +24,6 @@ struct MyUserInfo: Codable {
     }
     
     var toUserSummary: UserSummary {
-        return UserSummary(id: id, profileImagePath: profileImagePath, nickName: nickName)
+        return UserSummary(id: id, profileImagePath: profileImagePath, nickName: nickName, description: description)
     }
 }

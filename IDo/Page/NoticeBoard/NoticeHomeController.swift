@@ -10,16 +10,31 @@ import FirebaseDatabase
 import SnapKit
 import UIKit
 
+final class IntrinsicTableView: UITableView {
+
+    override var contentSize: CGSize {
+        didSet {
+            invalidateIntrinsicContentSize()
+        }
+    }
+
+
+    override var intrinsicContentSize: CGSize {
+        return CGSize(width: UIView.noIntrinsicMetric, height: contentSize.height)
+    }
+
+}
+
 final class NoticeHomeController: UIViewController {
     private var club: Club
     var signUpButtonUpdate: ((AuthState) -> Void)?
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     private let clubImage: UIImage
-    private let memberTableView: UITableView = {
-        let tableview = UITableView()
-//        tableview.estimatedRowHeight = UITableView.automaticDimension
+    private let memberTableView: IntrinsicTableView = {
+        let tableview = IntrinsicTableView()
+        tableview.rowHeight = 36 + 8 + 8
         tableview.isScrollEnabled = false
-        tableview.rowHeight = 50
+        tableview.separatorStyle = .none
         return tableview
     }()
     
@@ -95,7 +110,11 @@ final class NoticeHomeController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        firebaseClubDatabaseManager.readData()
+        firebaseClubDatabaseManager.readData { _ in
+            DispatchQueue.main.async {
+                self.memberTableView.reloadData()
+            }
+        }
     }
     
     @objc func handleSignUp() {
@@ -138,11 +157,9 @@ final class NoticeHomeController: UIViewController {
     
     private func setupAutoLayout() {
         let safeArea = view.safeAreaLayoutGuide
-        scrollStackViewContainer.snp.makeConstraints { make in
-            make.left.right.equalTo(scrollView.contentLayoutGuide).inset(Constant.margin4)
-            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
-            make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
-            make.width.equalTo(scrollView.frameLayoutGuide.snp.width).inset(Constant.margin4)
+        
+        imageView.snp.makeConstraints { make in
+            make.height.equalTo(150)
         }
         
         scrollView.snp.makeConstraints { make in
@@ -151,14 +168,17 @@ final class NoticeHomeController: UIViewController {
             make.bottom.equalTo(signUpButton.snp.top).offset(-10)
         }
         
+        scrollStackViewContainer.snp.makeConstraints { make in
+            make.left.right.equalTo(scrollView.contentLayoutGuide).inset(Constant.margin4)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
+            make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
+            make.width.equalTo(scrollView.frameLayoutGuide.snp.width).inset(Constant.margin4)
+        }
+        
         signUpButton.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.left.right.equalToSuperview().inset(Constant.margin4)
             make.bottom.equalTo(safeArea.snp.bottom).inset(20)
-        }
-        
-        imageView.snp.makeConstraints { make in
-            make.height.equalTo(150)
         }
     }
     
@@ -184,27 +204,45 @@ final class NoticeHomeController: UIViewController {
 }
 
 extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return club.userList?.count ?? 0
     }
     
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "맴버 목록"
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MemberTableViewCell.identifier, for: indexPath) as? MemberTableViewCell else { return UITableViewCell() }
+        cell.selectionStyle = .none
         if let userList = club.userList {
             let user = userList[indexPath.row]
             cell.nameLabel.text = user.nickName
+            cell.descriptionLabel.text = user.description
             guard let profilePath = user.profileImagePath else { return cell }
             FBURLCache.shared.downloadURL(storagePath: profilePath + "/\(ImageSize.small.rawValue)") { result in
                 switch result {
                 case .success(let image):
-                    cell.profileImage.imageView.image = image
-                    cell.profileImage.backgroundColor = UIColor(color: .white)
-                    cell.profileImage.contentMargin = 0
+                    DispatchQueue.main.async {
+                        cell.profileImageView.image = image
+                    }
+                    cell.profileImageView.backgroundColor = UIColor(color: .white)
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             }
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let removeAction = UIContextualAction(style: .normal, title: "삭제") { _, _, _ in
+            
+        }
+        removeAction.backgroundColor = UIColor(color: .negative)
+        let config = UISwipeActionsConfiguration(actions: [removeAction])
+        config.performsFirstActionWithFullSwipe = false
+        return config
     }
 }
