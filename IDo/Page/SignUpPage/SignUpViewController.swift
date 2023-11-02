@@ -369,6 +369,10 @@ private extension SignUpViewController {
             showAlertDialog(title: "경고", message: "비밀번호와 비밀번호 재확인이 일치하지 않습니다.")
             return
         }
+        guard checkButton.isSelected else {
+            showAlertDialog(title: "경고", message: "약관에 동의해주세요.")
+            return
+        }
         if authenticationNumberButton.title(for: .normal) != "완료" {
             if authenticationNumberTextField.text?.isEmpty == true {
                 showAlertDialog(title: "경고", message: "인증번호를 입력해주세요")
@@ -377,7 +381,7 @@ private extension SignUpViewController {
             }
             return
         }
-        
+
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] _, error in
             if let error = error {
                 let nsError = error as NSError
