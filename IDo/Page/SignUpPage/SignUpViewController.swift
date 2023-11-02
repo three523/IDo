@@ -324,9 +324,9 @@ private extension SignUpViewController {
             make.height.equalTo(15)
         }
         nextButton.snp.makeConstraints { make in
-            make.top.equalTo(termsStackView.snp.bottom).offset(Constant.margin3)
-            make.left.right.equalToSuperview().inset(Constant.margin4)
-            make.height.equalTo(contentHeight)
+            make.bottom.equalTo(safeArea).inset(Constant.margin3)
+            make.left.right.equalToSuperview().inset(Constant.margin3)
+            make.height.equalTo(48)
         }
     }
     
