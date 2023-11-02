@@ -6,7 +6,7 @@ final class CategoryCollectionViewCell: UICollectionViewCell, Reusable {
     let categoryImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.alpha = 0.5
+        imageView.alpha = 0.3
         return imageView
     }()
 
@@ -15,13 +15,14 @@ final class CategoryCollectionViewCell: UICollectionViewCell, Reusable {
         label.font = .bodyFont(.medium, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
         label.textAlignment = .center
+        label.alpha = 0.3
         return label
     }()
 
     override var isSelected: Bool {
         didSet {
-            categoryImageView.alpha = isSelected ? 1.0 : 0.5
-            titleLabel.alpha = isSelected ? 1.0 : 0.5
+            categoryImageView.alpha = isSelected ? 1.0 : 0.3
+            titleLabel.alpha = isSelected ? 1.0 : 0.3
         }
     }
 

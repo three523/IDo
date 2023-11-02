@@ -15,7 +15,6 @@ class CategoryCollectionCell: UICollectionViewCell {
     let categoryImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.alpha = 0.5
         return imageView
     }()
 
@@ -26,13 +25,6 @@ class CategoryCollectionCell: UICollectionViewCell {
         label.textAlignment = .center
         return label
     }()
-
-    override var isSelected: Bool {
-        didSet {
-            categoryImageView.alpha = isSelected ? 1.0 : 0.5
-            label.alpha = isSelected ? 1.0 : 0.5
-        }
-    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
