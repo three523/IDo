@@ -58,10 +58,6 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func updateMyCommentList() {
-        MyProfile.shared.update(myCommentList: modelList)
-    }
-    
     func deleteAllCommentList() {
         ref.removeValue { error, _ in
             if let error {

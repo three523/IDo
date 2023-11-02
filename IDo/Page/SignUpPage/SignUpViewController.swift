@@ -14,6 +14,7 @@ final class SignUpViewController: UIViewController {
     var smtp: SMTP!
     var verificationCode: String?
     var isEmailChecked: Bool = false
+    var isButtonClicked: Bool = false
 
     var passwordErrorLabel: UILabel = {
         let label = UILabel()
@@ -56,7 +57,8 @@ final class SignUpViewController: UIViewController {
 
     private let backButton: UIButton = {
         let button = UIButton()
-        button.setTitle("back", for: .normal)
+        button.setTitle("〈 뒤로가기", for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.setTitleColor(UIColor(color: .contentPrimary), for: .normal)
         return button
     }()
@@ -135,7 +137,7 @@ final class SignUpViewController: UIViewController {
     private let emailAuthorizationButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("인증", for: .normal)
-        btn.setTitleColor(UIColor(color: .text2), for: .normal)
+        btn.setTitleColor(UIColor(color: .white), for: .normal)
         btn.backgroundColor = UIColor(color: .contentPrimary)
         btn.layer.cornerRadius = 5
         return btn
@@ -144,7 +146,7 @@ final class SignUpViewController: UIViewController {
     private let authenticationNumberButton: UIButton = {
         let btn = UIButton()
         btn.setTitle("확인", for: .normal)
-        btn.setTitleColor(UIColor(color: .text2), for: .normal)
+        btn.setTitleColor(UIColor(color: .white), for: .normal)
         btn.backgroundColor = UIColor(color: .contentPrimary)
         btn.layer.cornerRadius = 5
         return btn
@@ -166,6 +168,9 @@ final class SignUpViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
@@ -181,6 +186,7 @@ private extension SignUpViewController {
         addViews()
         autolayoutSetup()
         setupButton()
+        setupKeyboardEvent()
         passwordTextField.delegate = self
         passwordConfirmTextField.delegate = self
     }
@@ -338,9 +344,9 @@ private extension SignUpViewController {
                 print(errorCode)
                 switch errorCode.code {
                 case .emailAlreadyInUse:
-                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다.")
+                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다. 다른 이메일을 사용해주세요.")
                     self?.emailAuthorizationButton.isEnabled = true
-                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .text2), for: .normal)
+                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .white), for: .normal)
                     self?.emailAuthorizationButton.backgroundColor = UIColor(color: .contentPrimary)
                     return
                 case .weakPassword:
@@ -393,7 +399,51 @@ private extension SignUpViewController {
         }
     }
     
+    func setupKeyboardEvent() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillShow),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(keyboardWillHide),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+    }
+    
+    @objc func keyboardWillShow(_ sender: Notification) {
+        // keyboardFrame: 현재 동작하고 있는 이벤트에서 키보드의 frame을 받아옴
+        // currentTextField: 현재 응답을 받고있는 UITextField를 알아냅니다.
+        guard let keyboardFrame = sender.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
+              let currentTextField = UIResponder.currentResponder as? UITextField else { return }
+        
+        // Y축으로 키보드의 상단 위치
+        let keyboardTopY = keyboardFrame.cgRectValue.origin.y
+        // 현재 선택한 텍스트 필드의 Frame 값
+        let convertedTextFieldFrame = view.convert(currentTextField.frame,
+                                                   from: currentTextField.superview)
+        // Y축으로 현재 텍스트 필드의 하단 위치
+        let textFieldBottomY = convertedTextFieldFrame.origin.y + convertedTextFieldFrame.size.height
+        
+        // Y축으로 텍스트필드 하단 위치가 키보드 상단 위치보다 클 때 (즉, 텍스트필드가 키보드에 가려질 때가 되겠죠!)
+        if textFieldBottomY > keyboardTopY {
+            let textFieldTopY = convertedTextFieldFrame.origin.y
+            // 노가다를 통해서 모든 기종에 적절한 크기를 설정함.
+            let newFrame = textFieldTopY - keyboardTopY / 1.6
+            view.frame.origin.y -= newFrame
+        }
+    }
+
+    @objc func keyboardWillHide(_ sender: Notification) {
+        if view.frame.origin.y != 0 {
+            view.frame.origin.y = 0
+        }
+    }
+
     @objc func addSMTPButton() {
+        guard isButtonClicked else {
+            showAlertDialog(title: "경고", message: "중복확인 버튼을 눌러주세요.")
+            return
+        }
         guard let emailText = emailTextField.text,
               !emailText.isEmpty,
               emailText.isValidEmail()
@@ -474,6 +524,8 @@ private extension SignUpViewController {
     }
     
     @objc func clickLinkButton() {
+        isButtonClicked = true
+        print("중복 확인 버튼이 클릭되었습니다")
         guard let email = emailTextField.text, !email.isEmpty else {
             showAlertDialog(title: "경고", message: "이메일을 입력해주세요.")
             return
@@ -550,5 +602,50 @@ extension SignUpViewController: UITextFieldDelegate {
             passwordConfirmErrorLabel.isHidden = false
             passwordConfirmErrorLabel.text = "비밀번호가 일치하지 않습니다."
         }
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if textField == emailTextField {
+            view.frame.origin.y = 0
+               
+        } else if textField == passwordTextField || textField == passwordConfirmTextField || textField == authenticationNumberTextField {
+            // 부드러운 효과를 위해 애니메이션 처리
+            UIView.animate(withDuration: 0.3) {
+                let transform = CGAffineTransform(translationX: 0, y: -100)
+                self.view.transform = transform
+            }
+        }
+    }
+       
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == emailTextField {
+            view.frame.origin.y = 0
+               
+        } else if textField == passwordTextField {
+            UIView.animate(withDuration: 0.3) {
+                let transform = CGAffineTransform(translationX: 0, y: 0)
+                self.view.transform = transform
+            }
+        }
+    }
+}
+
+extension UIResponder {
+    private enum Static {
+        weak static var responder: UIResponder?
+    }
+    
+    static var currentResponder: UIResponder? {
+        Static.responder = nil
+        UIApplication.shared.sendAction(#selector(UIResponder._trap), to: nil, from: nil, for: nil)
+        return Static.responder
+    }
+    
+    @objc private func _trap() {
+        Static.responder = self
     }
 }

@@ -86,7 +86,7 @@ class CreateNoticeBoardView: UIView {
 private extension CreateNoticeBoardView {
     
     func configureUI() {
-        backgroundColor = UIColor.white
+        backgroundColor = UIColor(color: .backgroundPrimary)
     }
     
     func addSubView() {

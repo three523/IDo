@@ -152,7 +152,7 @@ private extension CreateNoticeBoardViewController {
             guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
             guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
-            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText, clubID: club.id) { success in
+            firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText) { success in
                 if success {
                     print("게시판 생성 성공")
                 }
@@ -404,7 +404,7 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
         let imagePath = firebaseManager.noticeBoards[editingMemoIndex!].imageList![indexPath.row]
         
         // Firebase Storage에서 이미지를 삭제
-        firebaseManager.deleteImage(clubID: club.id, noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex!].id, imagePaths: [imagePath]) { success in
+        firebaseManager.deleteImage(noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex!].id, imagePaths: [imagePath]) { success in
             if success {
                 // 로컬에서 이미지를 삭제하고 Collection View를 업데이트
                 self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {

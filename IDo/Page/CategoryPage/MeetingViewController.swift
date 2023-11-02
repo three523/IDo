@@ -36,10 +36,6 @@ class MeetingViewController: UIViewController {
             self?.tableView.reloadData()
             self?.updateNoMeetingsViewVisibility()
         }
-//        meetingsData.readClub { _ in
-//            self.setupEmptyMessageView()
-//            self.updateNoMeetingsViewVisibility()
-//        }
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -76,6 +72,11 @@ class MeetingViewController: UIViewController {
         titleLabel.textAlignment = .center
         
         navigationItem.titleView = titleLabel
+        
+        // 백 버튼 아이템 생성 및 설정
+        let backBarButtonItem = UIBarButtonItem(title: titleLabel.text, style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
     }
 
     private func setupEmptyMessageView() {
@@ -101,6 +102,10 @@ class MeetingViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(BasicCell.self, forCellReuseIdentifier: "Cell")
+        tableView.rowHeight = UITableView.automaticDimension
+        
+        // 왼쪽 공백 없애기
+        tableView.separatorInset.left = 0
         
         view.addSubview(tableView)
     }
@@ -170,7 +175,9 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         let club = meetingsData.clubs[indexPath.row]
         cell.titleLabel.text = club.title
         cell.aboutLabel.text = club.description
-        cell.basicImageView.image = UIImage(named: "MeetingProfileImage")
+        cell.memberLabel.text = "멤버 \(club.userList?.count ?? 0)"
+        cell.basicImageView.backgroundColor = UIColor(color: .contentBackground)
+        cell.basicImageView.image = nil
         
         if let imageURL = club.imageURL {
             meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
@@ -189,15 +196,12 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        TemporaryManager.shared.meetingIndex = indexPath.row
-        TemporaryManager.shared.categoryData = TemporaryManager.shared.categoryData
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
         let club = meetingsData.clubs[indexPath.row]
         var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
-        print(meetingsData.clubImages)
         
-        guard let currentUser = Auth.auth().currentUser else { return }
-        let isJoin = club.userList?.contains(where: { $0.id == currentUser.uid }) ?? false
+        guard let currentUser = MyProfile.shared.myUserInfo else { return }
+        let isJoin = club.userList?.contains(where: { $0.id == currentUser.id }) ?? false
         let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
         self.navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
