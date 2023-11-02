@@ -29,6 +29,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var myProfileImage: UIImage?
     private var noticeBoard: NoticeBoard
     private let firebaseNoticeBoardManager: FirebaseManager
+    private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     weak var delegate: FirebaseManagerDelegate?
     
     private var editIndex: Int
@@ -38,6 +39,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         self.firebaseCommentManager = FirebaseCommentManaer(refPath: ["CommentList",noticeBoard.id], noticeBoard: noticeBoard)
         self.firebaseNoticeBoardManager = firebaseNoticeBoardManager
         self.editIndex = editIndex
+        self.firebaseClubDatabaseManager = FirebaseClubDatabaseManager(refPath: [firebaseNoticeBoardManager.club.category, "meetings", firebaseNoticeBoardManager.club.id])
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
         guard let profileImageURL = noticeBoard.rootUser.profileImagePath  else { return }
@@ -177,13 +179,40 @@ private extension NoticeBoardDetailViewController {
                     let spamHandler: (UIAlertAction) -> Void = { _ in
                         let okHandler: (UIAlertAction) -> Void = { _ in
                             
+                            let rootUser = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
+                            
+                            guard let rootUserIndex = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == rootUser.id}) else { return }
+                            
+                            // club에 있는 noticeboardList 지우기
+                            self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]) { success in
+                                
+                                self.firebaseNoticeBoardManager.club.noticeBoardList?.removeAll(where: {$0.id == self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].id})
+                                
+                                
+                            }
+                            
+                            // 그냥 noticeboardList에서 지우기
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
-                                    var declarationCount = self.noticeBoard.rootUser.declarationCount ?? 0
+                                    var declarationCount = self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount ?? 0
                                     declarationCount += 1
+                                    self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount = declarationCount
                                     
-                                    self.firebaseCommentManager.deleteAllCommentList()
+                                    self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: self.noticeBoard.rootUser.id, declarationCount: declarationCount)
+                                    
+                                    
                                     self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    
+                                    if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
+                                        
+                                        // club에 있는 유저 삭제
+                                        self.firebaseClubDatabaseManager.removeUser(user: self.noticeBoard.rootUser) { success in
+                                            if success {
+                                                // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
+                                                print("해당 작성자가 모임에서 방출되었습니다.")
+                                            }
+                                        }
+                                    }
                                     self.navigationController?.popViewController(animated: true)
                                 }
                             }
