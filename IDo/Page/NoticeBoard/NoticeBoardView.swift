@@ -38,7 +38,7 @@ private extension NoticeBoardView {
     
     // NoticeBoardView의 기본 UI 설정
     func configureUI() {
-        backgroundColor = UIColor.white
+        backgroundColor = UIColor(color: .backgroundPrimary)
     }
     
     // noticeBoardTableView를 SubView에 추가

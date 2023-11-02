@@ -44,8 +44,8 @@ class BasicCell: UITableViewCell {
 
     let basicImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = .black
-        imageView.layer.cornerRadius = 24
+        imageView.backgroundColor = UIColor(color: .contentBackground)
+        imageView.layer.cornerRadius = 22
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         return imageView
