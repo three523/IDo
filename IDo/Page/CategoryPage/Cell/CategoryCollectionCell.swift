@@ -29,14 +29,14 @@ class CategoryCollectionCell: UICollectionViewCell {
           
         categoryImageView.contentMode = .scaleAspectFit
         categoryImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(10)
+            make.top.equalToSuperview().inset(10).offset(70)
             make.centerX.equalToSuperview()
             make.height.width.equalTo(80)
         }
           
         label.textAlignment = .center
         label.snp.makeConstraints { make in
-            make.top.equalTo(categoryImageView.snp.bottom).offset(10)
+            make.top.equalTo(categoryImageView.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(10)
         }
     }

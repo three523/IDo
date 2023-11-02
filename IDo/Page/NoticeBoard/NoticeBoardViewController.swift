@@ -15,10 +15,8 @@ class NoticeBoardViewController: UIViewController {
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
     
     var firebaseManager: FirebaseManager
-    var club: Club
     
-    init(club: Club, firebaseManager: FirebaseManager) {
-        self.club = club
+    init(firebaseManager: FirebaseManager) {
         self.firebaseManager = firebaseManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -37,7 +35,7 @@ class NoticeBoardViewController: UIViewController {
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
         
-        firebaseManager.readNoticeBoard(clubID: club.id)
+        firebaseManager.readNoticeBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -101,7 +99,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], club: club, firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
+        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
         vc.delegate = self
 //        let createVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
 //        createVC.editingTitleText = firebaseManager.noticeBoards[indexPath.row].title
@@ -129,6 +127,36 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         navigationItem.backBarButtonItem = backBarButtonItem
         
         navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let currentNoticeBoard = firebaseManager.noticeBoards[indexPath.row]
+        
+        guard let currentUserID = Auth.auth().currentUser?.uid else {
+            return nil
+        }
+        
+        if currentNoticeBoard.rootUser.id == currentUserID {
+            let deleteNoticeBoardAction = UIContextualAction(style: .normal, title: nil) { (action, view, completion) in
+                self.firebaseManager.deleteNoticeBoard(at: indexPath.row) { success in
+                    if success {
+                        self.firebaseManager.readNoticeBoard()
+                    }
+                }
+                completion(true)
+            }
+            
+            deleteNoticeBoardAction.backgroundColor = .systemRed
+            deleteNoticeBoardAction.image = UIImage(systemName: "trash.fill")
+            
+            let configuration = UISwipeActionsConfiguration(actions: [deleteNoticeBoardAction])
+            configuration.performsFirstActionWithFullSwipe = false
+            return configuration
+        } else {
+            // 게시글 작성자와 현재 사용자가 다를 때
+            return UISwipeActionsConfiguration(actions: [])
+        }
     }
 }
 
