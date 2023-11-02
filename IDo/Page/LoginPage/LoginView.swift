@@ -36,7 +36,7 @@ class LoginView: UIView {
         imageView.image = UIImage(named: "logo")
         return imageView
     }()
-    
+
     private(set) var emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "이메일을 입력해주세요"
@@ -66,7 +66,7 @@ class LoginView: UIView {
         button.layer.cornerRadius = 5
         return button
     }()
-    
+
     private(set) lazy var signUpStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -75,7 +75,7 @@ class LoginView: UIView {
         stackView.spacing = 4
         return stackView
     }()
-    
+
     private(set) lazy var signUpLeftLabel: UILabel = {
         let label = UILabel()
         label.text = "처음 오셨나요?"
@@ -83,7 +83,7 @@ class LoginView: UIView {
         label.font = UIFont.bodyFont(.medium, weight: .medium)
         return label
     }()
-    
+
     private(set) lazy var signUpRightLabel: UILabel = {
         let label = UILabel()
         label.text = "이메일로 가입하기"
@@ -119,7 +119,7 @@ private extension LoginView {
         addSubview(loginButton)
         addSubview(signUpStackView)
     }
-    
+
     func addStackView() {
         signUpStackView.addArrangedSubview(signUpLeftLabel)
         signUpStackView.addArrangedSubview(signUpRightLabel)
@@ -134,13 +134,13 @@ private extension LoginView {
 //            make.width.equalTo(300)
 //            make.height.equalTo(45)
 //        }
-        
+
         logoImageView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(100)
             make.width.height.equalTo(100)
             make.centerX.equalToSuperview()
         }
-        
+
         emailTextField.snp.makeConstraints { make in
             make.top.equalTo(logoImageView.snp.bottom).offset(100)
             make.left.right.equalToSuperview().inset(Constant.margin4)
@@ -156,26 +156,26 @@ private extension LoginView {
             make.left.right.equalToSuperview().inset(Constant.margin4)
             make.height.equalTo(48)
         }
-        
+
         signUpStackView.snp.makeConstraints { make in
             make.top.equalTo(loginButton.snp.bottom).offset(Constant.margin4)
             make.left.right.equalToSuperview().inset(Constant.margin4)
         }
-        
+
         signUpButton.snp.makeConstraints { make in
             make.width.height.equalTo(17)
         }
-        
+
 //        signUpLeftLabel.snp.makeConstraints { make in
 //            make.top.equalTo(loginButton.snp.bottom).offset(Constant.margin3)
 //            make.left.equalTo(snp.left).offset(Constant.margin4)
 //        }
-//        
+//
 //        signUpRightLabel.snp.makeConstraints { make in
 //            make.top.equalTo(loginButton.snp.bottom).offset(Constant.margin3)
 //            make.left.equalTo(signUpLeftLabel.snp.right).offset(32)
 //        }
-//        
+//
 //        signUpButton.snp.makeConstraints { make in
 //            make.top.equalTo(loginButton.snp.bottom).offset(Constant.margin3)
 //            make.left.equalTo(signUpRightLabel.snp.right).offset(32)

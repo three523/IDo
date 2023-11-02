@@ -165,8 +165,8 @@ private extension NoticeBoardTableViewCell {
         
         headStackView.snp.makeConstraints { make in
             make.top.equalTo(contentView.snp.top).offset(Constant.margin2)
-            make.leading.equalTo(contentView.snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(contentView.snp.trailing).offset(-Constant.margin3)
+            make.leading.equalTo(contentView.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(contentView.snp.trailing).offset(-Constant.margin4)
         }
         
         profileImageView.snp.makeConstraints { make in
@@ -175,14 +175,14 @@ private extension NoticeBoardTableViewCell {
         
         bodyStackView.snp.makeConstraints { make in
             make.top.equalTo(headStackView.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(contentView.snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(contentView.snp.trailing).offset(-Constant.margin3)
+            make.leading.equalTo(contentView.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(contentView.snp.trailing).offset(-Constant.margin4)
         }
         
         footStackView.snp.makeConstraints { make in
             make.top.equalTo(bodyStackView.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(contentView.snp.leading).offset(Constant.margin3)
-            make.trailing.equalTo(contentView.snp.trailing).offset(-Constant.margin3)
+            make.leading.equalTo(contentView.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(contentView.snp.trailing).offset(-Constant.margin4)
             make.bottom.equalTo(contentView.snp.bottom).offset(-Constant.margin2)
         }
         

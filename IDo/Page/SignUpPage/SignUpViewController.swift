@@ -14,6 +14,7 @@ final class SignUpViewController: UIViewController {
     var smtp: SMTP!
     var verificationCode: String?
     var isEmailChecked: Bool = false
+    var isButtonClicked: Bool = false
 
     var passwordErrorLabel: UILabel = {
         let label = UILabel()
@@ -56,7 +57,8 @@ final class SignUpViewController: UIViewController {
 
     private let backButton: UIButton = {
         let button = UIButton()
-        button.setTitle("back", for: .normal)
+        button.setTitle("〈 뒤로가기", for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.setTitleColor(UIColor(color: .contentPrimary), for: .normal)
         return button
     }()
@@ -166,6 +168,9 @@ final class SignUpViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
@@ -339,9 +344,9 @@ private extension SignUpViewController {
                 print(errorCode)
                 switch errorCode.code {
                 case .emailAlreadyInUse:
-                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다.")
+                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다. 다른 이메일을 사용해주세요.")
                     self?.emailAuthorizationButton.isEnabled = true
-                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .text2), for: .normal)
+                    self?.emailAuthorizationButton.setTitleColor(UIColor(color: .white), for: .normal)
                     self?.emailAuthorizationButton.backgroundColor = UIColor(color: .contentPrimary)
                     return
                 case .weakPassword:
@@ -435,6 +440,10 @@ private extension SignUpViewController {
     }
 
     @objc func addSMTPButton() {
+        guard isButtonClicked else {
+            showAlertDialog(title: "경고", message: "중복확인 버튼을 눌러주세요.")
+            return
+        }
         guard let emailText = emailTextField.text,
               !emailText.isEmpty,
               emailText.isValidEmail()
@@ -515,6 +524,8 @@ private extension SignUpViewController {
     }
     
     @objc func clickLinkButton() {
+        isButtonClicked = true
+        print("중복 확인 버튼이 클릭되었습니다")
         guard let email = emailTextField.text, !email.isEmpty else {
             showAlertDialog(title: "경고", message: "이메일을 입력해주세요.")
             return

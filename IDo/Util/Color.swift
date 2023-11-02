@@ -27,6 +27,7 @@ enum Color: String, CaseIterable {
     case contentPrimary = "ContentPrimay"
     case contentPrimayPress = "ContentPrimary-Press"
     case contentBackground = "ContentBackground"
+    case contentDisable = "ContentDisable"
     
     //Border Colors
     case borderOpaque = "BorderOpaque"

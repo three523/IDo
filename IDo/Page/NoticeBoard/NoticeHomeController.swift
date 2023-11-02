@@ -126,6 +126,7 @@ final class NoticeHomeController: UIViewController {
     }
     
     private func addViews() {
+        view.backgroundColor = UIColor.white
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
         scrollStackViewContainer.addArrangedSubview(imageView)

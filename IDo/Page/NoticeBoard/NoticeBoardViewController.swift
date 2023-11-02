@@ -92,6 +92,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         }
         cell.nameLabel.text = firebaseManager.noticeBoards[indexPath.row].rootUser.nickName
         cell.commentLabel.text = firebaseManager.noticeBoards[indexPath.row].commentCount
+        cell.selectionStyle = .none
         return cell
     }
     
