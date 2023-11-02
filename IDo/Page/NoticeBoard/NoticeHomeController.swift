@@ -140,7 +140,7 @@ final class NoticeHomeController: UIViewController {
         let safeArea = view.safeAreaLayoutGuide
         scrollStackViewContainer.snp.makeConstraints { make in
             make.left.right.equalTo(scrollView.contentLayoutGuide).inset(Constant.margin4)
-            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(30)
             make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
             make.width.equalTo(scrollView.frameLayoutGuide.snp.width).inset(Constant.margin4)
         }
