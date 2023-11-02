@@ -30,7 +30,7 @@ class MyProfileViewController: UIViewController {
     //회원탈퇴
     var deleteID = UIButton()
     
-    
+    //수정화면 false 고정
     var isEdit = false
     
     func makeProfileImage() {
@@ -75,6 +75,7 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.layer.cornerRadius = 10
         selfInfoDetail.textContainerInset = UIEdgeInsets(top: 9, left: 8, bottom: 0, right: 9)
         selfInfoDetail.isUserInteractionEnabled = false
+        selfInfoDetail.isScrollEnabled = true
     }
     func makeWriteMe() {
         writeMe.text = "작성한 글"
@@ -166,7 +167,7 @@ class MyProfileViewController: UIViewController {
             make.top.equalTo(selfInfo.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
             make.width.equalTo(360)
-            make.height.equalTo(110)
+            make.height.equalTo(120)
         }
         writeMe.snp.makeConstraints { make in
             make.top.equalTo(selfInfoDetail.snp.bottom).offset(20)
@@ -175,7 +176,7 @@ class MyProfileViewController: UIViewController {
         writeMeTableView.snp.makeConstraints { make in
             make.top.equalTo(writeMe.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(150)
+            make.height.equalTo(180)
         }
         logout.snp.makeConstraints { make in
             make.top.equalTo(writeMeTableView.snp.bottom).offset(15)
@@ -203,7 +204,8 @@ extension MyProfileViewController : UITextViewDelegate {
         
         let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
         
-        if textView == selfInfoDetail {
+        selfInfoDetail.isScrollEnabled = true
+        if textView === selfInfoDetail {
             return chagedText.count <= 299
         }
         return true
@@ -269,6 +271,9 @@ private extension MyProfileViewController {
             
             writeMe.isHidden = true // "작성한글" title Label 숨기기
             writeMeTableView.isHidden = true // 작성한글 리스트 숨기기
+            logout.isHidden = true
+            deleteID.isHidden = true
+            
             
             //isEdit = false인 상태의 실행 코드
         } else {
@@ -279,6 +284,8 @@ private extension MyProfileViewController {
             
             writeMe.isHidden = false // 작성한글 title Label 나타내기
             writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
+            logout.isHidden = false
+            deleteID.isHidden = false
         }
     }
 }
