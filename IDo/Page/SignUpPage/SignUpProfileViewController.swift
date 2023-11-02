@@ -26,6 +26,10 @@ class SignUpProfileViewController: UIViewController {
         textField.textColor = UIColor(color: .textStrong)
         textField.placeholder = "닉네임을 입력해주세요(10자 이내)"
         textField.borderStyle = .roundedRect
+        textField.layer.cornerRadius = 5.0
+        textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
+        textField.layer.borderWidth = 1.0
+
         return textField
     }()
 
@@ -60,7 +64,7 @@ class SignUpProfileViewController: UIViewController {
         textView.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
         textView.textAlignment = .left
         textView.layer.cornerRadius = 5.0
-        textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor // 0.5는 투명도를 의미합니다.
+        textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
         textView.layer.borderWidth = 1.0
 
         return textView
@@ -282,7 +286,7 @@ extension SignUpProfileViewController: UITextViewDelegate {
         aboutUsLabel.isHidden = !textView.text.isEmpty
         countDescriptionLabel.text = "\(textView.text.count)/300"
 
-        if textView.text.count > 300 {
+        if textView.text.count >= 300 {
             shakeAnimation(for: countDescriptionLabel)
             countDescriptionLabel.textColor = .red
         } else {
@@ -294,7 +298,7 @@ extension SignUpProfileViewController: UITextViewDelegate {
         let currentText = textView.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
 
-        if prospectiveText.count > 301 {
+        if prospectiveText.count > 300 {
             return false
         }
         return true

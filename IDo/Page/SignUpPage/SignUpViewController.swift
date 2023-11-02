@@ -340,7 +340,7 @@ private extension SignUpViewController {
                 print(errorCode)
                 switch errorCode.code {
                 case .emailAlreadyInUse:
-                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다.")
+                    self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다. 다른 이메일을 사용해주세요.")
                     self?.emailAuthorizationButton.isEnabled = true
                     self?.emailAuthorizationButton.setTitleColor(UIColor(color: .white), for: .normal)
                     self?.emailAuthorizationButton.backgroundColor = UIColor(color: .contentPrimary)
