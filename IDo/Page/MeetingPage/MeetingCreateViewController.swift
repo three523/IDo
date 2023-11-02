@@ -5,12 +5,17 @@ import FirebaseStorage
 class MeetingCreateViewController: UIViewController {
     
 
+    private let scrollView: UIScrollView = {
+        let v = UIScrollView()
+        return v
+    }()
+    
     private let meetingsData: MeetingsData
+    // contentmode 종류 봐보기
+    
     
     let profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
-        
-         // contentmode 종류 봐보기
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
         return button
     }()
@@ -134,7 +139,7 @@ class MeetingCreateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupCreateButton()
         updateFinishButtonState()
         configureUI()
