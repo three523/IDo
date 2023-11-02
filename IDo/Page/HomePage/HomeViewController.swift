@@ -153,7 +153,7 @@ private extension HomeViewController {
         // 네비게이션 라벨 생성
         let label = UILabel()
         label.text = "i들아 모여라"
-        label.font = UIFont.headFont(.xSmall , weight: .medium)
+        label.font = UIFont.headFont(.xSmall , weight: .bold)
         label.textColor = UIColor(color: .borderSelected)
         let containerView = UIView(); containerView.addSubview(label)
         label.snp.makeConstraints { make in
