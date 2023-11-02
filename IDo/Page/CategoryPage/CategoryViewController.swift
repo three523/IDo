@@ -11,11 +11,11 @@ import UIKit
 class CategoryViewController: UICollectionViewController {
     let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
     let categoryImage = [UIImage(named: "develop"), UIImage(named: "photo"), UIImage(named: "music"), UIImage(named: "game"), UIImage(named: "travel"), UIImage(named: "dance"), UIImage(named: "animal"), UIImage(named: "fishing"), UIImage(named: "exercise")]
-    
 
     init() {
         let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
             // 아이템 크기
+
             let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1 / 3), heightDimension: .absolute(150))
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
@@ -66,13 +66,17 @@ class CategoryViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         let selectedCategory = categoryData[indexPath.row]
         let meetingsData = MeetingsData(category: selectedCategory)
         let meetingVC = MeetingViewController(meetingsData: meetingsData)
+
+        // 네비게이션 백 버튼의 이름 설정
+        let backBarButtonItem = UIBarButtonItem(title: "카테고리", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
+
         TemporaryManager.shared.categoryData = selectedCategory
-        
-        
+
         navigationController?.pushViewController(meetingVC, animated: true)
     }
 }

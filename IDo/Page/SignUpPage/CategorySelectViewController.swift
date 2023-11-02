@@ -28,17 +28,37 @@ final class CategorySelectViewController: UIViewController {
     }()
 
     private let categoryCollectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.minimumInteritemSpacing = Constant.margin2
-        flowLayout.minimumLineSpacing = Constant.margin2
-        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
-        flowLayout.scrollDirection = .vertical
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+//        let flowLayout = UICollectionViewFlowLayout()
+//        flowLayout.minimumInteritemSpacing = Constant.margin2
+//        flowLayout.minimumLineSpacing = Constant.margin2
+//        flowLayout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+//        flowLayout.scrollDirection = .vertical
+        let layout = UICollectionViewCompositionalLayout { (_: Int, _: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection? in
+            // 아이템 크기
+
+            let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1 / 3), heightDimension: .absolute(150))
+            // 셀의 사이즈
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            // 그룹 크기 ( 셀을 포함 )
+            let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150))
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: 3)
+            group.interItemSpacing = .fixed(10) // 아이템 간 간격
+
+            // 섹션
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 10 // 그룹 간 간격
+            section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10) // 섹션의 인셋
+
+            return section
+        }
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.allowsMultipleSelection = true
         return collectionView
     }()
 
     private let categoryData = ["IT•개발", "사진•영상", "음악•악기", "게임•오락", "여행•맛집", "댄스•공연", "동물•식물", "낚시•캠핑", "운동•스포츠"]
+    let categoryImage = [UIImage(named: "develop"), UIImage(named: "photo"), UIImage(named: "music"), UIImage(named: "game"), UIImage(named: "travel"), UIImage(named: "dance"), UIImage(named: "animal"), UIImage(named: "fishing"), UIImage(named: "exercise")]
     private let email: String
     private let password: String
     private var selectedCategorys: [String] = [] {
@@ -64,6 +84,9 @@ final class CategorySelectViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .black
+        navigationItem.backBarButtonItem = backBarButtonItem
         setup()
     }
 }
@@ -120,8 +143,7 @@ extension CategorySelectViewController: UICollectionViewDelegate, UICollectionVi
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryCollectionViewCell.identifier, for: indexPath) as? CategoryCollectionViewCell else { return UICollectionViewCell() }
         cell.titleLabel.text = categoryData[indexPath.row]
-        cell.layer.borderColor = UIColor(color: .black).cgColor
-        cell.layer.borderWidth = 1
+        cell.categoryImageView.image = categoryImage[indexPath.row]
         return cell
     }
 

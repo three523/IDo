@@ -26,17 +26,19 @@ class HomeViewController : UIViewController {
     
     func makeSuggestClub() {
         suggestClub.text = "이런 모임은 어떠신가요?"
-        suggestClub.textColor = .black
-        suggestClub.font = .bodyFont(.medium  , weight: .bold)
+        suggestClub.textColor = UIColor(color: .textStrong)
+        suggestClub.font = .bodyFont(.large, weight: .bold)
     }
     func makeLine() {
         line.backgroundColor = UIColor(color: .textStrong)
     }
     func makeTableView() {
-        suggestTableView.register(HomeViewcell.self, forCellReuseIdentifier: "Cell")
+        suggestTableView.register(BasicCell.self, forCellReuseIdentifier: "Cell")
         suggestTableView.dataSource = self
         suggestTableView.delegate = self
         suggestTableView.separatorStyle = .none
+        suggestTableView.rowHeight = UITableView.automaticDimension
+        suggestTableView.isScrollEnabled = false
     }
     func makeLine2() {
         line2.backgroundColor = UIColor(color: .textStrong)
@@ -44,12 +46,15 @@ class HomeViewController : UIViewController {
     func makeJoinClub() {
         joinClub.text = "가입한 모임"
         joinClub.textColor = UIColor(color: .textStrong)
-        joinClub.font = .bodyFont(.medium  , weight: .bold)
+        joinClub.font = .bodyFont(.large, weight: .bold)
     }
     func makeTableView2() {
-        joinClubTableView.register(HomeViewcell.self, forCellReuseIdentifier: "Cell")
+        joinClubTableView.register(BasicCell.self, forCellReuseIdentifier: "Cell")
         joinClubTableView.dataSource = self
         joinClubTableView.delegate = self
+        joinClubTableView.separatorInset.left = 20
+        joinClubTableView.separatorInset.right = 20
+        joinClubTableView.rowHeight = UITableView.automaticDimension
     }
     
     override func viewDidLoad() {
@@ -60,7 +65,6 @@ class HomeViewController : UIViewController {
         makeLine2()
         makeTableView()
         makeTableView2()
-        joinClubTableView.rowHeight = UITableView.automaticDimension
         HomeViewTopControllerSet()
         navigationBar()
         setLayout()
@@ -75,32 +79,34 @@ class HomeViewController : UIViewController {
         
         suggestClub.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.leading.equalToSuperview().offset(Constant.margin4)
         }
         line.snp.makeConstraints { make in
-            make.top.equalTo(suggestClub.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(suggestClub.snp.bottom).offset(Constant.margin2)
+            make.leading.equalToSuperview().offset(Constant.margin4)
+            make.trailing.equalToSuperview().offset(-Constant.margin4)
             make.height.equalTo(1)
         }
         suggestTableView.snp.makeConstraints { make in
-            make.top.equalTo(line.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(100)
+            make.top.equalTo(line.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(78)
         }
+        
         joinClub.snp.makeConstraints { make in
-            make.top.equalTo(suggestTableView.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(suggestTableView.snp.bottom).offset(Constant.margin4)
+            make.leading.equalToSuperview().offset(Constant.margin4)
         }
         line2.snp.makeConstraints { make in
-            make.top.equalTo(joinClub.snp.bottom).offset(10)
-            make.left.equalToSuperview().offset(20)
-            make.width.equalTo(350)
+            make.top.equalTo(joinClub.snp.bottom).offset(Constant.margin2)
+            make.leading.equalToSuperview().offset(Constant.margin4)
+            make.trailing.equalToSuperview().offset(-Constant.margin4)
             make.height.equalTo(1)
         }
         joinClubTableView.snp.makeConstraints { make in
-            make.top.equalTo(line2.snp.bottom).offset(3)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(200)
+            make.top.equalTo(line2.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         
     }
@@ -108,9 +114,9 @@ class HomeViewController : UIViewController {
 
 
 extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return 75
+//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == suggestTableView {
@@ -120,18 +126,17 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HomeViewcell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
         if tableView == suggestTableView {
-            cell.clubname1.text = suggestClubList
-            cell.clubname2.text = suggestClubInfo
-            cell.clubname3.text = suggestClubMember
+            cell.titleLabel.text = suggestClubList
+            cell.aboutLabel.text = suggestClubInfo
+            cell.memberLabel.text = suggestClubMember
         } else {
-            cell.clubname1.text = joinClubList[indexPath.row]
-            cell.clubname2.text = joinClubInfo[indexPath.row]
-            cell.clubname3.text = joinClubMember[indexPath.row]
+            cell.titleLabel.text = joinClubList[indexPath.row]
+            cell.aboutLabel.text = joinClubInfo[indexPath.row]
+            cell.memberLabel.text = joinClubMember[indexPath.row]
         }
-        cell.clubView.image = UIImage(systemName: "photo")
-        cell.clubView.frame = CGRect(x: 55, y: 10, width: 30, height: 30)
+        cell.selectionStyle = .none
         return cell
     }
 }
@@ -158,6 +163,3 @@ private extension HomeViewController {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: containerView)
     }
 }
-
-
-

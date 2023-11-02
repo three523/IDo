@@ -29,6 +29,10 @@ class MeetingsData {
                 self.update()
                 completion(isSuccess)
             }
+            guard let myInfo = MyProfile.shared.myUserInfo else { return }
+            var myClubList = myInfo.myClubList ?? []
+            myClubList.append(club)
+            MyProfile.shared.update(myClubList: myClubList)
         }
     }
     
@@ -44,19 +48,7 @@ class MeetingsData {
                 completion?(false)
                 return
             }
-            var tempClubs = [Club]()
-            for (_, item) in value {
-                if let itemDict = item as? [String: Any],
-                   let id = itemDict["id"] as? String,
-                   let description = itemDict["description"] as? String,
-                   let title = itemDict["title"] as? String,
-                   let imageURL = itemDict["imageURL"] as? String,
-                    let category = itemDict["category"] as? String
-                {
-                    let club = Club(id: id, title: title, imageURL: imageURL, description: description, category: category)
-                    tempClubs.append(club)
-                }
-            }
+            let tempClubs: [Club] = DataModelCodable.decodingDataSnapshot(value: value)
             self.clubs = tempClubs.sorted(by: {$0.title.count < $1.title.count})
             completion?(true)
             self.update()

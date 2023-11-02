@@ -71,7 +71,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
                 return
             }
             
-            let dataList: [T] = self.decodingDataSnapshot(value: value)
+            let dataList: [T] = DataModelCodable.decodingDataSnapshot(value: value)
             completion(.success(dataList))
             
             self.modelList = dataList
@@ -100,7 +100,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
                 return
             }
             
-            guard let data: T = self.decodingSingleDataSnapshot(value: value) else {
+            guard let data: T = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
                 print("decoding error")
                 return
             }
@@ -159,46 +159,5 @@ class FBDatabaseManager<T: Codable & Identifier> {
             self.modelList.removeAll(where: { $0.id == data.id })
             completion(true)
         }
-    }
-    
-    func decodingDataSnapshot<T: Decodable>(value: [String: Any]) -> [T] {
-        let commentTestList: [T] = value.compactMap { key, value in
-            let comment: T? = decodingSingleDataSnapshot(value: value)
-            return comment
-        }
-        return commentTestList
-    }
-    
-    private func getDecodingData<T: Decodable>(dataSnapshot: DataSnapshot) -> T? {
-        guard let value = dataSnapshot.value as? [String: Any] else { return nil }
-        guard let data: T = self.decodingSingleDataSnapshot(value: value) else { return  nil }
-        return data
-    }
-    
-    func decodingSingleDataSnapshot<T: Decodable>(value: Any) -> T? {
-        let decoder = JSONDecoder()
-        guard let data = try? JSONSerialization.data(withJSONObject: value) else { return nil }
-        do {
-            let data = try JSONSerialization.data(withJSONObject: value)
-            let result = try decoder.decode(T.self, from: data)
-            
-            return result
-        } catch DecodingError.dataCorrupted(let context) {
-            // 데이터가 손상된 경우 처리
-            print("Data Corrupted: \(context.debugDescription)")
-        } catch DecodingError.keyNotFound(let key, let context) {
-            // 키를 찾을 수 없는 경우 처리
-            print("Key Not Found: \(key.stringValue) in \(context.debugDescription)")
-        } catch DecodingError.typeMismatch(_, let context) {
-            // 타입 불일치 오류 처리
-            print("Type Mismatch: \(context.debugDescription)")
-        } catch DecodingError.valueNotFound(_, let context) {
-            // 값을 찾을 수 없는 경우 처리
-            print("Value Not Found: \(context.debugDescription)")
-        } catch {
-            // 기타 디코딩 오류 처리
-            print("Error decoding JSON: \(error)")
-        }
-        return nil
     }
 }

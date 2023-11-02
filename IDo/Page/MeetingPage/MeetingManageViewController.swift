@@ -32,14 +32,6 @@ class MeetingManageViewController: UIViewController {
         return button
     }()
     
-    let imageSetLabel: UILabel = {
-        let label = UILabel()
-        label.text = "대표 사진"
-        label.font = UIFont(name: "SF Pro", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .regular)
-        label.textAlignment = .center
-        return label
-    }()
-    
     let meetingNameField: UITextField = {
         let textField = UITextField()
         textField.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
@@ -112,36 +104,39 @@ class MeetingManageViewController: UIViewController {
         meetingNameField.text = club.title
         meetingDescriptionField.text = club.description
         profileImageButton.setImage(clubImage, for: .normal)
-        //            // 캐시에서 이미지 확인
-        //            if let cachedImage = ImageCache.shared.getImage(for: imageUrlString) {
-        //                if let resizedImage = cachedImage.resized(to: CGSize(width: 120, height: 120)) {
-        //                    self.profileImageButton.setImage(resizedImage, for: .normal)
-        //                }
-        //            } else {
-        //                // 캐시에 이미지 없는 경우
-        //                if let url = URL(string: imageUrlString) {
-        //                    URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-        //                        if let data = data, let image = UIImage(data: data) {
-        //                            if let resizedImage = image.resized(to: CGSize(width: 120, height: 120)) {
-        //                                DispatchQueue.main.async {
-        //                                    self?.profileImageButton.setImage(resizedImage, for: .normal)
-        //                                    ImageCache.shared.cacheImage(resizedImage, for: imageUrlString)
-        //                                }
-        //                            }
-        //                        }
-        //                    }.resume()
-        //                }
-        //            }
-        //        }
-        
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
+    
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            manageFinishButton.snp.updateConstraints { (make) in
+                make.bottom.equalToSuperview().offset(-keyboardHeight)
+            }
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        manageFinishButton.snp.updateConstraints { (make) in
+            make.bottom.equalToSuperview().offset(-120)
+        }
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
     
     private func configureUI() {
         // UI 설정
         view.addSubview(profileImageButton)
-        view.addSubview(imageSetLabel)
+//        view.addSubview(imageSetLabel)
         view.addSubview(meetingNameField)
         meetingNameField.delegate = self
         view.addSubview(countMeetingNameField)
@@ -151,17 +146,12 @@ class MeetingManageViewController: UIViewController {
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
             make.centerX.equalToSuperview()
-            make.width.equalTo(120)
-            make.height.equalTo(120)
-        }
-        
-        imageSetLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
+            make.width.equalTo(360)
+            make.height.equalTo(240)
         }
         
         meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(imageSetLabel.snp.bottom).offset(12)
+            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
             make.centerX.equalToSuperview()
             make.width.equalTo(361)
             make.height.equalTo(37)
@@ -182,12 +172,12 @@ class MeetingManageViewController: UIViewController {
             make.width.equalTo(361)
             make.height.equalTo(250)
         }
-        
+        meetingDescriptionField.delegate = self
         placeholderLabel.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField).offset(12)
             make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
         }
-        meetingDescriptionField.delegate = self
+        
         
         
         manageFinishButton.snp.makeConstraints { (make) in
@@ -195,6 +185,7 @@ class MeetingManageViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.width.equalTo(140)
             make.height.equalTo(44)
+            make.bottom.equalToSuperview().offset(-120)
         }
         
         
@@ -251,12 +242,12 @@ class MeetingManageViewController: UIViewController {
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            let circularImage = selectedImage.circularImage(size: profileImageButton.bounds.size)
-            profileImageButton.setImage(circularImage, for: .normal)
+            if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                let roundedImage = selectedImage.resizedAndRoundedImage()
+                profileImageButton.setImage(roundedImage, for: .normal)
+            }
+            picker.dismiss(animated: true, completion: nil)
         }
-        picker.dismiss(animated: true, completion: nil)
-    }
 }
 
 
