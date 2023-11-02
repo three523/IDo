@@ -15,10 +15,8 @@ class NoticeBoardViewController: UIViewController {
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
     
     var firebaseManager: FirebaseManager
-    var club: Club
     
-    init(club: Club, firebaseManager: FirebaseManager) {
-        self.club = club
+    init(firebaseManager: FirebaseManager) {
         self.firebaseManager = firebaseManager
         super.init(nibName: nil, bundle: nil)
     }
@@ -37,7 +35,7 @@ class NoticeBoardViewController: UIViewController {
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
         
-        firebaseManager.readNoticeBoard(clubID: club.id)
+        firebaseManager.readNoticeBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,7 +96,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], club: club, firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
+        let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
         vc.delegate = self
 //        let createVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
 //        createVC.editingTitleText = firebaseManager.noticeBoards[indexPath.row].title
@@ -134,7 +132,7 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
             let deleteNoticeBoardAction = UIContextualAction(style: .normal, title: nil) { (action, view, completion) in
                 self.firebaseManager.deleteNoticeBoard(at: indexPath.row) { success in
                     if success {
-                        self.firebaseManager.readNoticeBoard(clubID: self.club.id)
+                        self.firebaseManager.readNoticeBoard()
                     }
                 }
                 completion(true)

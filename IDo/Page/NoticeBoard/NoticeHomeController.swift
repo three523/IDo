@@ -10,14 +10,18 @@ import FirebaseDatabase
 import SnapKit
 import UIKit
 
-class NoticeHomeController: UIViewController {
-    var meetingId: String?
-    var categoryData: String?
-    var meetingIndex: Int?
-    var club: Club
-    var signUpButtonUpdate: ((Bool) -> Void)?
-    let fbUserDatabaseManager: FirebaseUserDatabaseManager
-    let clubImage: UIImage
+final class NoticeHomeController: UIViewController {
+    private var club: Club
+    var signUpButtonUpdate: ((AuthState) -> Void)?
+    private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
+    private let clubImage: UIImage
+    private let memberTableView: UITableView = {
+        let tableview = UITableView()
+//        tableview.estimatedRowHeight = UITableView.automaticDimension
+        tableview.isScrollEnabled = false
+        tableview.rowHeight = 50
+        return tableview
+    }()
     
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
@@ -53,30 +57,27 @@ class NoticeHomeController: UIViewController {
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.isScrollEnabled = true
-        scrollView.scrollsToTop = true
         return scrollView
     }()
     
     private let scrollStackViewContainer: UIStackView = {
         let view = UIStackView()
-        view.alignment = .center
+        view.alignment = .fill
         view.axis = .vertical
         view.distribution = .fill
         view.spacing = 25
         return view
     }()
     
-    init(club: Club, isJoin: Bool, fbUserDatabaseManager: FirebaseUserDatabaseManager, clubImage: UIImage) {
+    init(club: Club, isJoin: Bool, firebaseClubDataManager: FirebaseClubDatabaseManager, clubImage: UIImage) {
         self.clubImage = clubImage
         self.club = club
-        self.fbUserDatabaseManager = fbUserDatabaseManager
+        self.firebaseClubDatabaseManager = firebaseClubDataManager
         super.init(nibName: nil, bundle: nil)
         signUpButton.isHidden = isJoin
-        guard let myInfo = MyProfile.shared.myUserInfo else { return }
-        self.fbUserDatabaseManager.update = { [weak self] in
+        self.firebaseClubDatabaseManager.update = { [weak self] in
             guard let userInfo = MyProfile.shared.myUserInfo,
-                  let joinUserList = self?.fbUserDatabaseManager.model?.userList else { return }
+                  let joinUserList = self?.firebaseClubDatabaseManager.model?.userList else { return }
             self?.signUpButton.isHidden = joinUserList.contains(where: { $0.id == userInfo.id })
         }
     }
@@ -94,7 +95,7 @@ class NoticeHomeController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fbUserDatabaseManager.readData()
+        firebaseClubDatabaseManager.readData()
     }
     
     @objc func handleSignUp() {
@@ -105,68 +106,71 @@ class NoticeHomeController: UIViewController {
     
     private func addUser() {
         guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
-        fbUserDatabaseManager.appendUser(user: idoUser.toUserSummary)
+        firebaseClubDatabaseManager.appendUser(user: idoUser.toUserSummary) { isCompleted in
+            if isCompleted { self.signUpButton.isHidden = isCompleted }
+            let authState: AuthState = isCompleted ? .member : .notMember
+            self.signUpButtonUpdate?(authState)
+        }
     }
     
     private func addMyClubList() {
         var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
         myClubList.append(club)
-        MyProfile.shared.update(myClubList: myClubList) { isCompleted in
-            if isCompleted { self.signUpButton.isHidden = isCompleted }
-            self.signUpButtonUpdate?(isCompleted)
-        }
+        MyProfile.shared.update(myClubList: myClubList)
     }
 
     func setup() {
+        addViews()
+        setupAutoLayout()
+        setupTableView()
+    }
+    
+    private func addViews() {
         view.addSubview(scrollView)
         scrollView.addSubview(scrollStackViewContainer)
-        
+        scrollStackViewContainer.addArrangedSubview(imageView)
+        scrollStackViewContainer.addArrangedSubview(label)
+        scrollStackViewContainer.addArrangedSubview(textLabel)
+        scrollStackViewContainer.addArrangedSubview(memberTableView)
         view.addSubview(signUpButton)
-        
+    }
+    
+    private func setupAutoLayout() {
+        let safeArea = view.safeAreaLayoutGuide
         scrollStackViewContainer.snp.makeConstraints { make in
-            make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading)
-            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing)
-            make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(50)
+            make.left.right.equalTo(scrollView.contentLayoutGuide).inset(Constant.margin4)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
             make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
-            make.width.equalTo(scrollView.frameLayoutGuide.snp.width)
+            make.width.equalTo(scrollView.frameLayoutGuide.snp.width).inset(Constant.margin4)
         }
         
         scrollView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.top.equalTo(view.layoutMarginsGuide.snp.top)
+            make.left.right.equalToSuperview()
+            make.top.equalTo(safeArea.snp.top).inset(Constant.margin3)
             make.bottom.equalTo(signUpButton.snp.top).offset(-10)
         }
         
         signUpButton.snp.makeConstraints { make in
             make.height.equalTo(50)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
+            make.left.right.equalToSuperview().inset(Constant.margin4)
+            make.bottom.equalTo(safeArea.snp.bottom).inset(20)
         }
         
-        configureContainerView()
+        imageView.snp.makeConstraints { make in
+            make.height.equalTo(150)
+        }
     }
     
-    private func configureContainerView() {
-        scrollStackViewContainer.addArrangedSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.width.height.equalTo(150)
-        }
-        scrollStackViewContainer.addArrangedSubview(label)
-        scrollStackViewContainer.addArrangedSubview(textLabel)
-        
-        signUpButton.snp.makeConstraints { make in
-            make.height.equalTo(50)
-            make.leading.trailing.equalToSuperview().inset(20)
-        }
+    private func setupTableView() {
+        memberTableView.delegate = self
+        memberTableView.dataSource = self
+        memberTableView.register(MemberTableViewCell.self, forCellReuseIdentifier: MemberTableViewCell.identifier)
     }
 
     func loadDataFromFirebase() {
         label.text = club.title
         textLabel.text = club.description
         imageView.image = clubImage
-//        scrollStackViewContainer.addArrangedSubview(label)
-//        scrollStackViewContainer.addArrangedSubview(textLabel)
     }
 
     func update(club: Club, imageData: Data) {
@@ -175,5 +179,31 @@ class NoticeHomeController: UIViewController {
             self.textLabel.text = club.description
             self.imageView.image = UIImage(data: imageData)
         }
+    }
+}
+
+extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return club.userList?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MemberTableViewCell.identifier, for: indexPath) as? MemberTableViewCell else { return UITableViewCell() }
+        if let userList = club.userList {
+            let user = userList[indexPath.row]
+            cell.nameLabel.text = user.nickName
+            guard let profilePath = user.profileImagePath else { return cell }
+            FBURLCache.shared.downloadURL(storagePath: profilePath + "/\(ImageSize.small.rawValue)") { result in
+                switch result {
+                case .success(let image):
+                    cell.profileImage.imageView.image = image
+                    cell.profileImage.backgroundColor = UIColor(color: .white)
+                    cell.profileImage.contentMargin = 0
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
+        return cell
     }
 }

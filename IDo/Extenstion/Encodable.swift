@@ -38,4 +38,14 @@ extension Array where Element: Encodable {
         }
         return data
     }
+    
+    
+}
+
+extension Array where Element: Identifier  {
+    mutating func update(element: Element) -> Element? {
+        guard let index = self.firstIndex(where: { $0.id == element.id }) else { return nil }
+        self[index] = element
+        return element
+    }
 }
