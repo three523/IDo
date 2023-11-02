@@ -5,7 +5,21 @@ import FirebaseStorage
 class MeetingCreateViewController: UIViewController {
     
 
+    
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.alwaysBounceVertical = true
+        return scrollView
+    }()
+    
+    private let containerView: UIView = {
+           let view = UIView()
+           return view
+       }()
+    
     private let meetingsData: MeetingsData
+    // contentmode 종류 봐보기
+    var originalY: CGFloat?
     let profileImageButton: MeetingProfileImageButton = {
         let button = MeetingProfileImageButton()
         button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
@@ -91,6 +105,13 @@ class MeetingCreateViewController: UIViewController {
                 return
             }
 
+        if !profileImageButton.profileImageChanged {
+                let alert = UIAlertController(title: "알림", message: "대표 사진은 필수입니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+                return
+            }
+        
         guard let myUserInfo = MyProfile.shared.myUserInfo else {
             print("현재 사용자 정보를 가져오지 못했습니다.")
             return
@@ -124,32 +145,32 @@ class MeetingCreateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupCreateButton()
         updateFinishButtonState()
         configureUI()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+
     }
     
+    
+
     @objc func keyboardWillShow(notification: NSNotification) {
+        if originalY == nil {
+            originalY = self.view.frame.origin.y
+        }
+        
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             let keyboardHeight = keyboardSize.height
-            createFinishButton.snp.updateConstraints { (make) in
-                make.bottom.equalToSuperview().offset(-keyboardHeight)
-            }
-            UIView.animate(withDuration: 0.3) {
-                self.view.layoutIfNeeded()
-            }
+            let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+            self.view.frame.origin.y = originalY! - adjustmentHeight
         }
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-        createFinishButton.snp.updateConstraints { (make) in
-            make.bottom.equalToSuperview().offset(-120)
-        }
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
+        if let originalY = originalY {
+            self.view.frame.origin.y = originalY
         }
     }
 
@@ -160,30 +181,43 @@ class MeetingCreateViewController: UIViewController {
     
     private func configureUI() {
         // UI 설정
-        view.addSubview(profileImageButton)
-//        scrollView.addSubview(imageSetLabel)
-        view.addSubview(meetingNameField)
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerView)
         meetingNameField.delegate = self
-        view.addSubview(countMeetingNameField)
-        view.addSubview(createFinishButton)
-        view.addSubview(countDescriptionField)
-        view.addSubview(meetingDescriptionField)
-        view.addSubview(placeholderLabel)
+        containerView.addSubview(profileImageButton)
+        containerView.addSubview(meetingNameField)
+        containerView.addSubview(countMeetingNameField)
+        containerView.addSubview(createFinishButton)
+        containerView.addSubview(countDescriptionField)
+        containerView.addSubview(meetingDescriptionField)
+        containerView.addSubview(placeholderLabel)
         
-        profileImageButton.snp.makeConstraints { (make) in
-            make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top).offset(16)
-            make.centerX.equalToSuperview()
-        }
-        
+        scrollView.snp.makeConstraints { (make) in
+                make.edges.equalToSuperview()
+            }
 
+            containerView.snp.makeConstraints { (make) in
+                make.top.bottom.leading.trailing.equalTo(scrollView)
+                make.width.equalTo(scrollView)
+            }
         
+        
+        let desiredAspectRatio: CGFloat = 3.0 / 4.0
+                
+        profileImageButton.snp.makeConstraints { (make) in
+            make.top.equalTo(containerView.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+            make.centerX.equalTo(containerView)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
+        }
+                
         meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(12)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(361)
+            make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin4)
+            make.centerX.equalTo(containerView)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
             make.height.equalTo(37)
         }
-        
+              
         let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 6, height: meetingNameField.frame.height))
         meetingNameField.leftView = leftPaddingView
         meetingNameField.leftViewMode = .always
@@ -192,29 +226,28 @@ class MeetingCreateViewController: UIViewController {
             make.top.equalTo(meetingNameField.snp.bottom).offset(4)
             make.right.equalTo(meetingNameField.snp.right)
         }
-        
+                
         meetingDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
-            make.centerX.equalToSuperview()
-            make.width.equalTo(361)
-            make.height.equalTo(250)
+            make.centerX.equalTo(containerView)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.height.equalTo(200)
         }
         meetingDescriptionField.delegate = self
+        
         placeholderLabel.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField).offset(12)
             make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
         }
-        
-        
+                
         createFinishButton.snp.makeConstraints { (make) in
-                make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
-                make.centerX.equalToSuperview()
-                make.width.equalTo(140)
-                make.height.equalTo(44)
-            make.bottom.equalToSuperview().offset(-120)
-            make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-8)
-            }
-        
+            make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
+            make.centerX.equalTo(containerView)
+            make.width.equalTo(140)
+            make.height.equalTo(44)
+            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
+        }
+                
         countDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField.snp.bottom).offset(4)
             make.right.equalTo(meetingDescriptionField.snp.right)
@@ -241,8 +274,9 @@ class MeetingCreateViewController: UIViewController {
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-                let roundedImage = selectedImage.resizedAndRoundedImage()
-                profileImageButton.setImage(roundedImage, for: .normal)
+//                let roundedImage = selectedImage.resizedAndRoundedImage()
+                profileImageButton.setImage(selectedImage, for: .normal)
+                profileImageButton.profileImageChanged = true
             }
             picker.dismiss(animated: true, completion: nil)
         }

@@ -157,7 +157,6 @@ final class NoticeHomeController: UIViewController {
     
     private func setupAutoLayout() {
         let safeArea = view.safeAreaLayoutGuide
-        
         imageView.snp.makeConstraints { make in
             make.height.equalTo(150)
         }
@@ -170,7 +169,7 @@ final class NoticeHomeController: UIViewController {
         
         scrollStackViewContainer.snp.makeConstraints { make in
             make.left.right.equalTo(scrollView.contentLayoutGuide).inset(Constant.margin4)
-            make.top.equalTo(scrollView.contentLayoutGuide.snp.top)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(30)
             make.bottom.equalTo(scrollView.contentLayoutGuide.snp.bottom)
             make.width.equalTo(scrollView.frameLayoutGuide.snp.width).inset(Constant.margin4)
         }
