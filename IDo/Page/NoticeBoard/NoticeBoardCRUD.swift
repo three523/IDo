@@ -350,20 +350,34 @@ class FirebaseManager {
     }
     
     // MARK: - 신고 횟수 저장(noticeBoard에서 진행)
-    func updateDeclarationCount(userId: String, newCount: Int, completion: @escaping (Bool) -> Void) {
+    func updateUserDeclarationCount(userID: String, declarationCount: Int, completion: ((Bool) -> Void)? = nil) {
+        let ref = Database.database().reference().child(club.category).child("meetings").child(club.id).child("userList")
         
-//        guard let myInfo = MyProfile.shared.myUserInfo else { return }
-//        let ref = Database.database().reference().child("Users").child(myInfo.toUserSummary.declarationCount)
-//        
-//        // 데이터베이스에 새 declarationCount 값을 저장
-//        ref.setValue(newCount) { (error, _) in
-//            if let error = error {
-//                print("Data could not be saved: \(error).")
-//                completion(false)
-//            } else {
-//                print("Data saved successfully!")
-//                completion(true)
-//            }
-//        }
+        var userList = club.userList
+        guard let index = userList?.firstIndex(where: { $0.id == userID}) else { return }
+        userList?[index].declarationCount = declarationCount
+        ref.setValue(userList?.asArrayDictionary()) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                return
+            }
+        }
+    }
+    
+    // MARK: - Users에서 declarationCount 불러오기
+    func getDeclarationCount(userID: String, completion: ((Bool) -> Void)? = nil) {
+        let ref = Database.database().reference().child(club.category).child("meetings").child(club.id).child("userList")
+        
+        ref.getData(completion: { (error, snapshot) in
+            if let error = error {
+                print("Error getting data: \(error)")
+                completion?(false)
+                return
+            }
+            else {
+//                guard let userList =
+                completion?(true)
+            }
+        })
     }
 }

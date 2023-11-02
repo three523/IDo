@@ -41,6 +41,24 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             }
         }
     }
+    
+    func removeNoticeBoard(club: Club, clubNoticeboard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
+        let ref = Database.database().reference().child(club.category).child("meetings").child(club.id).child("noticeBoardList")
+        var noticeBoardList = club.noticeBoardList
+        noticeBoardList?.removeAll(where: {$0.id == clubNoticeboard.id})
+        ref.setValue(noticeBoardList?.asArrayDictionary()) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                return
+            }
+            completion?(true)
+            self.removeUserNoticeBoard(user: clubNoticeboard.rootUser, noticeBoard: clubNoticeboard)
+            self.removeComment(noticeBoard: clubNoticeboard)
+            clubNoticeboard.imageList?.compactMap{ self.removeImage(path: $0) }
+            
+        }
+    }
+    
     private func removeComment(noticeBoard: NoticeBoard) {
         let ref = Database.database().reference().child("CommentList").child(noticeBoard.id)
         ref.getData { error, dataSnapShot in
@@ -97,7 +115,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 }
             }
             userNoticeBoardList.removeAll(where: { $0.id == noticeBoard.id })
-            ref.updateChildValues(["myNoticeBoardList" : userNoticeBoardList.dictionary])
+            ref.updateChildValues(["myNoticeBoardList" : userNoticeBoardList.asArrayDictionary()])
         }
     }
     private func removeUserComment(user: UserSummary ,comment: Comment) {

@@ -13,6 +13,7 @@ class NoticeBoardViewController: UIViewController {
     
     private let noticeBoardView = NoticeBoardView()
     private let noticeBoardEmptyView = NoticeBoardEmptyView()
+
     
     var firebaseManager: FirebaseManager
     
