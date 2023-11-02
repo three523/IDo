@@ -152,6 +152,35 @@ final class SignUpViewController: UIViewController {
         return btn
     }()
 
+    lazy var checkButton: UIButton = {
+        var button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "rectangle"), for: .normal)
+        button.setImage(UIImage(systemName: "checkmark.rectangle"), for: .selected)
+        button.layer.cornerRadius = 5
+        button.backgroundColor = .white
+
+        return button
+    }()
+
+    private let termsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "귀하는 IDo의 서비스 이용에 필요한 최소한의 개인정보 수집·이용에 동의하지 않을 수 있으나 동의를 거부할 경우 회원제 서비스 이용이 불가합니다."
+        label.textColor = .darkGray
+        label.font = UIFont.systemFont(ofSize: 10)
+        label.textAlignment = .left
+        label.numberOfLines = 3
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        return label
+    }()
+
+    lazy var termsStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [checkButton, termsLabel])
+        stackView.spacing = 12
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        return stackView
+    }()
+
     private let nextButton: UIButton = {
         let button = UIButton()
         button.setTitle("회원가입", for: .normal)
@@ -207,6 +236,7 @@ private extension SignUpViewController {
         view.addSubview(authenticationNumberButton)
         view.addSubview(passwordErrorLabel)
         view.addSubview(passwordConfirmErrorLabel)
+        view.addSubview(termsStackView)
     }
     
     func autolayoutSetup() {
@@ -284,8 +314,17 @@ private extension SignUpViewController {
             make.left.right.equalToSuperview().inset(Constant.margin4)
         }
         
+        termsStackView.snp.makeConstraints { make in
+            make.top.equalTo(passwordConfirmErrorLabel.snp.bottom).offset(Constant.margin2)
+            make.left.equalToSuperview().inset(Constant.margin4)
+            make.right.equalToSuperview().inset(Constant.margin4)
+        }
+        checkButton.snp.makeConstraints { make in
+            make.width.equalTo(15)
+            make.height.equalTo(15)
+        }
         nextButton.snp.makeConstraints { make in
-            make.top.equalTo(passwordConfirmErrorLabel.snp.bottom).offset(Constant.margin3)
+            make.top.equalTo(termsStackView.snp.bottom).offset(Constant.margin3)
             make.left.right.equalToSuperview().inset(Constant.margin4)
             make.height.equalTo(contentHeight)
         }
@@ -305,6 +344,8 @@ private extension SignUpViewController {
         emailAuthorizationButton.addTarget(self, action: #selector(addSMTPButton), for: .touchUpInside)
         
         authenticationNumberButton.addTarget(self, action: #selector(addSMTPNumberButton), for: .touchUpInside)
+        
+        checkButton.addTarget(self, action: #selector(checkButtonAction), for: .touchUpInside)
     }
     
     @objc func clickNextButton() {
@@ -328,6 +369,10 @@ private extension SignUpViewController {
             showAlertDialog(title: "경고", message: "비밀번호와 비밀번호 재확인이 일치하지 않습니다.")
             return
         }
+        guard checkButton.isSelected else {
+            showAlertDialog(title: "경고", message: "약관에 동의해주세요.")
+            return
+        }
         if authenticationNumberButton.title(for: .normal) != "완료" {
             if authenticationNumberTextField.text?.isEmpty == true {
                 showAlertDialog(title: "경고", message: "인증번호를 입력해주세요")
@@ -336,7 +381,7 @@ private extension SignUpViewController {
             }
             return
         }
-        
+
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] _, error in
             if let error = error {
                 let nsError = error as NSError
@@ -553,6 +598,10 @@ private extension SignUpViewController {
                 self.showAlertDialog(title: "오류", message: "중복 확인 중 오류가 발생했습니다.")
             }
         })
+    }
+    
+    @objc func checkButtonAction(_ sender: UIButton) {
+        sender.isSelected.toggle()
     }
 }
 
