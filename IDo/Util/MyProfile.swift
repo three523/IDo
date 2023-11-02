@@ -100,7 +100,7 @@ final class MyProfile {
         if let myCommentList {
             myInfo?.myCommentList = myCommentList
         }
-        guard let idoUser = self.myUserInfo?.toIDoUser else { return }
+        guard let idoUser = myInfo?.toIDoUser else { return }
         firebaseManager.updateValue(value: idoUser) { isCompletion in
             if isCompletion {
                 completion?(isCompletion)
