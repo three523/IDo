@@ -28,13 +28,13 @@ final class MyProfile {
         firebaseManager.readData { result in
             switch result {
             case .success(let idoUser):
-                if let currentUpdateAt = self.myUserInfo?.updateAt,
-                   let serverUpdateAt = idoUser.updateAt {
-                    if currentUpdateAt >= serverUpdateAt {
-                        completion?(true)
-                        return
-                    }
-                }
+//                if let currentUpdateAt = self.myUserInfo?.updateAt,
+//                   let serverUpdateAt = idoUser.updateAt {
+//                    if currentUpdateAt >= serverUpdateAt {
+//                        completion?(true)
+//                        return
+//                    }
+//                }
                 self.myUserInfo = idoUser.toMyUserInfo
                 if let profilePath = idoUser.profileImagePath {
                     self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)

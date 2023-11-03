@@ -26,6 +26,7 @@ class HomeViewController : UIViewController {
     let homeEmptyView = HomeEmptyView()
     
     var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+    
     var currentUserClubList: [Club] = []
     var currentUserClublImage: UIImage?
     
@@ -64,17 +65,18 @@ class HomeViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        makeJoinClub()
-        makeSuggestClub()
-        makeLine()
-        makeLine2()
-        makeTableView()
-        makeTableView2()
-        HomeViewTopControllerSet()
-        navigationBar()
-        setLayout()
         
-        getUserClubList(userID: MyProfile.shared.myUserInfo!.id)
+        getUserClubList(userID: MyProfile.shared.myUserInfo!.id) { success in
+            self.makeJoinClub()
+            self.makeSuggestClub()
+            self.makeLine()
+            self.makeLine2()
+            self.makeTableView()
+            self.makeTableView2()
+            self.HomeViewTopControllerSet()
+            self.navigationBar()
+            self.setLayout()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -82,6 +84,7 @@ class HomeViewController : UIViewController {
         getUserClubList(userID: MyProfile.shared.myUserInfo!.id)
         updateUIBasedOnData()
         joinClubTableView.reloadData()
+        print(MyProfile.shared.myUserInfo)
     }
     
     func setLayout() {
@@ -172,18 +175,18 @@ class HomeViewController : UIViewController {
         }
     }
     
-    func getUserClubImage(referencePath: String, imageSize: ImageSize, completion: ((Bool) -> Void)? = nil) {
+    func getUserClubImage(referencePath: String, imageSize: ImageSize, completion: ((UIImage) -> Void)? = nil) {
         // 카테고리 -> meetings_images -> referencePath
-//        let storageRef = Storage.storage().reference().child(MyProfile.shared.myUserInfo?.ca).child(referencePath)
-//        FBURLCache.shared.downloadURL(storagePath: storageRef.fullPath) { result in
-//            switch result {
-//            case .success(let image):
-//                self.currentUserClublImage = image
-//                self.joinClubTableView.reloadData()
-//            case .failure(let error):
-//                print("이미지 다운로드 실패: \(error)")
-//            }
-//        }
+        let storageRef = Storage.storage().reference().child(referencePath)
+        FBURLCache.shared.downloadURL(storagePath: storageRef.fullPath) { result in
+            switch result {
+            case .success(let image):
+        
+                completion?(image)
+            case .failure(let error):
+                print("이미지 다운로드 실패: \(error)")
+            }
+        }
     }
 }
 
@@ -210,14 +213,22 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
             cell.aboutLabel.text = currentUserClubList[indexPath.row].description
             cell.memberLabel.text = "멤버 \((currentUserClubList[indexPath.row].userList?.count ?? 0) + 1)"
             
-            
-            getUserClubImage(referencePath: currentUserClubList[indexPath.row].id, imageSize: .medium) { success in
-                cell.basicImageView.image = self.currentUserClublImage
+            guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return cell }
+            getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
+                cell.basicImageView.image = image
             }
 
         }
         cell.selectionStyle = .none
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return }
+        getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
+            let noticeBoardVC = NoticeMeetingController(club: self.currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!, clubImage: image)
+            self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+        }
     }
 }
 

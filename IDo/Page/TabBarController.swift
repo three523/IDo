@@ -13,10 +13,10 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         guard let uid = Auth.auth().currentUser?.uid else { return }
-        MyProfile.shared.getUserProfile(uid: uid)
-        self.tabBarSetting()
-        self.viewControllerSetting()
-        
+        MyProfile.shared.getUserProfile(uid: uid) { success in
+            self.tabBarSetting()
+            self.viewControllerSetting()
+        }
     }
 
     private func tabBarSetting() {
@@ -32,10 +32,10 @@ class TabBarController: UITabBarController {
 //        let vc3 = UINavigationController(rootViewController: NoticeViewController())
         let vc4 = UINavigationController(rootViewController: MyProfileViewController())
 
-        //vc1.title = "홈"
-        //vc2.title = "카테고리"
+        vc1.title = "홈"
+        vc2.title = "카테고리"
 //        vc3.title = "알림"
-        //vc4.title = "마이프로필"
+        vc4.title = "마이프로필"
 
 //        self.setViewControllers([vc1, vc2, vc3, vc4], animated: false)
         self.setViewControllers([vc1, vc2, vc4], animated: false)
