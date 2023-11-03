@@ -20,6 +20,7 @@ class MyProfileViewController: UIViewController {
     // 자기소개
     let selfInfo = UILabel()
     var selfInfoDetail = UITextView()
+    var selfInfoInt = UILabel()
     
     // 내가쓴글
     let writeMe = UILabel()
@@ -27,22 +28,21 @@ class MyProfileViewController: UIViewController {
     var writeMeDate = ["yyyy-mm-dd", "yyyy-mm-dd"]
     var writeMeTableView = UITableView()
     
-    // 로그아웃
+    // 로그아웃, 세로 구분선, 회원탈퇴
     var logout = UIButton()
-    
-    // 회원탈퇴
+    let line = UIView()
     var deleteID = UIButton()
     
     // 수정화면 false 고정
     var isEdit = false
     
     func makeProfileImage() {
-        profileImage.setImage(UIImage(named: "MeetingProfileImage"), for: .normal)
+        profileImage.setImage(.profile, for: .normal)
         profileImage.imageView?.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = 50
         profileImage.clipsToBounds = true
     }
-
+    
     func makeProfileName() {
         profileName.text = "애라링"
         profileName.textAlignment = .center
@@ -50,7 +50,7 @@ class MyProfileViewController: UIViewController {
         profileName.font = UIFont.headFont(.xSmall, weight: .medium)
         profileName.isUserInteractionEnabled = false
     }
-
+    
     func makeChoiceEnjoy() {
         let firstText = "낚시/캠핑"
         let secondText = "맛집/여행"
@@ -67,16 +67,16 @@ class MyProfileViewController: UIViewController {
         choiceEnjoy.textAlignment = .center
         choiceEnjoy.isUserInteractionEnabled = false
     }
-
+    
     func makeSelfInfo() {
         selfInfo.text = "자기소개"
         selfInfo.textColor = .black
         selfInfo.font = UIFont.bodyFont(.medium, weight: .medium)
     }
-
+    
     func makeSelfInfoDetail() {
         selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
-        selfInfoDetail.text = "안녕하세요. 이애라입니다."
+        selfInfoDetail.text = ""
         selfInfoDetail.textColor = UIColor(named: "ui-text-strong")
         selfInfoDetail.backgroundColor = UIColor(color: .backgroundSecondary)
         selfInfoDetail.layer.cornerRadius = 10
@@ -84,35 +84,43 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.isUserInteractionEnabled = false
         selfInfoDetail.isScrollEnabled = true
     }
-
+    func makeselfInfoInt() {
+        selfInfoInt.text = "(\(selfInfoDetail.text.count)/300)"
+        selfInfoInt.textColor = UIColor(color: .placeholder)
+        selfInfoInt.font = UIFont.bodyFont(.small, weight: .medium)
+    }
+    
     func makeWriteMe() {
         writeMe.text = "작성한 글"
         writeMe.textColor = .black
         writeMe.font = UIFont.bodyFont(.medium, weight: .medium)
     }
-
+    
     func makeWriteMeTableView() {
         writeMeTableView.register(WriteMeTableViewCell.self, forCellReuseIdentifier: "Cell")
         writeMeTableView.dataSource = self
         writeMeTableView.delegate = self
     }
-
+    
     func makeLogout() {
         logout.setTitle("로그아웃", for: .normal)
-        logout.titleLabel?.font = UIFont.bodyFont(.medium, weight: .medium)
-        logout.setTitleColor(.black, for: .normal)
+        logout.titleLabel?.font = UIFont.bodyFont(.small, weight: .medium)
+        logout.setTitleColor(.lightGray, for: .normal)
         logout.backgroundColor = .none
         logout.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
     }
-
+    func makeLine() {
+        line.backgroundColor = UIColor.lightGray
+    }
+    
     func makeDeleteID() {
         deleteID.setTitle("회원탈퇴", for: .normal)
-        deleteID.setTitleColor(.red, for: .normal)
-        deleteID.titleLabel?.font = UIFont.bodyFont(.medium, weight: .medium)
+        deleteID.setTitleColor(.lightGray, for: .normal)
+        deleteID.titleLabel?.font = UIFont.bodyFont(.small, weight: .medium)
         deleteID.backgroundColor = .none
         deleteID.addTarget(self, action: #selector(deleteIDButtonTapped), for: .touchUpInside)
     }
-
+    
     // 로딩되는 뷰
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -125,6 +133,8 @@ class MyProfileViewController: UIViewController {
         makeWriteMeTableView()
         makeLogout()
         makeDeleteID()
+        makeLine()
+        makeselfInfoInt()
         setLayout()
         profileEditControllerSet()
         navigationBarButtonAction()
@@ -135,7 +145,7 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.delegate = self
         isEdit = false
     }
-
+    
     // 로드가 된 뒤에 보여지는 뷰
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -154,6 +164,8 @@ class MyProfileViewController: UIViewController {
         view.addSubview(writeMeTableView)
         view.addSubview(logout)
         view.addSubview(deleteID)
+        view.addSubview(selfInfoInt)
+        view.addSubview(line)
         
         profileImage.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
@@ -178,47 +190,73 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.snp.makeConstraints { make in
             make.top.equalTo(selfInfo.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(120)
+            make.width.equalTo(360)
+            make.height.equalTo(130)
+        }
+        selfInfoInt.snp.makeConstraints { make in
+            make.top.equalTo(selfInfoDetail.snp.bottom).offset(5)
+            make.trailing.equalTo(selfInfoDetail).offset(-5)
         }
         writeMe.snp.makeConstraints { make in
-            make.top.equalTo(selfInfoDetail.snp.bottom).offset(20)
+            make.top.equalTo(selfInfoInt.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         writeMeTableView.snp.makeConstraints { make in
             make.top.equalTo(writeMe.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(180)
+            make.height.equalTo(160)
         }
         logout.snp.makeConstraints { make in
             make.top.equalTo(writeMeTableView.snp.bottom).offset(15)
-            make.leading.equalTo(writeMeTableView).offset(90)
+            make.leading.equalTo(writeMeTableView).offset(100)
             make.width.equalTo(70)
             make.height.equalTo(30)
         }
-        deleteID.snp.makeConstraints { make in
+        line.snp.makeConstraints { make in
             make.centerY.equalTo(logout)
-            make.leading.equalTo(logout.snp.trailing).offset(20)
+            make.leading.equalTo(logout.snp.trailing).offset(5)
+            make.width.equalTo(2)
+            make.height.equalTo(18)
+        }
+        deleteID.snp.makeConstraints { make in
+            make.centerY.equalTo(line)
+            make.leading.equalTo(line.snp.trailing).offset(5)
             make.width.equalTo(70)
             make.height.equalTo(30)
         }
     }
-
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
 }
 
-// 자기소개 300자 제한
+// 자기소개 300자 제한 및 Label로 입력 글자수 표시
 extension MyProfileViewController: UITextViewDelegate {
+    
+    func textViewDidChange(_ textView: UITextView) {
+        
+        //입력 글자 수 표시
+        if textView == selfInfoDetail {
+            let textCount = selfInfoDetail.text.count
+            selfInfoInt.text = "(\(textCount)/300)"
+            
+            if textCount == 0 {
+                selfInfoInt.textColor = UIColor(color: .placeholder)
+            } else {
+                selfInfoInt.textColor = UIColor.black
+            }
+        }
+    }
+    // 자기소개 글 300자 제한 표시
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
         guard let stringRange = Range(range, in: currentText) else { return false }
         
         let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
         
-        selfInfoDetail.isScrollEnabled = true
         if textView === selfInfoDetail {
-            return chagedText.count <= 299
+            return chagedText.count <= 300
         }
         return true
     }
@@ -236,7 +274,7 @@ extension MyProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as!
-            WriteMeTableViewCell
+        WriteMeTableViewCell
         if tableView == writeMeTableView {
             cell.write.text = writeMeList[indexPath.row]
             cell.write2.text = writeMeDate[indexPath.row]
@@ -280,6 +318,7 @@ private extension MyProfileViewController {
             writeMe.isHidden = true // "작성한글" title Label 숨기기
             writeMeTableView.isHidden = true // 작성한글 리스트 숨기기
             logout.isHidden = true
+            line.isHidden = true
             deleteID.isHidden = true
             
             // isEdit = false인 상태의 실행 코드
@@ -292,6 +331,7 @@ private extension MyProfileViewController {
             writeMe.isHidden = false // 작성한글 title Label 나타내기
             writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
             logout.isHidden = false
+            line.isHidden = false
             deleteID.isHidden = false
         }
     }
@@ -353,7 +393,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         // 알림창 표시
         present(alertController, animated: true, completion: nil)
     }
-
+    
     @objc func deleteIDButtonTapped() {
         let alertController = UIAlertController(title: "회원탈퇴", message: "회원 탈퇴를 진행하시겠습니까?", preferredStyle: .alert)
         
