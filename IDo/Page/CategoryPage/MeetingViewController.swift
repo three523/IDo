@@ -201,8 +201,7 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
         
         guard let currentUser = MyProfile.shared.myUserInfo else { return }
-        let isJoin = club.userList?.contains(where: { $0.id == currentUser.id }) ?? false
-        let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, isJoin: isJoin, clubImage: clubImage)
+        let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, clubImage: clubImage)
         self.navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 }

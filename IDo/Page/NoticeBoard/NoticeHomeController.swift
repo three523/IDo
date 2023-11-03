@@ -11,17 +11,17 @@ import SnapKit
 import UIKit
 
 final class NoticeHomeController: UIViewController {
-    private var club: Club
     var signUpButtonUpdate: ((AuthState) -> Void)?
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     private let clubImage: UIImage
-    private let memberTableView: UITableView = {
-        let tableview = UITableView()
-//        tableview.estimatedRowHeight = UITableView.automaticDimension
+    let memberTableView: IntrinsicTableView = {
+        let tableview = IntrinsicTableView()
+        tableview.rowHeight = 36 + 8 + 8
         tableview.isScrollEnabled = false
-        tableview.rowHeight = 50
+        tableview.separatorStyle = .none
         return tableview
     }()
+    private let authState: AuthState
     
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
@@ -69,17 +69,14 @@ final class NoticeHomeController: UIViewController {
         return view
     }()
     
-    init(club: Club, isJoin: Bool, firebaseClubDataManager: FirebaseClubDatabaseManager, clubImage: UIImage) {
+    init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager, clubImage: UIImage) {
         self.clubImage = clubImage
-        self.club = club
         self.firebaseClubDatabaseManager = firebaseClubDataManager
+        self.authState = authState
         super.init(nibName: nil, bundle: nil)
-        signUpButton.isHidden = isJoin
-        self.firebaseClubDatabaseManager.update = { [weak self] in
-            guard let userInfo = MyProfile.shared.myUserInfo,
-                  let joinUserList = self?.firebaseClubDatabaseManager.model?.userList else { return }
-            self?.signUpButton.isHidden = joinUserList.contains(where: { $0.id == userInfo.id })
-        }
+        
+        let isClubMember = authState != .notMember
+        signUpButton.isHidden = isClubMember
     }
     
     @available(*, unavailable)
@@ -91,11 +88,15 @@ final class NoticeHomeController: UIViewController {
         super.viewDidLoad()
         setup()
         loadDataFromFirebase()
+        firebaseClubDatabaseManager.readData { _ in
+            DispatchQueue.main.async {
+                self.memberTableView.reloadData()
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        firebaseClubDatabaseManager.readData()
     }
     
     @objc func handleSignUp() {
@@ -109,11 +110,16 @@ final class NoticeHomeController: UIViewController {
         firebaseClubDatabaseManager.appendUser(user: idoUser.toUserSummary) { isCompleted in
             if isCompleted { self.signUpButton.isHidden = isCompleted }
             let authState: AuthState = isCompleted ? .member : .notMember
+            guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else { return }
             self.signUpButtonUpdate?(authState)
+            self.memberTableView.beginUpdates()
+            self.memberTableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .automatic)
+            self.memberTableView.endUpdates()
         }
     }
     
     private func addMyClubList() {
+        guard let club = firebaseClubDatabaseManager.model else { return }
         var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
         myClubList.append(club)
         MyProfile.shared.update(myClubList: myClubList)
@@ -138,6 +144,16 @@ final class NoticeHomeController: UIViewController {
     
     private func setupAutoLayout() {
         let safeArea = view.safeAreaLayoutGuide
+        imageView.snp.makeConstraints { make in
+            make.height.equalTo(150)
+        }
+        
+        scrollView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview()
+            make.top.equalTo(safeArea.snp.top).inset(Constant.margin3)
+            make.bottom.equalTo(safeArea).offset(Constant.margin3)
+        }
+        
         scrollStackViewContainer.snp.makeConstraints { make in
             make.left.right.equalTo(scrollView.contentLayoutGuide).inset(Constant.margin4)
             make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(30)
@@ -145,20 +161,10 @@ final class NoticeHomeController: UIViewController {
             make.width.equalTo(scrollView.frameLayoutGuide.snp.width).inset(Constant.margin4)
         }
         
-        scrollView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(safeArea.snp.top).inset(Constant.margin3)
-            make.bottom.equalTo(signUpButton.snp.top).offset(-10)
-        }
-        
         signUpButton.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.left.right.equalToSuperview().inset(Constant.margin4)
             make.bottom.equalTo(safeArea.snp.bottom).inset(20)
-        }
-        
-        imageView.snp.makeConstraints { make in
-            make.height.equalTo(150)
         }
     }
     
@@ -169,42 +175,69 @@ final class NoticeHomeController: UIViewController {
     }
 
     func loadDataFromFirebase() {
-        label.text = club.title
-        textLabel.text = club.description
+        label.text = firebaseClubDatabaseManager.model?.title
+        textLabel.text = firebaseClubDatabaseManager.model?.description
         imageView.image = clubImage
     }
 
     func update(club: Club, imageData: Data) {
         DispatchQueue.main.async {
-            self.label.text = club.title
-            self.textLabel.text = club.description
+            self.label.text = self.firebaseClubDatabaseManager.model?.title
+            self.textLabel.text = self.firebaseClubDatabaseManager.model?.description
             self.imageView.image = UIImage(data: imageData)
         }
     }
 }
 
 extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return club.userList?.count ?? 0
+        return firebaseClubDatabaseManager.model?.userList?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return MemberListHeaderView()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MemberTableViewCell.identifier, for: indexPath) as? MemberTableViewCell else { return UITableViewCell() }
-        if let userList = club.userList {
+        cell.selectionStyle = .none
+        if let userList = firebaseClubDatabaseManager.model?.userList {
             let user = userList[indexPath.row]
             cell.nameLabel.text = user.nickName
+            cell.descriptionLabel.text = user.description
+            cell.profileImageView.image = nil
             guard let profilePath = user.profileImagePath else { return cell }
             FBURLCache.shared.downloadURL(storagePath: profilePath + "/\(ImageSize.small.rawValue)") { result in
                 switch result {
                 case .success(let image):
-                    cell.profileImage.imageView.image = image
-                    cell.profileImage.backgroundColor = UIColor(color: .white)
-                    cell.profileImage.contentMargin = 0
+                    DispatchQueue.main.async {
+                        cell.profileImageView.image = image
+                        cell.profileImageView.backgroundColor = UIColor(color: .white)
+                    }
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             }
         }
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard authState == .root,
+              let user = firebaseClubDatabaseManager.model?.userList?[indexPath.row] else { return nil }
+        let removeAction = UIContextualAction(style: .normal, title: "삭제") { _, _, _ in
+            self.firebaseClubDatabaseManager.removeUser(user: user) { isCompleted in
+                if isCompleted {
+                    tableView.beginUpdates()
+                    tableView.deleteRows(at: [indexPath], with: .automatic)
+                    tableView.endUpdates()
+                }
+            }
+        }
+        removeAction.backgroundColor = UIColor(color: .negative)
+        let config = UISwipeActionsConfiguration(actions: [removeAction])
+        config.performsFirstActionWithFullSwipe = false
+        return config
     }
 }
