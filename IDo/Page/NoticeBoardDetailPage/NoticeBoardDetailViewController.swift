@@ -421,46 +421,75 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
             guard let image else { return }
             cell.setUserImage(profileImage: image, color: UIColor(color: .white), margin: 0)
         }
-        cell.updateEnable = comment.writeUser.id == currentUser.uid
+        let isCommentWriteUser = comment.writeUser.id == currentUser.uid
         cell.contentLabel.text = comment.content
         cell.writeInfoView.writerNameLabel.text = comment.writeUser.nickName
         cell.moreButtonTapHandler = { [weak self] in
             //TODO: 같이 LongPress할때와 똑같이 작동함 함수로 뺄 필요가 있음
             guard let self else { return }
-            
-            let updateHandler: (UIAlertAction) -> Void = { _ in
-                let comment = self.firebaseCommentManager.modelList[indexPath.row]
-                let vc = CommentUpdateViewController(comment: comment)
-                vc.commentUpdate = { [weak self] updateComment in
-                    guard let self else { return }
+            if isCommentWriteUser {
+                let updateHandler: (UIAlertAction) -> Void = { _ in
+                    let comment = self.firebaseCommentManager.modelList[indexPath.row]
+                    let vc = CommentUpdateViewController(comment: comment)
+                    vc.commentUpdate = { [weak self] updateComment in
+                        guard let self else { return }
+                        guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
+                        if myCommentList.update(element: updateComment) == nil { return }
+                        MyProfile.shared.update(myCommentList: myCommentList)
+                        self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
+                            self.commentTableView.reloadRows(at: [indexPath], with: .none)
+                        }
+                    }
+                    vc.hidesBottomBarWhenPushed = true
+                    vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+                let deleteHandler: (UIAlertAction) -> Void = { _ in
+                    let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
                     guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                    if myCommentList.update(element: updateComment) == nil { return }
+                    myCommentList.removeAll(where: { $0.id == removeCommnet.id })
                     MyProfile.shared.update(myCommentList: myCommentList)
-                    self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
-                        self.commentTableView.reloadRows(at: [indexPath], with: .none)
+                    self.firebaseCommentManager.deleteData(data: removeCommnet) { isComplete in
+                        if self.firebaseCommentManager.modelList.isEmpty {
+                            tableView.reloadData()
+                        } else {
+                            self.deleteCell(tableView: tableView, indexPath: indexPath)
+                        }
                     }
                 }
-                vc.hidesBottomBarWhenPushed = true
-                vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
-            let deleteHandler: (UIAlertAction) -> Void = { _ in
-                let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
-                guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                myCommentList.removeAll(where: { $0.id == removeCommnet.id })
-                MyProfile.shared.update(myCommentList: myCommentList)
-                self.firebaseCommentManager.deleteData(data: removeCommnet) { isComplete in
-                    if self.firebaseCommentManager.modelList.isEmpty {
-                        tableView.reloadData()
-                    } else {
-                        tableView.beginUpdates()
-                        tableView.deleteRows(at: [indexPath], with: .none)
-                        tableView.endUpdates()
+                
+                AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
+            } else {
+                let declarationHandler: (UIAlertAction) -> Void = { _ in
+                    let spamHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
                     }
+                    let dislikeHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    let selfHarmHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    let illegalSaleHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    let nudityHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    let hateSpeechHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    let violenceHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    let bullyingHandler: (UIAlertAction) -> Void = { _ in
+                        self.declarationAlert(indexPath: indexPath)
+                    }
+                    
+                    AlertManager.showDeclarationActionSheet(on: self, title: "신고하기", message: "신고의 이유를 해당 항목에서 선택해주세요.", spamHandler: spamHandler, dislikeHandler: dislikeHandler, selfHarmHandler: selfHarmHandler, illegalSaleHandler: illegalSaleHandler, nudityHandler: nudityHandler, hateSpeechHandler: hateSpeechHandler, violenceHandler: violenceHandler, bullyingHandler: bullyingHandler)
                 }
+                AlertManager.showDeclaration(on: self, title: "알림", message: "이 게시글을 신고하시겠습니까?", declarationHandler: declarationHandler)
             }
-            
-            AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
         }
         guard let dateText = comment.createDate.diffrenceDate else { return cell }
         cell.setDate(dateText: dateText)
@@ -482,9 +511,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                 if self.firebaseCommentManager.modelList.isEmpty {
                     tableView.reloadData()
                 } else {
-                    tableView.beginUpdates()
-                    tableView.deleteRows(at: [indexPath], with: .none)
-                    tableView.endUpdates()
+                    self.deleteCell(tableView: tableView, indexPath: indexPath)
                 }
             }
             
@@ -510,6 +537,52 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         let config = UISwipeActionsConfiguration(actions: [removeAction, updateAction])
         config.performsFirstActionWithFullSwipe = false
         return config
+    }
+    
+    private func declarationAlert(indexPath: IndexPath) {
+        let okHandler: (UIAlertAction) -> Void = { _ in
+            let commentUser = self.firebaseCommentManager.modelList[indexPath.row].writeUser
+            
+            guard let rootUserIndex = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == commentUser.id}) else { return }
+            
+            let deleteCommnet = self.firebaseCommentManager.modelList[indexPath.row]
+            self.firebaseCommentManager.deleteData(data: deleteCommnet) { isComplete in
+                var declarationCount = self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount ?? 0
+                declarationCount += 1
+                self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount = declarationCount
+                self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: deleteCommnet.writeUser.id, declarationCount: declarationCount)
+                self.firebaseClubDatabaseManager.removeUserComment(comment: deleteCommnet)
+                
+                if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
+                    
+                    // club에 있는 유저 삭제
+                    self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
+                        if success {
+                            // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
+                            print("해당 작성자가 모임에서 방출되었습니다.")
+                        }
+                    }
+                }
+                if self.firebaseCommentManager.modelList.isEmpty {
+                    self.commentTableView.reloadData()
+                } else {
+                    self.deleteCell(tableView: self.commentTableView, indexPath: indexPath)
+                }
+            }
+        }
+        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+    }
+    
+    private func insertCell(tableView: UITableView, indexPath: IndexPath) {
+        tableView.beginUpdates()
+        tableView.insertRows(at: [indexPath], with: .none)
+        tableView.endUpdates()
+    }
+    
+    private func deleteCell(tableView: UITableView, indexPath: IndexPath) {
+        tableView.beginUpdates()
+        tableView.deleteRows(at: [indexPath], with: .none)
+        tableView.endUpdates()
     }
     
 }

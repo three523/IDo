@@ -15,7 +15,8 @@ class MyProfileViewController: UIViewController {
     // 프로필
     var profileImage = UIButton()
     var profileName = UITextView()
-    var choiceEnjoy = UITextView()
+    var choiceEnjoy = UIPickerView()
+    var enjoyList: [String] = []
     
     // 자기소개
     let selfInfo = UILabel()
@@ -52,19 +53,10 @@ class MyProfileViewController: UIViewController {
     }
 
     func makeChoiceEnjoy() {
-        let firstText = "낚시/캠핑"
-        let secondText = "맛집/여행"
-        let thirdText = "운동/스포츠"
-        let totalText = firstText + ",  " + secondText + ",  " + thirdText
-        choiceEnjoy.text = totalText
-        choiceEnjoy.textColor = UIColor(color: .borderSelected)
-        choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
-        choiceEnjoy.font = UIFont.bodyFont(.small, weight: .medium)
         choiceEnjoy.layer.cornerRadius = 10 // 원하는 값으로 설정
         choiceEnjoy.layer.borderWidth = 5 // 원하는 두께로 설정
         choiceEnjoy.layer.borderColor = UIColor(color: .contentBackground).cgColor // 원하는 테두리 색상으로 설정
         choiceEnjoy.clipsToBounds = true
-        choiceEnjoy.textAlignment = .center
         choiceEnjoy.isUserInteractionEnabled = false
     }
 
@@ -113,6 +105,16 @@ class MyProfileViewController: UIViewController {
         deleteID.addTarget(self, action: #selector(deleteIDButtonTapped), for: .touchUpInside)
     }
 
+    func updateEnjoyList() {
+        if let hobbies = MyProfile.shared.myUserInfo?.hobbyList {
+            // Assign `hobbyList` to `enjoyList`
+            enjoyList = hobbies
+
+            // Reload the picker view
+            choiceEnjoy.reloadAllComponents()
+        }
+    }
+
     // 로딩되는 뷰
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,6 +134,7 @@ class MyProfileViewController: UIViewController {
         navigationController?.delegate = self
         profileName.delegate = self
         choiceEnjoy.delegate = self
+        choiceEnjoy.dataSource = self
         selfInfoDetail.delegate = self
         isEdit = false
     }
@@ -168,7 +171,7 @@ class MyProfileViewController: UIViewController {
         }
         choiceEnjoy.snp.makeConstraints { make in
             make.top.equalTo(profileName.snp.bottom).offset(0)
-            make.leading.trailing.equalToSuperview().inset(80)
+            make.leading.trailing.equalToSuperview().inset(130)
             make.height.equalTo(35)
         }
         selfInfo.snp.makeConstraints { make in
@@ -396,5 +399,19 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         
         // 알림창 표시
         present(alertController, animated: true, completion: nil)
+    }
+}
+
+extension MyProfileViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+       
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return enjoyList.count
+    }
+       
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return enjoyList[row]
     }
 }
