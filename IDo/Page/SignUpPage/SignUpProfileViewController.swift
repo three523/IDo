@@ -35,7 +35,7 @@ class SignUpProfileViewController: UIViewController {
 
     private let signUpButton: UIButton = {
         let button = UIButton()
-        button.setTitle("로그인", for: .normal)
+        button.setTitle("완료", for: .normal)
         button.setTitleColor(UIColor(color: .white), for: .normal)
         button.backgroundColor = UIColor(color: .contentPrimary)
         button.layer.cornerRadius = 5
