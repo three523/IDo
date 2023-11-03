@@ -169,7 +169,6 @@ class MyProfileViewController: UIViewController {
         choiceEnjoy.snp.makeConstraints { make in
             make.top.equalTo(profileName.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(80)
-            make.width.equalTo(60)
             make.height.equalTo(35)
         }
         selfInfo.snp.makeConstraints { make in
@@ -179,7 +178,6 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.snp.makeConstraints { make in
             make.top.equalTo(selfInfo.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.width.equalTo(360)
             make.height.equalTo(120)
         }
         writeMe.snp.makeConstraints { make in
