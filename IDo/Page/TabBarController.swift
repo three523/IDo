@@ -12,11 +12,10 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        MyProfile.shared.getUserProfile(uid: uid) { success in
-            self.tabBarSetting()
-            self.viewControllerSetting()
-        }
+//        guard let uid = Auth.auth().currentUser?.uid else { return }
+//        MyProfile.shared.getUserProfile(uid: uid)
+        self.tabBarSetting()
+        self.viewControllerSetting()
     }
 
     private func tabBarSetting() {

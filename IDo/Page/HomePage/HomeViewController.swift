@@ -7,6 +7,7 @@
 ///
 import UIKit
 import SnapKit
+import FirebaseAuth
 import FirebaseDatabase
 import FirebaseStorage
 
@@ -27,7 +28,6 @@ class HomeViewController : UIViewController {
     
     var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
     
-    var currentUserClubList: [Club] = []
     var currentUserClublImage: UIImage?
     
     func makeSuggestClub() {
@@ -65,26 +65,27 @@ class HomeViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        getUserClubList(userID: MyProfile.shared.myUserInfo!.id) { success in
-            self.makeJoinClub()
-            self.makeSuggestClub()
-            self.makeLine()
-            self.makeLine2()
-            self.makeTableView()
+        self.makeJoinClub()
+        self.makeSuggestClub()
+        self.makeLine()
+        self.makeLine2()
+        self.makeTableView()
+        self.HomeViewTopControllerSet()
+        self.navigationBar()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        MyProfile.shared.getUserProfile(uid: uid) { _ in
+            print("Test: \(MyProfile.shared.myUserInfo?.myClubList?.count)")
+            self.updateUIBasedOnData()
             self.makeTableView2()
-            self.HomeViewTopControllerSet()
-            self.navigationBar()
             self.setLayout()
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        getUserClubList(userID: MyProfile.shared.myUserInfo!.id)
+//        getUserClubList(userID: MyProfile.shared.myUserInfo!.id)
         updateUIBasedOnData()
         joinClubTableView.reloadData()
-        print(MyProfile.shared.myUserInfo)
     }
     
     func setLayout() {
@@ -135,37 +136,11 @@ class HomeViewController : UIViewController {
         }
     }
     
-    func getUserClubList(userID: String, completion: ((Bool) -> Void)? = nil) {
-        let ref = Database.database().reference().child("Users").child(userID)
-        
-        ref.getData(completion: { (error, snapshot) in
-            if let error = error {
-                print("Error getting data: \(error)")
-                completion?(false)
-                return
-            }
-            
-            guard let value = snapshot?.value as? [String: Any],
-                  let myClubListData = value["myClubList"] as? [[String: Any]] else {
-                completion?(false)
-                return
-            }
-            
-            var newClubList: [Club] = []
-            for clubData in myClubListData {
-                if let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: clubData) {
-                    newClubList.append(club)
-                }
-            }
-            
-            self.currentUserClubList = newClubList
-            self.updateUIBasedOnData()
-            self.joinClubTableView.reloadData()
-            completion?(true)
-        })
-    }
-    
     func updateUIBasedOnData() {
+        guard let currentUserClubList = MyProfile.shared.myUserInfo?.myClubList else {
+            print("사용자 정보가 없습니다")
+            return
+        }
         if currentUserClubList.count == 0 {
             homeEmptyView.isHidden = false
             joinClubTableView.isHidden = true
@@ -181,7 +156,6 @@ class HomeViewController : UIViewController {
         FBURLCache.shared.downloadURL(storagePath: storageRef.fullPath) { result in
             switch result {
             case .success(let image):
-        
                 completion?(image)
             case .failure(let error):
                 print("이미지 다운로드 실패: \(error)")
@@ -198,7 +172,7 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
             return 1
         }
     
-        return currentUserClubList.count
+        return MyProfile.shared.myUserInfo?.myClubList?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -209,6 +183,10 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
             cell.aboutLabel.text = suggestClubInfo
             cell.memberLabel.text = suggestClubMember
         } else {
+            guard let currentUserClubList = MyProfile.shared.myUserInfo?.myClubList else {
+                print("현재 내 클럽이 없습니다.")
+                return cell
+            }
             cell.titleLabel.text = currentUserClubList[indexPath.row].title
             cell.aboutLabel.text = currentUserClubList[indexPath.row].description
             cell.memberLabel.text = "멤버 \((currentUserClubList[indexPath.row].userList?.count ?? 0) + 1)"
@@ -224,9 +202,10 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return }
-        getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
-            let noticeBoardVC = NoticeMeetingController(club: self.currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!, clubImage: image)
+        guard let currentUserClubList = MyProfile.shared.myUserInfo?.myClubList,
+            let clubImagePath = currentUserClubList[indexPath.row].imageURL else { return }
+        getUserClubImage(referencePath: clubImagePath, imageSize: .medium) { image in
+            let noticeBoardVC = NoticeMeetingController(club: currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!, clubImage: image)
             self.navigationController?.pushViewController(noticeBoardVC, animated: true)
         }
     }

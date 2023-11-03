@@ -25,15 +25,18 @@ class FBURLCache {
     func downloadURL(storagePath: String, completion: @escaping (Result<UIImage,Error>) -> Void) {
         if let image = imageCache.object(forKey: storagePath as NSString) {
             completion(.success(image))
+            return
         }
         let storage = Storage.storage().reference(withPath: storagePath)
         storage.getMetadata { metadata, error in
             if let error {
                 completion(.failure(error))
+                return
             }
             storage.downloadURL { url, error in
                 if let error {
                     completion(.failure(error))
+                    return
                 }
                 guard let url else { return }
                 let request = URLRequest(url: url)
@@ -44,8 +47,10 @@ class FBURLCache {
                         if let image = UIImage(data: cachedResponse.data) {
                             completion(.success(image))
                             self.imageCache.setObject(image, forKey: storagePath as NSString)
+                            return
                         } else {
                             print("image Data를 읽을수 없습니다.")
+                            return
                         }
                     } else {
                         self.downloadImageData(request: request, storagePath: storagePath) { result in
@@ -58,6 +63,7 @@ class FBURLCache {
                                 print("image Data를 읽을수 없습니다.")
                             case .failure(let error):
                                 completion(.failure(error))
+                                return
                             }
                         }
                     }
@@ -72,6 +78,7 @@ class FBURLCache {
                             print("image Data를 읽을수 없습니다.")
                         case .failure(let error):
                             completion(.failure(error))
+                            return
                         }
                     }
                 }

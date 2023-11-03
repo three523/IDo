@@ -102,7 +102,6 @@ final class NoticeHomeController: UIViewController {
     @objc func handleSignUp() {
         print("Sign Up button tapped!.")
         addUser()
-        addMyClubList()
     }
     
     private func addUser() {
@@ -115,6 +114,7 @@ final class NoticeHomeController: UIViewController {
             self.memberTableView.beginUpdates()
             self.memberTableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .automatic)
             self.memberTableView.endUpdates()
+            self.addMyClubList()
         }
     }
     
