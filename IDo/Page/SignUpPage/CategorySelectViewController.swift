@@ -9,13 +9,13 @@ import FirebaseAuth
 import FirebaseDatabase
 import UIKit
 final class CategorySelectViewController: UIViewController {
-    private let selectedCountLabel: UILabel = {
-        let label = UILabel()
-        label.font = .bodyFont(.medium, weight: .regular)
-        label.textColor = UIColor(color: .textStrong)
-        label.text = "0개 선택되었습니다. (최대 3개)"
-        return label
-    }()
+//    private let selectedCountLabel: UILabel = {
+//        let label = UILabel()
+//        label.font = .bodyFont(.medium, weight: .regular)
+//        label.textColor = UIColor(color: .textStrong)
+//        label.text = "0개 선택되었습니다."
+//        return label
+//    }()
 
     private let nextButton: UIButton = {
         let button = UIButton()
@@ -64,8 +64,8 @@ final class CategorySelectViewController: UIViewController {
     private var selectedCategorys: [String] = [] {
         didSet {
             print(selectedCategorys)
-            if selectedCategorys.count <= 3 {
-                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다. (최대 3개)"
+            if selectedCategorys.count <= 1 {
+//                selectedCountLabel.text = "\(selectedCategorys.count)개 선택되었습니다."
                 nextButton.isEnabled = !selectedCategorys.isEmpty
             }
         }
@@ -101,7 +101,7 @@ private extension CategorySelectViewController {
 
     func addViews() {
         view.addSubview(categoryCollectionView)
-        view.addSubview(selectedCountLabel)
+//        view.addSubview(selectedCountLabel)
         view.addSubview(nextButton)
     }
 
@@ -114,10 +114,10 @@ private extension CategorySelectViewController {
             make.left.right.bottom.equalTo(safeArea).inset(Constant.margin3)
             make.height.equalTo(48)
         }
-        selectedCountLabel.snp.makeConstraints { make in
-            make.centerX.equalTo(safeArea)
-            make.bottom.equalTo(nextButton.snp.top).offset(-Constant.margin3)
-        }
+//        selectedCountLabel.snp.makeConstraints { make in
+//            make.centerX.equalTo(safeArea)
+//            make.bottom.equalTo(nextButton.snp.top).offset(-Constant.margin3)
+//        }
     }
 
     func setupCollectionView() {
@@ -159,6 +159,6 @@ extension CategorySelectViewController: UICollectionViewDelegate, UICollectionVi
     }
 
     func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return selectedCategorys.count < 3
+        return selectedCategorys.count < 1
     }
 }
