@@ -39,20 +39,30 @@ class LoginView: UIView {
 
     private(set) var emailTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "이메일을 입력해주세요"
+        textField.attributedPlaceholder = NSAttributedString(
+               string: "이메일을 입력해주세요.",
+               attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray]
+           )
         textField.font = .bodyFont(.large, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
         textField.borderStyle = .roundedRect
+        textField.layer.borderWidth = 0.8
+        textField.layer.cornerRadius = 5
         textField.autocapitalizationType = .none
         return textField
     }()
 
     private(set) var passwordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "비밀번호를 입력해주세요"
+        textField.attributedPlaceholder = NSAttributedString(
+               string: "비밀번호를 입력해주세요",
+               attributes: [NSAttributedString.Key.foregroundColor: UIColor.gray]
+           )
         textField.font = .bodyFont(.large, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
         textField.borderStyle = .roundedRect
+        textField.layer.borderWidth = 0.8
+        textField.layer.cornerRadius = 5
         textField.isSecureTextEntry = true
         return textField
     }()
@@ -92,16 +102,16 @@ class LoginView: UIView {
         return label
     }()
 
-    private(set) var signUpButton: UIButton = {
-        let button = UIButton()
-//        button.setTitle("회원가입", for: .normal)
-//        button.setTitleColor(UIColor(color: .white), for: .normal)
-//        button.backgroundColor = UIColor(color: .contentPrimary)
-//        button.layer.cornerRadius = 5
-        button.setImage(UIImage(systemName: "arrow.forward.circle"), for: .normal)
-        button.tintColor = UIColor(color: .main)
-        return button
-    }()
+//    private(set) var signUpButton: UIButton = {
+//        let button = UIButton()
+////        button.setTitle("회원가입", for: .normal)
+////        button.setTitleColor(UIColor(color: .white), for: .normal)
+////        button.backgroundColor = UIColor(color: .contentPrimary)
+////        button.layer.cornerRadius = 5
+//        button.setImage(UIImage(systemName: "arrow.forward.circle"), for: .normal)
+//        button.tintColor = UIColor(color: .main)
+//        return button
+//    }()
 }
 
 private extension LoginView {
@@ -123,7 +133,7 @@ private extension LoginView {
     func addStackView() {
         signUpStackView.addArrangedSubview(signUpLeftLabel)
         signUpStackView.addArrangedSubview(signUpRightLabel)
-        signUpStackView.addArrangedSubview(signUpButton)
+//        signUpStackView.addArrangedSubview(signUpButton)
     }
 
     // 오토레이아웃 설정
@@ -162,9 +172,9 @@ private extension LoginView {
             make.left.right.equalToSuperview().inset(Constant.margin4)
         }
 
-        signUpButton.snp.makeConstraints { make in
-            make.width.height.equalTo(17)
-        }
+//        signUpButton.snp.makeConstraints { make in
+//            make.width.height.equalTo(17)
+//        }
 
 //        signUpLeftLabel.snp.makeConstraints { make in
 //            make.top.equalTo(loginButton.snp.bottom).offset(Constant.margin3)
