@@ -124,7 +124,7 @@ class MeetingCreateViewController: UIViewController {
                 imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
             }
 
-        let club = Club(id: UUID().uuidString, rootUser: currentUserSummary,title: name, imageURL: nil, description: description, category: meetingsData.category, userList: [currentUserSummary], createDate: Date())
+        let club = Club(id: UUID().uuidString, rootUser: currentUserSummary,title: name, imageURL: nil, description: description, category: meetingsData.category, userList: [currentUserSummary], createDate: Date().dateToString)
         meetingsData.addClub(club: club, imageData: imageData) { isSuccess in
             if isSuccess {
                 let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
