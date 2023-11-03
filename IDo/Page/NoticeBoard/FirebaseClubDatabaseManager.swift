@@ -169,6 +169,9 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             }
             self.model?.userList = userList
             completion?(true)
+            guard var myClubList = MyProfile.shared.myUserInfo?.myClubList else { return }
+            myClubList.removeAll(where: { $0.id == model.id })
+            MyProfile.shared.update(myClubList: myClubList)
         }
     }
     
