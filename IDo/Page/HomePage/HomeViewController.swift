@@ -24,6 +24,8 @@ class HomeViewController : UIViewController {
     var joinClubMember = ["멤버 295","멤버 43"]
     var joinClubTableView = UITableView()
     
+    var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+    
     func makeSuggestClub() {
         suggestClub.text = "이런 모임은 어떠신가요?"
         suggestClub.textColor = UIColor(color: .textStrong)
@@ -122,19 +124,24 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
         if tableView == suggestTableView {
             return 1
         }
-        return joinClubList.count
+        
+        return myClubList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
         if tableView == suggestTableView {
+            // 현재 유저가 선택한 카테고리에 접근 -> 해당 카테고리에 있는 클럽 보여주기
             cell.titleLabel.text = suggestClubList
             cell.aboutLabel.text = suggestClubInfo
             cell.memberLabel.text = suggestClubMember
         } else {
-            cell.titleLabel.text = joinClubList[indexPath.row]
-            cell.aboutLabel.text = joinClubInfo[indexPath.row]
-            cell.memberLabel.text = joinClubMember[indexPath.row]
+//            cell.titleLabel.text = joinClubList[indexPath.row]
+//            cell.aboutLabel.text = joinClubInfo[indexPath.row]
+//            cell.memberLabel.text = joinClubMember[indexPath.row]
+            cell.titleLabel.text = myClubList[indexPath.row].title
+            cell.aboutLabel.text = myClubList[indexPath.row].description
+            cell.memberLabel.text = myClubList[indexPath.row].userList?.count as? String
         }
         cell.selectionStyle = .none
         return cell
