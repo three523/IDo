@@ -546,7 +546,7 @@ private extension SignUpViewController {
                         self?.showAlertDialog(title: "인증", message: "인증이 성공적으로 처리되었습니다")
                         self?.authenticationNumberButton.setTitle("완료", for: .normal)
                         self?.emailAuthorizationButton.isEnabled = false
-                        self?.emailAuthorizationButton.setTitleColor(.gray, for: .normal)
+                        self?.emailAuthorizationButton.setTitleColor(.white, for: .normal)
                         self?.emailAuthorizationButton.backgroundColor = .lightGray
                     }
                 }
