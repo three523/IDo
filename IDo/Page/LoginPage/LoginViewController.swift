@@ -30,30 +30,30 @@ class LoginViewController: UIViewController {
         // Do any additional setup after loading the view.
         clickLoginButton()
         clickDefaultLoginButton()
-//        clickSignupButton()
+        clickSignupButton()
     }
 }
 
 private extension LoginViewController {
-//    func clickSignupButton() {
-//        loginView.signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
-//    }
-
+    func clickSignupButton() {
+        loginView.signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
+    }
+    
     @objc func signUp() {
         let signUpVC = UINavigationController(rootViewController: SignUpViewController())
         signUpVC.modalPresentationStyle = .fullScreen
         present(signUpVC, animated: true)
     }
-
+    
     // 화면 터치 시 키보드 내려가게 구현
     override internal func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
-
+    
     func clickDefaultLoginButton() {
         loginView.loginButton.addTarget(self, action: #selector(firebaseLogin), for: .touchUpInside)
     }
-
+    
     @objc func firebaseLogin() {
         guard let email = loginView.emailTextField.text, !email.isEmpty else {
             showAlert(message: "이메일을 입력해주세요")
@@ -65,21 +65,21 @@ private extension LoginViewController {
         }
         loginFirebase(email: email, password: password)
     }
-
+    
     func showAlert(message: String) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
         alert.addAction(okAction)
         present(alert, animated: true, completion: nil)
     }
-
+    
     func clickLoginButton() {
         loginView.kakaoLoginButton.addTarget(self, action: #selector(kakaoLogin), for: .touchUpInside)
     }
-
+    
     @objc func kakaoLogin() {
         // MARK: - 카카오톡 앱으로 로그인
-
+        
         if UserApi.isKakaoTalkLoginAvailable() {
             UserApi.shared.loginWithKakaoTalk { oauthToken, error in
                 if let error = error {
@@ -87,17 +87,17 @@ private extension LoginViewController {
                 }
                 else {
                     print("loginWithKakaoTalk() success.")
-
+                    
                     // do something
                     _ = oauthToken
-
+                    
                     self.getUserInfo()
                 }
             }
         }
-
+        
         // MARK: - 카카오톡 계정으로 로그인
-
+        
         else {
             UserApi.shared.loginWithKakaoAccount { oauthToken, error in
                 if let error = error {
@@ -105,18 +105,18 @@ private extension LoginViewController {
                 }
                 else {
                     print("loginWithKakaoAccount() success.")
-
+                    
                     // do something
                     _ = oauthToken
-
+                    
                     self.getUserInfo()
                 }
             }
         }
     }
-
+    
     // MARK: - 카카오로 로그인한 사용자 정보 가져오기
-
+    
     private func getUserInfo() {
         UserApi.shared.me { user, error in
             if let error = error {
@@ -124,7 +124,7 @@ private extension LoginViewController {
             }
             else {
                 print("me() success.")
-
+                
                 // do something
                 _ = user
                 if let email = user?.kakaoAccount?.email {
@@ -137,16 +137,16 @@ private extension LoginViewController {
             }
         }
     }
-
+    
     // MARK: - Firebase 등록
-
+    
     private func regiSterFirebase(email: String, password: String) {
         Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
             // Error(등록 실패)
             if let e = error {
                 print(e.localizedDescription)
             }
-
+            
             // Success(등록 성공)
             else {
                 guard let user = authResult?.user else { return }
@@ -156,21 +156,33 @@ private extension LoginViewController {
             }
         }
     }
-
+    
     // MARK: - Firebase 로그인
-
+    
     private func loginFirebase(email: String, password: String) {
-        Auth.auth().signIn(withEmail: email, password: password) { _, error in
-            // Error(등록 실패)
-            if let e = error {
+        Auth.auth().signIn(withEmail: email, password: password) { [weak self] _, error in
+            guard let self = self else { return }
+            
+            if let error = error {
                 AlertManager.showAlert(on: self, title: "알림", message: "이메일과 비밀번호를 다시 확인해주세요.")
-                print(e.localizedDescription)
-                return
+                print(error.localizedDescription)
             }
-            // Success(등록 성공)
             else {
-                let mainBarController = TabBarController()
-                (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(mainBarController, animated: true)
+                if let hobbyList = MyProfile.shared.myUserInfo?.hobbyList, !hobbyList.isEmpty {
+                    let mainBarController = TabBarController()
+                    (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(mainBarController, animated: true)
+                }
+                else {
+                    if let navigationController = self.navigationController {
+                        let categorySelectVC = CategorySelectViewController(email: email, password: password)
+                        navigationController.pushViewController(categorySelectVC, animated: true)
+                    }
+                    else {
+                        let categorySelectVC = CategorySelectViewController(email: email, password: password)
+                        let navigationController = UINavigationController(rootViewController: categorySelectVC)
+                        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(navigationController, animated: true)
+                    }
+                }
             }
         }
     }
