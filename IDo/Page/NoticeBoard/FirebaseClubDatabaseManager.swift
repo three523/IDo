@@ -154,6 +154,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 print(error.localizedDescription)
                 return
             }
+            self.model?.userList = userList
             completion?(true)
         }
     }
@@ -161,6 +162,19 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
     func removeUser(user: UserSummary, completion: ((Bool) -> Void)? = nil) {
         guard let model,
               var userList = model.userList else { return }
+        userList.removeAll(where: { $0.id == user.id })
+        ref.updateChildValues(["userList":userList.asArrayDictionary()]) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                return
+            }
+            self.model?.userList = userList
+            completion?(true)
+        }
+    }
+    
+    func removeUser(club: Club, user: UserSummary, completion: ((Bool) -> Void)? = nil) {
+        guard var userList = club.userList else { return }
         userList.removeAll(where: { $0.id == user.id })
         ref.updateChildValues(["userList":userList.asArrayDictionary()]) { error, _ in
             if let error {

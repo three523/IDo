@@ -5,11 +5,10 @@
 //  Created by t2023-m0053 on 2023/10/11.
 //
 
-import UIKit
 import SnapKit
+import UIKit
 
 class BasicCell: UITableViewCell {
-    
     let labelStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -17,7 +16,7 @@ class BasicCell: UITableViewCell {
         stackView.distribution = .fillEqually
         return stackView
     }()
-    
+
     let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.small, weight: .bold)
@@ -33,7 +32,7 @@ class BasicCell: UITableViewCell {
         label.numberOfLines = 1
         return label
     }()
-    
+
     let memberLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.xSmall, weight: .regular)
@@ -56,16 +55,15 @@ class BasicCell: UITableViewCell {
 
         contentView.addSubview(basicImageView)
         contentView.addSubview(labelStackView)
-        
+
         labelStackView.addArrangedSubview(titleLabel)
         labelStackView.addArrangedSubview(aboutLabel)
         labelStackView.addArrangedSubview(memberLabel)
-        
-        basicImageView.snp.makeConstraints { make in
 
+        basicImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(Constant.margin2)
+            make.bottom.equalToSuperview().offset(-Constant.margin2).priority(.high)
             make.leading.equalToSuperview().offset(Constant.margin4)
-            make.bottom.equalToSuperview().offset(-Constant.margin2)
             make.width.height.equalTo(62)
         }
 
@@ -80,5 +78,15 @@ class BasicCell: UITableViewCell {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) 구현되지 않았습니다.")
+    }
+}
+
+extension BasicCell: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
     }
 }

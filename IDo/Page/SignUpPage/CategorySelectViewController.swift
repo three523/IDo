@@ -112,6 +112,7 @@ private extension CategorySelectViewController {
         }
         nextButton.snp.makeConstraints { make in
             make.left.right.bottom.equalTo(safeArea).inset(Constant.margin3)
+            make.height.equalTo(48)
         }
         selectedCountLabel.snp.makeConstraints { make in
             make.centerX.equalTo(safeArea)
