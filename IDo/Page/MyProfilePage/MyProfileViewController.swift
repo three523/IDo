@@ -10,6 +10,8 @@ import SnapKit
 import UIKit
 
 class MyProfileViewController: UIViewController {
+    private var firebaseManager: FBDatabaseManager<IDoUser>!
+
     // 프로필
     var profileImage = UIButton()
     var profileName = UITextView()
@@ -179,7 +181,6 @@ class MyProfileViewController: UIViewController {
         choiceEnjoy.snp.makeConstraints { make in
             make.top.equalTo(profileName.snp.bottom).offset(0)
             make.leading.trailing.equalToSuperview().inset(80)
-            make.width.equalTo(60)
             make.height.equalTo(35)
         }
         selfInfo.snp.makeConstraints { make in
@@ -401,24 +402,34 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         alertController.addAction(cancelAction)
         
         // 로그아웃 버튼 추가
-        let deleteIDAction = UIAlertAction(title: "회원탈퇴", style: .destructive) { _ in
-            if let user = Auth.auth().currentUser {
-                user.delete { [self] error in
-                    if let error = error {
-                        print("Firebase Error : ", error)
-                    } else {
-                        print("회원탈퇴 성공!")
-                        if let navigationController = self.navigationController {
-                            navigationController.popToRootViewController(animated: true)
-                            let loginViewController = LoginViewController()
-                            loginViewController.hidesBottomBarWhenPushed = true
-                            loginViewController.modalPresentationStyle = .fullScreen
-                            self.present(loginViewController, animated: true, completion: nil)
+        let deleteIDAction = UIAlertAction(title: "회원탈퇴", style: .destructive) { [weak self] _ in
+            
+            let userDatabaseManager = FBDatabaseManager<IDoUser>(refPath: ["Users"])
+            guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+            
+            userDatabaseManager.deleteData(data: user) { [weak self] success in
+                if success {
+                    if let user = Auth.auth().currentUser {
+                        user.delete { [self] error in
+                            if let error = error {
+                                print("Firebase Error : ", error)
+                            } else {
+                                print("회원탈퇴 성공!")
+                                DispatchQueue.main.async {
+                                    if let navigationController = self?.navigationController {
+                                        navigationController.popToRootViewController(animated: true)
+                                        let loginViewController = LoginViewController()
+                                        loginViewController.hidesBottomBarWhenPushed = true
+                                        loginViewController.modalPresentationStyle = .fullScreen
+                                        self?.present(loginViewController, animated: true, completion: nil)
+                                    }
+                                }
+                            }
                         }
+                    } else {
+                        print("로그인 정보가 존재하지 않습니다")
                     }
                 }
-            } else {
-                print("로그인 정보가 존재하지 않습니다")
             }
         }
         alertController.addAction(deleteIDAction)

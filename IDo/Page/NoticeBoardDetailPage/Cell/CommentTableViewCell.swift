@@ -19,11 +19,11 @@ class CommentTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     var moreButtonTapHandler: () -> Void = {}
-    var updateEnable: Bool = false {
-        didSet {
-            writeInfoView.moreImageView.isHidden = !updateEnable
-        }
-    }
+//    var updateEnable: Bool = false {
+//        didSet {
+//            writeInfoView.moreImageView.isHidden = !updateEnable
+//        }
+//    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
