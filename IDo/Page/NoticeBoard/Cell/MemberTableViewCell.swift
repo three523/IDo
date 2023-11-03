@@ -11,7 +11,7 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
 
     let profileImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "person"))
-        imageView.backgroundColor = UIColor(color: .backgroundPrimary)
+        imageView.backgroundColor = UIColor(color: .contentBackground)
         imageView.tintColor = UIColor(color: .white)
         return imageView
     }()
@@ -76,6 +76,11 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
     private func setupImageView() {
         profileImageView.layer.cornerRadius = imageSize/2
         profileImageView.layer.masksToBounds = true
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        profileImageView.image = nil
     }
 
 }

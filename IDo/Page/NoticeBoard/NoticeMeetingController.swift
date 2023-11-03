@@ -25,9 +25,9 @@ final class NoticeMeetingController: TabmanViewController {
     private var club: Club
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     private let clubImage: UIImage
-    private let HomeVC: NoticeHomeController
+    private let homeVC: NoticeHomeController
     
-    private var authState: AuthState = .notMember {
+    private var authState: AuthState {
         didSet {
             updateNavigationItme()
         }
@@ -39,12 +39,20 @@ final class NoticeMeetingController: TabmanViewController {
         self.clubImage = clubImage
         self.firebaseClubDatabaseManager = FirebaseClubDatabaseManager(refPath: [club.category,"meetings",club.id])
         
-        let isJoin = club.userList?.contains(where: { $0.id == currentUser.id }) ?? false
-        
-        self.HomeVC = NoticeHomeController(club: club, isJoin: isJoin, firebaseClubDataManager: firebaseClubDatabaseManager, clubImage: clubImage)
+        let isRootUser = currentUser.id == club.rootUser.id
+        let isClubMember = club.userList?.contains(where: { $0.id == currentUser.id }) ?? false
+        if isRootUser {
+            self.authState = .root
+        } else if isClubMember {
+            self.authState = .member
+        } else {
+            self.authState = .notMember
+        }
+        self.homeVC = NoticeHomeController(club: club, authState: authState, firebaseClubDataManager: firebaseClubDatabaseManager, clubImage: clubImage)
         super.init(nibName: nil, bundle: nil)
+        
         firebaseClubDatabaseManager.readData()
-        HomeVC.signUpButtonUpdate = { [weak self] authState in
+        homeVC.signUpButtonUpdate = { [weak self] authState in
             self?.authState = authState
         }
     }
@@ -103,7 +111,7 @@ final class NoticeMeetingController: TabmanViewController {
     private func setupTabmanViewController() {
         let titleVC = NoticeBoardViewController(firebaseManager: firebaseManager)
 
-        viewControllers.append(HomeVC)
+        viewControllers.append(homeVC)
         viewControllers.append(titleVC)
     }
 }
@@ -127,7 +135,7 @@ extension NoticeMeetingController {
             let moreButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(moreAlert))
             navigationItem.rightBarButtonItem = moreButton
         case .member:
-            let outButton = UIBarButtonItem(image: UIImage(systemName: "rectangle.portrait.and.arrow.right"), style: .plain, target: self, action: #selector(outAlert))
+            let outButton = UIBarButtonItem(title: "모임 탈퇴", style: .plain, target: self, action: #selector(outAlert))
             outButton.tintColor = UIColor(color: .negative)
             navigationItem.rightBarButtonItem = outButton
         case .notMember:
@@ -197,11 +205,15 @@ extension NoticeMeetingController {
     }
     
     private func outClub() {
-        guard let myUserSummary = MyProfile.shared.myUserInfo?.toUserSummary else { return }
+        guard let myUserSummary = MyProfile.shared.myUserInfo?.toUserSummary,
+              let outUserIndex = self.firebaseClubDatabaseManager.model?.userList?.firstIndex(where: { $0.id == myUserSummary.id }) else { return }
         firebaseClubDatabaseManager.removeUser(user: myUserSummary) { isCompleted in
             if isCompleted {
                 self.authState = .notMember
-                self.HomeVC.signUpButton.isHidden = false
+                self.homeVC.signUpButton.isHidden = false
+                self.homeVC.memberTableView.beginUpdates()
+                self.homeVC.memberTableView.deleteRows(at: [IndexPath(row: outUserIndex, section: 0)], with: .automatic)
+                self.homeVC.memberTableView.endUpdates()
             }
         }
     }
@@ -209,7 +221,7 @@ extension NoticeMeetingController {
     func moveUpdateVC() {
         let updateNoticeBoardVC = MeetingManageViewController(club: club, clubImage: clubImage)
         updateNoticeBoardVC.updateHandler = { [weak self] club, data in
-            self?.HomeVC.update(club: club, imageData: data)
+            self?.homeVC.update(club: club, imageData: data)
         }
 
         // 네비게이션 백 버튼의 이름 설정

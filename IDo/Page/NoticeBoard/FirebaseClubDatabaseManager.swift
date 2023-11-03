@@ -136,6 +136,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 print(error.localizedDescription)
                 return
             }
+            self.model?.userList = userList
             completion?(true)
         }
     }
@@ -149,6 +150,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 print(error.localizedDescription)
                 return
             }
+            self.model?.userList = userList
             completion?(true)
         }
     }
