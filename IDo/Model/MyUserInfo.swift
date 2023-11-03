@@ -13,6 +13,7 @@ struct MyUserInfo: Codable {
     var profileImagePath: String?
     var profileImage: [String: Data]
     var nickName: String
+    var declarationCount: Int?
     var description: String?
     var hobbyList: [String]?
     var myClubList: [Club]?
@@ -24,6 +25,6 @@ struct MyUserInfo: Codable {
     }
     
     var toUserSummary: UserSummary {
-        return UserSummary(id: id, profileImagePath: profileImagePath, nickName: nickName, description: description)
+        return UserSummary(id: id, profileImagePath: profileImagePath, nickName: nickName, description: description, declarationCount: declarationCount)
     }
 }

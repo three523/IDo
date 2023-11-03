@@ -186,6 +186,7 @@ private extension SignUpProfileViewController {
         signUpButton.snp.makeConstraints { make in
             make.left.right.equalTo(safeArea).inset(Constant.margin3)
             self.bottomButtonConstraint = make.bottom.equalTo(safeArea).inset(Constant.margin3).constraint
+            make.height.equalTo(48)
         }
     }
 

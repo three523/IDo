@@ -29,6 +29,7 @@ final class NoticeBoardDetailViewController: UIViewController {
     private var myProfileImage: UIImage?
     private var noticeBoard: NoticeBoard
     private let firebaseNoticeBoardManager: FirebaseManager
+    private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     weak var delegate: FirebaseManagerDelegate?
     
     private var editIndex: Int
@@ -38,6 +39,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         self.firebaseCommentManager = FirebaseCommentManaer(refPath: ["CommentList",noticeBoard.id], noticeBoard: noticeBoard)
         self.firebaseNoticeBoardManager = firebaseNoticeBoardManager
         self.editIndex = editIndex
+        self.firebaseClubDatabaseManager = FirebaseClubDatabaseManager(refPath: [firebaseNoticeBoardManager.club.category, "meetings", firebaseNoticeBoardManager.club.id])
         super.init(nibName: nil, bundle: nil)
         self.currentUser = Auth.auth().currentUser
         guard let profileImageURL = noticeBoard.rootUser.profileImagePath  else { return }
@@ -177,13 +179,44 @@ private extension NoticeBoardDetailViewController {
                     let spamHandler: (UIAlertAction) -> Void = { _ in
                         let okHandler: (UIAlertAction) -> Void = { _ in
                             
+                            // 해당 게시글의 작성자에 접근
+                            let rootUser = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
+                            
+                            // 클럽 userList에서 해당 게시글 작성자 인덱스에 접근
+                            guard let rootUserIndex = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == rootUser.id}) else { return }
+                            
+                            // club에 있는 noticeboardList 지우기
+                            self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]) { success in
+                                
+                                self.firebaseNoticeBoardManager.club.noticeBoardList?.removeAll(where: {$0.id == self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].id})
+                                
+                                
+                            }
+                            
+                            // 그냥 noticeboardList에서 지우기
                             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                                 if success {
-                                    var declarationCount = self.noticeBoard.rootUser.declarationCount ?? 0
-                                    declarationCount += 1
                                     
-                                    self.firebaseCommentManager.deleteAllCommentList()
+                                    // 신고 횟수
+                                    var declarationCount = self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount ?? 0
+                                    declarationCount += 1
+                                    self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount = declarationCount
+                                    
+                                    self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: self.noticeBoard.rootUser.id, declarationCount: declarationCount)
+                                    
+                                    
                                     self.firebaseNoticeBoardManager.readNoticeBoard()
+                                    
+                                    if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
+                                        
+                                        // club에 있는 유저 삭제
+                                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
+                                            if success {
+                                                // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
+                                                print("해당 작성자가 모임에서 방출되었습니다.")
+                                            }
+                                        }
+                                    }
                                     self.navigationController?.popViewController(animated: true)
                                 }
                             }
@@ -191,88 +224,32 @@ private extension NoticeBoardDetailViewController {
                         AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
                     }
                     let dislikeHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let selfHarmHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let illegalSaleHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let nudityHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let hateSpeechHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let violenceHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let bullyingHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    self.firebaseCommentManager.deleteAllCommentList()
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     
                     AlertManager.showDeclarationActionSheet(on: self, title: "신고하기", message: "신고의 이유를 해당 항목에서 선택해주세요.", spamHandler: spamHandler, dislikeHandler: dislikeHandler, selfHarmHandler: selfHarmHandler, illegalSaleHandler: illegalSaleHandler, nudityHandler: nudityHandler, hateSpeechHandler: hateSpeechHandler, violenceHandler: violenceHandler, bullyingHandler: bullyingHandler)
@@ -280,6 +257,19 @@ private extension NoticeBoardDetailViewController {
                 AlertManager.showDeclaration(on: self, title: "알림", message: "이 게시글을 신고하시겠습니까?", declarationHandler: declarationHandler)
             }
         }
+    }
+    
+    func handleSuccessAction(title: String, message: String) {
+        let okHandler: (UIAlertAction) -> Void = { _ in
+            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
+                if success {
+                    self.firebaseCommentManager.deleteAllCommentList()
+                    self.firebaseNoticeBoardManager.readNoticeBoard()
+                    self.navigationController?.popViewController(animated: true)
+                }
+            }
+        }
+        AlertManager.showCheckDeclaration(on: self, title: title, message: message, okHandler: okHandler)
     }
     
     func tableViewSetup() {
