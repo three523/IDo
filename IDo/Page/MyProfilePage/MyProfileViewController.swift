@@ -76,6 +76,7 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.isUserInteractionEnabled = false
         selfInfoDetail.isScrollEnabled = true
     }
+
     func makeselfInfoInt() {
         selfInfoInt.text = "(\(selfInfoDetail.text.count)/300)"
         selfInfoInt.textColor = UIColor(color: .placeholder)
@@ -101,6 +102,7 @@ class MyProfileViewController: UIViewController {
         logout.backgroundColor = .none
         logout.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
     }
+
     func makeLine() {
         line.backgroundColor = UIColor.lightGray
     }
@@ -112,7 +114,6 @@ class MyProfileViewController: UIViewController {
         deleteID.backgroundColor = .none
         deleteID.addTarget(self, action: #selector(deleteIDButtonTapped), for: .touchUpInside)
     }
-<<<<<<< HEAD
 
     func updateEnjoyList() {
         if let hobbies = MyProfile.shared.myUserInfo?.hobbyList {
@@ -124,9 +125,6 @@ class MyProfileViewController: UIViewController {
         }
     }
 
-=======
-    
->>>>>>> c179a230d11d2de04a00628114ef292419841280
     // 로딩되는 뷰
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -240,10 +238,8 @@ class MyProfileViewController: UIViewController {
 
 // 자기소개 300자 제한 및 Label로 입력 글자수 표시
 extension MyProfileViewController: UITextViewDelegate {
-    
     func textViewDidChange(_ textView: UITextView) {
-        
-        //입력 글자 수 표시
+        // 입력 글자 수 표시
         if textView == selfInfoDetail {
             let textCount = selfInfoDetail.text.count
             selfInfoInt.text = "(\(textCount)/300)"
@@ -255,6 +251,7 @@ extension MyProfileViewController: UITextViewDelegate {
             }
         }
     }
+
     // 자기소개 글 300자 제한 표시
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
@@ -281,7 +278,7 @@ extension MyProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as!
-        WriteMeTableViewCell
+            WriteMeTableViewCell
         if tableView == writeMeTableView {
             cell.write.text = writeMeList[indexPath.row]
             cell.write2.text = writeMeDate[indexPath.row]
