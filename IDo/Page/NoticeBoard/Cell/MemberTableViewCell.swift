@@ -9,18 +9,18 @@ import UIKit
 
 final class MemberTableViewCell: UITableViewCell, Reusable {
 
-    let profileImage: BasicImageView = {
-        let imageView = BasicImageView(image: UIImage(systemName: "person"))
-        imageView.contentMargin = 4
-        imageView.backgroundColor = UIColor(color: .backgroundPrimary)
+    let profileImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "person"))
+        imageView.backgroundColor = UIColor(color: .contentBackground)
         imageView.tintColor = UIColor(color: .white)
         return imageView
     }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .bodyFont(.large, weight: .medium)
+        label.font = .bodyFont(.medium, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
+        label.numberOfLines = 1
         return label
     }()
     
@@ -28,13 +28,15 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
         let label = UILabel()
         label.font = .bodyFont(.large, weight: .regular)
         label.textColor = UIColor(color: .textStrong)
+        label.numberOfLines = 1
         return label
     }()
     
-    var imageSize: CGFloat = 30
+    var imageSize: CGFloat = 36
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setup()
     }
     
     required init?(coder: NSCoder) {
@@ -44,29 +46,41 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
     private func setup() {
         addViews()
         setupAutoLayout()
+        setupImageView()
     }
     
     private func addViews() {
-        contentView.addSubview(profileImage)
+        contentView.addSubview(profileImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(descriptionLabel)
     }
     
     private func setupAutoLayout() {
-        profileImage.snp.makeConstraints { make in
-            make.left.centerY.equalTo(contentView)
+        profileImageView.snp.makeConstraints { make in
+            make.left.equalTo(contentView)
             make.width.height.equalTo(imageSize)
+            make.verticalEdges.equalTo(contentView).inset(Constant.margin2)
         }
         
         nameLabel.snp.makeConstraints { make in
-            make.top.equalTo(contentView).inset(Constant.margin1)
-            make.left.equalTo(profileImage.snp.right).offset(Constant.margin2)
+            make.top.equalTo(profileImageView.snp.top)
+            make.left.equalTo(profileImageView.snp.right).offset(Constant.margin2)
         }
         
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(nameLabel.snp.bottom).inset(Constant.margin1)
-            make.left.equalTo(profileImage.snp.right).offset(Constant.margin2)
+            make.left.equalTo(profileImageView.snp.right).offset(Constant.margin2)
         }
+    }
+    
+    private func setupImageView() {
+        profileImageView.layer.cornerRadius = imageSize/2
+        profileImageView.layer.masksToBounds = true
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        profileImageView.image = nil
     }
 
 }
