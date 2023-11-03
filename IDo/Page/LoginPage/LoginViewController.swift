@@ -30,14 +30,14 @@ class LoginViewController: UIViewController {
         // Do any additional setup after loading the view.
         clickLoginButton()
         clickDefaultLoginButton()
-        clickSignupButton()
+//        clickSignupButton()
     }
 }
 
 private extension LoginViewController {
-    func clickSignupButton() {
-        loginView.signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
-    }
+//    func clickSignupButton() {
+//        loginView.signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
+//    }
     
     @objc func signUp() {
         let signUpVC = UINavigationController(rootViewController: SignUpViewController())
