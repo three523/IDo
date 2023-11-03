@@ -49,7 +49,7 @@ class MeetingsData {
                 return
             }
             let tempClubs: [Club] = DataModelCodable.decodingDataSnapshot(value: value)
-            self.clubs = tempClubs.sorted(by: {$0.title.count < $1.title.count})
+            self.clubs = tempClubs.sorted(by: { $0.createDate > $1.createDate })
             completion?(true)
             self.update()
         }
