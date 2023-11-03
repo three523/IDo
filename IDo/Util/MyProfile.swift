@@ -20,11 +20,13 @@ final class MyProfile {
     private init() {}
     
     func getUserProfile(uid: String, completion: ((Bool) -> Void)? = nil) {
-        if let currentUser = fileCache.getFile(uid: uid) {
-            self.myUserInfo = currentUser
-            completion?(true)
-        }
         firebaseManager = FBDatabaseManager(refPath: ["Users",uid])
+        //MARK: 데이터가 바꼈는지 체크하는 부분 로직 생각해보기
+//        if let currentUser = fileCache.getFile(uid: uid) {
+//            self.myUserInfo = currentUser
+//            completion?(true)
+//            return
+//        }
         firebaseManager.readData { result in
             switch result {
             case .success(let idoUser):
@@ -40,6 +42,7 @@ final class MyProfile {
                     self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)
                     completion?(true)
                 }
+                return
             case .failure(let error):
                 completion?(false)
                 print(error.localizedDescription)

@@ -38,7 +38,7 @@ class MyProfileViewController: UIViewController {
     var isEdit = false
     
     func makeProfileImage() {
-        profileImage.setImage(.profile, for: .normal)
+        profileImage.setImage(UIImage(named: "profile"), for: .normal)
         profileImage.imageView?.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = 50
         profileImage.clipsToBounds = true

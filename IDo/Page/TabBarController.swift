@@ -12,11 +12,10 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        MyProfile.shared.getUserProfile(uid: uid) { success in
-            self.tabBarSetting()
-            self.viewControllerSetting()
-        }
+//        guard let uid = Auth.auth().currentUser?.uid else { return }
+//        MyProfile.shared.getUserProfile(uid: uid)
+        self.tabBarSetting()
+        self.viewControllerSetting()
     }
 
     private func tabBarSetting() {
@@ -24,6 +23,16 @@ class TabBarController: UITabBarController {
         self.modalPresentationStyle = .fullScreen
         self.tabBar.unselectedItemTintColor = .systemGray
         self.tabBar.tintColor = UIColor(color: .main)
+        
+        // TabBar 상단에 1픽셀 높이의 구분선을 추가
+        let tabBarSeparator = CALayer()
+        tabBarSeparator.backgroundColor = UIColor(color: .placeholder).cgColor // 구분선 색상 설정
+        tabBarSeparator.frame = CGRect(x: 0, y: 0, width: self.tabBar.frame.width, height: 1.0 / UIScreen.main.scale) // 1픽셀 높이의 선
+        self.tabBar.layer.addSublayer(tabBarSeparator)
+        
+        // 기본 탭바 상단 섀도우 제거
+        self.tabBar.shadowImage = UIImage()
+        self.tabBar.backgroundImage = UIImage()
     }
 
     private func viewControllerSetting() {
