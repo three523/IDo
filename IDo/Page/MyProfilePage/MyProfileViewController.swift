@@ -341,7 +341,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
                     navigationController.popToRootViewController(animated: true)
                     let loginViewController = LoginViewController()
                     loginViewController.hidesBottomBarWhenPushed = true
-                    loginViewController.modalPresentationStyle = .fullScreen 
+                    loginViewController.modalPresentationStyle = .fullScreen
                     self.present(loginViewController, animated: true, completion: nil)
                 }
             } catch let signOutError as NSError {
@@ -363,8 +363,24 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         
         // 로그아웃 버튼 추가
         let deleteIDAction = UIAlertAction(title: "회원탈퇴", style: .destructive) { _ in
-            // 로그아웃 동작을 수행할 함수 호출
-//            self.performLogout()
+            if let user = Auth.auth().currentUser {
+                user.delete { [self] error in
+                    if let error = error {
+                        print("Firebase Error : ", error)
+                    } else {
+                        print("회원탈퇴 성공!")
+                        if let navigationController = self.navigationController {
+                            navigationController.popToRootViewController(animated: true)
+                            let loginViewController = LoginViewController()
+                            loginViewController.hidesBottomBarWhenPushed = true
+                            loginViewController.modalPresentationStyle = .fullScreen
+                            self.present(loginViewController, animated: true, completion: nil)
+                        }
+                    }
+                }
+            } else {
+                print("로그인 정보가 존재하지 않습니다")
+            }
         }
         alertController.addAction(deleteIDAction)
         
