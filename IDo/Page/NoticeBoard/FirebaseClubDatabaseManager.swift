@@ -170,4 +170,16 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             completion?(true)
         }
     }
+    
+    func removeUser(club: Club, user: UserSummary, completion: ((Bool) -> Void)? = nil) {
+        guard var userList = club.userList else { return }
+        userList.removeAll(where: { $0.id == user.id })
+        ref.updateChildValues(["userList":userList.asArrayDictionary()]) { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                return
+            }
+            completion?(true)
+        }
+    }
 }
