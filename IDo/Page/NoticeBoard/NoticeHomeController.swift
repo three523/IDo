@@ -11,7 +11,6 @@ import SnapKit
 import UIKit
 
 final class NoticeHomeController: UIViewController {
-    private var club: Club
     var signUpButtonUpdate: ((AuthState) -> Void)?
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     private let clubImage: UIImage
@@ -72,7 +71,6 @@ final class NoticeHomeController: UIViewController {
     
     init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager, clubImage: UIImage) {
         self.clubImage = clubImage
-        self.club = club
         self.firebaseClubDatabaseManager = firebaseClubDataManager
         self.authState = authState
         super.init(nibName: nil, bundle: nil)
