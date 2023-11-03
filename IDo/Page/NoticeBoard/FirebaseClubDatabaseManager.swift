@@ -36,7 +36,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             guard let noticeBoards else { return }
             noticeBoards.forEach { noticeBoard in
                 self.removeUserNoticeBoard(user: noticeBoard.rootUser, noticeBoard: noticeBoard)
-                self.removeComment(noticeBoard: noticeBoard)
+                self.removeAllCommentList(noticeBoard: noticeBoard)
                 noticeBoard.imageList?.compactMap{ self.removeImage(path: $0) }
             }
         }
@@ -53,13 +53,13 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             }
             completion?(true)
             self.removeUserNoticeBoard(user: clubNoticeboard.rootUser, noticeBoard: clubNoticeboard)
-            self.removeComment(noticeBoard: clubNoticeboard)
+            self.removeAllCommentList(noticeBoard: clubNoticeboard)
             clubNoticeboard.imageList?.compactMap{ self.removeImage(path: $0) }
             
         }
     }
     
-    private func removeComment(noticeBoard: NoticeBoard) {
+    private func removeAllCommentList(noticeBoard: NoticeBoard) {
         let ref = Database.database().reference().child("CommentList").child(noticeBoard.id)
         ref.getData { error, dataSnapShot in
             if let error {
@@ -69,8 +69,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             guard let value = dataSnapShot?.value as? [String : Any] else { return }
             let commentList: [Comment] = DataModelCodable.decodingDataSnapshot(value: value)
             commentList.forEach { comment in
-                let writeUser = comment.writeUser
-                self.removeUserComment(user: writeUser, comment: comment)
+                self.removeUserComment(comment: comment)
             }
             ref.removeValue { error, _ in
                 if let error {
@@ -118,8 +117,8 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             ref.updateChildValues(["myNoticeBoardList" : userNoticeBoardList.asArrayDictionary()])
         }
     }
-    private func removeUserComment(user: UserSummary ,comment: Comment) {
-        let ref = Database.database().reference().child("Users").child(user.id)
+    func removeUserComment(comment: Comment) {
+        let ref = Database.database().reference().child("Users").child(comment.writeUser.id)
         let userCommentListRef = ref.child("myCommentList")
         userCommentListRef.getData { error, dataSnapShot in
             if let error {
