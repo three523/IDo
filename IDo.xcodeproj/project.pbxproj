@@ -20,6 +20,7 @@
 		10C265BE2AD55BC2002BA40A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BD2AD55BC2002BA40A /* Assets.xcassets */; };
 		10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */; };
 		10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10C265C92AD55C81002BA40A /* SnapKit */; };
+		10C4882A2AF4ED6A00E4EAB3 /* HomeEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C488292AF4ED6A00E4EAB3 /* HomeEmptyView.swift */; };
 		18B591A02AF1D658002A684D /* DataModelCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B5919F2AF1D658002A684D /* DataModelCodable.swift */; };
 		18B591A22AF275CF002A684D /* MemberTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B591A12AF275CE002A684D /* MemberTableViewCell.swift */; };
 		18C269FD2AD9411D00899A6F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18C269FC2AD9411D00899A6F /* GoogleService-Info.plist */; };
@@ -131,6 +132,7 @@
 		10C265BD2AD55BC2002BA40A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		10C265C02AD55BC2002BA40A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		10C265C22AD55BC2002BA40A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10C488292AF4ED6A00E4EAB3 /* HomeEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeEmptyView.swift; path = IDo/Page/NoticeBoard/HomeEmptyView.swift; sourceTree = SOURCE_ROOT; };
 		10CBA0372AD6455400F1DA37 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		10CBA0392AD6464A00F1DA37 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		10CBA03B2AD6465600F1DA37 /* NoticeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeViewController.swift; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 		10CBA03F2AD6467600F1DA37 /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
+				10C488292AF4ED6A00E4EAB3 /* HomeEmptyView.swift */,
 				10C265B52AD55BBF002BA40A /* HomeViewController.swift */,
 				7B6D8C642AE0D0B100FF2194 /* HomeViewcell.swift */,
 			);
@@ -688,6 +691,7 @@
 				7B226EEC2AEBD85900EAED75 /* SignUpProfileViewController.swift in Sources */,
 				7B226EED2AEBD85900EAED75 /* LoginInfo.swift in Sources */,
 				7B226EEE2AEBD85900EAED75 /* FirebaseCreateUserManager.swift in Sources */,
+				10C4882A2AF4ED6A00E4EAB3 /* HomeEmptyView.swift in Sources */,
 				18D764AC2AF3C34600AD6140 /* MemberListHeaderView.swift in Sources */,
 				7B226EEF2AEBD85900EAED75 /* LoginViewController.swift in Sources */,
 				7B226EF02AEBD85900EAED75 /* LoginView.swift in Sources */,

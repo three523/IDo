@@ -177,51 +177,8 @@ private extension NoticeBoardDetailViewController {
                 // MARK: - 게시판 신고 로직
                 let declarationHandler: (UIAlertAction) -> Void = { _ in
                     let spamHandler: (UIAlertAction) -> Void = { _ in
-                        let okHandler: (UIAlertAction) -> Void = { _ in
-                            
-                            // 해당 게시글의 작성자에 접근
-                            let rootUser = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
-                            
-                            // 클럽 userList에서 해당 게시글 작성자 인덱스에 접근
-                            guard let rootUserIndex = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == rootUser.id}) else { return }
-                            
-                            // club에 있는 noticeboardList 지우기
-                            self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]) { success in
-                                
-                                self.firebaseNoticeBoardManager.club.noticeBoardList?.removeAll(where: {$0.id == self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].id})
-                                
-                                
-                            }
-                            
-                            // 그냥 noticeboardList에서 지우기
-                            self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
-                                if success {
-                                    
-                                    // 신고 횟수
-                                    var declarationCount = self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount ?? 0
-                                    declarationCount += 1
-                                    self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount = declarationCount
-                                    
-                                    self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: self.noticeBoard.rootUser.id, declarationCount: declarationCount)
-                                    
-                                    
-                                    self.firebaseNoticeBoardManager.readNoticeBoard()
-                                    
-                                    if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
-                                        
-                                        // club에 있는 유저 삭제
-                                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
-                                            if success {
-                                                // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
-                                                print("해당 작성자가 모임에서 방출되었습니다.")
-                                            }
-                                        }
-                                    }
-                                    self.navigationController?.popViewController(animated: true)
-                                }
-                            }
-                        }
-                        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+                        
+                        self.handleSuccessAction(title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?")
                     }
                     let dislikeHandler: (UIAlertAction) -> Void = { _ in
                         
@@ -261,10 +218,45 @@ private extension NoticeBoardDetailViewController {
     
     func handleSuccessAction(title: String, message: String) {
         let okHandler: (UIAlertAction) -> Void = { _ in
+            
+            // 해당 게시글의 작성자에 접근
+            let rootUser = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
+            
+            // 클럽 userList에서 해당 게시글 작성자 인덱스에 접근
+            guard let rootUserIndex = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == rootUser.id}) else { return }
+            
+            // club에 있는 noticeboardList 지우기
+            self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]) { success in
+                
+                self.firebaseNoticeBoardManager.club.noticeBoardList?.removeAll(where: {$0.id == self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].id})
+                
+                
+            }
+            
+            // 그냥 noticeboardList에서 지우기
             self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                 if success {
-                    self.firebaseCommentManager.deleteAllCommentList()
+                    
+                    // 신고 횟수
+                    var declarationCount = self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount ?? 0
+                    declarationCount += 1
+                    self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount = declarationCount
+                    
+                    self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: self.noticeBoard.rootUser.id, declarationCount: declarationCount)
+                    
+                    
                     self.firebaseNoticeBoardManager.readNoticeBoard()
+                    
+                    if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
+                        
+                        // club에 있는 유저 삭제
+                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
+                            if success {
+                                // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
+                                print("해당 작성자가 모임에서 방출되었습니다.")
+                            }
+                        }
+                    }
                     self.navigationController?.popViewController(animated: true)
                 }
             }
