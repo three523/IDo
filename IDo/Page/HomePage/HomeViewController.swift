@@ -7,6 +7,8 @@
 ///
 import UIKit
 import SnapKit
+import FirebaseDatabase
+import FirebaseStorage
 
 class HomeViewController : UIViewController {
     
@@ -19,10 +21,14 @@ class HomeViewController : UIViewController {
     
     let joinClub = UILabel()
     let line2 = UIView()
-    let joinClubList = ["신림 헬린이 모여라", "동대문구 배드민턴 모임"]
-    var joinClubInfo = ["헬스 좋아하시는 분들을 위한 모임", "배드민턴 초보도 가능 :)"]
-    var joinClubMember = ["멤버 295","멤버 43"]
     var joinClubTableView = UITableView()
+    
+    let homeEmptyView = HomeEmptyView()
+    
+    var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+    
+    var currentUserClubList: [Club] = []
+    var currentUserClublImage: UIImage?
     
     func makeSuggestClub() {
         suggestClub.text = "이런 모임은 어떠신가요?"
@@ -41,7 +47,7 @@ class HomeViewController : UIViewController {
         suggestTableView.isScrollEnabled = false
     }
     func makeLine2() {
-        line2.backgroundColor = UIColor(color: .textStrong)
+        line2.backgroundColor = UIColor(color: .placeholder)
     }
     func makeJoinClub() {
         joinClub.text = "가입한 모임"
@@ -59,42 +65,56 @@ class HomeViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        makeJoinClub()
-        makeSuggestClub()
-        makeLine()
-        makeLine2()
-        makeTableView()
-        makeTableView2()
-        HomeViewTopControllerSet()
-        navigationBar()
-        setLayout()
+        
+        getUserClubList(userID: MyProfile.shared.myUserInfo!.id) { success in
+            self.makeJoinClub()
+            self.makeSuggestClub()
+            self.makeLine()
+            self.makeLine2()
+            self.makeTableView()
+            self.makeTableView2()
+            self.HomeViewTopControllerSet()
+            self.navigationBar()
+            self.setLayout()
+        }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getUserClubList(userID: MyProfile.shared.myUserInfo!.id)
+        updateUIBasedOnData()
+        joinClubTableView.reloadData()
+        print(MyProfile.shared.myUserInfo)
+    }
+    
     func setLayout() {
         view.addSubview(joinClub)
-        view.addSubview(suggestClub)
-        view.addSubview(line)
+        //view.addSubview(suggestClub)
+        //view.addSubview(line)
         view.addSubview(line2)
         view.addSubview(joinClubTableView)
-        view.addSubview(suggestTableView)
+        //view.addSubview(suggestTableView)
+        view.addSubview(homeEmptyView)
         
-        suggestClub.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.leading.equalToSuperview().offset(Constant.margin4)
-        }
-        line.snp.makeConstraints { make in
-            make.top.equalTo(suggestClub.snp.bottom).offset(Constant.margin2)
-            make.leading.equalToSuperview().offset(Constant.margin4)
-            make.trailing.equalToSuperview().offset(-Constant.margin4)
-            make.height.equalTo(1)
-        }
-        suggestTableView.snp.makeConstraints { make in
-            make.top.equalTo(line.snp.bottom)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(78)
-        }
+//        suggestClub.snp.makeConstraints { make in
+//            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+//            make.leading.equalToSuperview().offset(Constant.margin4)
+//        }
+//        line.snp.makeConstraints { make in
+//            make.top.equalTo(suggestClub.snp.bottom).offset(Constant.margin2)
+//            make.leading.equalToSuperview().offset(Constant.margin4)
+//            make.trailing.equalToSuperview().offset(-Constant.margin4)
+//            make.height.equalTo(1)
+//        }
+//        suggestTableView.snp.makeConstraints { make in
+//            make.top.equalTo(line.snp.bottom)
+//            make.leading.trailing.equalToSuperview()
+//            make.height.equalTo(78)
+//        }
         
         joinClub.snp.makeConstraints { make in
-            make.top.equalTo(suggestTableView.snp.bottom).offset(Constant.margin4)
+//            make.top.equalTo(suggestTableView.snp.bottom).offset(Constant.margin4)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
             make.leading.equalToSuperview().offset(Constant.margin4)
         }
         line2.snp.makeConstraints { make in
@@ -108,36 +128,107 @@ class HomeViewController : UIViewController {
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
+        homeEmptyView.snp.makeConstraints { make in
+            make.top.equalTo(line2.snp.bottom)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+        }
+    }
+    
+    func getUserClubList(userID: String, completion: ((Bool) -> Void)? = nil) {
+        let ref = Database.database().reference().child("Users").child(userID)
         
+        ref.getData(completion: { (error, snapshot) in
+            if let error = error {
+                print("Error getting data: \(error)")
+                completion?(false)
+                return
+            }
+            
+            guard let value = snapshot?.value as? [String: Any],
+                  let myClubListData = value["myClubList"] as? [[String: Any]] else {
+                completion?(false)
+                return
+            }
+            
+            var newClubList: [Club] = []
+            for clubData in myClubListData {
+                if let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: clubData) {
+                    newClubList.append(club)
+                }
+            }
+            
+            self.currentUserClubList = newClubList
+            self.updateUIBasedOnData()
+            self.joinClubTableView.reloadData()
+            completion?(true)
+        })
+    }
+    
+    func updateUIBasedOnData() {
+        if currentUserClubList.count == 0 {
+            homeEmptyView.isHidden = false
+            joinClubTableView.isHidden = true
+        } else {
+            homeEmptyView.isHidden = true
+            joinClubTableView.isHidden = false
+        }
+    }
+    
+    func getUserClubImage(referencePath: String, imageSize: ImageSize, completion: ((UIImage) -> Void)? = nil) {
+        // 카테고리 -> meetings_images -> referencePath
+        let storageRef = Storage.storage().reference().child(referencePath)
+        FBURLCache.shared.downloadURL(storagePath: storageRef.fullPath) { result in
+            switch result {
+            case .success(let image):
+        
+                completion?(image)
+            case .failure(let error):
+                print("이미지 다운로드 실패: \(error)")
+            }
+        }
     }
 }
 
 
 extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return 75
-//    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tableView == suggestTableView {
             return 1
         }
-        return joinClubList.count
+    
+        return currentUserClubList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
         if tableView == suggestTableView {
+            // 현재 유저가 선택한 카테고리에 접근 -> 해당 카테고리에 있는 클럽 보여주기
             cell.titleLabel.text = suggestClubList
             cell.aboutLabel.text = suggestClubInfo
             cell.memberLabel.text = suggestClubMember
         } else {
-            cell.titleLabel.text = joinClubList[indexPath.row]
-            cell.aboutLabel.text = joinClubInfo[indexPath.row]
-            cell.memberLabel.text = joinClubMember[indexPath.row]
+            cell.titleLabel.text = currentUserClubList[indexPath.row].title
+            cell.aboutLabel.text = currentUserClubList[indexPath.row].description
+            cell.memberLabel.text = "멤버 \((currentUserClubList[indexPath.row].userList?.count ?? 0) + 1)"
+            
+            guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return cell }
+            getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
+                cell.basicImageView.image = image
+            }
+
         }
         cell.selectionStyle = .none
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return }
+        getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
+            let noticeBoardVC = NoticeMeetingController(club: self.currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!, clubImage: image)
+            self.navigationController?.pushViewController(noticeBoardVC, animated: true)
+        }
     }
 }
 
