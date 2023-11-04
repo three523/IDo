@@ -168,10 +168,10 @@ class MyProfileViewController: UIViewController {
         updateButtonTitle()
         profileName.resignFirstResponder()
         selfInfoDetail.resignFirstResponder()
-        profileUpdate()
+        getProfile()
     }
     
-    private func profileUpdate() {
+    private func getProfile() {
         guard let myProfile = MyProfile.shared.myUserInfo else { return }
         profileName.text = myProfile.nickName
         if let hobby = myProfile.hobbyList?.first {
@@ -188,7 +188,9 @@ class MyProfileViewController: UIViewController {
         MyProfile.shared.loadImage(defaultPath: imagePath, paths: [.medium]) {
             guard let imageData = MyProfile.shared.myUserInfo?.profileImage[ImageSize.medium.rawValue],
                   let image = UIImage(data: imageData) else { return }
-            self.profileImage.setImage(image, for: .normal)
+            DispatchQueue.main.async {
+                self.profileImage.setImage(image, for: .normal)
+            }
         }
     }
         
@@ -393,6 +395,12 @@ private extension MyProfileViewController {
             line.isHidden = false
             deleteID.isHidden = false
             choiceEnjoyTextField.tintColor = .clear
+            guard let hobby = choiceEnjoyTextField.text else {
+                print("관심사가 업습니다.")
+                return
+            }
+            //TODO: 프로필 업데이트이 수정이 되지 않은 경우 업데이트를 안하도록 수정이 필요함
+            MyProfile.shared.update(nickName: profileName.text, updateProfileImage: profileImage.image(for: .normal), description: selfInfoDetail.text, hobbyList: [hobby])
         }
     }
 }
