@@ -294,7 +294,7 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         }
         
         if textView == createNoticeBoardView.contentTextView {
-            if changedText.count > 16 {
+            if changedText.count > 500 {
                 createNoticeBoardView.contentCountLabel.textColor = UIColor.red
                 shakeAnimation(for: createNoticeBoardView.contentCountLabel)
                 return false
