@@ -72,13 +72,9 @@ class HomeViewController : UIViewController {
         self.makeTableView()
         self.HomeViewTopControllerSet()
         self.navigationBar()
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        MyProfile.shared.getUserProfile(uid: uid) { _ in
-            print("Test: \(MyProfile.shared.myUserInfo?.myClubList?.count)")
-            self.updateUIBasedOnData()
-            self.makeTableView2()
-            self.setLayout()
-        }
+        self.updateUIBasedOnData()
+        self.makeTableView2()
+        self.setLayout()
     }
     
     override func viewWillAppear(_ animated: Bool) {
