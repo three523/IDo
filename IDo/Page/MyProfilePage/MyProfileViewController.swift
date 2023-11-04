@@ -48,6 +48,7 @@ class MyProfileViewController: UIViewController {
         profileImage.imageView?.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = 50
         profileImage.clipsToBounds = true
+        profileImage.isUserInteractionEnabled = false
     }
         
     func makeProfileName() {
@@ -380,6 +381,7 @@ private extension MyProfileViewController {
             logout.isHidden = true
             line.isHidden = true
             deleteID.isHidden = true
+            profileImage.isUserInteractionEnabled = true
             choiceEnjoyTextField.tintColor = .clear
 
             // isEdit = false인 상태의 실행 코드
@@ -394,6 +396,7 @@ private extension MyProfileViewController {
             logout.isHidden = false
             line.isHidden = false
             deleteID.isHidden = false
+            profileImage.isUserInteractionEnabled = false
             choiceEnjoyTextField.tintColor = .clear
             guard let hobby = choiceEnjoyTextField.text else {
                 print("관심사가 업습니다.")
