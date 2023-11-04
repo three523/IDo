@@ -37,14 +37,13 @@ class MyProfileViewController: UIViewController {
     var isEdit = false
     
     func makeProfileImage() {
-        profileImage.setImage(UIImage(named: "profile"), for: .normal)
         profileImage.imageView?.contentMode = .scaleAspectFill
         profileImage.layer.cornerRadius = 50
         profileImage.clipsToBounds = true
     }
     
     func makeProfileName() {
-        profileName.text = "애라링"
+        profileName.text = ""
         profileName.textAlignment = .center
         profileName.textColor = .black
         profileName.font = UIFont.headFont(.xSmall, weight: .medium)
@@ -52,11 +51,7 @@ class MyProfileViewController: UIViewController {
     }
     
     func makeChoiceEnjoy() {
-        let firstText = "낚시/캠핑"
-        let secondText = "맛집/여행"
-        let thirdText = "운동/스포츠"
-        let totalText = firstText + ",  " + secondText + ",  " + thirdText
-        choiceEnjoy.text = totalText
+        choiceEnjoy.text = ""
         choiceEnjoy.textColor = UIColor(color: .borderSelected)
         choiceEnjoy.backgroundColor = UIColor(color: .contentBackground)
         choiceEnjoy.font = UIFont.bodyFont(.small, weight: .medium)
@@ -75,8 +70,8 @@ class MyProfileViewController: UIViewController {
     }
     
     func makeSelfInfoDetail() {
-        selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
         selfInfoDetail.text = ""
+        selfInfoDetail.font = UIFont.bodyFont(.medium, weight: .regular)
         selfInfoDetail.textColor = UIColor(named: "ui-text-strong")
         selfInfoDetail.backgroundColor = UIColor(color: .backgroundSecondary)
         selfInfoDetail.layer.cornerRadius = 10
@@ -152,6 +147,28 @@ class MyProfileViewController: UIViewController {
         profileName.resignFirstResponder()
         choiceEnjoy.resignFirstResponder()
         selfInfoDetail.resignFirstResponder()
+        profileUpdate()
+    }
+    
+    private func profileUpdate() {
+        guard let myProfile = MyProfile.shared.myUserInfo else { return }
+        profileName.text = myProfile.nickName
+        if let hobby = myProfile.hobbyList?.first {
+            choiceEnjoy.text = hobby
+        }
+        if let description = myProfile.description {
+            selfInfoDetail.text = description
+        }
+        if let profileMediumImageData = myProfile.profileImage[ImageSize.medium.rawValue],
+           let profileMediumImage = UIImage(data: profileMediumImageData) {
+            profileImage.setImage(profileMediumImage, for: .normal)
+        }
+        guard let imagePath = myProfile.profileImagePath else { return }
+        MyProfile.shared.loadImage(defaultPath: imagePath, paths: [.medium]) {
+            guard let imageData = MyProfile.shared.myUserInfo?.profileImage[ImageSize.medium.rawValue],
+                  let image = UIImage(data: imageData) else { return }
+            self.profileImage.setImage(image, for: .normal)
+        }
     }
     
     func setLayout() {
