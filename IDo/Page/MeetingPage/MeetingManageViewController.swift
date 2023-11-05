@@ -23,10 +23,10 @@ class MeetingManageViewController: UIViewController {
     lazy var storageRef = storage.reference()
     private var meetingsData: MeetingsData
     private var club: Club
-    private let clubImage: UIImage
+    private let clubImage: UIImage?
     var updateHandler: ((Club, Data) -> Void)?
     
-    init(club: Club, clubImage: UIImage) {
+    init(club: Club, clubImage: UIImage?) {
         self.club = club
         self.clubImage = clubImage
         self.meetingsData = MeetingsData(category: club.category)
@@ -114,7 +114,22 @@ class MeetingManageViewController: UIViewController {
         configureUI()
         meetingNameField.text = club.title
         meetingDescriptionField.text = club.description
-        profileImageButton.setImage(clubImage, for: .normal)
+        if let clubImage {
+            profileImageButton.setImage(clubImage, for: .normal)
+        } else {
+            if let imagePath = club.imageURL {
+                FBURLCache.shared.downloadURL(storagePath: imagePath) { result in
+                    switch result {
+                    case .success(let image):
+                        DispatchQueue.main.async {
+                            self.profileImageButton.setImage(image, for: .normal)
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
