@@ -76,7 +76,14 @@ final class NoticeHomeController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         let isClubMember = authState != .notMember
-        signUpButton.isHidden = isClubMember
+//        signUpButton.isHidden = isClubMember
+        signUpButton.snp.updateConstraints { make in
+            if isClubMember {
+                make.height.equalTo(0)
+            } else {
+                make.height.equalTo(50)
+            }
+        }
     }
     
     @available(*, unavailable)
@@ -112,7 +119,12 @@ final class NoticeHomeController: UIViewController {
     private func addUser() {
         guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
         firebaseClubDatabaseManager.appendUser(user: idoUser.toUserSummary) { isCompleted in
-            if isCompleted { self.signUpButton.isHidden = isCompleted }
+            if isCompleted {
+//                self.signUpButton.isHidden = isCompleted
+                self.signUpButton.snp.updateConstraints { make in
+                    make.height.equalTo(0)
+                }
+            }
             let authState: AuthState = isCompleted ? .member : .notMember
             guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else { return }
             self.signUpButtonUpdate?(authState)
@@ -156,7 +168,7 @@ final class NoticeHomeController: UIViewController {
         scrollView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(safeArea.snp.top).inset(Constant.margin3)
-            make.bottom.equalTo(safeArea).offset(Constant.margin3)
+            make.bottom.equalTo(signUpButton.snp.top).offset(Constant.margin3)
         }
         
         scrollStackViewContainer.snp.makeConstraints { make in
