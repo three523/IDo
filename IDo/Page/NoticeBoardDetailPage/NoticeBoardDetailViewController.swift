@@ -75,6 +75,7 @@ final class NoticeBoardDetailViewController: UIViewController {
                 self.commentTableView.reloadData()
             }
         }
+        NavigationBar.setNavigationCategoryTitle(for: navigationItem)
         setup()
     }
     

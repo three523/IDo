@@ -88,8 +88,17 @@ class SignUpProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        
+        // 타이틀 생성 및 설정
+        if let navigationBar = self.navigationController?.navigationBar {
+            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 생성")
+        }
+        
         setup()
-        // Do any additional setup after loading the view.
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -200,6 +209,7 @@ private extension SignUpProfileViewController {
         profileImageView.addGestureRecognizer(gesture)
         profileImageView.isUserInteractionEnabled = true
         profileImageView.layoutIfNeeded()
+        profileImageView.backgroundColor = UIColor(color: .contentBackground)
         profileImageView.layer.cornerRadius = profileImageView.bounds.height / 2
         profileImageView.layer.masksToBounds = true
     }

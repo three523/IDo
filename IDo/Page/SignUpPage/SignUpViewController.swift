@@ -10,6 +10,8 @@ import FirebaseCore
 import FirebaseDatabase
 import SwiftSMTP
 import UIKit
+import SnapKit
+
 final class SignUpViewController: UIViewController {
     var smtp: SMTP!
     var verificationCode: String?
@@ -128,7 +130,7 @@ final class SignUpViewController: UIViewController {
     private let authenticationNumberTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "인증번호"
-        textField.font = .bodyFont(.medium, weight: .regular)
+        textField.font = .bodyFont(.large, weight: .regular)
         textField.textColor = UIColor(color: .textStrong)
         textField.borderStyle = .roundedRect
         return textField
@@ -183,7 +185,7 @@ final class SignUpViewController: UIViewController {
 
     private let nextButton: UIButton = {
         let button = UIButton()
-        button.setTitle("회원가입", for: .normal)
+        button.setTitle("가입하기", for: .normal)
         button.setTitleColor(UIColor(color: .white), for: .normal)
         button.backgroundColor = UIColor(color: .contentPrimary)
         button.layer.cornerRadius = 5
@@ -193,19 +195,34 @@ final class SignUpViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        navigationSet()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        navigationController?.setNavigationBarHidden(true, animated: animated)
+        
+        //navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
+        //navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    private func navigationSet() {
+        
+        let configuration = UIImage.SymbolConfiguration(weight: .semibold) // .bold 또는 원하는 굵기로 설정
+        let image = UIImage(systemName: "chevron.backward", withConfiguration: configuration)
+        
+        let backButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(clickBackButton))
+        self.navigationItem.leftBarButtonItem = backButton
+        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.black
+        
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        
+        if let navigationBar = self.navigationController?.navigationBar {
+            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "회원가입")
+        }
     }
 }
 
@@ -225,7 +242,7 @@ private extension SignUpViewController {
         view.addSubview(linkButton)
         view.addSubview(passwordTextField)
         view.addSubview(nextButton)
-        view.addSubview(backButton)
+        //view.addSubview(backButton)
         view.addSubview(idLable)
         view.addSubview(passwordLable)
         view.addSubview(passwordConfirmLable)
@@ -241,9 +258,9 @@ private extension SignUpViewController {
     
     func autolayoutSetup() {
         let safeArea = view.safeAreaLayoutGuide
-        backButton.snp.makeConstraints { make in
-            make.top.left.equalTo(safeArea).inset(Constant.margin3)
-        }
+//        backButton.snp.makeConstraints { make in
+//            make.top.left.equalTo(safeArea).inset(Constant.margin3)
+//        }
         passwordTextField.rightView = eyeButton
         passwordTextField.rightViewMode = .always
         
@@ -252,7 +269,8 @@ private extension SignUpViewController {
         let contentHeight = 48
         
         idLable.snp.makeConstraints { make in
-            make.top.equalTo(backButton.snp.bottom).offset(Constant.margin3)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+//            make.top.equalTo(backButton.snp.bottom).offset(Constant.margin3)
             make.leading.trailing.equalToSuperview().inset(Constant.margin4)
         }
         
@@ -333,7 +351,7 @@ private extension SignUpViewController {
     func setupButton() {
         nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
         
-        backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
+        //backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
         
         eyeButton.addTarget(self, action: #selector(eyeClickButton), for: .touchUpInside)
         
