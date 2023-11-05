@@ -140,6 +140,7 @@ final class SignUpViewController: UIViewController {
         let btn = UIButton()
         btn.setTitle("인증", for: .normal)
         btn.setTitleColor(UIColor(color: .white), for: .normal)
+        btn.titleLabel?.font = UIFont.bodyFont(.large, weight: .regular)
         btn.backgroundColor = UIColor(color: .contentPrimary)
         btn.layer.cornerRadius = 5
         return btn
@@ -149,6 +150,7 @@ final class SignUpViewController: UIViewController {
         let btn = UIButton()
         btn.setTitle("확인", for: .normal)
         btn.setTitleColor(UIColor(color: .white), for: .normal)
+        btn.titleLabel?.font = UIFont.bodyFont(.large, weight: .regular)
         btn.backgroundColor = UIColor(color: .contentPrimary)
         btn.layer.cornerRadius = 5
         return btn
@@ -187,6 +189,7 @@ final class SignUpViewController: UIViewController {
         let button = UIButton()
         button.setTitle("가입하기", for: .normal)
         button.setTitleColor(UIColor(color: .white), for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.backgroundColor = UIColor(color: .contentPrimary)
         button.layer.cornerRadius = 5
         return button
