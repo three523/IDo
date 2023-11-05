@@ -432,8 +432,8 @@ private extension SignUpViewController {
         termsLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(termsOfUseTap)))
         
         guard let privacyPolicyText = privacyPolicyLabel.text else { return }
-        let privacyPolicyAttributedString = NSMutableAttributedString(string: termsText)
-        let privacyPolicyRange = (termsText as NSString).range(of: "이용약관")
+        let privacyPolicyAttributedString = NSMutableAttributedString(string: privacyPolicyText)
+        let privacyPolicyRange = (privacyPolicyText as NSString).range(of: "개인정보처리방침")
         let privacyPolicyLinkAttributes: [NSAttributedString.Key : Any] = [
            .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
            .foregroundColor: UIColor.blue, // 링크 텍스트 색상
