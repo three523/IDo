@@ -226,9 +226,12 @@ private extension HomeViewController {
             make.leading.equalToSuperview().offset(7) // 또는 적절한 값을 사용
             make.top.bottom.trailing.equalToSuperview()
         }
-        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
+        
+        
+        
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        
         navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: containerView)
     }
