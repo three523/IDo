@@ -219,7 +219,7 @@ class MyProfileViewController: UIViewController {
         profileName.snp.makeConstraints { make in
             make.top.equalTo(profileImage.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
-            make.width.equalTo(70)
+            make.left.right.equalToSuperview().inset(Constant.margin4)
             make.height.equalTo(45)
         }
         choiceEnjoyTextField.snp.makeConstraints { make in
@@ -362,9 +362,8 @@ private extension MyProfileViewController {
         navigationItem.rightBarButtonItem = editButton
         navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
             
-        let backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = UIColor(color: .main)
-        navigationItem.backBarButtonItem = backBarButtonItem
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
     }
 
     @objc func editVC() {

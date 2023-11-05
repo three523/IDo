@@ -67,16 +67,10 @@ class MeetingViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        let titleLabel = UILabel()
-        titleLabel.text = TemporaryManager.shared.categoryData ?? ""
-        titleLabel.textAlignment = .center
-        
-        navigationItem.titleView = titleLabel
+        NavigationBar.setNavigationCategoryTitle(for: navigationItem)
         
         // 백 버튼 아이템 생성 및 설정
-        let backBarButtonItem = UIBarButtonItem(title: titleLabel.text, style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
     }
 
     private func setupEmptyMessageView() {
@@ -111,7 +105,7 @@ class MeetingViewController: UIViewController {
     }
     
     func navigationItem() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "pencil"), style: .done, target: self, action: #selector(setBtnTap))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "plus"), style: .done, target: self, action: #selector(setBtnTap))
         
         //        button.addTarget(self, action: #selector(profileImageTapped), for: .touchUpInside)
         //        let noticeBoardVC = MeetingCreateViewController()

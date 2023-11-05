@@ -4,8 +4,6 @@ import FirebaseStorage
 
 class MeetingCreateViewController: UIViewController {
     
-
-    
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -152,6 +150,9 @@ class MeetingCreateViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
 
+        if let navigationBar = self.navigationController?.navigationBar {
+            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 생성하기")
+        }
     }
     
     

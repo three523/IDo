@@ -101,10 +101,8 @@ final class NoticeHomeController: UIViewController {
             }
         }
         
-        // 네비게이션 백 버튼의 이름 설정
-        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
     }
     
     override func viewWillAppear(_ animated: Bool) {
