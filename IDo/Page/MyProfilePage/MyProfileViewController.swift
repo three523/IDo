@@ -185,12 +185,16 @@ class MyProfileViewController: UIViewController {
            let profileMediumImage = UIImage(data: profileMediumImageData) {
             profileImage.setImage(profileMediumImage, for: .normal)
         }
-        guard let imagePath = myProfile.profileImagePath else { return }
+        guard let imagePath = myProfile.profileImagePath else {
+              self.profileImage.setImage(UIImage(named: "profile"), for: .normal)
+            return
+        }
         MyProfile.shared.loadImage(defaultPath: imagePath, paths: [.medium]) {
-            guard let imageData = MyProfile.shared.myUserInfo?.profileImage[ImageSize.medium.rawValue],
-                  let image = UIImage(data: imageData) else { return }
-            DispatchQueue.main.async {
-                self.profileImage.setImage(image, for: .normal)
+            if let imageData = MyProfile.shared.myUserInfo?.profileImage[ImageSize.medium.rawValue],
+               let image = UIImage(data: imageData) {
+                DispatchQueue.main.async {
+                    self.profileImage.setImage(image, for: .normal)
+                }
             }
         }
     }

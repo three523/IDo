@@ -43,9 +43,12 @@ final class MyProfile {
                     completion?(true)
                     return
                 }
+                completion?(true)
+                return
             case .failure(let error):
                 completion?(false)
                 print(error.localizedDescription)
+                return
             }
         }
     }
