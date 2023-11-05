@@ -24,7 +24,7 @@ final class NoticeMeetingController: TabmanViewController {
     private let firebaseManager: FirebaseManager
     private var club: Club
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
-    private let clubImage: UIImage
+    private let clubImage: UIImage?
     private let homeVC: NoticeHomeController
     
     private var authState: AuthState {
@@ -33,7 +33,7 @@ final class NoticeMeetingController: TabmanViewController {
         }
     }
 
-    init(club: Club, currentUser: MyUserInfo, clubImage: UIImage) {
+    init(club: Club, currentUser: MyUserInfo, clubImage: UIImage?) {
         self.club = club
         self.firebaseManager = FirebaseManager(club: club)
         self.clubImage = clubImage
