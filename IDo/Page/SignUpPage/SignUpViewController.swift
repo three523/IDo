@@ -17,6 +17,7 @@ final class SignUpViewController: UIViewController {
     var verificationCode: String?
     var isEmailChecked: Bool = false
     var isButtonClicked: Bool = false
+    var isPrivacyPolicy: Bool = false
 
     var passwordErrorLabel: UILabel = {
         let label = UILabel()
