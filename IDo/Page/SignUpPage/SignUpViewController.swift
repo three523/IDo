@@ -265,6 +265,8 @@ private extension SignUpViewController {
         setupButton()
         setupKeyboardEvent()
         setupHyperLink()
+        emailTextField.delegate = self
+        authenticationNumberTextField.delegate = self
         passwordTextField.delegate = self
         passwordConfirmTextField.delegate = self
     }
@@ -376,7 +378,7 @@ private extension SignUpViewController {
         }
         
         privacyPolicyStackView.snp.makeConstraints { make in
-            make.top.equalTo(termsStackView.snp.bottom).offset(Constant.margin1)
+            make.top.equalTo(termsStackView.snp.bottom).offset(Constant.margin2)
             make.left.equalToSuperview().inset(Constant.margin4)
             make.right.equalToSuperview().inset(Constant.margin4)
         }
@@ -563,14 +565,14 @@ private extension SignUpViewController {
     }
     
     func setupKeyboardEvent() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillShow),
-                                               name: UIResponder.keyboardWillShowNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(keyboardWillHide),
-                                               name: UIResponder.keyboardWillHideNotification,
-                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(keyboardWillShow),
+//                                               name: UIResponder.keyboardWillShowNotification,
+//                                               object: nil)
+//        NotificationCenter.default.addObserver(self,
+//                                               selector: #selector(keyboardWillHide),
+//                                               name: UIResponder.keyboardWillHideNotification,
+//                                               object: nil)
     }
     
     @objc func keyboardWillShow(_ sender: Notification) {
@@ -761,6 +763,11 @@ extension SignUpViewController: UITextFieldDelegate {
             validatePasswordConfirm()
         }
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
+    }
 
     private func validatePasswordConfirm() {
         let passwordText = passwordTextField.text ?? ""
@@ -782,28 +789,28 @@ extension SignUpViewController: UITextFieldDelegate {
     }
 
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        if textField == emailTextField {
-            view.frame.origin.y = 0
-               
-        } else if textField == passwordTextField || textField == passwordConfirmTextField || textField == authenticationNumberTextField {
-            // 부드러운 효과를 위해 애니메이션 처리
-            UIView.animate(withDuration: 0.3) {
-                let transform = CGAffineTransform(translationX: 0, y: -100)
-                self.view.transform = transform
-            }
-        }
+//        if textField == emailTextField {
+//            view.frame.origin.y = 0
+//
+//        } else if textField == passwordTextField || textField == passwordConfirmTextField || textField == authenticationNumberTextField {
+//            // 부드러운 효과를 위해 애니메이션 처리
+//            UIView.animate(withDuration: 0.3) {
+//                let transform = CGAffineTransform(translationX: 0, y: -100)
+//                self.view.transform = transform
+//            }
+//        }
     }
        
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField == emailTextField {
-            view.frame.origin.y = 0
-               
-        } else if textField == passwordTextField {
-            UIView.animate(withDuration: 0.3) {
-                let transform = CGAffineTransform(translationX: 0, y: 0)
-                self.view.transform = transform
-            }
-        }
+//        if textField == emailTextField {
+//            view.frame.origin.y = 0
+//
+//        } else if textField == passwordTextField {
+//            UIView.animate(withDuration: 0.3) {
+//                let transform = CGAffineTransform(translationX: 0, y: 0)
+//                self.view.transform = transform
+//            }
+//        }
     }
 }
 
