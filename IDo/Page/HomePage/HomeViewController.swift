@@ -185,7 +185,7 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
             }
             cell.titleLabel.text = currentUserClubList[indexPath.row].title
             cell.aboutLabel.text = currentUserClubList[indexPath.row].description
-            cell.memberLabel.text = "멤버 \((currentUserClubList[indexPath.row].userList?.count ?? 0) + 1)"
+            cell.memberLabel.text = "멤버 \((currentUserClubList[indexPath.row].userList?.count ?? 0))"
             
             guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return cell }
             getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
