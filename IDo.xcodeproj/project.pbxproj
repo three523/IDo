@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10790B972AF7B35F001F6CCB /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10790B962AF7B35F001F6CCB /* NavigationBar.swift */; };
 		10B174882ADAE11C00BF4273 /* SpoqaHanSansNeo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174832ADAE11A00BF4273 /* SpoqaHanSansNeo-Bold.ttf */; };
 		10B174892ADAE11C00BF4273 /* SpoqaHanSansNeo-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174842ADAE11B00BF4273 /* SpoqaHanSansNeo-Light.ttf */; };
 		10B1748A2ADAE11C00BF4273 /* SpoqaHanSansNeo-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174852ADAE11B00BF4273 /* SpoqaHanSansNeo-Medium.ttf */; };
@@ -113,6 +114,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		10790B962AF7B35F001F6CCB /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		10842A202AE0FCB700684FDE /* NoticeBoardCRUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardCRUD.swift; sourceTree = "<group>"; };
 		10A7A8D22AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardImagePicker.swift; sourceTree = "<group>"; };
 		10B1747E2ADA3B9F00BF4273 /* NoticeBoardEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardEmptyView.swift; sourceTree = "<group>"; };
@@ -389,6 +391,7 @@
 				180C33672AD642B6000979F7 /* Font.swift */,
 				180C33682AD642B6000979F7 /* Color.swift */,
 				10CBA0432AD646CE00F1DA37 /* Margin.swift */,
+				10790B962AF7B35F001F6CCB /* NavigationBar.swift */,
 				18CCC1802ADD03C4000D092C /* Reusable.swift */,
 				18B12CB92ADFDD1700FB325F /* Identifier.swift */,
 				18C6BC7B2AE7C564000E4D3F /* FBURLCache.swift */,
@@ -664,6 +667,7 @@
 				7B226ECD2AEBD85900EAED75 /* Club.swift in Sources */,
 				7B226ECE2AEBD85900EAED75 /* NoticeBoard.swift in Sources */,
 				7B226ECF2AEBD85900EAED75 /* Comment.swift in Sources */,
+				10790B972AF7B35F001F6CCB /* NavigationBar.swift in Sources */,
 				7B226ED02AEBD85900EAED75 /* Category.swift in Sources */,
 				7B226ED12AEBD85900EAED75 /* UserSummary.swift in Sources */,
 				7B226ED22AEBD85900EAED75 /* FBDatabaseManager.swift in Sources */,
@@ -877,9 +881,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2YK85BG576;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2YK85BG576;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDo/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
@@ -893,8 +899,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.camp.IDo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.nbcamp.iDo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dev_iDo;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -906,9 +914,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2YK85BG576;
+				DEVELOPMENT_TEAM = "";
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2YK85BG576;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDo/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
@@ -922,8 +932,10 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.camp.IDo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.nbcamp.iDo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = adHoc_iDo;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

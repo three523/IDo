@@ -66,11 +66,20 @@ final class NoticeMeetingController: TabmanViewController {
         super.viewDidLoad()
         authCheck()
         setupTabman()
+        setupNavigationBar()
+    }
+    
+    private func setupNavigationBar() {
+//        let titleLabel = UILabel()
+//        titleLabel.text = TemporaryManager.shared.categoryData ?? ""
+//        titleLabel.textAlignment = .center
+//        
+//        navigationItem.titleView = titleLabel
         
-        // 네비게이션 백 버튼의 이름 설정
-        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
+        NavigationBar.setNavigationCategoryTitle(for: navigationItem)
+        
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
     }
     
     func setupTabman() {
@@ -157,12 +166,6 @@ extension NoticeMeetingController {
 
     @objc func moveCreateVC() {
         let createNoticeBoardVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
-        
-        // 네비게이션 백 버튼의 이름 설정
-        let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        
         navigationController?.pushViewController(createNoticeBoardVC, animated: true)
     }
     
@@ -215,7 +218,10 @@ extension NoticeMeetingController {
         firebaseClubDatabaseManager.removeUser(user: myUserSummary) { isCompleted in
             if isCompleted {
                 self.authState = .notMember
-                self.homeVC.signUpButton.isHidden = false
+//                self.homeVC.signUpButton.isHidden = false
+                self.homeVC.signUpButton.snp.updateConstraints { make in
+                    make.height.equalTo(50)
+                }
                 self.homeVC.memberTableView.beginUpdates()
                 self.homeVC.memberTableView.deleteRows(at: [IndexPath(row: outUserIndex, section: 0)], with: .automatic)
                 self.homeVC.memberTableView.endUpdates()

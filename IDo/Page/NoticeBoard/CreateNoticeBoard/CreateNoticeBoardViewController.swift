@@ -89,9 +89,18 @@ class CreateNoticeBoardViewController: UIViewController {
 private extension CreateNoticeBoardViewController {
     
     func navigationControllerSet() {
-        self.title = "게시판 작성"
+        if isEditingMode {
+            if let navigationBar = self.navigationController?.navigationBar {
+                NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "게시판 수정")
+            }
+        }
+        else {
+            if let navigationBar = self.navigationController?.navigationBar {
+                NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "게시판 작성")
+            }
+        }
         navigationItem.largeTitleDisplayMode = .never
-        navigationController?.view.tintColor = UIColor(named: "MainColor")
+        navigationController?.view.tintColor = UIColor.black
     }
     
     func navigationBarButtonAction() {
