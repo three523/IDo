@@ -200,6 +200,7 @@ class MeetingCreateViewController: UIViewController {
             containerView.snp.makeConstraints { (make) in
                 make.top.bottom.leading.trailing.equalTo(scrollView)
                 make.width.equalTo(scrollView)
+                make.bottom.equalTo(createFinishButton.snp.top).offset(-16)
             }
         
         
@@ -232,7 +233,7 @@ class MeetingCreateViewController: UIViewController {
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
             make.centerX.equalTo(containerView)
             make.left.right.equalTo(containerView).inset(Constant.margin4)
-            make.height.equalTo(200)
+            make.height.equalTo(160)
         }
         meetingDescriptionField.delegate = self
         
@@ -242,12 +243,13 @@ class MeetingCreateViewController: UIViewController {
         }
                 
         createFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
+
             make.centerX.equalTo(containerView)
-            make.width.equalTo(140)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
             make.height.equalTo(44)
-            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
+            make.bottom.equalTo(scrollView.safeAreaLayoutGuide.snp.bottom).offset(-16)
         }
+
                 
         countDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField.snp.bottom).offset(4)

@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
 
-//        try? Auth.auth().signOut()
+        try? Auth.auth().signOut()
         if Auth.auth().currentUser != nil {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             MyProfile.shared.getUserProfile(uid: uid) { isSuccess in
