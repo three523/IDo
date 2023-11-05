@@ -157,29 +157,56 @@ final class SignUpViewController: UIViewController {
         return btn
     }()
 
-    lazy var checkButton: UIButton = {
+    lazy var termsCheckButton: UIButton = {
         var button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "rectangle"), for: .normal)
         button.setImage(UIImage(systemName: "checkmark.rectangle"), for: .selected)
         button.layer.cornerRadius = 5
         button.backgroundColor = .white
-
         return button
     }()
 
     private let termsLabel: UILabel = {
         let label = UILabel()
-        label.text = "귀하는 IDo의 서비스 이용에 필요한 최소한의 개인정보 수집·이용에 동의하지 않을 수 있으나 동의를 거부할 경우 회원제 서비스 이용이 불가합니다."
+        label.text = "이용약관 동의"
         label.textColor = .darkGray
-        label.font = UIFont.systemFont(ofSize: 10)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
         label.textAlignment = .left
-        label.numberOfLines = 3
+        label.numberOfLines = 1
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
     }()
 
     lazy var termsStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [checkButton, termsLabel])
+        let stackView = UIStackView(arrangedSubviews: [termsCheckButton, termsLabel])
+        stackView.spacing = 12
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        return stackView
+    }()
+    
+    lazy var privacyPolicycheckButton: UIButton = {
+        var button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "rectangle"), for: .normal)
+        button.setImage(UIImage(systemName: "checkmark.rectangle"), for: .selected)
+        button.layer.cornerRadius = 5
+        button.backgroundColor = .white
+        return button
+    }()
+    
+    private let privacyPolicyLabel: UILabel = {
+        let label = UILabel()
+        label.text = "개인정보처리방침 동의"
+        label.textColor = .darkGray
+        label.font = UIFont.bodyFont(.small, weight: .regular)
+        label.textAlignment = .left
+        label.numberOfLines = 1
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        return label
+    }()
+    
+    lazy var privacyPolicyStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [privacyPolicycheckButton, privacyPolicyLabel])
         stackView.spacing = 12
         stackView.axis = .horizontal
         stackView.alignment = .center
@@ -237,6 +264,7 @@ private extension SignUpViewController {
         autolayoutSetup()
         setupButton()
         setupKeyboardEvent()
+        setupHyperLink()
         passwordTextField.delegate = self
         passwordConfirmTextField.delegate = self
     }
@@ -258,6 +286,7 @@ private extension SignUpViewController {
         view.addSubview(passwordErrorLabel)
         view.addSubview(passwordConfirmErrorLabel)
         view.addSubview(termsStackView)
+        view.addSubview(privacyPolicyStackView)
     }
     
     func autolayoutSetup() {
@@ -341,10 +370,21 @@ private extension SignUpViewController {
             make.left.equalToSuperview().inset(Constant.margin4)
             make.right.equalToSuperview().inset(Constant.margin4)
         }
-        checkButton.snp.makeConstraints { make in
+        termsCheckButton.snp.makeConstraints { make in
             make.width.equalTo(15)
             make.height.equalTo(15)
         }
+        
+        privacyPolicyStackView.snp.makeConstraints { make in
+            make.top.equalTo(termsStackView.snp.bottom).offset(Constant.margin1)
+            make.left.equalToSuperview().inset(Constant.margin4)
+            make.right.equalToSuperview().inset(Constant.margin4)
+        }
+        privacyPolicycheckButton.snp.makeConstraints { make in
+            make.width.equalTo(15)
+            make.height.equalTo(15)
+        }
+        
         nextButton.snp.makeConstraints { make in
             make.bottom.equalTo(safeArea).inset(Constant.margin3)
             make.left.right.equalToSuperview().inset(Constant.margin3)
@@ -367,7 +407,47 @@ private extension SignUpViewController {
         
         authenticationNumberButton.addTarget(self, action: #selector(addSMTPNumberButton), for: .touchUpInside)
         
-        checkButton.addTarget(self, action: #selector(checkButtonAction), for: .touchUpInside)
+        termsCheckButton.addTarget(self, action: #selector(termsCheckButtonAction), for: .touchUpInside)
+        
+        privacyPolicycheckButton.addTarget(self, action: #selector(privacyPolicycheckButtonAction), for: .touchUpInside)
+    }
+    
+    func setupHyperLink() {
+        guard let termsText = termsLabel.text else { return }
+        let termsAttributedString = NSMutableAttributedString(string: termsText)
+        let termsRange = (termsText as NSString).range(of: "이용약관")
+        let termsLinkAttributes: [NSAttributedString.Key : Any] = [
+           .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
+           .foregroundColor: UIColor.blue, // 링크 텍스트 색상
+           .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 스타일
+        ]
+
+        termsAttributedString.addAttributes(termsLinkAttributes, range: termsRange)
+
+        // UILabel에 NSAttributedString 설정
+        termsLabel.attributedText = termsAttributedString
+
+        // UILabel의 텍스트 선택 가능하게 설정
+        termsLabel.isUserInteractionEnabled = true
+        termsLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(termsOfUseTap)))
+        
+        guard let privacyPolicyText = privacyPolicyLabel.text else { return }
+        let privacyPolicyAttributedString = NSMutableAttributedString(string: privacyPolicyText)
+        let privacyPolicyRange = (privacyPolicyText as NSString).range(of: "개인정보처리방침")
+        let privacyPolicyLinkAttributes: [NSAttributedString.Key : Any] = [
+           .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
+           .foregroundColor: UIColor.blue, // 링크 텍스트 색상
+           .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 스타일
+        ]
+
+        privacyPolicyAttributedString.addAttributes(privacyPolicyLinkAttributes, range: privacyPolicyRange)
+
+        // UILabel에 NSAttributedString 설정
+        privacyPolicyLabel.attributedText = privacyPolicyAttributedString
+
+        // UILabel의 텍스트 선택 가능하게 설정
+        privacyPolicyLabel.isUserInteractionEnabled = true
+        privacyPolicyLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(privacyPolicyLabelTap)))
     }
     
     @objc func clickNextButton() {
@@ -391,8 +471,12 @@ private extension SignUpViewController {
             showAlertDialog(title: "경고", message: "비밀번호와 비밀번호 재확인이 일치하지 않습니다.")
             return
         }
-        guard checkButton.isSelected else {
-            showAlertDialog(title: "경고", message: "약관에 동의해주세요.")
+        guard termsCheckButton.isSelected else {
+            showAlertDialog(title: "경고", message: "이용약관에 동의해주세요.")
+            return
+        }
+        guard privacyPolicycheckButton.isSelected else {
+            showAlertDialog(title: "경고", message: "개인정보처리방침에 동의해주세요.")
             return
         }
         if authenticationNumberButton.title(for: .normal) != "완료" {
@@ -428,6 +512,18 @@ private extension SignUpViewController {
                 let categoryVC = CategorySelectViewController(email: email, password: password)
                 self?.navigationController?.pushViewController(categoryVC, animated: true)
             }
+        }
+    }
+    
+    @objc func termsOfUseTap() {
+        if let url = URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
+    }
+    
+    @objc func privacyPolicyLabelTap() {
+        if let url = URL(string: "https://melon-drawer-23e.notion.site/08b7900683944a66956bc8be87ba833b?pvs=4") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
     
@@ -625,7 +721,10 @@ private extension SignUpViewController {
         })
     }
     
-    @objc func checkButtonAction(_ sender: UIButton) {
+    @objc func termsCheckButtonAction(_ sender: UIButton) {
+        sender.isSelected.toggle()
+    }
+    @objc func privacyPolicycheckButtonAction(_ sender: UIButton) {
         sender.isSelected.toggle()
     }
 }
