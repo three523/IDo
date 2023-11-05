@@ -127,7 +127,7 @@ private extension CreateNoticeBoardView {
             make.top.equalTo(contentCountLabel.snp.bottom).offset(Constant.margin4)
             make.leading.equalTo(snp.leading).offset(Constant.margin4)
             make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
-            make.height.equalTo(30)
+            make.height.equalTo(40)
         }
         
         galleryCollectionView.snp.makeConstraints { make in

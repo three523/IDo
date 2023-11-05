@@ -24,7 +24,7 @@ final class NoticeMeetingController: TabmanViewController {
     private let firebaseManager: FirebaseManager
     private var club: Club
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
-    private let clubImage: UIImage
+    private let clubImage: UIImage?
     private let homeVC: NoticeHomeController
     
     private var authState: AuthState {
@@ -33,7 +33,7 @@ final class NoticeMeetingController: TabmanViewController {
         }
     }
 
-    init(club: Club, currentUser: MyUserInfo, clubImage: UIImage) {
+    init(club: Club, currentUser: MyUserInfo, clubImage: UIImage?) {
         self.club = club
         self.firebaseManager = FirebaseManager(club: club)
         self.clubImage = clubImage
@@ -103,21 +103,27 @@ final class NoticeMeetingController: TabmanViewController {
     
     private func setupTabmanBar() {
         let bar = TMBar.ButtonBar()
-        bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
+        bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 240.0)
+        bar.layout.contentMode = .fit
         
         // 탭 바의 배경 색상 설정
         bar.backgroundView.style = .flat(color: .white)
-        // 탭 아이템의 글자 색상 설정
+        
+        // 선택된 탭 아래에 나타나는 인디케이터의 색상 설정
+        bar.indicator.tintColor = UIColor(color: .main)
+        
         bar.buttons.customize { (button) in
+            
+            // 탭 사이의 여백 설정
+//            button.contentInset = UIEdgeInsets(top: 0, left: 23, bottom: 0, right: 23)
+            
+            
             // 비활성화된 탭의 색상
             button.tintColor = UIColor(color: .contentDisable)
             
             // 활성화된 탭의 색상
             button.selectedTintColor = UIColor(color: .main)
         }
-        
-        // 선택된 탭 아래에 나타나는 인디케이터의 색상 설정
-        bar.indicator.tintColor = UIColor(color: .main)
         
         addBar(bar, dataSource: self, at: .custom(view: tempView, layout: nil))
     }
@@ -149,7 +155,7 @@ extension NoticeMeetingController {
             let moreButton = UIBarButtonItem(image: UIImage(systemName: "ellipsis"), style: .plain, target: self, action: #selector(moreAlert))
             navigationItem.rightBarButtonItem = moreButton
         case .member:
-            let outButton = UIBarButtonItem(title: "모임 탈퇴", style: .plain, target: self, action: #selector(outAlert))
+            let outButton = UIBarButtonItem(title: "탈퇴", style: .plain, target: self, action: #selector(outAlert))
             outButton.tintColor = UIColor(color: .negative)
             navigationItem.rightBarButtonItem = outButton
         case .notMember:
