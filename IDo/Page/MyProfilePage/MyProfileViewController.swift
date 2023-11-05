@@ -204,8 +204,8 @@ class MyProfileViewController: UIViewController {
         view.addSubview(profileName)
         view.addSubview(selfInfo)
         view.addSubview(selfInfoDetail)
-        view.addSubview(writeMe)
-        view.addSubview(writeMeTableView)
+//        view.addSubview(writeMe)
+//        view.addSubview(writeMeTableView)
         view.addSubview(logout)
         view.addSubview(deleteID)
         view.addSubview(selfInfoInt)
@@ -240,32 +240,31 @@ class MyProfileViewController: UIViewController {
             make.top.equalTo(selfInfoDetail.snp.bottom).offset(5)
             make.trailing.equalTo(selfInfoDetail).offset(-5)
         }
-        writeMe.snp.makeConstraints { make in
-            make.top.equalTo(selfInfoInt.snp.bottom).offset(5)
-            make.leading.trailing.equalToSuperview().inset(20)
-        }
-        writeMeTableView.snp.makeConstraints { make in
-            make.top.equalTo(writeMe.snp.bottom).offset(0)
-            make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(160)
-        }
+//        writeMe.snp.makeConstraints { make in
+//            make.top.equalTo(selfInfoInt.snp.bottom).offset(5)
+//            make.leading.trailing.equalToSuperview().inset(20)
+//        }
+//        writeMeTableView.snp.makeConstraints { make in
+//            make.top.equalTo(writeMe.snp.bottom).offset(0)
+//            make.leading.trailing.equalToSuperview().inset(20)
+//            make.height.equalTo(140)
+//        }
         logout.snp.makeConstraints { make in
-            make.top.equalTo(writeMeTableView.snp.bottom).offset(15)
-            make.leading.equalTo(writeMeTableView).offset(100)
+            make.right.equalTo(line).offset(-Constant.margin2)
             make.width.equalTo(70)
-            make.height.equalTo(30)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin3)
         }
         line.snp.makeConstraints { make in
             make.centerY.equalTo(logout)
-            make.leading.equalTo(logout.snp.trailing).offset(5)
+            make.centerX.equalTo(view.safeAreaLayoutGuide)
             make.width.equalTo(2)
             make.height.equalTo(18)
         }
         deleteID.snp.makeConstraints { make in
             make.centerY.equalTo(line)
-            make.leading.equalTo(line.snp.trailing).offset(5)
+            make.leading.equalTo(line.snp.trailing).offset(Constant.margin2)
             make.width.equalTo(70)
-            make.height.equalTo(30)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin3)
         }
     }
                

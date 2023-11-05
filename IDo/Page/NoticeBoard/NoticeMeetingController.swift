@@ -215,7 +215,10 @@ extension NoticeMeetingController {
         firebaseClubDatabaseManager.removeUser(user: myUserSummary) { isCompleted in
             if isCompleted {
                 self.authState = .notMember
-                self.homeVC.signUpButton.isHidden = false
+//                self.homeVC.signUpButton.isHidden = false
+                self.homeVC.signUpButton.snp.updateConstraints { make in
+                    make.height.equalTo(50)
+                }
                 self.homeVC.memberTableView.beginUpdates()
                 self.homeVC.memberTableView.deleteRows(at: [IndexPath(row: outUserIndex, section: 0)], with: .automatic)
                 self.homeVC.memberTableView.endUpdates()
