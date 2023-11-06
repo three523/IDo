@@ -34,7 +34,7 @@ private extension HomeEmptyView {
         backgroundColor = UIColor(color: .backgroundPrimary)
         emptyMessageStackView.setImage(image: UIImage(systemName: "person.2"))
         emptyMessageStackView.titleLabel.text = "가입한 모임이 없습니다."
-        emptyMessageStackView.descriptionLabel.text = "모임에 가입해서 사람들과 취미/관심사를 공유해보세요."
+        emptyMessageStackView.descriptionLabel.text = "모임에 가입해서 취미/관심사를 공유해보세요."
     }
     
     // NoticeBoardEmptyView를 SubView에 추가
