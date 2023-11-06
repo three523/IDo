@@ -110,7 +110,7 @@ class MeetingManageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.hideKeyboardWhenTappedAround() 
         configureUI()
         meetingNameField.text = club.title
         meetingDescriptionField.text = club.description
@@ -138,6 +138,9 @@ class MeetingManageViewController: UIViewController {
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
+        countDescriptionField.text = "(\(meetingDescriptionField.text.count)/300)"
+        countMeetingNameField.text = "(\(meetingNameField.text?.count ?? 0)/16)"
+//        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     
     
@@ -185,6 +188,7 @@ class MeetingManageViewController: UIViewController {
             containerView.snp.makeConstraints { (make) in
                 make.top.bottom.leading.trailing.equalTo(scrollView)
                 make.width.equalTo(scrollView)
+                make.bottom.equalTo(manageFinishButton.snp.bottom)
             }
         
 
@@ -224,6 +228,7 @@ class MeetingManageViewController: UIViewController {
         placeholderLabel.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField).offset(12)
             make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
+           
         }
                 
         manageFinishButton.snp.makeConstraints { (make) in
@@ -299,7 +304,7 @@ extension MeetingManageViewController: UIImagePickerControllerDelegate, UINaviga
 extension MeetingManageViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         placeholderLabel.isHidden = !textView.text.isEmpty
-        countDescriptionField.text = "\(textView.text.count)/300"
+        countDescriptionField.text = "(\(textView.text.count)/300)"
         
         if textView.text.count > 300 {
             shakeAnimation(for: countDescriptionField)
@@ -330,7 +335,7 @@ extension MeetingManageViewController: UITextFieldDelegate {
         let currentText = textField.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
-        countMeetingNameField.text = "\(prospectiveText.count)/16"
+        countMeetingNameField.text = "(\(prospectiveText.count)/16)"
         
         if prospectiveText.count > 16 {
             shakeAnimation(for: countMeetingNameField)
