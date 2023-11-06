@@ -217,24 +217,24 @@ class MyProfileViewController: UIViewController {
             make.width.height.equalTo(100)
         }
         profileName.snp.makeConstraints { make in
-            make.top.equalTo(profileImage.snp.bottom).offset(10)
+            make.top.equalTo(profileImage.snp.bottom).offset(15)
             make.centerX.equalToSuperview()
             make.left.right.equalToSuperview().inset(Constant.margin4)
             make.height.equalTo(45)
         }
         choiceEnjoyTextField.snp.makeConstraints { make in
-            make.top.equalTo(profileName.snp.bottom).offset(0)
+            make.top.equalTo(profileName.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(130)
             make.height.equalTo(35)
         }
         selfInfo.snp.makeConstraints { make in
-            make.top.equalTo(choiceEnjoyTextField.snp.bottom).offset(20)
+            make.top.equalTo(choiceEnjoyTextField.snp.bottom).offset(30)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         selfInfoDetail.snp.makeConstraints { make in
             make.top.equalTo(selfInfo.snp.bottom).offset(5)
             make.leading.trailing.equalToSuperview().inset(20)
-            make.height.equalTo(130)
+            make.height.equalTo(200)
         }
         selfInfoInt.snp.makeConstraints { make in
             make.top.equalTo(selfInfoDetail.snp.bottom).offset(5)
