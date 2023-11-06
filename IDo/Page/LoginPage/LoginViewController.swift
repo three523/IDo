@@ -28,9 +28,16 @@ class LoginViewController: UIViewController {
         loginView.signUpRightLabel.addGestureRecognizer(tapGesture)
 
         // Do any additional setup after loading the view.
+        loginView.emailTextField.delegate = self
+        loginView.passwordTextField.delegate = self
         clickLoginButton()
         clickDefaultLoginButton()
 //        clickSignupButton()
+    }
+    
+    // 화면 터치 시 키보드 내려가게 구현
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
 }
 
@@ -43,11 +50,6 @@ private extension LoginViewController {
         let signUpVC = UINavigationController(rootViewController: SignUpViewController())
         signUpVC.modalPresentationStyle = .fullScreen
         present(signUpVC, animated: true)
-    }
-    
-    // 화면 터치 시 키보드 내려가게 구현
-    override internal func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
     }
     
     func clickDefaultLoginButton() {
@@ -192,5 +194,12 @@ private extension LoginViewController {
                 }
             }
         }
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        view.endEditing(true)
+        return true
     }
 }
