@@ -32,7 +32,6 @@
 		18D764AA2AF3C30C00AD6140 /* IntrinsicTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D764A92AF3C30C00AD6140 /* IntrinsicTableView.swift */; };
 		18D764AC2AF3C34600AD6140 /* MemberListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D764AB2AF3C34600AD6140 /* MemberListHeaderView.swift */; };
 		18DAE4332AEFAB9B00E37626 /* LodingImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DAE4322AEFAB9B00E37626 /* LodingImageView.swift */; };
-		7B09D3DF2AF107FB0050B66C /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B09D3DE2AF107FB0050B66C /* APIKey.swift */; };
 		7B226EC62AEBD85900EAED75 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055242ADE8AA3003D26E4 /* ViewState.swift */; };
 		7B226EC72AEBD85900EAED75 /* ImageSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C6BC792AE78DC7000E4D3F /* ImageSize.swift */; };
 		7B226EC82AEBD85900EAED75 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC17E2ADD039B000D092C /* Date.swift */; };
@@ -109,6 +108,7 @@
 		7B226F142AEBD85900EAED75 /* CategoryCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */; };
 		7B226F152AEBD85900EAED75 /* MyProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA03D2AD6466400F1DA37 /* MyProfileViewController.swift */; };
 		7B226F162AEBD85900EAED75 /* MyProfileViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */; };
+		E70A37112AF77BA100FB9EBB /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70A37102AF77BA100FB9EBB /* APIKey.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		E7C7D25A2AEFEBC500636732 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = E7C7D2592AEFEBC500636732 /* SwiftSMTP */; };
 /* End PBXBuildFile section */
@@ -189,7 +189,6 @@
 		18DAE4322AEFAB9B00E37626 /* LodingImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LodingImageView.swift; sourceTree = "<group>"; };
 		18DCD1A42AE5FB4300FEE070 /* SignUpProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpProfileViewController.swift; sourceTree = "<group>"; };
 		18DCD1A82AE61E9F00FEE070 /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
-		7B09D3DE2AF107FB0050B66C /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewCell.swift; sourceTree = "<group>"; };
 		7B6D8C642AE0D0B100FF2194 /* HomeViewcell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewcell.swift; sourceTree = "<group>"; };
 		7F671C6F2AD7F6A10095BD7B /* FinishButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishButton.swift; sourceTree = "<group>"; };
@@ -202,6 +201,7 @@
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
 		7FE072A32ADF82E900966916 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		7FE072A72ADFE21200966916 /* TemporaryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryManager.swift; sourceTree = "<group>"; };
+		E70A37102AF77BA100FB9EBB /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		E727D5112AEA633300B3090E /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		E73D73D82AD7BD2300EF9554 /* NoticeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeCell.swift; sourceTree = "<group>"; };
 		E73D73DD2AD7DEA200EF9554 /* NoticeMeetingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeMeetingController.swift; sourceTree = "<group>"; };
@@ -287,7 +287,7 @@
 				10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */,
 				18CEA0792AF7F54B00185B10 /* GoogleService-Info.plist */,
 				10C265C22AD55BC2002BA40A /* Info.plist */,
-				7B09D3DE2AF107FB0050B66C /* APIKey.swift */,
+				E70A37102AF77BA100FB9EBB /* APIKey.swift */,
 			);
 			path = IDo;
 			sourceTree = "<group>";
@@ -721,6 +721,7 @@
 				7B226F032AEBD85900EAED75 /* NoticeBoardDetailView.swift in Sources */,
 				7B226F042AEBD85900EAED75 /* WriterStackView.swift in Sources */,
 				7B226F052AEBD85900EAED75 /* NoticeBoardDetailViewController.swift in Sources */,
+				E70A37112AF77BA100FB9EBB /* APIKey.swift in Sources */,
 				7B226F062AEBD85900EAED75 /* CommentUpdateViewController.swift in Sources */,
 				7B226F072AEBD85900EAED75 /* FirebaseCommentManager.swift in Sources */,
 				7B226F082AEBD85900EAED75 /* NoticeViewController.swift in Sources */,
@@ -738,7 +739,6 @@
 				7B226F132AEBD85900EAED75 /* CategoryCell.swift in Sources */,
 				7B226F142AEBD85900EAED75 /* CategoryCollectionCell.swift in Sources */,
 				7B226F152AEBD85900EAED75 /* MyProfileViewController.swift in Sources */,
-				7B09D3DF2AF107FB0050B66C /* APIKey.swift in Sources */,
 				7B226F162AEBD85900EAED75 /* MyProfileViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -881,11 +881,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2YK85BG576;
+				DEVELOPMENT_TEAM = 2YK85BG576;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDo/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
@@ -900,10 +899,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.nbcamp.iDo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.camp.iDo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = dev_iDo;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -915,11 +913,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2YK85BG576;
+				DEVELOPMENT_TEAM = 2YK85BG576;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDo/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
@@ -934,10 +931,9 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.nbcamp.iDo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.camp.iDo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = adHoc_iDo;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

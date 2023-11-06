@@ -1,32 +1,57 @@
 import UIKit
+import SnapKit
 
 class MeetingProfileImageButton: UIButton {
     
     var profileImageChanged: Bool = false
     
-    // 서브뷰로 레이블이랑 아이콘 따서 넣고 테두리 선 그어서 코드로 구현
+    private let plusIconLabel: UILabel = {
+        let label = UILabel()
+        label.text = "+"
+        label.font = UIFont.systemFont(ofSize: 28)
+        label.textColor = .blue
+        label.textAlignment = .center
+        return label
+    }()
+    
+    private let textLabel: UILabel = {
+        let label = UILabel()
+        label.text = "대표 사진"
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.textColor = .black
+        label.textAlignment = .center
+        return label
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        
-        self.setImage(UIImage(named: "MeetingProfileImage"), for: .normal)
-        self.imageView?.contentMode = .scaleToFill
-        self.clipsToBounds = true
-        self.layer.masksToBounds = true
-        self.layer.cornerRadius = 24
-        self.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        setupViews()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-//    override func layoutSubviews() {
-//            super.layoutSubviews()
-////            self.layer.cornerRadius = self.frame.size.width / 2
-//            self.clipsToBounds = true
-//        }
     
+    private func setupViews() {
+        addSubview(plusIconLabel)
+                addSubview(textLabel)
+                
+                plusIconLabel.snp.makeConstraints { make in
+                    make.centerX.equalToSuperview()
+                    make.centerY.equalToSuperview().offset(-10)
+                }
+                
+        textLabel.snp.makeConstraints { make in
+                    make.top.equalTo(plusIconLabel.snp.bottom).offset(4)
+                    make.centerX.equalToSuperview()
+                }
+        
+        self.layer.cornerRadius = 24
+        self.layer.masksToBounds = true
+        self.layer.borderWidth = 0.5
+        self.layer.borderColor = UIColor.lightGray.cgColor // 테두리 색상을 파란색으로 설정합니다.
+    }
+
     // 이미지 선택
     func openImagePicker(in viewController: UIViewController) {
         let imagePicker = UIImagePickerController()
@@ -34,6 +59,17 @@ class MeetingProfileImageButton: UIButton {
         imagePicker.sourceType = .photoLibrary
         viewController.present(imagePicker, animated: true, completion: nil)
     }
+    
+    override func setImage(_ image: UIImage?, for state: UIControl.State) {
+            super.setImage(image, for: state)
+            updateVisibilityOfLabels(hide: image != nil)
+        }
+        
+    private func updateVisibilityOfLabels(hide: Bool) {
+            plusIconLabel.isHidden = hide
+            textLabel.isHidden = hide
+        }
+    
 }
 
 extension UIImage {

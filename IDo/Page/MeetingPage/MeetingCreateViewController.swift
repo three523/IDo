@@ -35,7 +35,7 @@ class MeetingCreateViewController: UIViewController {
     
     let countMeetingNameField: UILabel = {
         let label = UILabel()
-        label.text = "0/16"
+        label.text = "(0/16)"
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = UIColor.gray
         return label
@@ -62,9 +62,9 @@ class MeetingCreateViewController: UIViewController {
     
     let countDescriptionField: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .gray
-        label.text = "0/300"
+        label.text = "(0/300)"
         return label
     }()
     
@@ -200,10 +200,11 @@ class MeetingCreateViewController: UIViewController {
             containerView.snp.makeConstraints { (make) in
                 make.top.bottom.leading.trailing.equalTo(scrollView)
                 make.width.equalTo(scrollView)
+                make.bottom.equalTo(createFinishButton.snp.bottom).offset(-16)
             }
         
         
-        let desiredAspectRatio: CGFloat = 3.0 / 4.0
+        let desiredAspectRatio: CGFloat = 2.0 / 3.0
                 
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(containerView.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
@@ -232,7 +233,7 @@ class MeetingCreateViewController: UIViewController {
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
             make.centerX.equalTo(containerView)
             make.left.right.equalTo(containerView).inset(Constant.margin4)
-            make.height.equalTo(200)
+            make.height.equalTo(160)
         }
         meetingDescriptionField.delegate = self
         
@@ -242,12 +243,13 @@ class MeetingCreateViewController: UIViewController {
         }
                 
         createFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField.snp.bottom).offset(12)
+            make.top.equalTo(countDescriptionField.snp.bottom).offset(4)
             make.centerX.equalTo(containerView)
-            make.width.equalTo(140)
-            make.height.equalTo(44)
-            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
+            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.height.equalTo(48)
+//            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
         }
+
                 
         countDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingDescriptionField.snp.bottom).offset(4)

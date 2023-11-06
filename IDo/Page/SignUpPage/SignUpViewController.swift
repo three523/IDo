@@ -623,6 +623,7 @@ private extension SignUpViewController {
         let megaman = Mail.User(name: "사용자", email: emailTextField.text!)
         
         let code = "\(Int.random(in: 100000 ... 999999))"
+        print("code: \(code)")
         
         let mail = Mail(from: drLight, to: [megaman], subject: "IDo 이메일 코드", text: "인증 번호 \(code) \n" + "IDo 앱으로 돌아가 인증 번호를 입력해주세요.")
         

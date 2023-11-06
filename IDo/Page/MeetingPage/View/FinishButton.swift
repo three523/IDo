@@ -10,7 +10,7 @@ class FinishButton: UIButton {
         self.titleLabel?.font = UIFont(name: "Inter", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .medium)
         self.backgroundColor = UIColor(named: "ContentPrimay")
         self.setTitleColor(.white, for: .normal)
-        self.layer.cornerRadius = 20
+        self.layer.cornerRadius = 5
         self.clipsToBounds = true
         self.addTarget(self, action: #selector(showDebug), for: .touchUpInside)
     }
