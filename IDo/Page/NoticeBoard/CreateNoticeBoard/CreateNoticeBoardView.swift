@@ -36,7 +36,7 @@ class CreateNoticeBoardView: UIView {
         var label = UILabel()
         label.text = "(0/16)"
         label.textColor = UIColor(color: .placeholder)
-        label.font = UIFont.bodyFont(.small, weight: .medium)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
     }()
     
@@ -44,7 +44,7 @@ class CreateNoticeBoardView: UIView {
     private(set) lazy var contentTextView: UITextView = {
         var textView = UITextView()
         textView.backgroundColor = UIColor(color: .backgroundSecondary)
-        textView.font = UIFont.bodyFont(.small, weight: .medium)
+        textView.font = UIFont.bodyFont(.medium, weight: .regular)
         textView.layer.cornerRadius = 5
         return textView
     }()
@@ -54,7 +54,7 @@ class CreateNoticeBoardView: UIView {
         var label = UILabel()
         label.text = "(0/500)"
         label.textColor = UIColor(color: .placeholder)
-        label.font = UIFont.bodyFont(.small, weight: .medium)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
     }()
     
