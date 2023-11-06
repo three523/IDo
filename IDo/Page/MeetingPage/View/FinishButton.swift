@@ -7,9 +7,9 @@ class FinishButton: UIButton {
         super.init(frame: .zero)
         
         self.setTitle(title, for: .normal)
-        self.titleLabel?.font = UIFont(name: "Inter", size: 20) ?? UIFont.systemFont(ofSize: 20, weight: .medium)
-        self.backgroundColor = UIColor(named: "ContentPrimay")
-        self.setTitleColor(.white, for: .normal)
+        self.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
+        self.backgroundColor = UIColor(color: .contentPrimary)
+        self.setTitleColor(UIColor(color: .white), for: .normal)
         self.layer.cornerRadius = 5
         self.clipsToBounds = true
         self.addTarget(self, action: #selector(showDebug), for: .touchUpInside)
@@ -25,7 +25,7 @@ class FinishButton: UIButton {
     
     override var isEnabled: Bool {
         didSet {
-            backgroundColor = isEnabled ? UIColor(named: "ContentPrimay") : .lightGray
+            backgroundColor = isEnabled ? UIColor(color: .contentPrimary) : UIColor(color: .contentDisable)
         }
     }
 }
