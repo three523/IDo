@@ -42,7 +42,7 @@ class CategoryCollectionCell: UICollectionViewCell {
 
         categoryImageView.contentMode = .scaleAspectFit
         categoryImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(10).offset(70)
+            make.centerY.equalToSuperview()
             make.centerX.equalToSuperview()
             make.height.width.equalTo(80)
         }
