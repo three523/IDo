@@ -23,6 +23,13 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 self.removeImage(path: imagePath)
             }
             completion?(true)
+            guard let myUserInfo = MyProfile.shared.myUserInfo else {
+                print("사용자 정보가 없어 내 클럽을 지울 수 없습니다.")
+                return
+            }
+            var myClubList = myUserInfo.myClubList ?? []
+            myClubList.removeAll(where: { $0.id == club.id })
+            MyProfile.shared.update(myClubList: myClubList)
         }
     }
 

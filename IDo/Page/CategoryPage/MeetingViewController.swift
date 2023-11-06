@@ -190,9 +190,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! BasicCell
         let club = meetingsData.clubs[indexPath.row]
-        var clubImage = meetingsData.clubImages[club.id] ?? UIImage(named: "MeetingProfileImage")!
+        let clubImage = meetingsData.clubImages[club.id]
         
         guard let currentUser = MyProfile.shared.myUserInfo else {
             print("사용자 정보를 가져오지 못하고 있습니다")
