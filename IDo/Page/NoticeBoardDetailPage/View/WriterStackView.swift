@@ -20,7 +20,7 @@ final class WriterStackView: UIStackView {
         let imageView = BasicImageView(image: UIImage(systemName: "person.fill"))
         imageView.backgroundColor = UIColor(color: .contentPrimary)
         imageView.contentMargin = 4
-        imageView.layer.cornerRadius = 15
+        imageView.layer.cornerRadius = 18
         imageView.layer.masksToBounds = true
         return imageView
     }()
@@ -47,7 +47,7 @@ final class WriterStackView: UIStackView {
     let writerTimeLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyFont(.xSmall, weight: .regular)
-        label.textColor = UIColor(color: .text1)
+        label.textColor = UIColor(color: .text2)
         label.numberOfLines = 1
         let date = Date().addingTimeInterval(-200)
         label.text = date.diffrenceDate
@@ -97,7 +97,7 @@ private extension WriterStackView {
     
     func autoLayoutSetup() {
         writerImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
+            make.width.height.equalTo(36)
         }
     }
     

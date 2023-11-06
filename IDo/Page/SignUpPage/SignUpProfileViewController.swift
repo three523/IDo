@@ -209,7 +209,7 @@ private extension SignUpProfileViewController {
         profileImageView.addGestureRecognizer(gesture)
         profileImageView.isUserInteractionEnabled = true
         profileImageView.layoutIfNeeded()
-        profileImageView.backgroundColor = UIColor(color: .contentBackground)
+        profileImageView.tintColor = UIColor(color: .contentBackground)
         profileImageView.layer.cornerRadius = profileImageView.bounds.height / 2
         profileImageView.layer.masksToBounds = true
     }

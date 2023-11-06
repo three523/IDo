@@ -56,7 +56,7 @@ class NoticeBoardTableViewCell: UITableViewCell {
     private(set) lazy var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleToFill
-        imageView.layer.cornerRadius = 15
+        imageView.layer.cornerRadius = 18
         imageView.layer.masksToBounds = true
         imageView.image = UIImage(systemName: "person.circle.fill")
         imageView.tintColor = UIColor(color: .main)
@@ -78,7 +78,7 @@ class NoticeBoardTableViewCell: UITableViewCell {
         label.text = "10월 11일 오후 3:43"
         label.font = UIFont.bodyFont(.xSmall, weight: .regular)
         label.textAlignment = .right
-        label.textColor = UIColor.systemGray
+        label.textColor = UIColor(color: .text2)
         return label
     }()
     
@@ -172,7 +172,7 @@ private extension NoticeBoardTableViewCell {
         }
         
         profileImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(30)
+            make.width.height.equalTo(36)
         }
         
         bodyStackView.snp.makeConstraints { make in
