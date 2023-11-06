@@ -282,7 +282,7 @@ private extension SignUpProfileViewController {
     }
 
     @objc func signUp() {
-        guard !nickName.isEmpty else {
+        guard !nickNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             showAlert(message: "닉네임을 입력해주세요")
             return
         }
@@ -299,7 +299,7 @@ private extension SignUpProfileViewController {
             }
             guard let authDataResult = authDataResult else { return }
             let uid = authDataResult.user.uid
-            var user = IDoUser(id: uid, updateAt: Date().toString(), email: email, nickName: self.nickName, description: aboutUsTextView.text, hobbyList: self.selectedCategorys)
+            var user = IDoUser(id: uid, updateAt: Date().toString(), email: email, nickName: nickNameTextView.text, description: descriptionTextView.text, hobbyList: self.selectedCategorys)
 
             self.fbUserDatabaseManager.model = user
             self.fbUserDatabaseManager.appendData(data: user)
