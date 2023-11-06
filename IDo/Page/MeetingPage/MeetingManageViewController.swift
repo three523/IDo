@@ -23,7 +23,7 @@ class MeetingManageViewController: UIViewController {
     lazy var storageRef = storage.reference()
     private var meetingsData: MeetingsData
     private var club: Club
-    private let clubImage: UIImage?
+    private var clubImage: UIImage?
     var updateHandler: ((Club, Data) -> Void)?
     
     init(club: Club, clubImage: UIImage?) {
@@ -114,6 +114,7 @@ class MeetingManageViewController: UIViewController {
         configureUI()
         meetingNameField.text = club.title
         meetingDescriptionField.text = club.description
+        placeholderLabel.isHidden = !club.description.isEmpty
         if let clubImage {
             profileImageButton.setImage(clubImage, for: .normal)
         } else {
