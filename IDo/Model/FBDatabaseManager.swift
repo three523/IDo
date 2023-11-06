@@ -68,6 +68,7 @@ class FBDatabaseManager<T: Codable & Identifier> {
             guard let value = dataSnapshot.value as? [String: Any] else {
                 self.viewState = .loaded
                 self.modelList = []
+                completion(.success(self.modelList))
                 return
             }
             
