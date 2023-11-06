@@ -47,10 +47,11 @@ final class NoticeHomeController: UIViewController {
 
     lazy var signUpButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Sign Up", for: .normal)
-        button.backgroundColor = .blue
+        button.setTitle("가입하기", for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        button.backgroundColor = UIColor(color: .contentPrimary)
+        button.layer.cornerRadius = 5
         button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
         return button
     }()

@@ -26,7 +26,8 @@ final class WriterStackView: UIStackView {
     }()
     let moreImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "ellipsis"))
-        imageView.tintColor = UIColor(color: .backgroundTertiary)
+//        imageView.tintColor = UIColor(color: .backgroundTertiary)
+        imageView.tintColor = UIColor(color: .placeholder)
         return imageView
     }()
     private let verticalStackView: UIStackView = {

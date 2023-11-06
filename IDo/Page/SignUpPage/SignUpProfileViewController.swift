@@ -19,18 +19,67 @@ class SignUpProfileViewController: UIViewController {
     private let fbUserDatabaseManager: FirebaseCreateUserManager = .init(refPath: ["Users"])
     private let imagePickerViewController: UIImagePickerController = .init()
     private var bottomButtonConstraint: Constraint?
+    
     private let profileImageView: UIImageView = .init(image: UIImage(systemName: "camera.circle.fill"))
-    private let nickNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.font = .bodyFont(.large, weight: .regular)
-        textField.textColor = UIColor(color: .textStrong)
-        textField.placeholder = "닉네임을 입력해주세요(10자 이내)"
-        textField.borderStyle = .roundedRect
-        textField.layer.cornerRadius = 5.0
-        textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
-        textField.layer.borderWidth = 1.0
-
-        return textField
+    
+//    private let nickNameTextField: UITextField = {
+//        let textField = UITextField()
+//        textField.font = .bodyFont(.large, weight: .regular)
+//        textField.textColor = UIColor(color: .textStrong)
+//        textField.placeholder = "닉네임을 입력해주세요(10자 이내)"
+//        textField.borderStyle = .roundedRect
+//        textField.layer.cornerRadius = 5.0
+//        textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
+//        textField.layer.borderWidth = 1.0
+//
+//        return textField
+//    }()
+    
+    // 닉네임 입력 TextView
+    private(set) lazy var nickNameTextView: UITextView = {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor(color: .backgroundPrimary)
+        textView.font = UIFont.bodyFont(.large, weight: .medium)
+        textView.text = "닉네임을 입력해주세요"
+        textView.textColor = UIColor(color: .placeholder)
+        textView.layer.cornerRadius = 5
+        textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
+        textView.layer.borderWidth = 1.0
+        textView.resignFirstResponder()
+        return textView
+    }()
+    
+    // 닉네임 글자 수 표시 label
+    private(set) lazy var nickNameCountLabel: UILabel = {
+        var label = UILabel()
+        label.text = "(0/10)"
+        label.textColor = UIColor(color: .placeholder)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
+        return label
+    }()
+    
+    // 자기소개 입력 TextView
+    let descriptionTextView: UITextView = {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor(color: .backgroundPrimary)
+        textView.font = UIFont.bodyFont(.medium, weight: .regular)
+        textView.text = "자기소개를 입력해주세요"
+        textView.textColor = UIColor(color: .placeholder)
+        //textView.textAlignment = .left
+        textView.layer.cornerRadius = 5.0
+        textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
+        textView.layer.borderWidth = 1.0
+        textView.resignFirstResponder()
+        return textView
+    }()
+    
+    // 자기소개 글자 수 표시 label
+    private(set) lazy var descriptionCountLabel: UILabel = {
+        var label = UILabel()
+        label.text = "(0/300)"
+        label.textColor = UIColor(color: .placeholder)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
+        return label
     }()
 
     private let signUpButton: UIButton = {
@@ -42,33 +91,14 @@ class SignUpProfileViewController: UIViewController {
         return button
     }()
 
-    let countDescriptionLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .gray
-        label.text = "0/300"
-        return label
-    }()
-
-    let aboutUsLabel: UILabel = {
-        let label = UILabel()
-        label.text = "자기소개를 입력해주세요."
-        label.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-        label.textColor = UIColor.placeholderText
-
-        return label
-    }()
-
-    let aboutUsTextView: UITextView = {
-        let textView = UITextView()
-        textView.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-        textView.textAlignment = .left
-        textView.layer.cornerRadius = 5.0
-        textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
-        textView.layer.borderWidth = 1.0
-
-        return textView
-    }()
+//    let aboutUsLabel: UILabel = {
+//        let label = UILabel()
+//        label.text = "자기소개를 입력해주세요."
+//        label.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
+//        label.textColor = UIColor.placeholderText
+//
+//        return label
+//    }()
 
     private var aboutUs: String = ""
     private var nickName: String = ""
@@ -160,11 +190,13 @@ private extension SignUpProfileViewController {
 
     func addViews() {
         view.addSubview(profileImageView)
-        view.addSubview(nickNameTextField)
+        //view.addSubview(nickNameTextField)
+        view.addSubview(nickNameTextView)
+        view.addSubview(nickNameCountLabel)
+        view.addSubview(descriptionTextView)
+        view.addSubview(descriptionCountLabel)
         view.addSubview(signUpButton)
-        view.addSubview(aboutUsTextView)
-        view.addSubview(countDescriptionLabel)
-        view.addSubview(aboutUsLabel)
+        //view.addSubview(aboutUsLabel)
     }
 
     func setupAutoLayout() {
@@ -174,34 +206,48 @@ private extension SignUpProfileViewController {
             make.centerX.equalTo(safeArea)
             make.width.height.equalTo(90)
         }
-        nickNameTextField.snp.makeConstraints { make in
-            make.top.equalTo(profileImageView.snp.bottom).offset(Constant.margin2)
+//        nickNameTextField.snp.makeConstraints { make in
+//            make.top.equalTo(profileImageView.snp.bottom).offset(Constant.margin2)
+//            make.left.right.equalTo(safeArea).inset(Constant.margin4)
+//        }
+        nickNameTextView.snp.makeConstraints { make in
+            make.top.equalTo(profileImageView.snp.bottom).offset(Constant.margin3)
             make.left.right.equalTo(safeArea).inset(Constant.margin4)
+            make.height.equalTo(40)
         }
-        aboutUsTextView.snp.makeConstraints { make in
-            make.top.equalTo(nickNameTextField.snp.bottom).offset(Constant.margin2)
+        
+        nickNameCountLabel.snp.makeConstraints { make in
+            make.top.equalTo(nickNameTextView.snp.bottom).offset(Constant.margin1)
+            make.trailing.equalTo(safeArea.snp.trailing).inset(Constant.margin4)
+        }
+        
+        descriptionTextView.snp.makeConstraints { make in
+            make.top.equalTo(nickNameCountLabel.snp.bottom).offset(Constant.margin4)
             make.left.right.equalTo(safeArea).inset(Constant.margin4)
             make.height.equalTo(200)
         }
-        countDescriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(aboutUsTextView.snp.bottom).offset(4)
-            make.right.equalTo(aboutUsTextView.snp.right)
+        descriptionCountLabel.snp.makeConstraints { make in
+            make.top.equalTo(descriptionTextView.snp.bottom).offset(Constant.margin1)
+            make.trailing.equalTo(safeArea.snp.trailing).inset(Constant.margin4)
         }
 
-        aboutUsLabel.snp.makeConstraints { make in
-            make.top.equalTo(aboutUsTextView).offset(12)
-            make.left.equalTo(aboutUsTextView).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
-        }
+//        aboutUsLabel.snp.makeConstraints { make in
+//            make.top.equalTo(aboutUsTextView).offset(12)
+//            make.left.equalTo(aboutUsTextView).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
+//        }
         signUpButton.snp.makeConstraints { make in
-            make.left.right.equalTo(safeArea).inset(Constant.margin3)
-            self.bottomButtonConstraint = make.bottom.equalTo(safeArea).inset(Constant.margin3).constraint
+            
+            make.left.right.equalTo(safeArea).inset(Constant.margin4)
+            make.bottom.equalTo(safeArea).inset(Constant.margin3)
+//            self.bottomButtonConstraint = make.bottom.equalTo(safeArea).inset(Constant.margin3).constraint
             make.height.equalTo(48)
         }
     }
 
     func setupTextField() {
-        nickNameTextField.delegate = self
-        aboutUsTextView.delegate = self
+//        nickNameTextField.delegate = self
+        nickNameTextView.delegate = self
+        descriptionTextView.delegate = self
     }
 
     func setupImageView() {
@@ -240,7 +286,7 @@ private extension SignUpProfileViewController {
             showAlert(message: "닉네임을 입력해주세요")
             return
         }
-        guard !aboutUsTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        guard !descriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             showAlert(message: "자기소개를 입력해주세요")
             return
         }
@@ -301,27 +347,117 @@ extension SignUpProfileViewController: UITextFieldDelegate {
 }
 
 extension SignUpProfileViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        aboutUsLabel.isHidden = !textView.text.isEmpty
-        countDescriptionLabel.text = "\(textView.text.count)/300"
-
-        if textView.text.count >= 300 {
-            shakeAnimation(for: countDescriptionLabel)
-            countDescriptionLabel.textColor = .red
-        } else {
-            countDescriptionLabel.textColor = .black
+    
+    
+    // 초기 호출
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        
+        // 이름 textView
+        if textView == nickNameTextView {
+            if nickNameTextView.textColor == UIColor(color: .placeholder) {
+                
+                nickNameTextView.text = nil
+                nickNameTextView.textColor = UIColor.black
+            }
+        }
+        
+        // 내용 textView
+        if textView == descriptionTextView {
+            if descriptionTextView.textColor == UIColor(color: .placeholder) {
+                
+                descriptionTextView.text = nil
+                descriptionTextView.textColor = UIColor.black
+            }
         }
     }
-
+    
+    // 입력 시 호출
+    func textViewDidChange(_ textView: UITextView) {
+        
+        if textView == nickNameTextView {
+            let textCount = textView.text.count
+            nickNameCountLabel.text = "(\(textCount)/10)"
+            
+            if textCount == 0 {
+                nickNameCountLabel.textColor = UIColor(color: .placeholder)
+            } else {
+                nickNameCountLabel.textColor = UIColor.black
+            }
+        }
+        
+        if textView == descriptionTextView {
+            let textCount = textView.text.count
+            descriptionCountLabel.text = "(\(textCount)/300)"
+            
+            if textCount == 0 {
+                descriptionCountLabel.textColor = UIColor(color: .placeholder)
+            } else {
+                descriptionCountLabel.textColor = UIColor.black
+            }
+        }
+    }
+    
+    // 입력 종료 시 호출
+    func textViewDidEndEditing(_ textView: UITextView) {
+        
+        if nickNameTextView.text.isEmpty {
+            nickNameTextView.text = "닉네임을 입력해주세요."
+            nickNameTextView.textColor = UIColor(color: .placeholder)
+        }
+        
+        if descriptionTextView.text.isEmpty {
+            descriptionTextView.text = "자기소개를 입력해주세요."
+            descriptionTextView.textColor = UIColor(color: .placeholder)
+        }
+    }
+    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
-        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
-
-        if prospectiveText.count > 300 {
-            return false
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        
+        let changedText = currentText.replacingCharacters(in: stringRange, with: text)
+        
+        if textView == nickNameTextView {
+            if changedText.count > 10 {
+                nickNameCountLabel.textColor = UIColor.red
+                shakeAnimation(for: nickNameCountLabel)
+                return false
+            }
+            return true
+        }
+        
+        if textView == descriptionTextView {
+            if changedText.count > 300 {
+                descriptionCountLabel.textColor = UIColor.red
+                shakeAnimation(for: descriptionCountLabel)
+                return false
+            }
+            return true
         }
         return true
     }
+    
+//    func textViewDidChange(_ textView: UITextView) {
+//        aboutUsLabel.isHidden = !textView.text.isEmpty
+//        countDescriptionLabel.text = "\(textView.text.count)/300"
+//
+//        if textView.text.count >= 300 {
+//            shakeAnimation(for: countDescriptionLabel)
+//            countDescriptionLabel.textColor = .red
+//        } else {
+//            countDescriptionLabel.textColor = .black
+//        }
+//    }
+//
+//    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+//        let currentText = textView.text ?? ""
+//        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
+//
+//        if prospectiveText.count > 300 {
+//            return false
+//        }
+//        return true
+//    }
 }
 
 extension SignUpProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
