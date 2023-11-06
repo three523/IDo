@@ -21,11 +21,15 @@ final class NoticeHomeController: UIViewController {
         tableview.separatorStyle = .none
         return tableview
     }()
+
     private let authState: AuthState
     
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
         imageView.image = UIImage(named: "MeetingProfileImage")
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 24
         return imageView
     }()
     
@@ -47,10 +51,11 @@ final class NoticeHomeController: UIViewController {
 
     lazy var signUpButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Sign Up", for: .normal)
-        button.backgroundColor = .blue
+        button.setTitle("가입하기", for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        button.backgroundColor = UIColor(color: .contentPrimary)
+        button.layer.cornerRadius = 5
         button.addTarget(self, action: #selector(handleSignUp), for: .touchUpInside)
         return button
     }()
@@ -159,10 +164,13 @@ final class NoticeHomeController: UIViewController {
     
     private func setupAutoLayout() {
         let safeArea = view.safeAreaLayoutGuide
+        let desiredAspectRatio: CGFloat = 2.0 / 3.0
         imageView.snp.makeConstraints { make in
-            make.height.equalTo(150)
+            make.right.equalTo(scrollStackViewContainer).inset(Constant.margin4)
+            make.height.equalTo(imageView.snp.width).multipliedBy(desiredAspectRatio)
+            make.centerX.equalToSuperview()
         }
-        
+           
         scrollView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(safeArea.snp.top).inset(Constant.margin3)
@@ -219,7 +227,6 @@ final class NoticeHomeController: UIViewController {
 }
 
 extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return firebaseClubDatabaseManager.model?.userList?.count ?? 0
     }

@@ -156,7 +156,12 @@ extension NoticeMeetingController {
             navigationItem.rightBarButtonItem = moreButton
         case .member:
             let outButton = UIBarButtonItem(title: "탈퇴", style: .plain, target: self, action: #selector(outAlert))
-            outButton.tintColor = UIColor(color: .negative)
+//            outButton.tintColor = UIColor(color: .negative)
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.bodyFont(.medium, weight: .regular),
+                .foregroundColor: UIColor(color: .negative)
+            ]
+            outButton.setTitleTextAttributes(attributes, for: .normal)
             navigationItem.rightBarButtonItem = outButton
         case .notMember:
             navigationItem.rightBarButtonItem = nil

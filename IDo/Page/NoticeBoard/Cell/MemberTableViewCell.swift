@@ -18,7 +18,7 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.font = .bodyFont(.medium, weight: .regular)
+        label.font = .bodyFont(.small, weight: .medium)
         label.textColor = UIColor(color: .textStrong)
         label.numberOfLines = 1
         return label
@@ -26,8 +26,8 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
     
     let descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .bodyFont(.large, weight: .regular)
-        label.textColor = UIColor(color: .textStrong)
+        label.font = .bodyFont(.xSmall, weight: .regular)
+        label.textColor = UIColor(color: .text2)
         label.numberOfLines = 1
         return label
     }()
@@ -68,7 +68,7 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
         }
         
         descriptionLabel.snp.makeConstraints { make in
-            make.top.equalTo(nameLabel.snp.bottom).inset(Constant.margin1)
+            make.bottom.equalTo(profileImageView.snp.bottom)
             make.left.equalTo(profileImageView.snp.right).offset(Constant.margin2)
         }
     }
