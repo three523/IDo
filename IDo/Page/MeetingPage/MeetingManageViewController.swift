@@ -114,6 +114,7 @@ class MeetingManageViewController: UIViewController {
         configureUI()
         meetingNameField.text = club.title
         meetingDescriptionField.text = club.description
+        placeholderLabel.isHidden = !club.description.isEmpty
         if let clubImage {
             profileImageButton.setImage(clubImage, for: .normal)
         } else {
