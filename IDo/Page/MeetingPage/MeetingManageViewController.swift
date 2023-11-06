@@ -138,8 +138,8 @@ class MeetingManageViewController: UIViewController {
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
-        countDescriptionField.text = "\(meetingDescriptionField.text.count)/300"
-        countMeetingNameField.text = "\(meetingNameField.text?.count ?? 0)/16"
+        countDescriptionField.text = "(\(meetingDescriptionField.text.count)/300)"
+        countMeetingNameField.text = "(\(meetingNameField.text?.count ?? 0)/16)"
 //        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     
@@ -304,7 +304,7 @@ extension MeetingManageViewController: UIImagePickerControllerDelegate, UINaviga
 extension MeetingManageViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         placeholderLabel.isHidden = !textView.text.isEmpty
-        countDescriptionField.text = "\(textView.text.count)/300"
+        countDescriptionField.text = "(\(textView.text.count)/300)"
         
         if textView.text.count > 300 {
             shakeAnimation(for: countDescriptionField)
@@ -335,7 +335,7 @@ extension MeetingManageViewController: UITextFieldDelegate {
         let currentText = textField.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
-        countMeetingNameField.text = "\(prospectiveText.count)/16"
+        countMeetingNameField.text = "(\(prospectiveText.count)/16)"
         
         if prospectiveText.count > 16 {
             shakeAnimation(for: countMeetingNameField)
