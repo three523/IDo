@@ -18,6 +18,11 @@ class MeetingCreateViewController: UIViewController {
         }
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.meetingNameTextView.resignFirstResponder()
+        self.meetingDescriptionTextView.resignFirstResponder()
+    }
+    
     init(meetingsData: MeetingsData) {
         self.meetingsData = meetingsData
         super.init(nibName: nil, bundle: nil)
@@ -101,9 +106,6 @@ class MeetingCreateViewController: UIViewController {
 //        textView.textContainerInset = UIEdgeInsets.zero
 //        textView.textContainer.lineFragmentPadding = 0
 //        textView.textContainerInset = UIEdgeInsets(top: 12, left: 14, bottom: 12, right: 12)
-//        textView.clipsToBounds = true
-//        textView.isEditable = true
-//        textView.isScrollEnabled = true
         
         let textView = UITextView()
         textView.backgroundColor = UIColor(color: .backgroundSecondary)
@@ -124,17 +126,9 @@ class MeetingCreateViewController: UIViewController {
         return label
     }()
     
-    func shakeAnimation(for view: UIView) {
-        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: .linear)
-        animation.duration = 0.5
-        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
-        view.layer.add(animation, forKey: "shake")
-    }
-    
-    // MARK: - 버튼 관련
     private let createFinishButton = FinishButton()
     
+    // MARK: - 버튼 관련
     private func setupCreateButton() {
         createFinishButton.addTarget(self, action: #selector(createMeeting), for: .touchUpInside)
     }
@@ -234,9 +228,9 @@ class MeetingCreateViewController: UIViewController {
         containerView.addSubview(profileImageButton)
         containerView.addSubview(meetingNameTextView)
         containerView.addSubview(countMeetingNameLabel)
-        containerView.addSubview(createFinishButton)
-        containerView.addSubview(countDescriptionLabel)
         containerView.addSubview(meetingDescriptionTextView)
+        containerView.addSubview(countDescriptionLabel)
+        containerView.addSubview(createFinishButton)
         
         scrollView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -326,6 +320,14 @@ extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINaviga
 // MARK: - 텍스트 뷰 관련
 extension MeetingCreateViewController: UITextViewDelegate {
     
+    func shakeAnimation(for view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
+        view.layer.add(animation, forKey: "shake")
+    }
+    
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
         
@@ -390,7 +392,7 @@ extension MeetingCreateViewController: UITextViewDelegate {
         }
         
         if meetingDescriptionTextView.text.isEmpty {
-            meetingDescriptionTextView.text = "자기소개를 입력해주세요."
+            meetingDescriptionTextView.text = "모임에 대한 소개를 입력해주세요."
             meetingDescriptionTextView.textColor = UIColor(color: .placeholder)
         }
     }
