@@ -140,7 +140,7 @@ class MeetingManageViewController: UIViewController {
         }
         countDescriptionField.text = "\(meetingDescriptionField.text.count)/300"
         countMeetingNameField.text = "\(meetingNameField.text?.count ?? 0)/16"
-        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
+//        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     
     
