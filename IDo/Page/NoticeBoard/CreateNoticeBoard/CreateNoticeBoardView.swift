@@ -22,6 +22,14 @@ class CreateNoticeBoardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // 스크롤 뷰
+    private(set) lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.showsHorizontalScrollIndicator = false
+        return scrollView
+    }()
+    
     // 제목을 작성하는 textView
     private(set) lazy var titleTextView: UITextView = {
         var textView = UITextView()
@@ -90,51 +98,63 @@ private extension CreateNoticeBoardView {
     }
     
     func addSubView() {
-        addSubview(titleTextView)
-        addSubview(titleCountLabel)
-        addSubview(contentTextView)
-        addSubview(contentCountLabel)
-        addSubview(addPictureButton)
-        addSubview(galleryCollectionView)
+        addSubview(scrollView)
+        scrollView.addSubview(titleTextView)
+        scrollView.addSubview(titleCountLabel)
+        scrollView.addSubview(contentTextView)
+        scrollView.addSubview(contentCountLabel)
+        scrollView.addSubview(addPictureButton)
+        scrollView.addSubview(galleryCollectionView)
     }
     
     func autoLayout() {
+        
+        scrollView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         titleTextView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin4)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
+            make.top.equalTo(scrollView.contentLayoutGuide.snp.top).offset(Constant.margin3)
+            make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
             make.height.equalTo(40)
         }
         
         titleCountLabel.snp.makeConstraints { make in
             make.top.equalTo(titleTextView.snp.bottom).offset(Constant.margin1)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
         }
         
         contentTextView.snp.makeConstraints { make in
             make.top.equalTo(titleCountLabel.snp.bottom).offset(Constant.margin4)
-            make.leading.equalTo(snp.leading).offset(Constant.margin4)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
+            make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
             make.height.equalTo(320)
         }
         
         contentCountLabel.snp.makeConstraints { make in
             make.top.equalTo(contentTextView.snp.bottom).offset(Constant.margin1)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
         }
         
         addPictureButton.snp.makeConstraints { make in
             make.top.equalTo(contentCountLabel.snp.bottom).offset(Constant.margin4)
-            make.leading.equalTo(snp.leading).offset(Constant.margin4)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
+            make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
             make.height.equalTo(40)
         }
         
         galleryCollectionView.snp.makeConstraints { make in
             make.top.equalTo(addPictureButton.snp.bottom).offset(Constant.margin3)
-            make.leading.equalTo(snp.leading).offset(Constant.margin4)
-            make.trailing.equalTo(snp.trailing).offset(-Constant.margin4)
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-Constant.margin3)
+            make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading).offset(Constant.margin4)
+            make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
+            make.height.equalTo(450)
+        }
+        
+        // 스크롤 뷰의 스크롤 가능한 내용 크기를 설정합니다.
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.width.equalTo(scrollView.frameLayoutGuide)
+            make.bottom.equalTo(galleryCollectionView.snp.bottom).offset(-Constant.margin3)
         }
     }
 }
