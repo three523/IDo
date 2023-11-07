@@ -128,13 +128,23 @@ class MeetingManageViewController: UIViewController {
         }
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        addKeyboardNotifications()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardNotifications()
+    }
+
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
     
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
@@ -158,11 +168,6 @@ class MeetingManageViewController: UIViewController {
             make.height.equalTo(view.safeAreaLayoutGuide)
         }
     }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     
     private func configureUI() {
         // UI 설정

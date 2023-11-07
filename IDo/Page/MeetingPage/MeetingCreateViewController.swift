@@ -138,15 +138,29 @@ class MeetingCreateViewController: UIViewController {
         updateFinishButtonState()
         configureUI()
         setupScrollView()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
 
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 생성하기")
         }
     }
     
-    
+    override func viewWillAppear(_ animated: Bool) {
+        addKeyboardNotifications()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardNotifications()
+    }
+
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
 
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
@@ -170,16 +184,10 @@ class MeetingCreateViewController: UIViewController {
             make.height.equalTo(view.safeAreaLayoutGuide)
         }
     }
-
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     
     private func configureUI() {
         // UI 설정
         view.addSubview(scrollView)
-//        scrollView.addSubview(containerView)
         meetingNameField.delegate = self
         scrollView.addSubview(profileImageButton)
         scrollView.addSubview(meetingNameField)
@@ -242,7 +250,6 @@ class MeetingCreateViewController: UIViewController {
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(48)
-//            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
         }
 
                 
