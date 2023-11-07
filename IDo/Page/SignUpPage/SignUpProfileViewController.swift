@@ -18,23 +18,11 @@ class SignUpProfileViewController: UIViewController {
     private var user: IDoUser?
     private let fbUserDatabaseManager: FirebaseCreateUserManager = .init(refPath: ["Users"])
     private let imagePickerViewController: UIImagePickerController = .init()
-    private var bottomButtonConstraint: Constraint?
     
     private let profileImageView: UIImageView = .init(image: UIImage(systemName: "camera.circle.fill"))
     
-//    private let nickNameTextField: UITextField = {
-//        let textField = UITextField()
-//        textField.font = .bodyFont(.large, weight: .regular)
-//        textField.textColor = UIColor(color: .textStrong)
-//        textField.placeholder = "닉네임을 입력해주세요(10자 이내)"
-//        textField.borderStyle = .roundedRect
-//        textField.layer.cornerRadius = 5.0
-//        textField.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
-//        textField.layer.borderWidth = 1.0
-//
-//        return textField
-//    }()
-    
+    private var scrollView: UIScrollView = UIScrollView()
+//    private var containerView: UIView = UIView()
     // 닉네임 입력 TextView
     private(set) lazy var nickNameTextView: UITextView = {
         let textView = UITextView()
@@ -81,6 +69,8 @@ class SignUpProfileViewController: UIViewController {
         label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
     }()
+    
+    private let bottomView: UIView = UIView()
 
     private let signUpButton: UIButton = {
         let button = UIButton()
@@ -90,15 +80,6 @@ class SignUpProfileViewController: UIViewController {
         button.layer.cornerRadius = 5
         return button
     }()
-
-//    let aboutUsLabel: UILabel = {
-//        let label = UILabel()
-//        label.text = "자기소개를 입력해주세요."
-//        label.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-//        label.textColor = UIColor.placeholderText
-//
-//        return label
-//    }()
 
     private var aboutUs: String = ""
     private var nickName: String = ""
@@ -139,42 +120,29 @@ class SignUpProfileViewController: UIViewController {
         removeKeyboardNotifications()
     }
 
-    // 노티피케이션을 추가하는 메서드
     func addKeyboardNotifications() {
-        // 키보드가 나타날 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        // 키보드가 사라질 때 앱에게 알리는 메서드 추가
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    // 노티피케이션을 제거하는 메서드
     func removeKeyboardNotifications() {
-        // 키보드가 나타날 때 앱에게 알리는 메서드 제거
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        // 키보드가 사라질 때 앱에게 알리는 메서드 제거
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    @objc func keyboardWillShow(_ noti: NSNotification) {
-        if let keyboardFrame: NSValue = noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            let keyboardHeight = keyboardRectangle.height
-
-            if #available(iOS 11.0, *) {
-                let bottomInset = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.safeAreaInsets.bottom ?? 0
-                let adjustedKeyboardHeight = keyboardHeight - bottomInset
-                bottomButtonConstraint?.update(inset: adjustedKeyboardHeight + Constant.margin3)
-            } else {
-                bottomButtonConstraint?.update(inset: keyboardHeight + Constant.margin3)
-            }
-
-            view.layoutIfNeeded()
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide).offset(-keyboardHeight)
         }
     }
 
-    @objc func keyboardWillHide(_ noti: NSNotification) {
-        bottomButtonConstraint?.update(inset: Constant.margin3)
-        view.layoutIfNeeded()
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide)
+        }
     }
 }
 
@@ -186,66 +154,62 @@ private extension SignUpProfileViewController {
         setupImagePicker()
         setupImageView()
         setupButton()
+        setupScrollView()
     }
 
     func addViews() {
-        view.addSubview(profileImageView)
-        //view.addSubview(nickNameTextField)
-        view.addSubview(nickNameTextView)
-        view.addSubview(nickNameCountLabel)
-        view.addSubview(descriptionTextView)
-        view.addSubview(descriptionCountLabel)
-        view.addSubview(signUpButton)
-        //view.addSubview(aboutUsLabel)
+        view.addSubview(scrollView)
+        scrollView.addSubview(profileImageView)
+        scrollView.addSubview(nickNameTextView)
+        scrollView.addSubview(nickNameCountLabel)
+        scrollView.addSubview(descriptionTextView)
+        scrollView.addSubview(descriptionCountLabel)
+        scrollView.addSubview(signUpButton)
     }
 
     func setupAutoLayout() {
         let safeArea = view.safeAreaLayoutGuide
-        profileImageView.snp.makeConstraints { make in
-            make.top.equalTo(safeArea).inset(Constant.margin3)
-            make.centerX.equalTo(safeArea)
-            make.width.height.equalTo(90)
+        scrollView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
         }
-//        nickNameTextField.snp.makeConstraints { make in
-//            make.top.equalTo(profileImageView.snp.bottom).offset(Constant.margin2)
-//            make.left.right.equalTo(safeArea).inset(Constant.margin4)
-//        }
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.edges.equalTo(safeArea)
+        }
+        profileImageView.snp.makeConstraints { make in
+            make.width.height.equalTo(90)
+            make.top.equalTo(scrollView).inset(Constant.margin3)
+            make.centerX.equalTo(safeArea)
+        }
         nickNameTextView.snp.makeConstraints { make in
             make.top.equalTo(profileImageView.snp.bottom).offset(Constant.margin3)
-            make.left.right.equalTo(safeArea).inset(Constant.margin4)
             make.height.equalTo(40)
+            make.left.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
         }
         
         nickNameCountLabel.snp.makeConstraints { make in
             make.top.equalTo(nickNameTextView.snp.bottom).offset(Constant.margin1)
-            make.trailing.equalTo(safeArea.snp.trailing).inset(Constant.margin4)
+            make.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
         }
         
         descriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(nickNameCountLabel.snp.bottom).offset(Constant.margin4)
-            make.left.right.equalTo(safeArea).inset(Constant.margin4)
+            make.left.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
             make.height.equalTo(200)
         }
         descriptionCountLabel.snp.makeConstraints { make in
             make.top.equalTo(descriptionTextView.snp.bottom).offset(Constant.margin1)
-            make.trailing.equalTo(safeArea.snp.trailing).inset(Constant.margin4)
+            make.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
+            make.bottom.lessThanOrEqualTo(scrollView).inset(Constant.margin3)
         }
-
-//        aboutUsLabel.snp.makeConstraints { make in
-//            make.top.equalTo(aboutUsTextView).offset(12)
-//            make.left.equalTo(aboutUsTextView).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
-//        }
         signUpButton.snp.makeConstraints { make in
-            
-            make.left.right.equalTo(safeArea).inset(Constant.margin4)
-            make.bottom.equalTo(safeArea).inset(Constant.margin3)
-//            self.bottomButtonConstraint = make.bottom.equalTo(safeArea).inset(Constant.margin3).constraint
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
             make.height.equalTo(48)
         }
     }
 
     func setupTextField() {
-//        nickNameTextField.delegate = self
         nickNameTextView.delegate = self
         descriptionTextView.delegate = self
     }
@@ -271,6 +235,12 @@ private extension SignUpProfileViewController {
 
     func setupButton() {
         signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
+    }
+    
+    func setupScrollView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(endEditing))
+        scrollView.isUserInteractionEnabled = true
+        scrollView.addGestureRecognizer(tapGesture)
     }
 
     func shakeAnimation(for view: UIView) {
@@ -299,7 +269,7 @@ private extension SignUpProfileViewController {
             }
             guard let authDataResult = authDataResult else { return }
             let uid = authDataResult.user.uid
-            var user = IDoUser(id: uid, updateAt: Date().toString(), email: email, nickName: nickNameTextView.text, description: descriptionTextView.text, hobbyList: self.selectedCategorys)
+            let user = IDoUser(id: uid, updateAt: Date().toString(), email: email, nickName: nickNameTextView.text, description: descriptionTextView.text, hobbyList: self.selectedCategorys)
 
             self.fbUserDatabaseManager.model = user
             self.fbUserDatabaseManager.appendData(data: user)
@@ -334,6 +304,11 @@ private extension SignUpProfileViewController {
             }
         }
     }
+    
+    @objc func endEditing() {
+        view.endEditing(true)
+    }
+    
 }
 
 extension SignUpProfileViewController: UITextFieldDelegate {
@@ -419,6 +394,10 @@ extension SignUpProfileViewController: UITextViewDelegate {
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == nickNameTextView {
+            if text == "\n" {
+                descriptionTextView.becomeFirstResponder()
+                return false
+            }
             if changedText.count > 10 {
                 nickNameCountLabel.textColor = UIColor.red
                 shakeAnimation(for: nickNameCountLabel)

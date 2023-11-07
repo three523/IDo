@@ -11,9 +11,9 @@ class MeetingCreateViewController: UIViewController {
     }()
     
     private let containerView: UIView = {
-           let view = UIView()
-           return view
-       }()
+       let view = UIView()
+       return view
+   }()
     
     private let meetingsData: MeetingsData
     // contentmode 종류 봐보기
