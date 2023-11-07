@@ -198,13 +198,6 @@ class MeetingCreateViewController: UIViewController {
             make.top.left.right.equalTo(safeArea)
             make.height.equalTo(safeArea)
         }
-
-//        containerView.snp.makeConstraints { (make) in
-//            make.top.bottom.leading.trailing.equalTo(scrollView)
-//            make.width.equalTo(scrollView)
-//            make.bottom.equalTo(createFinishButton.snp.bottom).offset(-16)
-//        }
-        
         
         let desiredAspectRatio: CGFloat = 2.0 / 3.0
                 

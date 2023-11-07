@@ -21,7 +21,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
 
-//        window.rootViewController = MeetingCreateViewController(meetingsData: MeetingsData(category: "T"))
 //        try? Auth.auth().signOut()
         if Auth.auth().currentUser != nil {
             guard let uid = Auth.auth().currentUser?.uid else { return }
