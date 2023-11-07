@@ -152,12 +152,16 @@ private extension NoticeBoardDetailViewController {
             if noticeBoard.rootUser.id == currentUser?.uid {
                 // MARK: - 게시판 업데이트 로직
                 let updateHandler: (UIAlertAction) -> Void = { _ in
-                    let createNoticeVC = CreateNoticeBoardViewController(club: self.firebaseNoticeBoardManager.club, firebaseManager: self.firebaseNoticeBoardManager, index: self.editIndex, images: self.firebaseCommentManager.noticeBoardImages)
+                    let createNoticeVC = CreateNoticeBoardViewController(club: self.firebaseNoticeBoardManager.club, firebaseManager: self.firebaseNoticeBoardManager, index: self.editIndex)
                     
                     self.firebaseNoticeBoardManager.selectedImage = self.firebaseCommentManager.noticeBoardImages
                     
+                    self.firebaseNoticeBoardManager.newSelectedImage = self.firebaseCommentManager.noticeBoardImages
+                    
                     createNoticeVC.editingTitleText = self.noticeBoard.title
                     createNoticeVC.editingContentText = self.noticeBoard.content
+                    
+                    self.firebaseNoticeBoardManager.removeSelecteImage = []
                     
                     self.navigationController?.pushViewController(createNoticeVC, animated: true)
                 }

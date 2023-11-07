@@ -86,6 +86,55 @@ class FBURLCache {
         }
     }
     
+    struct ImageIndex {
+        var index: String
+        var image: UIImage
+    }
+    
+    func downloadURL(storagePath: String, completion: @escaping (Result<ImageIndex,Error>) -> Void) {
+        
+//        if let image = imageCache.object(forKey: storagePath as NSString) {
+//            completion(.success(image))
+//            return
+//        }
+        let storage = Storage.storage().reference(withPath: storagePath)
+        storage.getMetadata { metadata, error in
+            if let error {
+                completion(.failure(error))
+                return
+            }
+            guard let indexMetaData = metadata?.customMetadata?["index"] else {
+                print("메타데이터가 없습니다")
+                return
+            }
+            storage.downloadURL { url, error in
+                if let error {
+                    completion(.failure(error))
+                    return
+                }
+                guard let url else { return }
+                let request = URLRequest(url: url)
+                
+                
+                self.downloadImageData(request: request, storagePath: storagePath) { result in
+                    switch result {
+                    case .success(let data):
+                        if let image = UIImage(data: data) {
+                            let imageIndex = ImageIndex(index: indexMetaData, image: image)
+                            completion(.success(imageIndex))
+                            return
+                        }
+                        print("image Data를 읽을수 없습니다.")
+                    case .failure(let error):
+                        completion(.failure(error))
+                        return
+                    }
+                    
+                }
+            }
+        }
+    }
+    
     private func downloadImageData(request: URLRequest, storagePath: String, completion: @escaping (Result<Data,Error>) -> Void) {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error {
