@@ -411,6 +411,8 @@ private extension SignUpViewController {
         termsCheckButton.addTarget(self, action: #selector(termsCheckButtonAction), for: .touchUpInside)
         
         privacyPolicycheckButton.addTarget(self, action: #selector(privacyPolicycheckButtonAction), for: .touchUpInside)
+        // 텍스트 필드 감지
+        emailTextField.addTarget(self, action: #selector(emailTextFieldDidChange(_:)), for: .editingChanged)
     }
     
     func setupHyperLink() {
@@ -610,9 +612,16 @@ private extension SignUpViewController {
         }
         guard let emailText = emailTextField.text,
               !emailText.isEmpty,
-              emailText.isValidEmail()
+              isValidEmail(emailText)
         else {
             showAlertDialog(title: "알림", message: "이메일 형식이 잘못되었거나 이메일이 비어있습니다.")
+            return
+        }
+            
+        // 이메일이 변경되었는지 확인해요.
+        if !isEmailChecked {
+            // 이메일이 변경되었다면, 중복확인을 다시 하도록 사용자에게 알려요.
+            showAlertDialog(title: "알림", message: "이메일이 변경되었습니다. 중복확인을 다시 해주세요.")
             return
         }
         
@@ -641,7 +650,14 @@ private extension SignUpViewController {
             }
         }
     }
-    
+
+    @objc func emailTextFieldDidChange(_ textField: UITextField) {
+        // 중복확인 버튼을 활성화해요.
+        linkButton.isEnabled = true
+        // 인증 상태를 재설정해요.
+        isEmailChecked = false
+    }
+
     @objc func addSMTPNumberButton() {
         guard let email = emailTextField.text, !email.isEmpty else {
             showAlertDialog(title: "경고", message: "이메일을 입력해주세요.")
@@ -664,8 +680,11 @@ private extension SignUpViewController {
                     DispatchQueue.main.async {
                         if success {
                             self?.emailTextField.isEnabled = false
-                            
+                            self?.isEmailChecked = true
+                            self?.linkButton.isEnabled = false
+
                             self?.showAlertDialog(title: "인증", message: "인증이 성공적으로 처리되었습니다")
+                            
                             self?.authenticationNumberButton.setTitle("완료", for: .normal)
                             self?.authenticationNumberButton.isEnabled = false
                             self?.authenticationNumberButton.setTitleColor(UIColor(color: .borderSelected), for: .normal)
@@ -675,6 +694,9 @@ private extension SignUpViewController {
                             self?.emailAuthorizationButton.backgroundColor = UIColor(color: .placeholder)
                         } else {
                             self?.showAlertDialog(title: "경고", message: "인증번호가 일치하지 않습니다.")
+                            self?.emailTextField.isEnabled = true
+                            self?.isEmailChecked = false
+                            self?.linkButton.isEnabled = true
                         }
                     }
                 }
