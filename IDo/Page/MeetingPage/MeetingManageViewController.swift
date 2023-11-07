@@ -237,7 +237,8 @@ class MeetingManageViewController: UIViewController {
             make.top.equalTo(countMeetingNameLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
-            make.height.equalTo(160)
+            make.height.lessThanOrEqualTo(160)
+            make.height.greaterThanOrEqualTo(100)
         }
         
         countDescriptionLabel.snp.makeConstraints { (make) in
@@ -246,11 +247,11 @@ class MeetingManageViewController: UIViewController {
         }
         
         manageFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
+            make.top.greaterThanOrEqualTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(48)
-            //            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
     }
     

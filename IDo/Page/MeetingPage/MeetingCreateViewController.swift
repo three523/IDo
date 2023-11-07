@@ -180,7 +180,10 @@ class MeetingCreateViewController: UIViewController {
 //        containerView.addSubview(placeholderLabel)
         view.backgroundColor = UIColor(color: .backgroundPrimary)
         view.addSubview(scrollView)
+        
         meetingNameTextView.delegate = self
+        meetingDescriptionTextView.delegate = self
+        
         scrollView.addSubview(profileImageButton)
         scrollView.addSubview(meetingNameTextView)
         scrollView.addSubview(countMeetingNameLabel)
@@ -222,7 +225,8 @@ class MeetingCreateViewController: UIViewController {
             make.top.equalTo(countMeetingNameLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
-            make.height.equalTo(160)
+            make.height.lessThanOrEqualTo(160)
+            make.height.greaterThanOrEqualTo(100)
         }
         
         countDescriptionLabel.snp.makeConstraints { (make) in
@@ -231,10 +235,11 @@ class MeetingCreateViewController: UIViewController {
         }
         
         createFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
+            make.top.greaterThanOrEqualTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(48)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
     }
     
