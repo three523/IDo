@@ -52,8 +52,6 @@ class MeetingManageViewController: UIViewController {
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
-        countDescriptionField.text = "(\(meetingDescriptionField.text.count)/300)"
-        countMeetingNameField.text = "(\(meetingNameField.text?.count ?? 0)/16)"
 //        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     

@@ -6,7 +6,7 @@ class MeetingCreateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.hideKeyboardWhenTappedAround()
         setupCreateButton()
         updateFinishButtonState()
         configureUI()
