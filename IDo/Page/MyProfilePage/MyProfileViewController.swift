@@ -132,6 +132,11 @@ class MyProfileViewController: UIViewController {
         let hobbiesString = hobbyList.joined(separator: ", ")
         choiceEnjoyTextField.text = hobbiesString
     }
+    
+    func updateSelfInfoIntLabel() {
+        let textCount = selfInfoDetail.text.count
+        selfInfoInt.text = "(\(textCount)/300)"
+    }
 
     // 로딩되는 뷰
     override func viewDidLoad() {
@@ -142,6 +147,7 @@ class MyProfileViewController: UIViewController {
         makeProfileName()
         makeSelfInfo()
         makeSelfInfoDetail()
+        updateSelfInfoIntLabel()
         makeWriteMe()
         makeWriteMeTableView()
         makeLogout()
@@ -170,6 +176,7 @@ class MyProfileViewController: UIViewController {
         profileName.resignFirstResponder()
         selfInfoDetail.resignFirstResponder()
         getProfile()
+        updateSelfInfoIntLabel()
     }
     
     private func getProfile() {

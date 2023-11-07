@@ -192,12 +192,13 @@ class MeetingManageViewController: UIViewController {
         
         scrollView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+            make.bottom.equalTo(containerView.snp.bottom).offset(Constant.margin4)
         }
         
         containerView.snp.makeConstraints { (make) in
             make.top.bottom.leading.trailing.equalTo(scrollView)
             make.width.equalTo(scrollView)
-            make.bottom.equalTo(manageFinishButton.snp.bottom).offset(-16)
+            make.bottom.equalTo(manageFinishButton.snp.bottom).offset(24)
         }
         
         
