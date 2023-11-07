@@ -20,6 +20,51 @@ class SignUpProfileViewController: UIViewController {
     private let imagePickerViewController: UIImagePickerController = .init()
     private var bottomButtonConstraint: Constraint?
     
+    private var aboutUs: String = ""
+    private var nickName: String = ""
+    
+    init(email: String, password: String, selectedCategorys: [String]) {
+        self.email = email
+        self.password = password
+        self.selectedCategorys = selectedCategorys
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        
+        // 타이틀 생성 및 설정
+        if let navigationBar = self.navigationController?.navigationBar {
+            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 생성")
+        }
+        
+        setup()
+        
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        addKeyboardNotifications()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardNotifications()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.nickNameTextView.resignFirstResponder()
+        self.descriptionTextView.resignFirstResponder()
+    }
+    
+    // MARK: - 컴포넌트 생성
     private let profileImageView: UIImageView = .init(image: UIImage(systemName: "camera.circle.fill"))
     
 //    private let nickNameTextField: UITextField = {
@@ -86,6 +131,7 @@ class SignUpProfileViewController: UIViewController {
         let button = UIButton()
         button.setTitle("완료", for: .normal)
         button.setTitleColor(UIColor(color: .white), for: .normal)
+        button.titleLabel?.font = UIFont.bodyFont(.large, weight: .medium)
         button.backgroundColor = UIColor(color: .contentPrimary)
         button.layer.cornerRadius = 5
         return button
@@ -100,45 +146,8 @@ class SignUpProfileViewController: UIViewController {
 //        return label
 //    }()
 
-    private var aboutUs: String = ""
-    private var nickName: String = ""
 
-    init(email: String, password: String, selectedCategorys: [String]) {
-        self.email = email
-        self.password = password
-        self.selectedCategorys = selectedCategorys
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        
-        // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
-        
-        // 타이틀 생성 및 설정
-        if let navigationBar = self.navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 생성")
-        }
-        
-        setup()
-        
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        addKeyboardNotifications()
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        removeKeyboardNotifications()
-    }
-
+    // MARK: - 노티피케이션 관련
     // 노티피케이션을 추가하는 메서드
     func addKeyboardNotifications() {
         // 키보드가 나타날 때 앱에게 알리는 메서드 추가
@@ -179,6 +188,8 @@ class SignUpProfileViewController: UIViewController {
 }
 
 private extension SignUpProfileViewController {
+    
+    // MARK: - UI 및 오토레이아웃 관련
     func setup() {
         addViews()
         setupAutoLayout()
@@ -243,7 +254,8 @@ private extension SignUpProfileViewController {
             make.height.equalTo(48)
         }
     }
-
+    
+    // MARK: - 컴포넌트 세팅 관련
     func setupTextField() {
 //        nickNameTextField.delegate = self
         nickNameTextView.delegate = self
@@ -273,28 +285,23 @@ private extension SignUpProfileViewController {
         signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
     }
 
-    func shakeAnimation(for view: UIView) {
-        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: .linear)
-        animation.duration = 0.5
-        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
-        view.layer.add(animation, forKey: "shake")
-    }
-
     @objc func signUp() {
-        guard !nickNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            showAlert(message: "닉네임을 입력해주세요")
+        guard !nickNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, nickNameTextView.textColor == UIColor.black else {
+//            showAlert(message: "닉네임을 입력해주세요")
+            AlertManager.showAlert(on: self, title: "알림", message: "닉네임을 입력해주세요.")
             return
         }
-        guard !descriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            showAlert(message: "자기소개를 입력해주세요")
+        guard !descriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, descriptionTextView.textColor == UIColor.black else {
+//            showAlert(message: "자기소개를 입력해주세요")
+            AlertManager.showAlert(on: self, title: "알림", message: "자기소개를 입력해주세요.")
             return
         }
 
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] authDataResult, error in
             guard let self = self else { return }
             if let error {
-                self.showAlert(message: "로그인에 실패하였습니다.")
+//                self.showAlert(message: "로그인에 실패하였습니다.")
+                AlertManager.showAlert(on: self, title: "알림", message: "로그인에 실패하였습니다.")
                 return
             }
             guard let authDataResult = authDataResult else { return }
@@ -308,14 +315,14 @@ private extension SignUpProfileViewController {
         }
     }
 
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
-            alert.addAction(okAction)
-            self.present(alert, animated: true, completion: nil)
-        }
-    }
+//    func showAlert(message: String) {
+//        DispatchQueue.main.async {
+//            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+//            let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+//            alert.addAction(okAction)
+//            self.present(alert, animated: true, completion: nil)
+//        }
+//    }
 
     func firebaseLogin() {
         Auth.auth().signIn(withEmail: email, password: password) { authData, error in
@@ -336,18 +343,16 @@ private extension SignUpProfileViewController {
     }
 }
 
-extension SignUpProfileViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        return range.location < 10
-    }
-
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        nickName = text
-    }
-}
-
+// MARK: - 텍스트 뷰 관련
 extension SignUpProfileViewController: UITextViewDelegate {
+    
+    func shakeAnimation(for view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
+        view.layer.add(animation, forKey: "shake")
+    }
     
     
     // 초기 호출
@@ -461,6 +466,7 @@ extension SignUpProfileViewController: UITextViewDelegate {
 //    }
 }
 
+// MARK: - 이미지 피커 관련
 extension SignUpProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
@@ -474,5 +480,16 @@ extension SignUpProfileViewController: UIImagePickerControllerDelegate, UINaviga
                 self.profileImageView.image = image
             }
         }
+    }
+}
+
+extension SignUpProfileViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return range.location < 10
+    }
+
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        guard let text = textField.text else { return }
+        nickName = text
     }
 }
