@@ -25,7 +25,6 @@ class CreateNoticeBoardViewController: UIViewController {
     var editingContentText: String?
     
     var editingMemoIndex: Int?
-    var editingImages: [String:UIImage]?
     
     var firebaseManager: FirebaseManager
     var club: Club
@@ -36,10 +35,9 @@ class CreateNoticeBoardViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
-    convenience init(club: Club, firebaseManager: FirebaseManager, index: Int, images: [String:UIImage]) {
+    convenience init(club: Club, firebaseManager: FirebaseManager, index: Int) {
         self.init(club: club, firebaseManager: firebaseManager)
         self.editingMemoIndex = index
-        self.editingImages = images
         self.isEditingMode = true
     }
     
@@ -74,6 +72,8 @@ class CreateNoticeBoardViewController: UIViewController {
         if isMovingFromParent {
             firebaseManager.selectedImage.removeAll()
             firebaseManager.newSelectedImage.removeAll()
+            firebaseManager.removeSelecteImage.removeAll()
+            firebaseManager.missSelectedImage.removeAll()
             isEditingMode = false
         }
     }
@@ -163,6 +163,7 @@ private extension CreateNoticeBoardViewController {
             
             firebaseManager.createNoticeBoard(title: newTitleText, content: newContentText) { success in
                 if success {
+                    self.navigationController?.popViewController(animated: true)
                     print("게시판 생성 성공")
                 }
                 else {
@@ -170,9 +171,6 @@ private extension CreateNoticeBoardViewController {
                 }
             }
         }
-        
-        navigationController?.popViewController(animated: true)
-        firebaseManager.selectedImage.removeAll()
     }
     
     // 메모 내용 수정
@@ -185,6 +183,9 @@ private extension CreateNoticeBoardViewController {
             // 해당 인덱스의 메모 수정 코드 필요
             firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent) { success in
                 if success {
+                    // 수정 모드 종료
+                    self.isEditingMode = false
+                    self.navigationController?.popViewController(animated: true)
                     print("업데이트 완료")
                 }
             }
@@ -192,11 +193,6 @@ private extension CreateNoticeBoardViewController {
             // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
             (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
         }
-        
-        // 수정 모드 종료
-        isEditingMode = false
-        navigationController?.popViewController(animated: true)
-        firebaseManager.selectedImage.removeAll()
     }
 }
 
@@ -322,7 +318,7 @@ private extension CreateNoticeBoardViewController {
     }
     
     @objc func addPicture() {
-        if firebaseManager.selectedImage.count < 10 {
+        if firebaseManager.newSelectedImage.count < 10 {
             let imagePicker = UIImagePickerController()
             imagePicker.delegate = self
             imagePicker.sourceType = .photoLibrary
@@ -347,8 +343,11 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 //            firebaseManager.selectedImage += firebaseManager.newSelectedImage
             
             // 딕셔너리에 추가하는 코드 작성
-            let index = firebaseManager.selectedImage.count
-            firebaseManager.selectedImage[String(index)] = image
+//            let index = firebaseManager.selectedImage.count
+//            firebaseManager.selectedImage[String(index)] = image
+            let index = firebaseManager.newSelectedImage.count
+            firebaseManager.newSelectedImage[String(index)] = StorageImage(imageUID: UUID().uuidString, savedImage: image)
+            
             // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
             createNoticeBoardView.galleryCollectionView.reloadData()
             
@@ -360,12 +359,12 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
 // MARK: - 사진 CollectionView 관련
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return firebaseManager.selectedImage.count
+        return firebaseManager.newSelectedImage.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryCollectionViewCell.identifier, for: indexPath) as? GalleryCollectionViewCell else { return UICollectionViewCell() }
-        cell.createNoticeBoardImagePicker.galleryImageView.image = firebaseManager.selectedImage[String(indexPath.row)]
+        cell.createNoticeBoardImagePicker.galleryImageView.image = firebaseManager.newSelectedImage[String(indexPath.row)]?.savedImage
         cell.removeCellDelegate = self
         cell.indexPath = indexPath
         return cell
@@ -434,8 +433,16 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
 
 
     func removeLocal(_ indexPath: IndexPath) {
+        
+        guard let removeImage = self.firebaseManager.newSelectedImage[String(indexPath.row)] else {
+            print("삭제할 이미지를 찾을 수 없음")
+            return
+        }
+        
+        self.firebaseManager.removeSelecteImage.append(removeImage)
+        
         // 딕셔너리에서 이미지를 삭제
-        self.firebaseManager.selectedImage.removeValue(forKey: String(indexPath.row))
+        self.firebaseManager.newSelectedImage.removeValue(forKey: String(indexPath.row))
         
         // Collection View에서 해당 아이템을 삭제
         self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {
@@ -446,28 +453,29 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
             // 변경된 인덱스를 추적하기 위한 배열
             var updatedIndexPaths: [IndexPath] = []
             
+            
             // 딕셔너리의 키를 재정렬하고, 업데이트할 인덱스를 계산
             let newSelectedImage = self.reorderSelectedImages(startingFrom: indexPath.row, updatedIndexPaths: &updatedIndexPaths)
             
             // 재정렬된 이미지 딕셔너리를 업데이트
-            self.firebaseManager.selectedImage = newSelectedImage
+            self.firebaseManager.newSelectedImage = newSelectedImage
             
             // 변경된 인덱스에 대해서만 컬렉션 뷰 업데이트
             self.createNoticeBoardView.galleryCollectionView.reloadItems(at: updatedIndexPaths)
         }
     }
 
-    func reorderSelectedImages(startingFrom index: Int, updatedIndexPaths: inout [IndexPath]) -> [String: UIImage] {
-        var newSelectedImage: [String: UIImage] = [:]
+    func reorderSelectedImages(startingFrom index: Int, updatedIndexPaths: inout [IndexPath]) -> [String: StorageImage] {
+        var newSelectedImage: [String: StorageImage] = [:]
         var newIndex = 0
         
         // 삭제된 인덱스 이후의 아이템들을 업데이트하기 위한 인덱스 경로를 저장
-        for i in index..<self.firebaseManager.selectedImage.count {
+        for i in index..<self.firebaseManager.newSelectedImage.count {
             updatedIndexPaths.append(IndexPath(item: i, section: 0))
         }
         
         // 정렬된 딕셔너리를 반복하며 새로운 인덱스를 할당
-        for (_, image) in self.firebaseManager.selectedImage.sorted(by: { Int($0.key)! < Int($1.key)! }) {
+        for (_, image) in self.firebaseManager.newSelectedImage.sorted(by: { Int($0.key)! < Int($1.key)! }) {
             newSelectedImage[String(newIndex)] = image
             newIndex += 1
         }
@@ -478,31 +486,32 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
     func removeCell(_ indexPath: IndexPath) {
         
         // 게시글을 수정할 때
-        if isEditingMode {
-            
-            // storage에 이미지가 있을 때
-            if let editingMemoIndex = editingMemoIndex,
-               let imageList = firebaseManager.noticeBoards[editingMemoIndex].imageList,
-               indexPath.row < imageList.count {
-                
-                let imagePath = imageList[indexPath.row]
-                
-                // Firebase Storage에서 이미지를 삭제
-                firebaseManager.deleteImage(noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex].id, imagePaths: [imagePath]) { success in
-                    self.removeLocal(indexPath)
-                    
-                }
-            }
-            
-            // storage에 이미지가 없을 때
-            else {
-                removeLocal(indexPath)
-            }
-        }
-        
-        // 처음 게시글을 작성할 때
-        else {
-            removeLocal(indexPath)
-        }
+//        if isEditingMode {
+//            
+//            // storage에 이미지가 있을 때
+//            if let editingMemoIndex = editingMemoIndex,
+//               let imageList = firebaseManager.noticeBoards[editingMemoIndex].imageList,
+//               indexPath.row < imageList.count {
+//                
+//                let imagePath = imageList[indexPath.row]
+//                
+//                // Firebase Storage에서 이미지를 삭제
+//                firebaseManager.deleteImage(noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex].id, imagePaths: [imagePath]) { success in
+//                    self.removeLocal(indexPath)
+//                    
+//                }
+//            }
+//            
+//            // storage에 이미지가 없을 때
+//            else {
+//                removeLocal(indexPath)
+//            }
+//        }
+//        
+//        // 처음 게시글을 작성할 때
+//        else {
+//            removeLocal(indexPath)
+//        }
+        removeLocal(indexPath)
     }
 }

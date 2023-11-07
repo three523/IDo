@@ -46,7 +46,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             noticeBoards.forEach { noticeBoard in
                 self.removeUserNoticeBoard(user: noticeBoard.rootUser, noticeBoard: noticeBoard)
                 self.removeAllCommentList(noticeBoard: noticeBoard)
-                noticeBoard.imageList?.compactMap { self.removeImage(path: $0) }
+                noticeBoard.imageList?.compactMap { self.removeImage(path: $0.savedImagePath) }
             }
         }
     }
@@ -63,7 +63,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             completion?(true)
             self.removeUserNoticeBoard(user: clubNoticeboard.rootUser, noticeBoard: clubNoticeboard)
             self.removeAllCommentList(noticeBoard: clubNoticeboard)
-            clubNoticeboard.imageList?.compactMap { self.removeImage(path: $0) }
+            clubNoticeboard.imageList?.compactMap { self.removeImage(path: $0.savedImagePath) }
         }
     }
     

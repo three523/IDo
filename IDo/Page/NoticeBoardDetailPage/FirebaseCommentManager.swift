@@ -15,7 +15,7 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
     let urlCache = FBURLCache.shared
     let storage = Storage.storage().reference()
     var profileUpdate: ()->Void = {}
-    var noticeBoardImages: [String: UIImage] = [:]
+    var noticeBoardImages: [String: StorageImage] = [:]
 
     init(refPath: [String], noticeBoard: NoticeBoard) {
         self.noticeBoardRef = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child("\(noticeBoard.id)")
@@ -89,15 +89,27 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func getNoticeBoardImages(noticeBoard: NoticeBoard, completion: @escaping ([String: UIImage]) -> Void) {
+    func getNoticeBoardImages(noticeBoard: NoticeBoard, completion: @escaping ([String: StorageImage]) -> Void) {
         let storageRef = Storage.storage().reference()
         let imagePaths = noticeBoard.imageList ?? []
         for index in 0..<imagePaths.count {
-            let imageRef = storageRef.child(imagePaths[index])
+            let imageRef = storageRef.child(imagePaths[index].savedImagePath)
+//            urlCache.downloadURL(storagePath: imageRef.fullPath) { result in
+//                switch result {
+//                case .success(let image):
+//                    self.noticeBoardImages[String(index)] = image
+//                    if self.noticeBoardImages.count == imagePaths.count {
+//                        completion(self.noticeBoardImages)
+//                    }
+//                case .failure(let error):
+//                    print(error)
+//                }
+//            }
             urlCache.downloadURL(storagePath: imageRef.fullPath) { result in
                 switch result {
-                case .success(let image):
-                    self.noticeBoardImages[String(index)] = image
+                case .success(let imageIndex):
+                    let storageImage = StorageImage.init(imageUID: imagePaths[index].imageUID, savedImage: imageIndex.image)
+                    self.noticeBoardImages[imageIndex.index] = storageImage
                     if self.noticeBoardImages.count == imagePaths.count {
                         completion(self.noticeBoardImages)
                     }
