@@ -8,9 +8,9 @@
 import FirebaseAuth
 import FirebaseCore
 import FirebaseDatabase
+import SnapKit
 import SwiftSMTP
 import UIKit
-import SnapKit
 
 final class SignUpViewController: UIViewController {
     var smtp: SMTP!
@@ -232,26 +232,25 @@ final class SignUpViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        //navigationController?.setNavigationBarHidden(true, animated: animated)
+        // navigationController?.setNavigationBarHidden(true, animated: animated)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        //navigationController?.setNavigationBarHidden(false, animated: animated)
+        // navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     private func navigationSet() {
-        
         let configuration = UIImage.SymbolConfiguration(weight: .semibold) // .bold 또는 원하는 굵기로 설정
         let image = UIImage(systemName: "chevron.backward", withConfiguration: configuration)
         
         let backButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(clickBackButton))
-        self.navigationItem.leftBarButtonItem = backButton
-        self.navigationItem.leftBarButtonItem?.tintColor = UIColor.black
+        navigationItem.leftBarButtonItem = backButton
+        navigationItem.leftBarButtonItem?.tintColor = UIColor.black
         
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
         
-        if let navigationBar = self.navigationController?.navigationBar {
+        if let navigationBar = navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "회원가입")
         }
     }
@@ -276,7 +275,7 @@ private extension SignUpViewController {
         view.addSubview(linkButton)
         view.addSubview(passwordTextField)
         view.addSubview(nextButton)
-        //view.addSubview(backButton)
+        // view.addSubview(backButton)
         view.addSubview(idLable)
         view.addSubview(passwordLable)
         view.addSubview(passwordConfirmLable)
@@ -397,7 +396,7 @@ private extension SignUpViewController {
     func setupButton() {
         nextButton.addTarget(self, action: #selector(clickNextButton), for: .touchUpInside)
         
-        //backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
+        // backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
         
         eyeButton.addTarget(self, action: #selector(eyeClickButton), for: .touchUpInside)
         
@@ -418,10 +417,10 @@ private extension SignUpViewController {
         guard let termsText = termsLabel.text else { return }
         let termsAttributedString = NSMutableAttributedString(string: termsText)
         let termsRange = (termsText as NSString).range(of: "이용약관")
-        let termsLinkAttributes: [NSAttributedString.Key : Any] = [
-           .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
-           .foregroundColor: UIColor.blue, // 링크 텍스트 색상
-           .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 스타일
+        let termsLinkAttributes: [NSAttributedString.Key: Any] = [
+            .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
+            .foregroundColor: UIColor.blue, // 링크 텍스트 색상
+            .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 스타일
         ]
 
         termsAttributedString.addAttributes(termsLinkAttributes, range: termsRange)
@@ -436,10 +435,10 @@ private extension SignUpViewController {
         guard let privacyPolicyText = privacyPolicyLabel.text else { return }
         let privacyPolicyAttributedString = NSMutableAttributedString(string: privacyPolicyText)
         let privacyPolicyRange = (privacyPolicyText as NSString).range(of: "개인정보처리방침")
-        let privacyPolicyLinkAttributes: [NSAttributedString.Key : Any] = [
-           .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
-           .foregroundColor: UIColor.blue, // 링크 텍스트 색상
-           .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 스타일
+        let privacyPolicyLinkAttributes: [NSAttributedString.Key: Any] = [
+            .link: URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4")!, // 링크 URL
+            .foregroundColor: UIColor.blue, // 링크 텍스트 색상
+            .underlineStyle: NSUnderlineStyle.single.rawValue // 밑줄 스타일
         ]
 
         privacyPolicyAttributedString.addAttributes(privacyPolicyLinkAttributes, range: privacyPolicyRange)
@@ -547,17 +546,17 @@ private extension SignUpViewController {
             return
         }
         if let savedCode = UserDefaults.standard.string(forKey: "emailVerificationCode"), savedCode == userInputCode {
+            isEmailChecked = true
+            emailTextField.isEnabled = false
             completion(true)
         } else {
             emailAuthorizationButton.isEnabled = true
             authenticationNumberTextField.text = ""
             showAlertDialog(title: "경고", message: "인증번호가 일치하지 않습니다.")
-            
-            // 인증에 실패한 경우 false를 반환
             completion(false)
         }
     }
-    
+
     func verifyButtonPressed(_ sender: UIButton) {
         smtpNumberCode { _ in
             print("success")
@@ -644,7 +643,6 @@ private extension SignUpViewController {
     }
     
     @objc func addSMTPNumberButton() {
-        // 1. 입력된 이메일의 상태를 확인합니다.
         guard let email = emailTextField.text, !email.isEmpty else {
             showAlertDialog(title: "경고", message: "이메일을 입력해주세요.")
             return
@@ -659,25 +657,31 @@ private extension SignUpViewController {
             
             if let signInMethods = signInMethods, !signInMethods.isEmpty {
                 self?.emailAuthorizationButton.isEnabled = true
-                self?.emailAuthorizationButton.setTitleColor(.blue, for: .normal) // 원하는 색상으로 변경
-                self?.emailAuthorizationButton.backgroundColor = .white // 원하는 배경색으로 변경
+                self?.emailAuthorizationButton.setTitleColor(.blue, for: .normal)
+                self?.emailAuthorizationButton.backgroundColor = .white
             } else {
                 self?.smtpNumberCode { success in
-                    if success {
-                        self?.showAlertDialog(title: "인증", message: "인증이 성공적으로 처리되었습니다")
-                        self?.authenticationNumberButton.setTitle("완료", for: .normal)
-                        self?.authenticationNumberButton.isEnabled = false
-                        self?.authenticationNumberButton.setTitleColor(UIColor(color: .borderSelected), for: .normal)
-                        self?.authenticationNumberButton.backgroundColor = UIColor(color: .contentBackground)
-                        self?.emailAuthorizationButton.isEnabled = false
-                        self?.emailAuthorizationButton.setTitleColor(.darkGray, for: .normal)
-                        self?.emailAuthorizationButton.backgroundColor = UIColor(color: .placeholder)
+                    DispatchQueue.main.async {
+                        if success {
+                            self?.emailTextField.isEnabled = false
+                            
+                            self?.showAlertDialog(title: "인증", message: "인증이 성공적으로 처리되었습니다")
+                            self?.authenticationNumberButton.setTitle("완료", for: .normal)
+                            self?.authenticationNumberButton.isEnabled = false
+                            self?.authenticationNumberButton.setTitleColor(UIColor(color: .borderSelected), for: .normal)
+                            self?.authenticationNumberButton.backgroundColor = UIColor(color: .contentBackground)
+                            self?.emailAuthorizationButton.isEnabled = false
+                            self?.emailAuthorizationButton.setTitleColor(.darkGray, for: .normal)
+                            self?.emailAuthorizationButton.backgroundColor = UIColor(color: .placeholder)
+                        } else {
+                            self?.showAlertDialog(title: "경고", message: "인증번호가 일치하지 않습니다.")
+                        }
                     }
                 }
             }
         }
     }
-    
+
     @objc func eyeClickButton() {
         passwordTextField.isSecureTextEntry.toggle()
         eyeButton.isSelected.toggle()
@@ -727,6 +731,7 @@ private extension SignUpViewController {
     @objc func termsCheckButtonAction(_ sender: UIButton) {
         sender.isSelected.toggle()
     }
+
     @objc func privacyPolicycheckButtonAction(_ sender: UIButton) {
         sender.isSelected.toggle()
     }
