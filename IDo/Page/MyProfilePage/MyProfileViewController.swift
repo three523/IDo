@@ -368,9 +368,52 @@ private extension MyProfileViewController {
         let editButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(editVC))
         navigationItem.rightBarButtonItem = editButton
         navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .done, target: self, action: #selector(profileUpdateCancle))
+        hiddenLeftButton()
             
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+    }
+    
+    private func hiddenLeftButton() {
+        navigationItem.leftBarButtonItem?.tintColor = .clear
+        navigationItem.leftBarButtonItem?.isEnabled = false
+    }
+    
+    private func unHiddenLeftButton() {
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(color: .negative)
+        navigationItem.leftBarButtonItem?.isEnabled = true
+    }
+    
+    @objc func profileUpdateCancle() {
+        isEdit.toggle()
+        
+        guard let myProfile = MyProfile.shared.myUserInfo else {
+            print("사용자 정보가 없습니다.")
+            return
+        }
+        navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
+        profileName.isUserInteractionEnabled = false
+        profileName.text = myProfile.nickName
+        selfInfoDetail.isUserInteractionEnabled = false
+        selfInfoDetail.text = myProfile.description
+        choiceEnjoyTextField.isUserInteractionEnabled = false
+        choiceEnjoyTextField.text = myProfile.hobbyList?.first
+
+        writeMe.isHidden = false // 작성한글 title Label 나타내기
+        writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
+        logout.isHidden = false
+        line.isHidden = false
+        deleteID.isHidden = false
+        profileImage.isUserInteractionEnabled = false
+        if let data = myProfile.profileImage[ImageSize.medium.rawValue],
+           let image = UIImage(data: data) {
+            profileImage.setImage(image, for: .normal)
+        } else {
+            profileImage.setImage(UIImage(named: "profile"), for: .normal)
+        }
+        choiceEnjoyTextField.tintColor = .clear
     }
 
     @objc func editVC() {
@@ -380,7 +423,8 @@ private extension MyProfileViewController {
         // isEdit = true인 상태의 실행 코드
         if isEdit {
             navigationItem.rightBarButtonItem?.image = UIImage(systemName: "checkmark.circle")
-                    
+            unHiddenLeftButton()
+            
             // 각각 텍스트뷰를 활성화 시킴
             profileName.isUserInteractionEnabled = true
             selfInfoDetail.isUserInteractionEnabled = true
@@ -396,6 +440,8 @@ private extension MyProfileViewController {
             // isEdit = false인 상태의 실행 코드
         } else {
             navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
+            hiddenLeftButton()
+            
             profileName.isUserInteractionEnabled = false
             selfInfoDetail.isUserInteractionEnabled = false
             choiceEnjoyTextField.isUserInteractionEnabled = false
