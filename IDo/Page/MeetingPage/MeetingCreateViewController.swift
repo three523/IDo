@@ -10,11 +10,6 @@ class MeetingCreateViewController: UIViewController {
         return scrollView
     }()
     
-    private let containerView: UIView = {
-       let view = UIView()
-       return view
-   }()
-    
     private let meetingsData: MeetingsData
     // contentmode 종류 봐보기
     var originalY: CGFloat?
@@ -40,8 +35,6 @@ class MeetingCreateViewController: UIViewController {
         label.textColor = UIColor.gray
         return label
     }()
-    
-    
     
     let meetingDescriptionField: UITextView = {
         let textView = UITextView()
@@ -133,9 +126,6 @@ class MeetingCreateViewController: UIViewController {
             }
         }
     }
-    
-
- 
 
     private func setupCreateButton() {
         createFinishButton.addTarget(self, action: #selector(createMeeting), for: .touchUpInside)
@@ -147,6 +137,7 @@ class MeetingCreateViewController: UIViewController {
         setupCreateButton()
         updateFinishButtonState()
         configureUI()
+        setupScrollView()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
 
@@ -158,20 +149,25 @@ class MeetingCreateViewController: UIViewController {
     
 
     @objc func keyboardWillShow(notification: NSNotification) {
-        if originalY == nil {
-            originalY = self.view.frame.origin.y
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
         }
         
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let keyboardHeight = keyboardSize.height
-            let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
-            self.view.frame.origin.y = originalY! - adjustmentHeight
+        DispatchQueue.main.async {
+            self.scrollView.layoutIfNeeded()
+            let bottomOffset = CGPoint(x: 0, y: self.scrollView.contentSize.height - self.scrollView.bounds.size.height + self.scrollView.contentInset.bottom)
+            if bottomOffset.y > 0 {
+                self.scrollView.setContentOffset(bottomOffset, animated: true)
+            }
         }
     }
 
     @objc func keyboardWillHide(notification: NSNotification) {
-        if let originalY = originalY {
-            self.view.frame.origin.y = originalY
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
@@ -183,40 +179,46 @@ class MeetingCreateViewController: UIViewController {
     private func configureUI() {
         // UI 설정
         view.addSubview(scrollView)
-        scrollView.addSubview(containerView)
+//        scrollView.addSubview(containerView)
         meetingNameField.delegate = self
-        containerView.addSubview(profileImageButton)
-        containerView.addSubview(meetingNameField)
-        containerView.addSubview(countMeetingNameField)
-        containerView.addSubview(createFinishButton)
-        containerView.addSubview(countDescriptionField)
-        containerView.addSubview(meetingDescriptionField)
-        containerView.addSubview(placeholderLabel)
+        scrollView.addSubview(profileImageButton)
+        scrollView.addSubview(meetingNameField)
+        scrollView.addSubview(countMeetingNameField)
+        scrollView.addSubview(createFinishButton)
+        scrollView.addSubview(countDescriptionField)
+        scrollView.addSubview(meetingDescriptionField)
+        scrollView.addSubview(placeholderLabel)
         
+        let safeArea = view.safeAreaLayoutGuide
         scrollView.snp.makeConstraints { (make) in
-                make.edges.equalToSuperview()
-            }
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
 
-            containerView.snp.makeConstraints { (make) in
-                make.top.bottom.leading.trailing.equalTo(scrollView)
-                make.width.equalTo(scrollView)
-                make.bottom.equalTo(createFinishButton.snp.bottom).offset(-16)
-            }
+//        containerView.snp.makeConstraints { (make) in
+//            make.top.bottom.leading.trailing.equalTo(scrollView)
+//            make.width.equalTo(scrollView)
+//            make.bottom.equalTo(createFinishButton.snp.bottom).offset(-16)
+//        }
         
         
         let desiredAspectRatio: CGFloat = 2.0 / 3.0
                 
         profileImageButton.snp.makeConstraints { (make) in
-            make.top.equalTo(containerView.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.top.equalTo(scrollView.snp.top).offset(Constant.margin3)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
                 
         meetingNameField.snp.makeConstraints { (make) in
             make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin4)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(37)
         }
               
@@ -231,8 +233,8 @@ class MeetingCreateViewController: UIViewController {
                 
         meetingDescriptionField.snp.makeConstraints { (make) in
             make.top.equalTo(meetingNameField.snp.bottom).offset(22)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(160)
         }
         meetingDescriptionField.delegate = self
@@ -244,8 +246,8 @@ class MeetingCreateViewController: UIViewController {
                 
         createFinishButton.snp.makeConstraints { (make) in
             make.top.equalTo(countDescriptionField.snp.bottom).offset(4)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(48)
 //            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
         }
@@ -269,8 +271,15 @@ class MeetingCreateViewController: UIViewController {
             createFinishButton.isEnabled = !(istitleFieldEmpty || isDescriptionEmpty)
         }
 
-
-
+    private func setupScrollView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(endEditing))
+        scrollView.isUserInteractionEnabled = true
+        scrollView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func endEditing() {
+        view.endEditing(true)
+    }
     
 }
 

@@ -21,16 +21,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let scene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: scene)
 
-        window.rootViewController = MeetingCreateViewController(meetingsData: MeetingsData(category: "T"))
+//        window.rootViewController = MeetingCreateViewController(meetingsData: MeetingsData(category: "T"))
 //        try? Auth.auth().signOut()
-//        if Auth.auth().currentUser != nil {
-//            guard let uid = Auth.auth().currentUser?.uid else { return }
-//            MyProfile.shared.getUserProfile(uid: uid) { isSuccess in
-//                window.rootViewController = TabBarController()
-//            }
-//        } else {
-//            window.rootViewController = LoginViewController()
-//        }
+        if Auth.auth().currentUser != nil {
+            guard let uid = Auth.auth().currentUser?.uid else { return }
+            MyProfile.shared.getUserProfile(uid: uid) { isSuccess in
+                window.rootViewController = TabBarController()
+            }
+        } else {
+            window.rootViewController = LoginViewController()
+        }
         window.backgroundColor = .white
 
         // 카카오 로그인 토큰이 있는지 여부 확인
