@@ -400,38 +400,81 @@ extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 // MARK: - 사진 삭제 관련
 extension CreateNoticeBoardViewController: RemoveDelegate {
     
+    //    func removeLocal(_ indexPath: IndexPath) {
+    //            // 로컬에서 이미지를 삭제하고 Collection View를 업데이트
+    //            self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {
+    //
+    //                // 선택된 인덱스에 해당하는 이미지를 딕셔너리에서 삭제
+    //                self.firebaseManager.selectedImage[String(indexPath.row)] = nil
+    //
+    //                // 해당하는 아이템을 CollectionView에서 삭제
+    //                self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
+    //            } completion: { _ in
+    //
+    //                // 딕셔너리의 키를 재정렬
+    //                var newSelectedImage: [String: UIImage] = [:]
+    //                let sortedKeys = self.firebaseManager.selectedImage.keys.compactMap { Int($0) }.sorted()
+    //
+    //                // 재정렬할 때 사용할 새 인덱스
+    //                var newIndex = 0
+    //
+    //                for key in sortedKeys {
+    //                    if let image = self.firebaseManager.selectedImage[String(key)] {
+    //                        newSelectedImage[String(newIndex)] = image
+    //                        newIndex += 1
+    //                    }
+    //                }
+    //
+    //                // 재정렬된 이미지 딕셔너리를 업데이트
+    //                self.firebaseManager.selectedImage = newSelectedImage
+    //                
+    //                self.createNoticeBoardView.galleryCollectionView.reloadData()
+    //            }
+    //        }
+
+
     func removeLocal(_ indexPath: IndexPath) {
-        // 로컬에서 이미지를 삭제하고 Collection View를 업데이트
+        // 딕셔너리에서 이미지를 삭제
+        self.firebaseManager.selectedImage.removeValue(forKey: String(indexPath.row))
+        
+        // Collection View에서 해당 아이템을 삭제
         self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {
-            
-            // 선택된 인덱스에 해당하는 이미지를 딕셔너리에서 삭제
-            self.firebaseManager.selectedImage[String(indexPath.row)] = nil
-            
-            // 해당하는 아이템을 CollectionView에서 삭제
             self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
-        } completion: { _ in
+        } completion: { [weak self] _ in
+            guard let self = self else { return }
             
-            // 딕셔너리의 키를 재정렬
-            var newSelectedImage: [String: UIImage] = [:]
-            let sortedKeys = self.firebaseManager.selectedImage.keys.compactMap { Int($0) }.sorted()
+            // 변경된 인덱스를 추적하기 위한 배열
+            var updatedIndexPaths: [IndexPath] = []
             
-            // 재정렬할 때 사용할 새 인덱스
-            var newIndex = 0
-            
-            for key in sortedKeys {
-                if let image = self.firebaseManager.selectedImage[String(key)] {
-                    newSelectedImage[String(newIndex)] = image
-                    newIndex += 1
-                }
-            }
+            // 딕셔너리의 키를 재정렬하고, 업데이트할 인덱스를 계산
+            let newSelectedImage = self.reorderSelectedImages(startingFrom: indexPath.row, updatedIndexPaths: &updatedIndexPaths)
             
             // 재정렬된 이미지 딕셔너리를 업데이트
             self.firebaseManager.selectedImage = newSelectedImage
             
-            // self.createNoticeBoardView.galleryCollectionView.reloadData()
+            // 변경된 인덱스에 대해서만 컬렉션 뷰 업데이트
+            self.createNoticeBoardView.galleryCollectionView.reloadItems(at: updatedIndexPaths)
         }
     }
 
+    func reorderSelectedImages(startingFrom index: Int, updatedIndexPaths: inout [IndexPath]) -> [String: UIImage] {
+        var newSelectedImage: [String: UIImage] = [:]
+        var newIndex = 0
+        
+        // 삭제된 인덱스 이후의 아이템들을 업데이트하기 위한 인덱스 경로를 저장
+        for i in index..<self.firebaseManager.selectedImage.count {
+            updatedIndexPaths.append(IndexPath(item: i, section: 0))
+        }
+        
+        // 정렬된 딕셔너리를 반복하며 새로운 인덱스를 할당
+        for (_, image) in self.firebaseManager.selectedImage.sorted(by: { Int($0.key)! < Int($1.key)! }) {
+            newSelectedImage[String(newIndex)] = image
+            newIndex += 1
+        }
+        
+        return newSelectedImage
+    }
+    
     func removeCell(_ indexPath: IndexPath) {
         
         // 게시글을 수정할 때

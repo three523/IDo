@@ -4,6 +4,16 @@ import FirebaseStorage
 
 class MeetingCreateViewController: UIViewController {
     
+    init(meetingsData: MeetingsData) {
+        self.meetingsData = meetingsData
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - 컴포넌트 생성
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -19,82 +29,58 @@ class MeetingCreateViewController: UIViewController {
         return button
     }()
     
-    let meetingNameField: UITextField = {
-        let textField = UITextField()
-        textField.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-        textField.borderStyle = .roundedRect
-        textField.backgroundColor = UIColor(named: "BackgroundSecondary")
-        textField.placeholder = "모임 이름을 설정하세요."
-        return textField
-    }()
-    
-    let countMeetingNameField: UILabel = {
-        let label = UILabel()
-        label.text = "(0/16)"
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = UIColor.gray
-        return label
-    }()
-    
-    let meetingDescriptionField: UITextView = {
+    let meetingNameTextView: UITextView = {
         let textView = UITextView()
-        textView.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-        textView.backgroundColor = UIColor(named: "BackgroundSecondary")
-        textView.textAlignment = .left
-        textView.layer.cornerRadius = 5.0
-        textView.layer.borderColor = UIColor.lightGray.cgColor
-        textView.layer.borderWidth = 0.2
-        textView.clipsToBounds = true
-        textView.isEditable = true
-        textView.isScrollEnabled = true
-        textView.textContainerInset = UIEdgeInsets.zero
-        textView.textContainer.lineFragmentPadding = 0
-        textView.textContainerInset = UIEdgeInsets(top: 12, left: 14, bottom: 12, right: 12)
+        textView.backgroundColor = UIColor(color: .backgroundSecondary)
+        textView.font = UIFont.bodyFont(.large, weight: .medium)
+        textView.text = "모임 이름을 입력해주세요."
+        textView.textColor = UIColor(color: .placeholder)
+        textView.layer.cornerRadius = 5
+        textView.resignFirstResponder()
         return textView
     }()
     
-    let countDescriptionField: UILabel = {
+    // 이름 글자 수 표시 label
+    let countMeetingNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.textColor = .gray
+        label.text = "(0/16)"
+        label.textColor = UIColor(color: .placeholder)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
+        return label
+    }()
+    
+    // 소개글을 작성하는 textView
+    let meetingDescriptionTextView: UITextView = {
+        let textView = UITextView()
+        textView.backgroundColor = UIColor(color: .backgroundSecondary)
+        textView.font = UIFont.bodyFont(.medium, weight: .regular)
+        textView.text = "모임에 대한 소개를 입력해주세요."
+        textView.textColor = UIColor(color: .placeholder)
+        textView.layer.cornerRadius = 5.0
+        textView.resignFirstResponder()
+        return textView
+    }()
+    
+    // 소개글 글자 수 표시 label
+    let countDescriptionLabel: UILabel = {
+        let label = UILabel()
         label.text = "(0/300)"
+        label.textColor = UIColor(color: .placeholder)
+        label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
     }()
-    
-    init(meetingsData: MeetingsData) {
-        self.meetingsData = meetingsData
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    let placeholderLabel: UILabel = {
-        let label = UILabel()
-        label.text = "모임에 대한 소개를 해주세요."
-        label.font = UIFont(name: "SF Pro", size: 18) ?? UIFont.systemFont(ofSize: 18, weight: .regular)
-        label.textColor = UIColor.placeholderText
-        return label
-    }()
-    
-    func shakeAnimation(for view: UIView) {
-        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
-        animation.timingFunction = CAMediaTimingFunction(name: .linear)
-        animation.duration = 0.5
-        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
-        view.layer.add(animation, forKey: "shake")
-    }
     
     private let createFinishButton = FinishButton()
 
-
     @objc private func createMeeting() {
-            guard let name = meetingNameField.text, !name.isEmpty,
-                  let description = meetingDescriptionField.text, !description.isEmpty else {
-                print("모임의 이름과 설명은 필수 입력 항목입니다.")
-                return
-            }
+//            guard let name = meetingNameField.text, !name.isEmpty,
+//        guard let name = meetingNameTextView.text, !name.isEmpty,
+//              let description = meetingDescriptionTextView.text, !description.isEmpty else {
+        if meetingNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && meetingNameTextView.textColor != UIColor.black && meetingDescriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && meetingDescriptionTextView.textColor != UIColor.black {
+            AlertManager.showAlert(on: self, title: "알림", message: "모임의 이름과 설명은 필수 입력 항목입니다.")
+            print("모임의 이름과 설명은 필수 입력 항목입니다.")
+            
+        }
 
         if !profileImageButton.profileImageChanged {
                 let alert = UIAlertController(title: "알림", message: "대표 사진은 필수입니다.", preferredStyle: .alert)
@@ -115,7 +101,7 @@ class MeetingCreateViewController: UIViewController {
                 imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
             }
 
-        let club = Club(id: UUID().uuidString, rootUser: currentUserSummary,title: name, imageURL: nil, description: description, category: meetingsData.category, userList: [currentUserSummary], createDate: Date().dateToString)
+        let club = Club(id: UUID().uuidString, rootUser: currentUserSummary, title: meetingNameTextView.text, imageURL: nil, description: meetingDescriptionTextView.text, category: meetingsData.category, userList: [currentUserSummary], createDate: Date().dateToString)
         meetingsData.addClub(club: club, imageData: imageData) { isSuccess in
             if isSuccess {
                 let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
@@ -133,7 +119,7 @@ class MeetingCreateViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        hideKeyboardWhenTappedAround()
         setupCreateButton()
         updateFinishButtonState()
         configureUI()
@@ -161,7 +147,7 @@ class MeetingCreateViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
-
+    
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
@@ -184,19 +170,23 @@ class MeetingCreateViewController: UIViewController {
             make.height.equalTo(view.safeAreaLayoutGuide)
         }
     }
-    
+
+    // MARK: - UI 설정 및 오토레이아웃
     private func configureUI() {
-        // UI 설정
-        view.addSubview(scrollView)
-        meetingNameField.delegate = self
-        scrollView.addSubview(profileImageButton)
-        scrollView.addSubview(meetingNameField)
-        scrollView.addSubview(countMeetingNameField)
-        scrollView.addSubview(createFinishButton)
-        scrollView.addSubview(countDescriptionField)
-        scrollView.addSubview(meetingDescriptionField)
-        scrollView.addSubview(placeholderLabel)
         
+        // UI 설정
+//        meetingNameField.delegate = self
+//        containerView.addSubview(meetingNameField)
+//        containerView.addSubview(placeholderLabel)
+        view.backgroundColor = UIColor(color: .backgroundPrimary)
+        view.addSubview(scrollView)
+        meetingNameTextView.delegate = self
+        scrollView.addSubview(profileImageButton)
+        scrollView.addSubview(meetingNameTextView)
+        scrollView.addSubview(countMeetingNameLabel)
+        scrollView.addSubview(createFinishButton)
+        scrollView.addSubview(countDescriptionLabel)
+        scrollView.addSubview(meetingDescriptionTextView)
         let safeArea = view.safeAreaLayoutGuide
         scrollView.snp.makeConstraints { (make) in
             make.top.left.right.equalTo(safeArea)
@@ -208,7 +198,7 @@ class MeetingCreateViewController: UIViewController {
         }
         
         let desiredAspectRatio: CGFloat = 2.0 / 3.0
-                
+        
         profileImageButton.snp.makeConstraints { (make) in
             make.top.equalTo(scrollView.snp.top).offset(Constant.margin3)
             make.centerX.equalTo(scrollView)
@@ -216,48 +206,36 @@ class MeetingCreateViewController: UIViewController {
             make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
                 
-        meetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin4)
+        meetingNameTextView.snp.makeConstraints { (make) in
+            make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin3)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
-            make.height.equalTo(37)
+            make.height.equalTo(40)
         }
-              
-        let leftPaddingView = UIView(frame: CGRect(x: 0, y: 0, width: 6, height: meetingNameField.frame.height))
-        meetingNameField.leftView = leftPaddingView
-        meetingNameField.leftViewMode = .always
         
-        countMeetingNameField.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingNameField.snp.bottom).offset(4)
-            make.right.equalTo(meetingNameField.snp.right)
+        countMeetingNameLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(meetingNameTextView.snp.bottom).offset(Constant.margin1)
+            make.right.equalTo(meetingNameTextView.snp.right)
         }
                 
-        meetingDescriptionField.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingNameField.snp.bottom).offset(22)
+        meetingDescriptionTextView.snp.makeConstraints { (make) in
+            make.top.equalTo(countMeetingNameLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(160)
         }
-        meetingDescriptionField.delegate = self
         
-        placeholderLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField).offset(12)
-            make.left.equalTo(meetingDescriptionField).offset(12.8) // textview, textfield 간의 placeholder margin 차이로 인해 미세한 위치조정
+        countDescriptionLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(meetingDescriptionTextView.snp.bottom).offset(Constant.margin1)
+            make.right.equalTo(meetingDescriptionTextView.snp.right)
         }
-                
+        
         createFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(countDescriptionField.snp.bottom).offset(4)
+            make.top.equalTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(48)
         }
-
-                
-        countDescriptionField.snp.makeConstraints { (make) in
-            make.top.equalTo(meetingDescriptionField.snp.bottom).offset(4)
-            make.right.equalTo(meetingDescriptionField.snp.right)
-        }
-        
     }
     
     @objc private func profileImageTapped() {
@@ -266,23 +244,24 @@ class MeetingCreateViewController: UIViewController {
     
     func updateFinishButtonState() {
             // meetingNameField와 meetingDescriptionField가 모두 내용이 있을때만 활성화
-            let istitleFieldEmpty = meetingNameField.text?.isEmpty ?? true
-            let isDescriptionEmpty = meetingDescriptionField.text.isEmpty
+            let istitleFieldEmpty = meetingNameTextView.text?.isEmpty ?? true
+            let isDescriptionEmpty = meetingDescriptionTextView.text.isEmpty
             createFinishButton.isEnabled = !(istitleFieldEmpty || isDescriptionEmpty)
         }
 
     private func setupScrollView() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(endEditing))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
         scrollView.isUserInteractionEnabled = true
         scrollView.addGestureRecognizer(tapGesture)
     }
     
-    @objc func endEditing() {
+    @objc func scrollViewTap() {
         view.endEditing(true)
     }
     
 }
 
+// MARK: - 이미지 피커 관련
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
             if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
@@ -294,36 +273,142 @@ extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINaviga
         }
 }
 
-
+// MARK: - 텍스트 뷰 관련
 extension MeetingCreateViewController: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        placeholderLabel.isHidden = !textView.text.isEmpty
-        countDescriptionField.text = "\(textView.text.count)/300"
-        updateFinishButtonState()
+    
+    func shakeAnimation(for view: UIView) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.duration = 0.5
+        animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
+        view.layer.add(animation, forKey: "shake")
+    }
+    
+    // 초기 호출
+    func textViewDidBeginEditing(_ textView: UITextView) {
         
-        if textView.text.count > 300 {
-            shakeAnimation(for: countDescriptionField)
-            countDescriptionField.textColor = .red
-        } else {
-            countDescriptionField.textColor = .black
+        // 이름 textView
+        if textView == meetingNameTextView {
+            if meetingNameTextView.textColor == UIColor(color: .placeholder) {
+                
+                meetingNameTextView.text = nil
+                meetingNameTextView.textColor = UIColor.black
+            }
+        }
+        
+        // 내용 textView
+        if textView == meetingDescriptionTextView {
+            if meetingDescriptionTextView.textColor == UIColor(color: .placeholder) {
+                
+                meetingDescriptionTextView.text = nil
+                meetingDescriptionTextView.textColor = UIColor.black
+            }
+        }
+    }
+    
+    // 입력 시 호출
+    func textViewDidChange(_ textView: UITextView) {
+        
+        if textView == meetingNameTextView {
+            let textCount = textView.text.count
+            countMeetingNameLabel.text = "(\(textCount)/10)"
+            
+            if textCount == 0 {
+                countMeetingNameLabel.textColor = UIColor(color: .placeholder)
+            } else {
+                countMeetingNameLabel.textColor = UIColor.black
+            }
+        }
+        
+        if textView == meetingDescriptionTextView {
+            let textCount = textView.text.count
+            countDescriptionLabel.text = "(\(textCount)/300)"
+            
+            if textCount == 0 {
+                countDescriptionLabel.textColor = UIColor(color: .placeholder)
+            } else {
+                countDescriptionLabel.textColor = UIColor.black
+            }
+        }
+        
+        if !meetingNameTextView.text.isEmpty, meetingNameTextView.textColor ==  UIColor.black, meetingDescriptionTextView.textColor == UIColor.black ,!meetingDescriptionTextView.text.isEmpty {
+            createFinishButton.isEnabled = true
+        }
+        else {
+            createFinishButton.isEnabled = false
+        }
+    }
+    
+    // 입력 종료 시 호출
+    func textViewDidEndEditing(_ textView: UITextView) {
+        
+        if meetingNameTextView.text.isEmpty {
+            meetingNameTextView.text = "모임 이름을 입력해주세요."
+            meetingNameTextView.textColor = UIColor(color: .placeholder)
+        }
+        
+        if meetingDescriptionTextView.text.isEmpty {
+            meetingDescriptionTextView.text = "모임에 대한 소개를 입력해주세요."
+            meetingDescriptionTextView.textColor = UIColor(color: .placeholder)
         }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
-        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
+        guard let stringRange = Range(range, in: currentText) else { return false }
         
-        if prospectiveText.count > 301 {
-            return false
+        let changedText = currentText.replacingCharacters(in: stringRange, with: text)
+        
+        if textView == meetingNameTextView {
+            if changedText.count > 10 {
+                countMeetingNameLabel.textColor = UIColor.red
+                shakeAnimation(for: countMeetingNameLabel)
+                return false
+            }
+            return true
+        }
+        
+        if textView == meetingDescriptionTextView {
+            if changedText.count > 300 {
+                countDescriptionLabel.textColor = UIColor.red
+                shakeAnimation(for: countDescriptionLabel)
+                return false
+            }
+            return true
         }
         return true
     }
+    
+    
+    
+//    func textViewDidChange(_ textView: UITextView) {
+////        placeholderLabel.isHidden = !textView.text.isEmpty
+//        countDescriptionTextView.text = "\(textView.text.count)/300"
+//        updateFinishButtonState()
+//        
+//        if textView.text.count > 300 {
+//            shakeAnimation(for: countDescriptionTextView)
+//            countDescriptionTextView.textColor = .red
+//        } else {
+//            countDescriptionTextView.textColor = .black
+//        }
+//    }
+//    
+//    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+//        let currentText = textView.text ?? ""
+//        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
+//        
+//        if prospectiveText.count > 301 {
+//            return false
+//        }
+//        return true
+//    }
 }
 
 
 extension MeetingCreateViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        guard textField == meetingNameField else {
+        guard textField == meetingNameTextView else {
             return true
         }
         
@@ -334,14 +419,14 @@ extension MeetingCreateViewController: UITextFieldDelegate {
         let currentText = textField.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
-        countMeetingNameField.text = "\(prospectiveText.count)/16"
+        countMeetingNameLabel.text = "\(prospectiveText.count)/16"
         
         if prospectiveText.count > 16 {
-            shakeAnimation(for: countMeetingNameField)
-            countMeetingNameField.textColor = .red
+            shakeAnimation(for: countMeetingNameLabel)
+            countMeetingNameLabel.textColor = .red
             return false
         } else {
-            countMeetingNameField.textColor = .black
+            countMeetingNameLabel.textColor = .black
         }
         
         return true
@@ -349,6 +434,20 @@ extension MeetingCreateViewController: UITextFieldDelegate {
     }
 }
 
+// 키보드 올라왔을 때 화면 터치시 키보드 내리는 로직을 uiviewcontroller 에 대해 익스텐션으로 추가해서
+// self.hideKeyboardWhenTappedAround() 만 추가하면 모든 뷰컨트롤러에서 적용
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
 
 
 
