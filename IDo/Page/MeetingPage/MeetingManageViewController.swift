@@ -12,12 +12,12 @@ class MeetingManageViewController: UIViewController {
     lazy var storageRef = storage.reference()
     private var meetingsData: MeetingsData
     private var club: Club
-    private let clubImage: UIImage?
+    private var clubImage: UIImage?
     var updateHandler: ((Club, Data) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.hideKeyboardWhenTappedAround() 
         configureUI()
         meetingNameTextView.text = club.title
         meetingNameTextView.textColor = UIColor.black
@@ -52,6 +52,9 @@ class MeetingManageViewController: UIViewController {
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
+        countDescriptionField.text = "(\(meetingDescriptionField.text.count)/300)"
+        countMeetingNameField.text = "(\(meetingNameField.text?.count ?? 0)/16)"
+//        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

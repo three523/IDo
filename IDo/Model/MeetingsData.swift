@@ -25,14 +25,16 @@ class MeetingsData {
                 print(error.localizedDescription)
             }
             self.clubs.append(club)
+            var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+            myClubList.append(club)
+            MyProfile.shared.update(myClubList: myClubList)
             self.saveImage(imageData: imageData, club: club) { isSuccess in
                 self.update()
                 completion(isSuccess)
+                guard let index = myClubList.firstIndex(where: { $0.id == club.id }) else { return }
+                myClubList[index].imageURL = "\(club.category)/meeting_images/\(club.id).png"
+                MyProfile.shared.update(myClubList: myClubList)
             }
-            guard let myInfo = MyProfile.shared.myUserInfo else { return }
-            var myClubList = myInfo.myClubList ?? []
-            myClubList.append(club)
-            MyProfile.shared.update(myClubList: myClubList)
         }
     }
     

@@ -111,9 +111,11 @@ final class MyProfile {
         guard let idoUser = myInfo?.toIDoUser else { return }
         firebaseManager.updateValue(value: idoUser) { isCompletion in
             if isCompletion {
-                completion?(isCompletion)
                 self.myUserInfo = myInfo
+                completion?(isCompletion)
+                return
             }
+            completion?(false)
         }
     }
     

@@ -478,6 +478,20 @@ extension MeetingCreateViewController: UITextFieldDelegate {
     }
 }
 
+// 키보드 올라왔을 때 화면 터치시 키보드 내리는 로직을 uiviewcontroller 에 대해 익스텐션으로 추가해서
+// self.hideKeyboardWhenTappedAround() 만 추가하면 모든 뷰컨트롤러에서 적용
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}
 
 
 

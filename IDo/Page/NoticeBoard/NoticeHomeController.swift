@@ -14,6 +14,7 @@ final class NoticeHomeController: UIViewController {
     var signUpButtonUpdate: ((AuthState) -> Void)?
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
     private let clubImage: UIImage?
+    private let club: Club
     let memberTableView: IntrinsicTableView = {
         let tableview = IntrinsicTableView()
         tableview.rowHeight = 36 + 8 + 8
@@ -21,11 +22,15 @@ final class NoticeHomeController: UIViewController {
         tableview.separatorStyle = .none
         return tableview
     }()
+
     private let authState: AuthState
     
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
-        imageView.image = UIImage(named: "MeetingProfileImage")
+        imageView.backgroundColor = UIColor(color: .contentBackground)
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = 24
         return imageView
     }()
     
@@ -72,6 +77,7 @@ final class NoticeHomeController: UIViewController {
     
     init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager, clubImage: UIImage?) {
         self.clubImage = clubImage
+        self.club = club
         self.firebaseClubDatabaseManager = firebaseClubDataManager
         self.authState = authState
         super.init(nibName: nil, bundle: nil)
@@ -160,10 +166,13 @@ final class NoticeHomeController: UIViewController {
     
     private func setupAutoLayout() {
         let safeArea = view.safeAreaLayoutGuide
+        let desiredAspectRatio: CGFloat = 2.0 / 3.0
         imageView.snp.makeConstraints { make in
-            make.height.equalTo(150)
+            make.right.equalTo(scrollStackViewContainer).inset(Constant.margin4)
+            make.height.equalTo(imageView.snp.width).multipliedBy(desiredAspectRatio)
+            make.centerX.equalToSuperview()
         }
-        
+           
         scrollView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalTo(safeArea.snp.top).inset(Constant.margin3)
@@ -191,12 +200,12 @@ final class NoticeHomeController: UIViewController {
     }
 
     func loadDataFromFirebase() {
-        label.text = firebaseClubDatabaseManager.model?.title
-        textLabel.text = firebaseClubDatabaseManager.model?.description
+        label.text = club.title
+        textLabel.text = club.description
         if let clubImage {
             imageView.image = clubImage
         } else {
-            guard let imageURL = firebaseClubDatabaseManager.model?.imageURL else { return }
+            guard let imageURL = club.imageURL else { return }
             FBURLCache.shared.downloadURL(storagePath: imageURL) { result in
                 switch result {
                 case .success(let image):
@@ -220,7 +229,6 @@ final class NoticeHomeController: UIViewController {
 }
 
 extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return firebaseClubDatabaseManager.model?.userList?.count ?? 0
     }
