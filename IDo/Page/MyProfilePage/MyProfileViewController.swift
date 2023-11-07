@@ -11,7 +11,8 @@ import UIKit
 
 class MyProfileViewController: UIViewController {
     private var firebaseManager: FBDatabaseManager<IDoUser>!
-
+    private let scrollView: UIScrollView = UIScrollView()
+    
     // 프로필
     var profileImage = UIButton()
     var profileName = UITextView()
@@ -159,6 +160,7 @@ class MyProfileViewController: UIViewController {
         navigationBarButtonAction()
         buttonAction()
         setupPickerView()
+        setupScrollView()
         navigationController?.delegate = self
         profileName.delegate = self
         choicePickerView.delegate = self
@@ -177,6 +179,11 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.resignFirstResponder()
         getProfile()
         updateSelfInfoIntLabel()
+        addKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardNotifications()
     }
     
     private func getProfile() {
@@ -205,21 +212,68 @@ class MyProfileViewController: UIViewController {
             }
         }
     }
+    
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
+    func setupScrollView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
+        scrollView.isUserInteractionEnabled = true
+        scrollView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func scrollViewTap() {
+        view.endEditing(true)
+    }
         
     func setLayout() {
-        view.addSubview(profileImage)
-        view.addSubview(profileName)
-        view.addSubview(selfInfo)
-        view.addSubview(selfInfoDetail)
+        view.addSubview(scrollView)
+        scrollView.addSubview(profileImage)
+        scrollView.addSubview(profileName)
+        scrollView.addSubview(selfInfo)
+        scrollView.addSubview(selfInfoDetail)
 //        view.addSubview(writeMe)
 //        view.addSubview(writeMeTableView)
-        view.addSubview(logout)
-        view.addSubview(deleteID)
-        view.addSubview(selfInfoInt)
-        view.addSubview(line)
-        view.addSubview(choiceEnjoyTextField)
+        scrollView.addSubview(logout)
+        scrollView.addSubview(deleteID)
+        scrollView.addSubview(selfInfoInt)
+        scrollView.addSubview(line)
+        scrollView.addSubview(choiceEnjoyTextField)
+        
+        let safeArea = view.safeAreaLayoutGuide
+        scrollView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
         profileImage.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+            make.top.equalTo(scrollView.snp.top).offset(Constant.margin3)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(100)
         }
@@ -259,11 +313,11 @@ class MyProfileViewController: UIViewController {
         logout.snp.makeConstraints { make in
             make.right.equalTo(line).offset(-Constant.margin2)
             make.width.equalTo(70)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin3)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
         line.snp.makeConstraints { make in
             make.centerY.equalTo(logout)
-            make.centerX.equalTo(view.safeAreaLayoutGuide)
+            make.centerX.equalTo(scrollView)
             make.width.equalTo(2)
             make.height.equalTo(18)
         }
@@ -271,7 +325,7 @@ class MyProfileViewController: UIViewController {
             make.centerY.equalTo(line)
             make.leading.equalTo(line.snp.trailing).offset(Constant.margin2)
             make.width.equalTo(70)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin3)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
     }
                
