@@ -117,12 +117,16 @@ final class NoticeHomeController: UIViewController {
     }
     
     @objc func handleSignUp() {
+        signUpButton.isEnabled = false
         print("Sign Up button tapped!.")
         addUser()
     }
     
     private func addUser() {
-        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else {
+            signUpButton.isEnabled = true
+            return
+        }
         firebaseClubDatabaseManager.appendUser(user: idoUser.toUserSummary) { isCompleted in
             if isCompleted {
 //                self.signUpButton.isHidden = isCompleted
@@ -131,7 +135,10 @@ final class NoticeHomeController: UIViewController {
                 }
             }
             let authState: AuthState = isCompleted ? .member : .notMember
-            guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else { return }
+            guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else {
+                self.signUpButton.isEnabled = true
+                return
+            }
             self.signUpButtonUpdate?(authState)
             self.memberTableView.beginUpdates()
             self.memberTableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .automatic)
