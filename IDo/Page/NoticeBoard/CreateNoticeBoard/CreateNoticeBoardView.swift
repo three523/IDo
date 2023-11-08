@@ -27,6 +27,9 @@ class CreateNoticeBoardView: UIView {
         let scrollView = UIScrollView()
         scrollView.showsVerticalScrollIndicator = true
         scrollView.showsHorizontalScrollIndicator = false
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
+        scrollView.isUserInteractionEnabled = true
+        scrollView.addGestureRecognizer(tapGesture)
         return scrollView
     }()
     
@@ -109,8 +112,17 @@ private extension CreateNoticeBoardView {
     
     func autoLayout() {
         
+        let safeArea = safeAreaLayoutGuide
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
+        
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.top.equalTo(safeArea)
+            make.left.right.equalToSuperview()
+            make.width.equalTo(scrollView.frameLayoutGuide)
+            make.bottom.equalTo(galleryCollectionView.snp.bottom).offset(Constant.margin3)
         }
         
         titleTextView.snp.makeConstraints { make in
@@ -148,13 +160,12 @@ private extension CreateNoticeBoardView {
             make.top.equalTo(addPictureButton.snp.bottom).offset(Constant.margin3)
             make.leading.equalTo(scrollView.contentLayoutGuide.snp.leading).offset(Constant.margin4)
             make.trailing.equalTo(scrollView.contentLayoutGuide.snp.trailing).offset(-Constant.margin4)
-            make.height.equalTo(450)
-        }
-        
-        // 스크롤 뷰의 스크롤 가능한 내용 크기를 설정합니다.
-        scrollView.contentLayoutGuide.snp.makeConstraints { make in
-            make.width.equalTo(scrollView.frameLayoutGuide)
-            make.bottom.equalTo(galleryCollectionView.snp.bottom).offset(-Constant.margin3)
+            make.height.equalTo(0)
         }
     }
+    
+    @objc func scrollViewTap() {
+        endEditing(true)
+    }
+    
 }

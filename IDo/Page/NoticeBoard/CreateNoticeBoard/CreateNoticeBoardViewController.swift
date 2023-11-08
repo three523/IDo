@@ -65,6 +65,10 @@ class CreateNoticeBoardViewController: UIViewController {
         
         navigationController?.delegate = self
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        addKeyboardNotifications()
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -76,6 +80,7 @@ class CreateNoticeBoardViewController: UIViewController {
             firebaseManager.missSelectedImage.removeAll()
             isEditingMode = false
         }
+        removeKeyboardNotifications()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -83,6 +88,36 @@ class CreateNoticeBoardViewController: UIViewController {
         self.createNoticeBoardView.contentTextView.resignFirstResponder()
     }
     
+}
+
+// MARK: - KeyBoard 관련 extension
+private extension CreateNoticeBoardViewController {
+    
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        
+        createNoticeBoardView.scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        createNoticeBoardView.scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
 }
 
 // MARK: - NavigationBar 관련 extension
@@ -349,7 +384,10 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
             firebaseManager.newSelectedImage[String(index)] = StorageImage(imageUID: UUID().uuidString, savedImage: image)
             
             // 업데이트된 이미지 배열로 컬렉션 뷰를 새로고침
-            createNoticeBoardView.galleryCollectionView.reloadData()
+            DispatchQueue.main.async {
+                self.createNoticeBoardView.galleryCollectionView.insertItems(at: [IndexPath(row: index, section: 0)])
+                self.updateAutolayoutCollectionView()
+            }
             
         }
         picker.dismiss(animated: true, completion: nil)
@@ -370,7 +408,27 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectio
         return cell
     }
     
-    
+}
+
+//MARK: - CollectionView AutoLayout Update
+extension CreateNoticeBoardViewController {
+    func updateAutolayoutCollectionView() {
+        DispatchQueue.main.async {
+            if self.firebaseManager.selectedImage.count == 0 {
+                self.createNoticeBoardView.galleryCollectionView.snp.updateConstraints { make in
+                    make.height.equalTo(0)
+                }
+                return
+            }
+            let rows = ceil(CGFloat(self.firebaseManager.selectedImage.count) / 5.0)
+            let spacing = rows * 2
+            let cellHeight = (self.createNoticeBoardView.galleryCollectionView.bounds.width - 8) / 5
+            let contentHeight = rows * cellHeight + spacing
+            self.createNoticeBoardView.galleryCollectionView.snp.updateConstraints { make in
+                make.height.equalTo(contentHeight)
+            }
+        }
+    }
 }
 
 extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
