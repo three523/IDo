@@ -339,7 +339,7 @@ private extension NoticeBoardDetailViewController {
             guard let self else { return }
             if let myUserInfo = MyProfile.shared.myUserInfo {
                 let user = UserSummary(id: myUserInfo.id, profileImagePath: myUserInfo.profileImagePath, nickName: myUserInfo.nickName)
-                let comment = Comment(id: UUID().uuidString, noticeBoardID: "NoticeBoardID", writeUser: user, createDate: Date(), content: content)
+                let comment = Comment(id: UUID().uuidString, noticeBoardID: noticeBoard.id, writeUser: user, createDate: Date(), content: content)
                 firebaseCommentManager.appendData(data: comment) { isComplete in
                     if isComplete {
                         var myCommentList = myUserInfo.myCommentList ?? []

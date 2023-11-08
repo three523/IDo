@@ -23,6 +23,7 @@
 		10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */; };
 		10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10C265C92AD55C81002BA40A /* SnapKit */; };
 		10C4882A2AF4ED6A00E4EAB3 /* HomeEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C488292AF4ED6A00E4EAB3 /* HomeEmptyView.swift */; };
+		18A860AD2AFB7430002DC32B /* MyProfileUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A860AC2AFB7430002DC32B /* MyProfileUpdateManager.swift */; };
 		18B591A02AF1D658002A684D /* DataModelCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B5919F2AF1D658002A684D /* DataModelCodable.swift */; };
 		18B591A22AF275CF002A684D /* MemberTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B591A12AF275CE002A684D /* MemberTableViewCell.swift */; };
 		18C26A002AD941AF00899A6F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 18C269FF2AD941AF00899A6F /* FirebaseAnalytics */; };
@@ -152,6 +153,7 @@
 		187108622AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseClubDatabaseManager.swift; sourceTree = "<group>"; };
 		18A6A70B2AE269130086B37D /* SignUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewController.swift; sourceTree = "<group>"; };
 		18A6A70D2AE269FB0086B37D /* CategorySelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategorySelectViewController.swift; sourceTree = "<group>"; };
+		18A860AC2AFB7430002DC32B /* MyProfileUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileUpdateManager.swift; sourceTree = "<group>"; };
 		18B12CB12ADFBDC700FB325F /* UserSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSummary.swift; sourceTree = "<group>"; };
 		18B12CB32ADFC01000FB325F /* Encodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Encodable.swift; sourceTree = "<group>"; };
 		18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FBDatabaseManager.swift; sourceTree = "<group>"; };
@@ -489,6 +491,7 @@
 				18CE9C2C2AD8EDAD00C921D5 /* Category.swift */,
 				18B12CB12ADFBDC700FB325F /* UserSummary.swift */,
 				18B12CB72ADFDB0900FB325F /* FBDatabaseManager.swift */,
+				18A860AC2AFB7430002DC32B /* MyProfileUpdateManager.swift */,
 				7FE072A72ADFE21200966916 /* TemporaryManager.swift */,
 				7FA613F42AE9280C00735891 /* MeetingsData.swift */,
 				18C65F392AEAB33D006A3A79 /* MyUserInfo.swift */,
@@ -709,6 +712,7 @@
 				18D764AA2AF3C30C00AD6140 /* IntrinsicTableView.swift in Sources */,
 				7B226EF42AEBD85900EAED75 /* NoticeBoardViewController.swift in Sources */,
 				7B226EF52AEBD85900EAED75 /* NoticeBoardView.swift in Sources */,
+				18A860AD2AFB7430002DC32B /* MyProfileUpdateManager.swift in Sources */,
 				7B226EF62AEBD85900EAED75 /* NoticeBoardEmptyView.swift in Sources */,
 				7B226EF72AEBD85900EAED75 /* NoticeBoardTableViewCell.swift in Sources */,
 				7B226EF82AEBD85900EAED75 /* CreateNoticeBoardViewController.swift in Sources */,

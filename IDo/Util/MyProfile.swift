@@ -13,14 +13,14 @@ import FirebaseStorage
 final class MyProfile {
     
     static let shared = MyProfile()
-    private var firebaseManager: FBDatabaseManager<IDoUser>!
+    private var firebaseManager: MyProfileUpdateManager!
     private var fileCache: ProfileImageCache = ProfileImageCache()
     var myUserInfo: MyUserInfo?
     
     private init() {}
     
     func getUserProfile(uid: String, completion: ((Bool) -> Void)? = nil) {
-        firebaseManager = FBDatabaseManager(refPath: ["Users",uid])
+        firebaseManager = MyProfileUpdateManager(refPath: ["Users",uid])
         //MARK: 데이터가 바꼈는지 체크하는 부분 로직 생각해보기
 //        if let currentUser = fileCache.getFile(uid: uid) {
 //            self.myUserInfo = currentUser
@@ -109,7 +109,7 @@ final class MyProfile {
             myInfo?.myCommentList = myCommentList
         }
         guard let idoUser = myInfo?.toIDoUser else { return }
-        firebaseManager.updateValue(value: idoUser) { isCompletion in
+        firebaseManager.updateUser(idoUser: idoUser) { isCompletion in
             if isCompletion {
                 self.myUserInfo = myInfo
                 completion?(isCompletion)

@@ -189,7 +189,9 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
             
             guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return cell }
             getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
-                cell.basicImageView.image = image
+                DispatchQueue.main.async {
+                    cell.basicImageView.image = image
+                }
             }
 
         }
