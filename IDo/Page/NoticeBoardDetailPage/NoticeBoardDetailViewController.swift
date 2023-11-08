@@ -172,6 +172,7 @@ private extension NoticeBoardDetailViewController {
                         if success {
                             self.firebaseCommentManager.deleteAllCommentList()
                             self.firebaseNoticeBoardManager.readNoticeBoard()
+                            self.navigationController?.popViewController(animated: true)
                         }
                     }
                 }

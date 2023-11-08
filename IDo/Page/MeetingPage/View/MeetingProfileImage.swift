@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 
+
 class MeetingProfileImageButton: UIButton {
     
     var profileImageChanged: Bool = false
@@ -49,7 +50,7 @@ class MeetingProfileImageButton: UIButton {
         self.layer.cornerRadius = 24
         self.layer.masksToBounds = true
         self.layer.borderWidth = 0.5
-        self.layer.borderColor = UIColor.lightGray.cgColor // 테두리 색상을 파란색으로 설정합니다.
+        self.layer.borderColor = UIColor.lightGray.cgColor
     }
 
     // 이미지 선택
@@ -57,7 +58,6 @@ class MeetingProfileImageButton: UIButton {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = viewController as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
         imagePicker.sourceType = .photoLibrary
-        imagePicker.allowsEditing = true
         viewController.present(imagePicker, animated: true, completion: nil)
     }
     

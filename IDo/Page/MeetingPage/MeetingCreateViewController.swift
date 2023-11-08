@@ -1,19 +1,22 @@
-import UIKit
 import FirebaseDatabase
 import FirebaseStorage
+import UIKit
+import TOCropViewController
+//import CropViewController
 
 class MeetingCreateViewController: UIViewController {
-    
     init(meetingsData: MeetingsData) {
         self.meetingsData = meetingsData
         super.init(nibName: nil, bundle: nil)
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - 컴포넌트 생성
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -76,32 +79,40 @@ class MeetingCreateViewController: UIViewController {
 //            guard let name = meetingNameField.text, !name.isEmpty,
 //        guard let name = meetingNameTextView.text, !name.isEmpty,
 //              let description = meetingDescriptionTextView.text, !description.isEmpty else {
-        if meetingNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && meetingNameTextView.textColor != UIColor.black && meetingDescriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && meetingDescriptionTextView.textColor != UIColor.black {
+        createFinishButton.isEnabled = false
+
+        if meetingNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || meetingNameTextView.textColor == UIColor(color: .placeholder) || meetingDescriptionTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || meetingDescriptionTextView.textColor == UIColor(color: .placeholder) {
             AlertManager.showAlert(on: self, title: "알림", message: "모임의 이름과 설명은 필수 입력 항목입니다.")
             print("모임의 이름과 설명은 필수 입력 항목입니다.")
-            
+              
+            createFinishButton.isEnabled = true
+            return
         }
 
         if !profileImageButton.profileImageChanged {
-                let alert = UIAlertController(title: "알림", message: "대표 사진은 필수입니다.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-                self.present(alert, animated: true, completion: nil)
-                return
-            }
-        
+            let alert = UIAlertController(title: "알림", message: "대표 사진은 필수입니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+              
+            createFinishButton.isEnabled = true
+            return
+        }
+          
         guard let myUserInfo = MyProfile.shared.myUserInfo else {
             print("현재 사용자 정보를 가져오지 못했습니다.")
+              
+            createFinishButton.isEnabled = true
             return
         }
 
         let currentUserSummary = myUserInfo.toUserSummary
-        
         var imageData: Data? = nil
-            if let image = profileImageButton.image(for: .normal) {
-                imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
-            }
+        if let image = profileImageButton.image(for: .normal) {
+            imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
+        }
 
         let club = Club(id: UUID().uuidString, rootUser: currentUserSummary, title: meetingNameTextView.text, imageURL: nil, description: meetingDescriptionTextView.text, category: meetingsData.category, userList: [currentUserSummary], createDate: Date().dateToString)
+          
         meetingsData.addClub(club: club, imageData: imageData) { isSuccess in
             if isSuccess {
                 let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
@@ -109,6 +120,12 @@ class MeetingCreateViewController: UIViewController {
                     self.navigationController?.popViewController(animated: true)
                 }))
                 self.present(alert, animated: true, completion: nil)
+            } else {
+                let alert = UIAlertController(title: "실패", message: "모임을 개설하지 못했습니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                self.createFinishButton.isEnabled = true
             }
         }
     }
@@ -125,7 +142,7 @@ class MeetingCreateViewController: UIViewController {
         configureUI()
         setupScrollView()
 
-        if let navigationBar = self.navigationController?.navigationBar {
+        if let navigationBar = navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 생성하기")
         }
     }
@@ -151,7 +168,7 @@ class MeetingCreateViewController: UIViewController {
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
-        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        let adjustmentHeight = keyboardHeight - (tabBarController?.tabBar.frame.size.height ?? 0)
         scrollView.snp.updateConstraints { make in
             make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
         }
@@ -172,8 +189,8 @@ class MeetingCreateViewController: UIViewController {
     }
 
     // MARK: - UI 설정 및 오토레이아웃
+
     private func configureUI() {
-        
         // UI 설정
 //        meetingNameField.delegate = self
 //        containerView.addSubview(meetingNameField)
@@ -191,7 +208,7 @@ class MeetingCreateViewController: UIViewController {
         scrollView.addSubview(countDescriptionLabel)
         scrollView.addSubview(meetingDescriptionTextView)
         let safeArea = view.safeAreaLayoutGuide
-        scrollView.snp.makeConstraints { (make) in
+        scrollView.snp.makeConstraints { make in
             make.top.left.right.equalTo(safeArea)
             make.height.equalTo(safeArea)
         }
@@ -202,26 +219,26 @@ class MeetingCreateViewController: UIViewController {
         
         let desiredAspectRatio: CGFloat = 2.0 / 3.0
         
-        profileImageButton.snp.makeConstraints { (make) in
+        profileImageButton.snp.makeConstraints { make in
             make.top.equalTo(scrollView.snp.top).offset(Constant.margin3)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
                 
-        meetingNameTextView.snp.makeConstraints { (make) in
+        meetingNameTextView.snp.makeConstraints { make in
             make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin3)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(40)
         }
         
-        countMeetingNameLabel.snp.makeConstraints { (make) in
+        countMeetingNameLabel.snp.makeConstraints { make in
             make.top.equalTo(meetingNameTextView.snp.bottom).offset(Constant.margin1)
             make.right.equalTo(meetingNameTextView.snp.right)
         }
                 
-        meetingDescriptionTextView.snp.makeConstraints { (make) in
+        meetingDescriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(countMeetingNameLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
@@ -229,12 +246,12 @@ class MeetingCreateViewController: UIViewController {
             make.height.greaterThanOrEqualTo(100)
         }
         
-        countDescriptionLabel.snp.makeConstraints { (make) in
+        countDescriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(meetingDescriptionTextView.snp.bottom).offset(Constant.margin1)
             make.right.equalTo(meetingDescriptionTextView.snp.right)
         }
         
-        createFinishButton.snp.makeConstraints { (make) in
+        createFinishButton.snp.makeConstraints { make in
             make.top.greaterThanOrEqualTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
@@ -248,11 +265,11 @@ class MeetingCreateViewController: UIViewController {
     }
     
     func updateFinishButtonState() {
-            // meetingNameField와 meetingDescriptionField가 모두 내용이 있을때만 활성화
-            let istitleFieldEmpty = meetingNameTextView.text?.isEmpty ?? true
-            let isDescriptionEmpty = meetingDescriptionTextView.text.isEmpty
-            createFinishButton.isEnabled = !(istitleFieldEmpty || isDescriptionEmpty)
-        }
+        // meetingNameField와 meetingDescriptionField가 모두 내용이 있을때만 활성화
+        let istitleFieldEmpty = meetingNameTextView.text?.isEmpty ?? true
+        let isDescriptionEmpty = meetingDescriptionTextView.text.isEmpty
+        createFinishButton.isEnabled = !(istitleFieldEmpty || isDescriptionEmpty)
+    }
 
     private func setupScrollView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
@@ -263,23 +280,58 @@ class MeetingCreateViewController: UIViewController {
     @objc func scrollViewTap() {
         view.endEditing(true)
     }
-    
 }
 
 // MARK: - 이미지 피커 관련
+
+// MeetingCreateViewController.swift 내부
+
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
-            profileImageButton.setImage(selectedImage, for: .normal)
-            profileImageButton.profileImageChanged = true
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            let cropViewController = TOCropViewController(croppingStyle: .default, image: selectedImage)
+                       cropViewController.delegate = self
+                       cropViewController.customAspectRatio = CGSize(width: 3, height: 2) // 비율 3:2
+                       cropViewController.aspectRatioLockEnabled = true // 비율 선택 잠금
+                       cropViewController.resetAspectRatioEnabled = false // 비율 리셋 막음
+                       cropViewController.aspectRatioPickerButtonHidden = true // 비율 변경 토글 히든
+
+            picker.dismiss(animated: true) {
+                self.present(cropViewController, animated: true, completion: nil)
+            }
         }
-        picker.dismiss(animated: true, completion: nil)
     }
 }
 
-// MARK: - 텍스트 뷰 관련
-extension MeetingCreateViewController: UITextViewDelegate {
+extension MeetingCreateViewController: TOCropViewControllerDelegate {
+     func cropViewController(_ cropViewController: TOCropViewController, didCropTo image: UIImage, with cropRect: CGRect, angle: Int) {
+        // 편집된 이미지 버튼에 할다
+        profileImageButton.setImage(image, for: .normal)
+        profileImageButton.profileImageChanged = true
+        
+        cropViewController.dismiss(animated: true, completion: nil)
+    }
     
+    func cropViewController(_ cropViewController: TOCropViewController, didFinishCancelled cancelled: Bool) {
+        cropViewController.dismiss(animated: true, completion: nil) // 취소했을때
+    }
+}
+
+
+//extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+//        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+////                let roundedImage = selectedImage.resizedAndRoundedImage()
+//            profileImageButton.setImage(selectedImage, for: .normal)
+//            profileImageButton.profileImageChanged = true
+//        }
+//        picker.dismiss(animated: true, completion: nil)
+//    }
+//}
+
+// MARK: - 텍스트 뷰 관련
+
+extension MeetingCreateViewController: UITextViewDelegate {
     func shakeAnimation(for view: UIView) {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
         animation.timingFunction = CAMediaTimingFunction(name: .linear)
@@ -290,11 +342,9 @@ extension MeetingCreateViewController: UITextViewDelegate {
     
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
-        
         // 이름 textView
         if textView == meetingNameTextView {
             if meetingNameTextView.textColor == UIColor(color: .placeholder) {
-                
                 meetingNameTextView.text = nil
                 meetingNameTextView.textColor = UIColor.black
             }
@@ -303,7 +353,6 @@ extension MeetingCreateViewController: UITextViewDelegate {
         // 내용 textView
         if textView == meetingDescriptionTextView {
             if meetingDescriptionTextView.textColor == UIColor(color: .placeholder) {
-                
                 meetingDescriptionTextView.text = nil
                 meetingDescriptionTextView.textColor = UIColor.black
             }
@@ -312,7 +361,6 @@ extension MeetingCreateViewController: UITextViewDelegate {
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        
         if textView == meetingNameTextView {
             let textCount = textView.text.count
             countMeetingNameLabel.text = "(\(textCount)/20)"
@@ -335,17 +383,15 @@ extension MeetingCreateViewController: UITextViewDelegate {
             }
         }
         
-        if !meetingNameTextView.text.isEmpty, meetingNameTextView.textColor ==  UIColor.black, meetingDescriptionTextView.textColor == UIColor.black ,!meetingDescriptionTextView.text.isEmpty {
+        if !meetingNameTextView.text.isEmpty, meetingNameTextView.textColor == UIColor.black, meetingDescriptionTextView.textColor == UIColor.black,!meetingDescriptionTextView.text.isEmpty {
             createFinishButton.isEnabled = true
-        }
-        else {
+        } else {
             createFinishButton.isEnabled = false
         }
     }
     
     // 입력 종료 시 호출
     func textViewDidEndEditing(_ textView: UITextView) {
-        
         if meetingNameTextView.text.isEmpty {
             meetingNameTextView.text = "모임 이름을 입력해주세요."
             meetingNameTextView.textColor = UIColor(color: .placeholder)
@@ -383,13 +429,11 @@ extension MeetingCreateViewController: UITextViewDelegate {
         return true
     }
     
-    
-    
 //    func textViewDidChange(_ textView: UITextView) {
-////        placeholderLabel.isHidden = !textView.text.isEmpty
+    ////        placeholderLabel.isHidden = !textView.text.isEmpty
 //        countDescriptionTextView.text = "\(textView.text.count)/300"
 //        updateFinishButtonState()
-//        
+//
 //        if textView.text.count > 300 {
 //            shakeAnimation(for: countDescriptionTextView)
 //            countDescriptionTextView.textColor = .red
@@ -397,18 +441,17 @@ extension MeetingCreateViewController: UITextViewDelegate {
 //            countDescriptionTextView.textColor = .black
 //        }
 //    }
-//    
+//
 //    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
 //        let currentText = textView.text ?? ""
 //        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
-//        
+//
 //        if prospectiveText.count > 301 {
 //            return false
 //        }
 //        return true
 //    }
 }
-
 
 extension MeetingCreateViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
@@ -417,8 +460,8 @@ extension MeetingCreateViewController: UITextFieldDelegate {
         }
         
         func textFieldDidChangeSelection(_ textField: UITextField) {
-                updateFinishButtonState()
-            }
+            updateFinishButtonState()
+        }
         
         let currentText = textField.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
@@ -434,7 +477,6 @@ extension MeetingCreateViewController: UITextFieldDelegate {
         }
         
         return true
-        
     }
 }
 
@@ -452,6 +494,3 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
-
-
-

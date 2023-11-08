@@ -106,6 +106,11 @@ private extension WriterStackView {
         let gesture = UITapGestureRecognizer(target: self, action: #selector(moreButtonTap))
         moreImageView.isUserInteractionEnabled = true
         moreImageView.addGestureRecognizer(gesture)
+        moreImageView.contentMode = .center
+        moreImageView.snp.makeConstraints { make in
+            make.height.equalTo(20)
+            make.width.equalTo(18.5)
+        }
     }
     
     @objc func moreButtonTap() {
