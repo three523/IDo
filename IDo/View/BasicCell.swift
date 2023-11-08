@@ -49,6 +49,8 @@ class BasicCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
+    
+    var storagePath: String?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -78,6 +80,14 @@ class BasicCell: UITableViewCell {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) 구현되지 않았습니다.")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        if let storagePath {
+            FBURLCache.shared.cancelDownloadURL(storagePath: storagePath)
+        }
+        basicImageView.image = nil // 이미지 뷰 초기화
     }
 }
 

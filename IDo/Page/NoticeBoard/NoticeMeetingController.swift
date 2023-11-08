@@ -24,7 +24,7 @@ final class NoticeMeetingController: TabmanViewController {
     private let firebaseManager: FirebaseManager
     private var club: Club
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
-    private let clubImage: UIImage?
+    private let clubImage: UIImage? = nil
     private let homeVC: NoticeHomeController
     
     private var authState: AuthState {
@@ -33,10 +33,9 @@ final class NoticeMeetingController: TabmanViewController {
         }
     }
 
-    init(club: Club, currentUser: MyUserInfo, clubImage: UIImage?) {
+    init(club: Club, currentUser: MyUserInfo) {
         self.club = club
         self.firebaseManager = FirebaseManager(club: club)
-        self.clubImage = clubImage
         self.firebaseClubDatabaseManager = FirebaseClubDatabaseManager(refPath: [club.category,"meetings",club.id])
         
         let isRootUser = currentUser.id == club.rootUser.id
@@ -48,7 +47,7 @@ final class NoticeMeetingController: TabmanViewController {
         } else {
             self.authState = .notMember
         }
-        self.homeVC = NoticeHomeController(club: club, authState: authState, firebaseClubDataManager: firebaseClubDatabaseManager, clubImage: clubImage)
+        self.homeVC = NoticeHomeController(club: club, authState: authState, firebaseClubDataManager: firebaseClubDatabaseManager)
         super.init(nibName: nil, bundle: nil)
         
         firebaseClubDatabaseManager.readData()
@@ -241,6 +240,7 @@ extension NoticeMeetingController {
     }
 
     func moveUpdateVC() {
+        let clubImage = homeVC.imageView.image
         let updateNoticeBoardVC = MeetingManageViewController(club: club, clubImage: clubImage)
         updateNoticeBoardVC.updateHandler = { [weak self] club, data in
             self?.homeVC.update(club: club, imageData: data)

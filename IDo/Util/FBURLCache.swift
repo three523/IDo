@@ -12,6 +12,7 @@ class FBURLCache {
     static let shared = FBURLCache()
     private let urlCache: URLCache
     private let imageCache = NSCache<NSString, UIImage>()
+    private var downloadTasks: [String: URLSessionDataTask] = [:]
     
     private init() {
         let cacheSizeMemory = 100 * 1024 * 1024
@@ -21,18 +22,33 @@ class FBURLCache {
         self.urlCache = URLCache.shared
     }
     
+    func cancelDownloadURL(storagePath: String) {
+        downloadTasks[storagePath]?.cancel()
+        downloadTasks[storagePath] = nil
+    }
+    
     //TODO: 코드를 메서드를 어떻게 줄일지 생각해보기
     func downloadURL(storagePath: String, completion: @escaping (Result<UIImage,Error>) -> Void) {
-//        if let image = imageCache.object(forKey: storagePath as NSString) {
-//            completion(.success(image))
+        var cacheImage = UIImage()
+        //TODO: 이미지를 바뀌었을떄 metadata로 확인하여 이미지를 확인하는데 그전에 확인하는 방법 생각해보기
+        if let image = imageCache.object(forKey: storagePath as NSString) {
+            completion(.success(image))
+            cacheImage = image
 //            return
-//        }
+        }
         let storage = Storage.storage().reference(withPath: storagePath)
         storage.getMetadata { metadata, error in
             if let error {
                 completion(.failure(error))
                 return
             }
+            if let localDataHash = cacheImage.pngData()?.md5Hash,
+               let storageDataHash = metadata?.md5Hash,
+               localDataHash == storageDataHash {
+//                completion(.success(cacheImage))
+                return
+            }
+                        
             storage.downloadURL { url, error in
                 if let error {
                     completion(.failure(error))
@@ -136,9 +152,15 @@ class FBURLCache {
     }
     
     private func downloadImageData(request: URLRequest, storagePath: String, completion: @escaping (Result<Data,Error>) -> Void) {
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        let urlTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            
+            defer {
+                self?.downloadTasks.removeValue(forKey: storagePath)
+            }
+            
             if let error {
                 completion(.failure(error))
+                return
             }
             guard let data,
                 let response else { return }
@@ -146,8 +168,10 @@ class FBURLCache {
             URLCache.shared.storeCachedResponse(cachedData, for: request)
             completion(.success(data))
             if let image = UIImage(data: data) {
-                self.imageCache.setObject(image, forKey: storagePath as NSString)
+                self?.imageCache.setObject(image, forKey: storagePath as NSString)
             }
-        }.resume()
+        }
+        downloadTasks[storagePath] = urlTask
+        urlTask.resume()
     }
 }
