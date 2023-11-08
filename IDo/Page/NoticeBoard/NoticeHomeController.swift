@@ -28,7 +28,7 @@ final class NoticeHomeController: UIViewController {
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.backgroundColor = UIColor(color: .contentBackground)
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleToFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 24
         return imageView
@@ -107,22 +107,39 @@ final class NoticeHomeController: UIViewController {
                 self.memberTableView.reloadData()
             }
         }
-        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+            imageView.addGestureRecognizer(tapGesture)
+            imageView.isUserInteractionEnabled = true
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        //loadDataFromFirebase()
         super.viewWillAppear(animated)
     }
     
     @objc func handleSignUp() {
+        signUpButton.isEnabled = false
         print("Sign Up button tapped!.")
         addUser()
     }
     
+    // 탭해서 이미지 전체보기
+    @objc func imageTapped() {
+        if let image = imageView.image {
+            let imageViewer = FullScreenImageViewer(image: image)
+            imageViewer.modalPresentationStyle = .fullScreen
+            present(imageViewer, animated: true, completion: nil)
+        }
+    }
+
+    
     private func addUser() {
-        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+        guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else {
+            signUpButton.isEnabled = true
+            return
+        }
         firebaseClubDatabaseManager.appendUser(user: idoUser.toUserSummary) { isCompleted in
             if isCompleted {
 //                self.signUpButton.isHidden = isCompleted
@@ -131,7 +148,10 @@ final class NoticeHomeController: UIViewController {
                 }
             }
             let authState: AuthState = isCompleted ? .member : .notMember
-            guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else { return }
+            guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else {
+                self.signUpButton.isEnabled = true
+                return
+            }
             self.signUpButtonUpdate?(authState)
             self.memberTableView.beginUpdates()
             self.memberTableView.insertRows(at: [IndexPath(row: count - 1, section: 0)], with: .automatic)
@@ -221,8 +241,8 @@ final class NoticeHomeController: UIViewController {
 
     func update(club: Club, imageData: Data) {
         DispatchQueue.main.async {
-            self.label.text = self.firebaseClubDatabaseManager.model?.title
-            self.textLabel.text = self.firebaseClubDatabaseManager.model?.description
+            self.label.text = club.title
+            self.textLabel.text = club.description
             self.imageView.image = UIImage(data: imageData)
         }
     }

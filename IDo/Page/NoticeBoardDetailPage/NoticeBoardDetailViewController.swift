@@ -85,6 +85,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         guard let noticeBoard = firebaseNoticeBoardManager.noticeBoards.first(where: { $0.id == noticeBoard.id }) else { return }
         self.noticeBoard = noticeBoard
         print(noticeBoard)
+        updateNoticeBoardSetup()
         commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
     }
     
@@ -128,7 +129,7 @@ private extension NoticeBoardDetailViewController {
         
     }
     
-    func noticeBoardSetup() {
+    func updateNoticeBoardSetup() {
         if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
             noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
         }
@@ -145,6 +146,36 @@ private extension NoticeBoardDetailViewController {
                 self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
             }
         }
+        guard let profileImageURL = noticeBoard.rootUser.profileImagePath  else { return }
+        FBURLCache.shared.downloadURL(storagePath: profileImageURL + "/\(ImageSize.small.rawValue)") { result in
+            switch result {
+            case .success(let image):
+                DispatchQueue.main.async {
+                    self.noticeBoardDetailView.setupUserImage(image: image)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    func noticeBoardSetup() {
+//        if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
+//            noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
+//        }
+//        noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
+//        noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
+//        noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
+//        
+//        noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList?.count ?? 0)
+//        
+//        firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
+//            let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
+//            self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)
+//            DispatchQueue.main.async {
+//                self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+//            }
+//        }
         
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
