@@ -13,6 +13,8 @@ import SwiftSMTP
 import UIKit
 
 final class SignUpViewController: UIViewController {
+    private let fbUserDatabaseManager: FirebaseCreateUserManager = .init(refPath: ["Users"])
+    
     var smtp: SMTP!
     var verificationCode: String?
     var isEmailChecked: Bool = false
@@ -465,7 +467,7 @@ private extension SignUpViewController {
             return
         }
         
-        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self] _, error in
+        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self] authDataResult, error in
             if let error = error {
                 self?.nextButton.isEnabled = true
                 let nsError = error as NSError
@@ -489,6 +491,11 @@ private extension SignUpViewController {
                     return
                 }
             } else {
+                guard let authDataResult = authDataResult else { return }
+                let uid = authDataResult.user.uid
+                let user = IDoUser(id: uid, updateAt: Date().toString(), email: self?.emailTextField.text!, nickName: "", description: nil, hobbyList: nil)
+                self?.fbUserDatabaseManager.model = user
+                self?.fbUserDatabaseManager.appendData(data: user)
                 self?.navigateToCategorySelection()
             }
         }
