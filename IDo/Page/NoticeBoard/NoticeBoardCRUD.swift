@@ -178,6 +178,7 @@ class FirebaseManager {
     func deleteNoticeBoard(at index: Int, completion: ((Bool) -> Void)? = nil) {
         if index >= 0, index < self.noticeBoards.count {
             let noticeBoardID = self.noticeBoards[index].id
+            let imagePaths = self.noticeBoards[index].imageList?.map { $0.savedImagePath } ?? []
             let ref = Database.database().reference().child("noticeBoards").child(noticeBoards[index].clubID).child(noticeBoardID)
             
             ref.removeValue { error, _ in
@@ -191,7 +192,11 @@ class FirebaseManager {
                     self.removeMyNoticeBoard(noticeBoard: self.noticeBoards[index])
                     self.noticeBoards.remove(at: index)
                     self.delegate?.reloadData()
-                    completion?(true)
+                    self.deleteImage(noticeBoardID: self.noticeBoards[index].id, imagePaths: imagePaths) { success in
+                        if success {
+                            completion?(true)
+                        }
+                    }
                 }
             }
         }
