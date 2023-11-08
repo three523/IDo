@@ -119,7 +119,11 @@ class MeetingCreateViewController: UIViewController {
                 }))
                 self.present(alert, animated: true, completion: nil)
             } else {
-                    self.createFinishButton.isEnabled = true
+                let alert = UIAlertController(title: "실패", message: "모임을 개설하지 못했습니다.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+                    self.navigationController?.popViewController(animated: true)
+                }))
+                self.createFinishButton.isEnabled = true
             }
         }
     }
