@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		102C6E2A2AFAB0FE008BBB37 /* NoticeBoardImagePath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102C6E292AFAB0FE008BBB37 /* NoticeBoardImagePath.swift */; };
 		10790B972AF7B35F001F6CCB /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10790B962AF7B35F001F6CCB /* NavigationBar.swift */; };
 		10B174882ADAE11C00BF4273 /* SpoqaHanSansNeo-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174832ADAE11A00BF4273 /* SpoqaHanSansNeo-Bold.ttf */; };
 		10B174892ADAE11C00BF4273 /* SpoqaHanSansNeo-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 10B174842ADAE11B00BF4273 /* SpoqaHanSansNeo-Light.ttf */; };
@@ -115,6 +116,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		102C6E292AFAB0FE008BBB37 /* NoticeBoardImagePath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardImagePath.swift; sourceTree = "<group>"; };
 		10790B962AF7B35F001F6CCB /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		10842A202AE0FCB700684FDE /* NoticeBoardCRUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardCRUD.swift; sourceTree = "<group>"; };
 		10A7A8D22AD9192A00FFB6B1 /* CreateNoticeBoardImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardImagePicker.swift; sourceTree = "<group>"; };
@@ -492,6 +494,7 @@
 				7FE072A72ADFE21200966916 /* TemporaryManager.swift */,
 				7FA613F42AE9280C00735891 /* MeetingsData.swift */,
 				18C65F392AEAB33D006A3A79 /* MyUserInfo.swift */,
+				102C6E292AFAB0FE008BBB37 /* NoticeBoardImagePath.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -676,6 +679,7 @@
 				7B226ED22AEBD85900EAED75 /* FBDatabaseManager.swift in Sources */,
 				7B226ED32AEBD85900EAED75 /* TemporaryManager.swift in Sources */,
 				18B591A22AF275CF002A684D /* MemberTableViewCell.swift in Sources */,
+				102C6E2A2AFAB0FE008BBB37 /* NoticeBoardImagePath.swift in Sources */,
 				7B226ED42AEBD85900EAED75 /* MeetingsData.swift in Sources */,
 				7B226ED52AEBD85900EAED75 /* MyUserInfo.swift in Sources */,
 				7B226ED62AEBD85900EAED75 /* BasicCell.swift in Sources */,

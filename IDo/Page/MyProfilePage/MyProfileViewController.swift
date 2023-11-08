@@ -11,7 +11,8 @@ import UIKit
 
 class MyProfileViewController: UIViewController {
     private var firebaseManager: FBDatabaseManager<IDoUser>!
-
+    private let scrollView: UIScrollView = UIScrollView()
+    
     // 프로필
     var profileImage = UIButton()
     var profileName = UITextView()
@@ -159,6 +160,7 @@ class MyProfileViewController: UIViewController {
         navigationBarButtonAction()
         buttonAction()
         setupPickerView()
+        setupScrollView()
         navigationController?.delegate = self
         profileName.delegate = self
         choicePickerView.delegate = self
@@ -177,6 +179,11 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.resignFirstResponder()
         getProfile()
         updateSelfInfoIntLabel()
+        addKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardNotifications()
     }
     
     private func getProfile() {
@@ -205,21 +212,68 @@ class MyProfileViewController: UIViewController {
             }
         }
     }
+    
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide)
+        }
+    }
+    
+    func setupScrollView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
+        scrollView.isUserInteractionEnabled = true
+        scrollView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func scrollViewTap() {
+        view.endEditing(true)
+    }
         
     func setLayout() {
-        view.addSubview(profileImage)
-        view.addSubview(profileName)
-        view.addSubview(selfInfo)
-        view.addSubview(selfInfoDetail)
+        view.addSubview(scrollView)
+        scrollView.addSubview(profileImage)
+        scrollView.addSubview(profileName)
+        scrollView.addSubview(selfInfo)
+        scrollView.addSubview(selfInfoDetail)
 //        view.addSubview(writeMe)
 //        view.addSubview(writeMeTableView)
-        view.addSubview(logout)
-        view.addSubview(deleteID)
-        view.addSubview(selfInfoInt)
-        view.addSubview(line)
-        view.addSubview(choiceEnjoyTextField)
+        scrollView.addSubview(logout)
+        scrollView.addSubview(deleteID)
+        scrollView.addSubview(selfInfoInt)
+        scrollView.addSubview(line)
+        scrollView.addSubview(choiceEnjoyTextField)
+        
+        let safeArea = view.safeAreaLayoutGuide
+        scrollView.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
+        }
         profileImage.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
+            make.top.equalTo(scrollView.snp.top).offset(Constant.margin3)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(100)
         }
@@ -259,11 +313,11 @@ class MyProfileViewController: UIViewController {
         logout.snp.makeConstraints { make in
             make.right.equalTo(line).offset(-Constant.margin2)
             make.width.equalTo(70)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin3)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
         line.snp.makeConstraints { make in
             make.centerY.equalTo(logout)
-            make.centerX.equalTo(view.safeAreaLayoutGuide)
+            make.centerX.equalTo(scrollView)
             make.width.equalTo(2)
             make.height.equalTo(18)
         }
@@ -271,7 +325,7 @@ class MyProfileViewController: UIViewController {
             make.centerY.equalTo(line)
             make.leading.equalTo(line.snp.trailing).offset(Constant.margin2)
             make.width.equalTo(70)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(Constant.margin3)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
     }
                
@@ -368,9 +422,52 @@ private extension MyProfileViewController {
         let editButton = UIBarButtonItem(image: UIImage(systemName: "square.and.pencil"), style: .plain, target: self, action: #selector(editVC))
         navigationItem.rightBarButtonItem = editButton
         navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .done, target: self, action: #selector(profileUpdateCancle))
+        hiddenLeftButton()
             
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+    }
+    
+    private func hiddenLeftButton() {
+        navigationItem.leftBarButtonItem?.tintColor = .clear
+        navigationItem.leftBarButtonItem?.isEnabled = false
+    }
+    
+    private func unHiddenLeftButton() {
+        navigationItem.leftBarButtonItem?.tintColor = UIColor(color: .negative)
+        navigationItem.leftBarButtonItem?.isEnabled = true
+    }
+    
+    @objc func profileUpdateCancle() {
+        isEdit.toggle()
+        
+        guard let myProfile = MyProfile.shared.myUserInfo else {
+            print("사용자 정보가 없습니다.")
+            return
+        }
+        navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
+        profileName.isUserInteractionEnabled = false
+        profileName.text = myProfile.nickName
+        selfInfoDetail.isUserInteractionEnabled = false
+        selfInfoDetail.text = myProfile.description
+        choiceEnjoyTextField.isUserInteractionEnabled = false
+        choiceEnjoyTextField.text = myProfile.hobbyList?.first
+
+        writeMe.isHidden = false // 작성한글 title Label 나타내기
+        writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
+        logout.isHidden = false
+        line.isHidden = false
+        deleteID.isHidden = false
+        profileImage.isUserInteractionEnabled = false
+        if let data = myProfile.profileImage[ImageSize.medium.rawValue],
+           let image = UIImage(data: data) {
+            profileImage.setImage(image, for: .normal)
+        } else {
+            profileImage.setImage(UIImage(named: "profile"), for: .normal)
+        }
+        choiceEnjoyTextField.tintColor = .clear
     }
 
     @objc func editVC() {
@@ -380,7 +477,8 @@ private extension MyProfileViewController {
         // isEdit = true인 상태의 실행 코드
         if isEdit {
             navigationItem.rightBarButtonItem?.image = UIImage(systemName: "checkmark.circle")
-                    
+            unHiddenLeftButton()
+            
             // 각각 텍스트뷰를 활성화 시킴
             profileName.isUserInteractionEnabled = true
             selfInfoDetail.isUserInteractionEnabled = true
@@ -396,6 +494,8 @@ private extension MyProfileViewController {
             // isEdit = false인 상태의 실행 코드
         } else {
             navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
+            hiddenLeftButton()
+            
             profileName.isUserInteractionEnabled = false
             selfInfoDetail.isUserInteractionEnabled = false
             choiceEnjoyTextField.isUserInteractionEnabled = false

@@ -4,7 +4,6 @@ import FirebaseStorage
 
 class MeetingManageViewController: UIViewController {
     
-    var originalY: CGFloat?
     var meetingTitle: String?
     var meetingImageURL: String?
     var ref: DatabaseReference?
@@ -19,6 +18,7 @@ class MeetingManageViewController: UIViewController {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround() 
         configureUI()
+        setupScrollView()
         meetingNameTextView.text = club.title
         meetingNameTextView.textColor = UIColor.black
         countMeetingNameLabel.text = "(\(meetingNameTextView.text.count)/16)"
@@ -47,17 +47,28 @@ class MeetingManageViewController: UIViewController {
         }
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(notification:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(notification:)), name: UIResponder.keyboardWillHideNotification, object: nil)
         if let navigationBar = self.navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
 //        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.meetingNameTextView.resignFirstResponder()
-        self.meetingDescriptionTextView.resignFirstResponder()
+    override func viewWillAppear(_ animated: Bool) {
+        addKeyboardNotifications()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        removeKeyboardNotifications()
+    }
+
+    func addKeyboardNotifications() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    func removeKeyboardNotifications() {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     init(club: Club, clubImage: UIImage?) {
@@ -154,25 +165,26 @@ class MeetingManageViewController: UIViewController {
     
     // MARK: - 키보드 관련
     @objc func keyboardWillShow(notification: NSNotification) {
-        if originalY == nil {
-            originalY = self.view.frame.origin.y
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
+        let keyboardHeight = keyboardFrame.cgRectValue.height
+        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
         }
         
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            let keyboardHeight = keyboardSize.height
-            let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
-            self.view.frame.origin.y = originalY! - adjustmentHeight
+        DispatchQueue.main.async {
+            self.scrollView.layoutIfNeeded()
+            let bottomOffset = CGPoint(x: 0, y: self.scrollView.contentSize.height - self.scrollView.bounds.size.height + self.scrollView.contentInset.bottom)
+            if bottomOffset.y > 0 {
+                self.scrollView.setContentOffset(bottomOffset, animated: true)
+            }
         }
     }
     
     @objc func keyboardWillHide(notification: NSNotification) {
-        if let originalY = originalY {
-            self.view.frame.origin.y = originalY
+        scrollView.snp.updateConstraints { make in
+            make.height.equalTo(view.safeAreaLayoutGuide)
         }
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - UI 및 오토레이아웃 설정
@@ -180,41 +192,39 @@ class MeetingManageViewController: UIViewController {
         // UI 설정
         view.backgroundColor = UIColor(color: .backgroundPrimary)
         view.addSubview(scrollView)
-        scrollView.addSubview(containerView)
         meetingNameTextView.delegate = self
         meetingDescriptionTextView.delegate = self
-        containerView.addSubview(profileImageButton)
-        containerView.addSubview(meetingNameTextView)
-        containerView.addSubview(countMeetingNameLabel)
-        containerView.addSubview(meetingDescriptionTextView)
-        containerView.addSubview(countDescriptionLabel)
-        containerView.addSubview(manageFinishButton)
+        scrollView.addSubview(profileImageButton)
+        scrollView.addSubview(meetingNameTextView)
+        scrollView.addSubview(countMeetingNameLabel)
+        scrollView.addSubview(meetingDescriptionTextView)
+        scrollView.addSubview(countDescriptionLabel)
+        scrollView.addSubview(manageFinishButton)
+
+
         
+        let safeArea = view.safeAreaLayoutGuide
         scrollView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-            make.bottom.equalTo(containerView.snp.bottom).offset(Constant.margin4)
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
         }
-        
-        containerView.snp.makeConstraints { (make) in
-            make.top.bottom.leading.trailing.equalTo(scrollView)
-            make.width.equalTo(scrollView)
-            make.bottom.equalTo(manageFinishButton.snp.bottom).offset(24)
+        scrollView.contentLayoutGuide.snp.makeConstraints { make in
+            make.top.left.right.equalTo(safeArea)
+            make.height.equalTo(safeArea)
         }
-        
-        
         let desiredAspectRatio: CGFloat = 2.0 / 3.0
         
         profileImageButton.snp.makeConstraints { (make) in
-            make.top.equalTo(containerView.safeAreaLayoutGuide.snp.top).offset(Constant.margin3)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.top.equalTo(scrollView).offset(Constant.margin3)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
         
         meetingNameTextView.snp.makeConstraints { (make) in
             make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin3)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(40)
         }
         
@@ -225,9 +235,10 @@ class MeetingManageViewController: UIViewController {
         
         meetingDescriptionTextView.snp.makeConstraints { (make) in
             make.top.equalTo(countMeetingNameLabel.snp.bottom).offset(Constant.margin4)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
-            make.height.equalTo(160)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
+            make.height.lessThanOrEqualTo(160)
+            make.height.greaterThanOrEqualTo(100)
         }
         
         countDescriptionLabel.snp.makeConstraints { (make) in
@@ -236,12 +247,22 @@ class MeetingManageViewController: UIViewController {
         }
         
         manageFinishButton.snp.makeConstraints { (make) in
-            make.top.equalTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
-            make.centerX.equalTo(containerView)
-            make.left.right.equalTo(containerView).inset(Constant.margin4)
+            make.top.greaterThanOrEqualTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
+            make.centerX.equalTo(scrollView)
+            make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(48)
-            //            make.bottom.equalTo(containerView.safeAreaLayoutGuide.snp.bottom).offset(-8)
+            make.bottom.equalTo(scrollView).inset(Constant.margin3)
         }
+    }
+    
+    private func setupScrollView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollTap))
+        scrollView.isUserInteractionEnabled = true
+        scrollView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func scrollTap() {
+        view.endEditing(true)
     }
     
     // MARK: - 버튼 클릭 관련

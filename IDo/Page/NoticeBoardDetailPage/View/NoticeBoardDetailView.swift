@@ -88,11 +88,11 @@ extension NoticeBoardDetailView {
             }
         }
     }
-    func addNoticeBoardImages(images: [UIImage]) {
+    func addNoticeBoardImages(images: [StorageImage]) {
         for index in 0..<images.count {
             DispatchQueue.main.async {
                 guard let imageView = self.imageStackView.arrangedSubviews[index] as? LodingImageView else { return }
-                imageView.image = images[index]
+                imageView.image = images[index].savedImage
                 imageView.viewState = .loaded
             }
         }
