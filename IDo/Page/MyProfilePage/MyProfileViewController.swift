@@ -67,7 +67,8 @@ class MyProfileViewController: UIViewController {
         choiceEnjoyTextField.font = UIFont.bodyFont(.small, weight: .medium)
         choiceEnjoyTextField.layer.cornerRadius = 10 // 원하는 값으로 설정
         choiceEnjoyTextField.layer.borderWidth = 5 // 원하는 두께로 설정
-        choiceEnjoyTextField.layer.borderColor = UIColor(color: .contentBackground).cgColor // 원하는 테두리 색상으로 설정
+        // 원하는 테두리 색상으로 설정
+        choiceEnjoyTextField.layer.borderColor = UIColor(color: .contentBackground).cgColor
         choiceEnjoyTextField.clipsToBounds = true
         choiceEnjoyTextField.textAlignment = .center
         choiceEnjoyTextField.isUserInteractionEnabled = false
@@ -87,7 +88,6 @@ class MyProfileViewController: UIViewController {
         selfInfoDetail.backgroundColor = UIColor(color: .backgroundSecondary)
         selfInfoDetail.layer.cornerRadius = 10
         selfInfoDetail.textContainerInset = UIEdgeInsets(top: 9, left: 8, bottom: 0, right: 9)
-        selfInfoDetail.isUserInteractionEnabled = false
         selfInfoDetail.isScrollEnabled = true
     }
 
@@ -489,6 +489,7 @@ private extension MyProfileViewController {
             selfInfoDetail.isUserInteractionEnabled = true
             selfInfoInt.textColor = UIColor(color: .textStrong)
             choiceEnjoyTextField.isUserInteractionEnabled = true
+            
             writeMe.isHidden = true // "작성한글" title Label 숨기기
             writeMeTableView.isHidden = true // 작성한글 리스트 숨기기
             logout.isHidden = true
@@ -506,7 +507,7 @@ private extension MyProfileViewController {
             selfInfoDetail.isUserInteractionEnabled = false
             selfInfoInt.textColor = UIColor(color: .placeholder)
             choiceEnjoyTextField.isUserInteractionEnabled = false
-
+            
             writeMe.isHidden = false // 작성한글 title Label 나타내기
             writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
             logout.isHidden = false
