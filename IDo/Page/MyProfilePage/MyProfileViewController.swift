@@ -198,6 +198,7 @@ class MyProfileViewController: UIViewController {
         if let profileMediumImageData = myProfile.profileImage[ImageSize.medium.rawValue],
            let profileMediumImage = UIImage(data: profileMediumImageData) {
             profileImage.setImage(profileMediumImage, for: .normal)
+            return
         }
         guard let imagePath = myProfile.profileImagePath else {
               self.profileImage.setImage(UIImage(named: "profile"), for: .normal)
@@ -519,7 +520,6 @@ private extension MyProfileViewController {
                 print("관심사가 업습니다.")
                 return
             }
-            //TODO: 프로필 업데이트이 수정이 되지 않은 경우 업데이트를 안하도록 수정이 필요함
             MyProfile.shared.update(nickName: profileName.text, updateProfileImage: profileImage.image(for: .normal), description: selfInfoDetail.text, hobbyList: [hobby])
         }
     }
