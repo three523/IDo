@@ -18,14 +18,15 @@ class SignUpProfileViewController: UIViewController {
     private var user: IDoUser?
     private let fbUserDatabaseManager: FirebaseCreateUserManager = .init(refPath: ["Users"])
     private let imagePickerViewController: UIImagePickerController = .init()
-    
+
     private var aboutUs: String = ""
     private var nickName: String = ""
-    
+
     // MARK: - 컴포넌트 생성
+
     private let profileImageView: UIImageView = .init(image: UIImage(systemName: "camera.circle.fill"))
-    
-    private var scrollView: UIScrollView = UIScrollView()
+
+    private var scrollView: UIScrollView = .init()
 //    private var containerView: UIView = UIView()
     // 닉네임 입력 TextView
     private(set) lazy var nickNameTextView: UITextView = {
@@ -40,7 +41,7 @@ class SignUpProfileViewController: UIViewController {
         textView.resignFirstResponder()
         return textView
     }()
-    
+
     // 닉네임 글자 수 표시 label
     private(set) lazy var nickNameCountLabel: UILabel = {
         var label = UILabel()
@@ -49,7 +50,7 @@ class SignUpProfileViewController: UIViewController {
         label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
     }()
-    
+
     // 자기소개 입력 TextView
     let descriptionTextView: UITextView = {
         let textView = UITextView()
@@ -57,14 +58,14 @@ class SignUpProfileViewController: UIViewController {
         textView.font = UIFont.bodyFont(.medium, weight: .regular)
         textView.text = "자기소개를 입력해주세요"
         textView.textColor = UIColor(color: .placeholder)
-        //textView.textAlignment = .left
+        // textView.textAlignment = .left
         textView.layer.cornerRadius = 5.0
         textView.layer.borderColor = UIColor.lightGray.withAlphaComponent(0.5).cgColor
         textView.layer.borderWidth = 1.0
         textView.resignFirstResponder()
         return textView
     }()
-    
+
     // 자기소개 글자 수 표시 label
     private(set) lazy var descriptionCountLabel: UILabel = {
         var label = UILabel()
@@ -73,8 +74,8 @@ class SignUpProfileViewController: UIViewController {
         label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
     }()
-    
-    private let bottomView: UIView = UIView()
+
+    private let bottomView: UIView = .init()
 
     private let signUpButton: UIButton = {
         let button = UIButton()
@@ -101,17 +102,16 @@ class SignUpProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
+
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
-        
+
         // 타이틀 생성 및 설정
-        if let navigationBar = self.navigationController?.navigationBar {
+        if let navigationBar = navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 생성")
         }
-        
+
         setup()
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -121,10 +121,10 @@ class SignUpProfileViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         removeKeyboardNotifications()
     }
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.nickNameTextView.resignFirstResponder()
-        self.descriptionTextView.resignFirstResponder()
+        nickNameTextView.resignFirstResponder()
+        descriptionTextView.resignFirstResponder()
     }
 
     func addKeyboardNotifications() {
@@ -140,7 +140,7 @@ class SignUpProfileViewController: UIViewController {
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
-        
+
         scrollView.snp.updateConstraints { make in
             make.height.equalTo(view.safeAreaLayoutGuide).offset(-keyboardHeight)
         }
@@ -154,8 +154,8 @@ class SignUpProfileViewController: UIViewController {
 }
 
 private extension SignUpProfileViewController {
-    
     // MARK: - UI 및 오토레이아웃 관련
+
     func setup() {
         addViews()
         setupAutoLayout()
@@ -195,12 +195,12 @@ private extension SignUpProfileViewController {
             make.height.equalTo(40)
             make.left.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
         }
-        
+
         nickNameCountLabel.snp.makeConstraints { make in
             make.top.equalTo(nickNameTextView.snp.bottom).offset(Constant.margin1)
             make.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
         }
-        
+
         descriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(nickNameCountLabel.snp.bottom).offset(Constant.margin4)
             make.left.right.equalTo(scrollView.frameLayoutGuide).inset(Constant.margin4)
@@ -217,8 +217,9 @@ private extension SignUpProfileViewController {
             make.height.equalTo(48)
         }
     }
-    
+
     // MARK: - 컴포넌트 세팅 관련
+
     func setupTextField() {
         nickNameTextView.delegate = self
         descriptionTextView.delegate = self
@@ -246,7 +247,7 @@ private extension SignUpProfileViewController {
     func setupButton() {
         signUpButton.addTarget(self, action: #selector(signUp), for: .touchUpInside)
     }
-    
+
     func setupScrollView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
         scrollView.isUserInteractionEnabled = true
@@ -254,6 +255,8 @@ private extension SignUpProfileViewController {
     }
 
     @objc func signUp() {
+        signUpButton.isEnabled = false
+
         guard !nickNameTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, nickNameTextView.textColor == UIColor.black else {
 //            showAlert(message: "닉네임을 입력해주세요")
             AlertManager.showAlert(on: self, title: "알림", message: "닉네임을 입력해주세요.")
@@ -267,6 +270,9 @@ private extension SignUpProfileViewController {
 
         Auth.auth().signIn(withEmail: email, password: password) { [weak self] authDataResult, error in
             guard let self = self else { return }
+
+            self.signUpButton.isEnabled = true
+
             if let error {
 //                self.showAlert(message: "로그인에 실패하였습니다.")
                 AlertManager.showAlert(on: self, title: "알림", message: "로그인에 실패하였습니다.")
@@ -309,16 +315,15 @@ private extension SignUpProfileViewController {
             }
         }
     }
-    
+
     @objc func scrollViewTap() {
         view.endEditing(true)
     }
-    
 }
 
 // MARK: - 텍스트 뷰 관련
+
 extension SignUpProfileViewController: UITextViewDelegate {
-    
     func shakeAnimation(for view: UIView) {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
         animation.timingFunction = CAMediaTimingFunction(name: .linear)
@@ -326,48 +331,43 @@ extension SignUpProfileViewController: UITextViewDelegate {
         animation.values = [-2, 2, -2, 2, -2, 2] // 애니메이션 값 조정
         view.layer.add(animation, forKey: "shake")
     }
-    
-    
+
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
-        
         // 이름 textView
         if textView == nickNameTextView {
             if nickNameTextView.textColor == UIColor(color: .placeholder) {
-                
                 nickNameTextView.text = nil
                 nickNameTextView.textColor = UIColor.black
             }
         }
-        
+
         // 내용 textView
         if textView == descriptionTextView {
             if descriptionTextView.textColor == UIColor(color: .placeholder) {
-                
                 descriptionTextView.text = nil
                 descriptionTextView.textColor = UIColor.black
             }
         }
     }
-    
+
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        
         if textView == nickNameTextView {
             let textCount = textView.text.count
             nickNameCountLabel.text = "(\(textCount)/10)"
-            
+
             if textCount == 0 {
                 nickNameCountLabel.textColor = UIColor(color: .placeholder)
             } else {
                 nickNameCountLabel.textColor = UIColor.black
             }
         }
-        
+
         if textView == descriptionTextView {
             let textCount = textView.text.count
             descriptionCountLabel.text = "(\(textCount)/300)"
-            
+
             if textCount == 0 {
                 descriptionCountLabel.textColor = UIColor(color: .placeholder)
             } else {
@@ -375,27 +375,26 @@ extension SignUpProfileViewController: UITextViewDelegate {
             }
         }
     }
-    
+
     // 입력 종료 시 호출
     func textViewDidEndEditing(_ textView: UITextView) {
-        
         if nickNameTextView.text.isEmpty {
             nickNameTextView.text = "닉네임을 입력해주세요."
             nickNameTextView.textColor = UIColor(color: .placeholder)
         }
-        
+
         if descriptionTextView.text.isEmpty {
             descriptionTextView.text = "자기소개를 입력해주세요."
             descriptionTextView.textColor = UIColor(color: .placeholder)
         }
     }
-    
+
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         let currentText = textView.text ?? ""
         guard let stringRange = Range(range, in: currentText) else { return false }
-        
+
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
-        
+
         if textView == nickNameTextView {
             if text == "\n" {
                 descriptionTextView.becomeFirstResponder()
@@ -408,7 +407,7 @@ extension SignUpProfileViewController: UITextViewDelegate {
             }
             return true
         }
-        
+
         if textView == descriptionTextView {
             if changedText.count > 300 {
                 descriptionCountLabel.textColor = UIColor.red
@@ -419,7 +418,7 @@ extension SignUpProfileViewController: UITextViewDelegate {
         }
         return true
     }
-    
+
 //    func textViewDidChange(_ textView: UITextView) {
 //        aboutUsLabel.isHidden = !textView.text.isEmpty
 //        countDescriptionLabel.text = "\(textView.text.count)/300"
@@ -444,6 +443,7 @@ extension SignUpProfileViewController: UITextViewDelegate {
 }
 
 // MARK: - 이미지 피커 관련
+
 extension SignUpProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)

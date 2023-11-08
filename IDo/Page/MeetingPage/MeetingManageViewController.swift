@@ -1,9 +1,8 @@
-import UIKit
 import FirebaseDatabase
 import FirebaseStorage
+import UIKit
 
 class MeetingManageViewController: UIViewController {
-    
     var meetingTitle: String?
     var meetingImageURL: String?
     var ref: DatabaseReference?
@@ -16,7 +15,7 @@ class MeetingManageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hideKeyboardWhenTappedAround() 
+        hideKeyboardWhenTappedAround()
         configureUI()
         setupScrollView()
         meetingNameTextView.text = club.title
@@ -47,7 +46,7 @@ class MeetingManageViewController: UIViewController {
         }
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
-        if let navigationBar = self.navigationController?.navigationBar {
+        if let navigationBar = navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
         }
 //        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
@@ -84,6 +83,7 @@ class MeetingManageViewController: UIViewController {
     }
     
     // MARK: - 컴포넌트 생성
+
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.alwaysBounceVertical = true
@@ -164,10 +164,11 @@ class MeetingManageViewController: UIViewController {
     private let manageFinishButton = FinishButton(title: "수정 완료")
     
     // MARK: - 키보드 관련
+
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
-        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        let adjustmentHeight = keyboardHeight - (tabBarController?.tabBar.frame.size.height ?? 0)
         scrollView.snp.updateConstraints { make in
             make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
         }
@@ -188,6 +189,7 @@ class MeetingManageViewController: UIViewController {
     }
     
     // MARK: - UI 및 오토레이아웃 설정
+
     private func configureUI() {
         // UI 설정
         view.backgroundColor = UIColor(color: .backgroundPrimary)
@@ -201,10 +203,8 @@ class MeetingManageViewController: UIViewController {
         scrollView.addSubview(countDescriptionLabel)
         scrollView.addSubview(manageFinishButton)
 
-
-        
         let safeArea = view.safeAreaLayoutGuide
-        scrollView.snp.makeConstraints { (make) in
+        scrollView.snp.makeConstraints { make in
             make.top.left.right.equalTo(safeArea)
             make.height.equalTo(safeArea)
         }
@@ -214,26 +214,26 @@ class MeetingManageViewController: UIViewController {
         }
         let desiredAspectRatio: CGFloat = 2.0 / 3.0
         
-        profileImageButton.snp.makeConstraints { (make) in
+        profileImageButton.snp.makeConstraints { make in
             make.top.equalTo(scrollView).offset(Constant.margin3)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(profileImageButton.snp.width).multipliedBy(desiredAspectRatio)
         }
         
-        meetingNameTextView.snp.makeConstraints { (make) in
+        meetingNameTextView.snp.makeConstraints { make in
             make.top.equalTo(profileImageButton.snp.bottom).offset(Constant.margin3)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
             make.height.equalTo(40)
         }
         
-        countMeetingNameLabel.snp.makeConstraints { (make) in
+        countMeetingNameLabel.snp.makeConstraints { make in
             make.top.equalTo(meetingNameTextView.snp.bottom).offset(Constant.margin1)
             make.right.equalTo(meetingNameTextView.snp.right)
         }
         
-        meetingDescriptionTextView.snp.makeConstraints { (make) in
+        meetingDescriptionTextView.snp.makeConstraints { make in
             make.top.equalTo(countMeetingNameLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
@@ -241,12 +241,12 @@ class MeetingManageViewController: UIViewController {
             make.height.greaterThanOrEqualTo(100)
         }
         
-        countDescriptionLabel.snp.makeConstraints { (make) in
+        countDescriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(meetingDescriptionTextView.snp.bottom).offset(Constant.margin1)
             make.right.equalTo(meetingDescriptionTextView.snp.right)
         }
         
-        manageFinishButton.snp.makeConstraints { (make) in
+        manageFinishButton.snp.makeConstraints { make in
             make.top.greaterThanOrEqualTo(countDescriptionLabel.snp.bottom).offset(Constant.margin4)
             make.centerX.equalTo(scrollView)
             make.left.right.equalTo(scrollView).inset(Constant.margin4)
@@ -266,19 +266,25 @@ class MeetingManageViewController: UIViewController {
     }
     
     // MARK: - 버튼 클릭 관련
+
     @objc private func profileImageTapped() {
         profileImageButton.openImagePicker(in: self)
     }
     
     @objc func manageFinishButtonTapped() {
+        manageFinishButton.isEnabled = false
+
         guard let name = meetingNameTextView.text, !name.isEmpty,
-              let description = meetingDescriptionTextView.text, let meetingImage = profileImageButton.imageView?.image else {
-            
+              let description = meetingDescriptionTextView.text, let meetingImage = profileImageButton.imageView?.image
+        else {
+            manageFinishButton.isEnabled = true
+
             return
         }
         
         guard let imageData = meetingImage.jpegData(compressionQuality: 0.8) else {
-            
+            manageFinishButton.isEnabled = true
+
             return
         }
         
@@ -299,6 +305,8 @@ class MeetingManageViewController: UIViewController {
                 self.updateHandler?(self.club, imageData)
                 self.present(alert, animated: true, completion: nil)
             } else {
+                self.manageFinishButton.isEnabled = true
+
                 print("데아터 수정 실패")
             }
         }
@@ -306,8 +314,9 @@ class MeetingManageViewController: UIViewController {
 }
 
 // MARK: - 이미지 피커 관련
+
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             //                let roundedImage = selectedImage.resizedAndRoundedImage()
             profileImageButton.setImage(selectedImage, for: .normal)
@@ -317,8 +326,8 @@ extension MeetingManageViewController: UIImagePickerControllerDelegate, UINaviga
 }
 
 // MARK: - TextView 관련
+
 extension MeetingManageViewController: UITextViewDelegate {
-    
     func shakeAnimation(for view: UIView) {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
         animation.timingFunction = CAMediaTimingFunction(name: .linear)
@@ -329,11 +338,9 @@ extension MeetingManageViewController: UITextViewDelegate {
     
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
-        
         // 이름 textView
         if textView == meetingNameTextView {
             if meetingNameTextView.textColor == UIColor(color: .placeholder) {
-                
                 meetingNameTextView.text = nil
                 meetingNameTextView.textColor = UIColor.black
             }
@@ -342,7 +349,6 @@ extension MeetingManageViewController: UITextViewDelegate {
         // 내용 textView
         if textView == meetingDescriptionTextView {
             if meetingDescriptionTextView.textColor == UIColor(color: .placeholder) {
-                
                 meetingDescriptionTextView.text = nil
                 meetingDescriptionTextView.textColor = UIColor.black
             }
@@ -351,7 +357,6 @@ extension MeetingManageViewController: UITextViewDelegate {
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        
         if textView == meetingNameTextView {
             let textCount = textView.text.count
             countMeetingNameLabel.text = "(\(textCount)/10)"
@@ -374,17 +379,15 @@ extension MeetingManageViewController: UITextViewDelegate {
             }
         }
         
-        if !meetingNameTextView.text.isEmpty, meetingNameTextView.textColor ==  UIColor.black, meetingDescriptionTextView.textColor == UIColor.black ,!meetingDescriptionTextView.text.isEmpty {
+        if !meetingNameTextView.text.isEmpty, meetingNameTextView.textColor == UIColor.black, meetingDescriptionTextView.textColor == UIColor.black,!meetingDescriptionTextView.text.isEmpty {
             manageFinishButton.isEnabled = true
-        }
-        else {
+        } else {
             manageFinishButton.isEnabled = false
         }
     }
     
     // 입력 종료 시 호출
     func textViewDidEndEditing(_ textView: UITextView) {
-        
         if meetingNameTextView.text.isEmpty {
             meetingNameTextView.text = "모임 이름을 입력해주세요."
             meetingNameTextView.textColor = UIColor(color: .placeholder)
@@ -425,7 +428,7 @@ extension MeetingManageViewController: UITextViewDelegate {
 //    func textViewDidChange(_ textView: UITextView) {
 //        placeholderLabel.isHidden = !textView.text.isEmpty
 //        countDescriptionField.text = "\(textView.text.count)/300"
-//        
+//
 //        if textView.text.count > 300 {
 //            shakeAnimation(for: countDescriptionField)
 //            countDescriptionField.textColor = .red
@@ -433,17 +436,14 @@ extension MeetingManageViewController: UITextViewDelegate {
 //            countDescriptionField.textColor = .black
 //        }
 //    }
-//    
+//
 //    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
 //        let currentText = textView.text ?? ""
 //        let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: text)
-//        
+//
 //        if prospectiveText.count > 301 {
 //            return false
 //        }
 //        return true
 //    }
 }
-
-
-
