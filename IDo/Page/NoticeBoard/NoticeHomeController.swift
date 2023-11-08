@@ -113,6 +113,7 @@ final class NoticeHomeController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        //loadDataFromFirebase()
         super.viewWillAppear(animated)
     }
     
@@ -221,8 +222,8 @@ final class NoticeHomeController: UIViewController {
 
     func update(club: Club, imageData: Data) {
         DispatchQueue.main.async {
-            self.label.text = self.firebaseClubDatabaseManager.model?.title
-            self.textLabel.text = self.firebaseClubDatabaseManager.model?.description
+            self.label.text = club.title
+            self.textLabel.text = club.description
             self.imageView.image = UIImage(data: imageData)
         }
     }

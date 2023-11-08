@@ -302,6 +302,12 @@ class MeetingManageViewController: UIViewController {
                 alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
                     self.navigationController?.popViewController(animated: true)
                 }))
+                var clubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+                if let clubIndex = MyProfile.shared.myUserInfo?.myClubList?.firstIndex(where: {$0.id == self.club.id}) {
+                    clubList[clubIndex] = self.club
+                    MyProfile.shared.update(myClubList: clubList)
+                }
+                
                 self.updateHandler?(self.club, imageData)
                 self.present(alert, animated: true, completion: nil)
             } else {
