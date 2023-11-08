@@ -309,13 +309,12 @@ class MeetingCreateViewController: UIViewController {
 // MARK: - 이미지 피커 관련
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-//                let roundedImage = selectedImage.resizedAndRoundedImage()
-                profileImageButton.setImage(selectedImage, for: .normal)
-                profileImageButton.profileImageChanged = true
-            }
-            picker.dismiss(animated: true, completion: nil)
+        if let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            profileImageButton.setImage(selectedImage, for: .normal)
+            profileImageButton.profileImageChanged = true
         }
+        picker.dismiss(animated: true, completion: nil)
+    }
 }
 
 // MARK: - 텍스트 뷰 관련

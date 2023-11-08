@@ -57,6 +57,7 @@ class MeetingProfileImageButton: UIButton {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = viewController as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
         imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true
         viewController.present(imagePicker, animated: true, completion: nil)
     }
     

@@ -287,9 +287,9 @@ class MeetingManageViewController: UIViewController {
 // MARK: - 이미지 피커 관련
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            //                let roundedImage = selectedImage.resizedAndRoundedImage()
+        if let selectedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             profileImageButton.setImage(selectedImage, for: .normal)
+            profileImageButton.profileImageChanged = true
         }
         picker.dismiss(animated: true, completion: nil)
     }
