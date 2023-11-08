@@ -84,15 +84,15 @@ final class CategorySelectViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
-        
+
         // 타이틀 생성 및 설정
-        if let navigationBar = self.navigationController?.navigationBar {
+        if let navigationBar = navigationController?.navigationBar {
             NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "카테고리 선택")
         }
-        
+
         setup()
     }
 }
@@ -107,7 +107,7 @@ private extension CategorySelectViewController {
 
     func addViews() {
         view.addSubview(categoryCollectionView)
-//        view.addSubview(selectedCountLabel)
+        //        view.addSubview(selectedCountLabel)
         view.addSubview(nextButton)
     }
 
@@ -120,10 +120,10 @@ private extension CategorySelectViewController {
             make.left.right.bottom.equalTo(safeArea).inset(Constant.margin3)
             make.height.equalTo(48)
         }
-//        selectedCountLabel.snp.makeConstraints { make in
-//            make.centerX.equalTo(safeArea)
-//            make.bottom.equalTo(nextButton.snp.top).offset(-Constant.margin3)
-//        }
+        //        selectedCountLabel.snp.makeConstraints { make in
+        //            make.centerX.equalTo(safeArea)
+        //            make.bottom.equalTo(nextButton.snp.top).offset(-Constant.margin3)
+        //        }
     }
 
     func setupCollectionView() {
@@ -137,6 +137,8 @@ private extension CategorySelectViewController {
     }
 
     @objc func nextButtonClcik() {
+        nextButton.isEnabled = false
+
         let vc = SignUpProfileViewController(email: email, password: password, selectedCategorys: selectedCategorys)
         navigationController?.pushViewController(vc, animated: true)
     }
