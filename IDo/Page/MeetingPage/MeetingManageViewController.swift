@@ -284,19 +284,20 @@ class MeetingManageViewController: UIViewController {
             return
         }
         
-        guard let imageData = meetingImage.jpegData(compressionQuality: 0.8) else {
+        guard let imageData = meetingImage.jpegData(compressionQuality: 0.5) else {
             manageFinishButton.isEnabled = true
 
             return
         }
         
-        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
+//        saveMeetingToFirebase(name: name, description: description, imageData: imageData)
+        saveResizeImageMeetingToFirebase(name: name, description: description, clubImage: meetingImage, imageData: imageData)
     }
     
-    private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
+    private func saveResizeImageMeetingToFirebase(name: String, description: String, clubImage: UIImage, imageData: Data) {
         club.title = name
         club.description = description
-        meetingsData.updateClub(club: club, imagaData: imageData) { isSuccess in
+        meetingsData.updateClubResize(club: club, clubImage: clubImage) { isSuccess in
             if isSuccess {
                 print("데이터 수정 성공")
                 
@@ -319,6 +320,33 @@ class MeetingManageViewController: UIViewController {
             }
         }
     }
+    
+//    private func saveMeetingToFirebase(name: String, description: String, imageData: Data) {
+//        club.title = name
+//        club.description = description
+//        meetingsData.updateClub(club: club, imagaData: imageData) { isSuccess in
+//            if isSuccess {
+//                print("데이터 수정 성공")
+//
+//                let alert = UIAlertController(title: "완료", message: "모임 정보가 수정되었습니다.", preferredStyle: .alert)
+//                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+//                    self.navigationController?.popViewController(animated: true)
+//                }))
+//                var clubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+//                if let clubIndex = MyProfile.shared.myUserInfo?.myClubList?.firstIndex(where: {$0.id == self.club.id}) {
+//                    clubList[clubIndex] = self.club
+//                    MyProfile.shared.update(myClubList: clubList)
+//                }
+//
+//                self.updateHandler?(self.club, imageData)
+//                self.present(alert, animated: true, completion: nil)
+//            } else {
+//                self.manageFinishButton.isEnabled = true
+//
+//                print("데아터 수정 실패")
+//            }
+//        }
+//    }
 }
 
 // MARK: - 이미지 편집 관련

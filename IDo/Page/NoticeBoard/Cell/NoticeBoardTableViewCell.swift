@@ -13,6 +13,7 @@ class NoticeBoardTableViewCell: UITableViewCell {
     static let identifier = "NoticeBoardTableViewCell"
     
     var indexPath: IndexPath?
+    var storagePath: String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -27,6 +28,11 @@ class NoticeBoardTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
+        if let storagePath {
+            FBURLCache.shared.cancelDownloadURL(storagePath: storagePath)
+        }
+        profileImageView.image = nil
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

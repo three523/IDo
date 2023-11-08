@@ -13,7 +13,7 @@ import UIKit
 final class NoticeHomeController: UIViewController {
     var signUpButtonUpdate: ((AuthState) -> Void)?
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
-    private let clubImage: UIImage?
+    private let clubImage: UIImage? = nil
     private let club: Club
     let memberTableView: IntrinsicTableView = {
         let tableview = IntrinsicTableView()
@@ -75,8 +75,7 @@ final class NoticeHomeController: UIViewController {
         return view
     }()
     
-    init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager, clubImage: UIImage?) {
-        self.clubImage = clubImage
+    init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager) {
         self.club = club
         self.firebaseClubDatabaseManager = firebaseClubDataManager
         self.authState = authState
@@ -225,7 +224,8 @@ final class NoticeHomeController: UIViewController {
         if let clubImage {
             imageView.image = clubImage
         } else {
-            guard let imageURL = club.imageURL else { return }
+            guard var imageURL = club.imageURL else { return }
+            imageURL += "/\(ImageSize.medium.rawValue)"
             FBURLCache.shared.downloadURL(storagePath: imageURL) { result in
                 switch result {
                 case .success(let image):

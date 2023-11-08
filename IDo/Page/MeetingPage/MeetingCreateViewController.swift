@@ -107,13 +107,32 @@ class MeetingCreateViewController: UIViewController {
 
         let currentUserSummary = myUserInfo.toUserSummary
         var imageData: Data? = nil
+        var clubImage: UIImage? = nil
         if let image = profileImageButton.image(for: .normal) {
-            imageData = image.jpegData(compressionQuality: 0.8) // 이미지 품질
+            imageData = image.jpegData(compressionQuality: 0.5) // 이미지 품질
         }
 
         let club = Club(id: UUID().uuidString, rootUser: currentUserSummary, title: meetingNameTextView.text, imageURL: nil, description: meetingDescriptionTextView.text, category: meetingsData.category, userList: [currentUserSummary], createDate: Date().dateToString)
           
-        meetingsData.addClub(club: club, imageData: imageData) { isSuccess in
+//        meetingsData.addClub(club: club, imageData: imageData) { isSuccess in
+//            if isSuccess {
+//                let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
+//                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+//                    self.navigationController?.popViewController(animated: true)
+//                }))
+//                self.present(alert, animated: true, completion: nil)
+//            } else {
+//                let alert = UIAlertController(title: "실패", message: "모임을 개설하지 못했습니다.", preferredStyle: .alert)
+//                alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+//                    self.navigationController?.popViewController(animated: true)
+//                }))
+//                self.createFinishButton.isEnabled = true
+//            }
+//        }
+        if let image = profileImageButton.image(for: .normal) {
+            clubImage = image
+        }
+        meetingsData.addClubImageResize(club: club, image: clubImage) { isSuccess in
             if isSuccess {
                 let alert = UIAlertController(title: "완료", message: "모임을 개설했습니다!", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in

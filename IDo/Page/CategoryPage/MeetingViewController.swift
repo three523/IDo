@@ -174,7 +174,20 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.basicImageView.image = nil
         
         if let imageURL = club.imageURL {
-            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
+            cell.storagePath = imageURL
+            FBURLCache.shared.cancelDownloadURL(storagePath: imageURL)
+//            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
+//                switch result {
+//                case .success(let image):
+//                    DispatchQueue.main.async {
+//                        cell.basicImageView.image = image
+//                    }
+//
+//                case .failure(let error):
+//                    print(error)
+//                }
+//            }
+            meetingsData.loadImageResize(storagePath: imageURL, clubId: club.id, imageSize: .small) { result in
                 switch result {
                 case .success(let image):
                     DispatchQueue.main.async {
@@ -191,13 +204,12 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let club = meetingsData.clubs[indexPath.row]
-        let clubImage = meetingsData.clubImages[club.id]
         
         guard let currentUser = MyProfile.shared.myUserInfo else {
             print("사용자 정보를 가져오지 못하고 있습니다")
             return
         }
-        let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser, clubImage: clubImage)
+        let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser)
         self.navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 }
