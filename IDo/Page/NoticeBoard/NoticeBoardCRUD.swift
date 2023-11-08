@@ -190,13 +190,13 @@ class FirebaseManager {
                     print("Successfully deleted notice board.")
                     self.deleteNoticeBoardToClub(noticeBoard: self.noticeBoards[index])
                     self.removeMyNoticeBoard(noticeBoard: self.noticeBoards[index])
-                    self.noticeBoards.remove(at: index)
-                    self.delegate?.reloadData()
                     self.deleteImage(noticeBoardID: self.noticeBoards[index].id, imagePaths: imagePaths) { success in
                         if success {
                             completion?(true)
                         }
                     }
+                    self.noticeBoards.remove(at: index)
+                    self.delegate?.reloadData()
                 }
             }
         }

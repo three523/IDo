@@ -23,10 +23,10 @@ class FBURLCache {
     
     //TODO: 코드를 메서드를 어떻게 줄일지 생각해보기
     func downloadURL(storagePath: String, completion: @escaping (Result<UIImage,Error>) -> Void) {
-        if let image = imageCache.object(forKey: storagePath as NSString) {
-            completion(.success(image))
-            return
-        }
+//        if let image = imageCache.object(forKey: storagePath as NSString) {
+//            completion(.success(image))
+//            return
+//        }
         let storage = Storage.storage().reference(withPath: storagePath)
         storage.getMetadata { metadata, error in
             if let error {

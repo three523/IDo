@@ -22,10 +22,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: scene)
 
 //        try? Auth.auth().signOut()
-        if Auth.auth().currentUser != nil {
-            guard let uid = Auth.auth().currentUser?.uid else { return }
+        if let uid = Auth.auth().currentUser?.uid {
             MyProfile.shared.getUserProfile(uid: uid) { isSuccess in
-                window.rootViewController = TabBarController()
+                if isSuccess {
+                    window.rootViewController = TabBarController()
+                } else {
+                    window.rootViewController = LoginViewController()
+                }
             }
         } else {
             window.rootViewController = LoginViewController()
