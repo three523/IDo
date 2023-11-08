@@ -13,6 +13,7 @@ class MyProfileViewController: UIViewController {
     private var firebaseManager: FBDatabaseManager<IDoUser>!
     private let scrollView: UIScrollView = UIScrollView()
     
+    // MARK: - 컴포넌트
     // 프로필
     var profileImage = UIButton()
     var profileName = UITextView()
@@ -138,7 +139,8 @@ class MyProfileViewController: UIViewController {
         let textCount = selfInfoDetail.text.count
         selfInfoInt.text = "(\(textCount)/300)"
     }
-
+    
+    // MARK: - view 함수들
     // 로딩되는 뷰
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -186,6 +188,7 @@ class MyProfileViewController: UIViewController {
         removeKeyboardNotifications()
     }
     
+    // MARK: - 프로필 불러오기
     private func getProfile() {
         guard let myProfile = MyProfile.shared.myUserInfo else { return }
         profileName.text = myProfile.nickName
@@ -213,6 +216,7 @@ class MyProfileViewController: UIViewController {
         }
     }
     
+    // MARK: - 키보드 관련
     func addKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -239,6 +243,7 @@ class MyProfileViewController: UIViewController {
         }
     }
     
+    // MARK: - UI관련
     func setupScrollView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTap))
         scrollView.isUserInteractionEnabled = true
@@ -334,6 +339,7 @@ class MyProfileViewController: UIViewController {
     }
 }
 
+// MARK: - 텍스트 뷰 관련
 // 자기소개 300자 제한 및 Label로 입력 글자수 표시
 extension MyProfileViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
@@ -363,6 +369,7 @@ extension MyProfileViewController: UITextViewDelegate {
         return true
     }
 
+    // MARK: - 피커뷰 관련
     // 피커뷰 셋팅
     func setupPickerView() {
         choicePickerView.delegate = self
@@ -388,7 +395,7 @@ extension MyProfileViewController: UITextViewDelegate {
     }
 }
 
-// 테이블뷰 설정
+// MARK: - 테이블 뷰 관련
 extension MyProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 60
@@ -410,7 +417,7 @@ extension MyProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-// 네이게이션 바
+// MARK: - 네비게이션 바 관련
 private extension MyProfileViewController {
     func profileEditControllerSet() {
         // 네비게이션 LargeTitle 비활성화 및 title 입력
@@ -525,7 +532,7 @@ private extension MyProfileViewController {
     }
 }
 
-// 프로필이미지 버튼 눌렀을때 Action
+// MARK: - 프로필이미지 버튼 눌렀을때 Action
 extension MyProfileViewController: UINavigationControllerDelegate {}
 
 private extension MyProfileViewController {
@@ -541,7 +548,7 @@ private extension MyProfileViewController {
     }
 }
 
-// 프로필이미지 버튼 누른 후 변경된 이미지 저장 및 갤러리 dismiss
+// MARK: - 프로필이미지 버튼 누른 후 변경된 이미지 저장 및 갤러리 dismiss
 extension MyProfileViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let image = info[.originalImage] as? UIImage {
@@ -550,7 +557,8 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
             
         picker.dismiss(animated: true, completion: nil)
     }
-        
+    
+    // MARK: - 로그아웃 관련
     @objc func logoutButtonTapped() {
         let alertController = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
             
@@ -581,7 +589,8 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         // 알림창 표시
         present(alertController, animated: true, completion: nil)
     }
-        
+    
+    // MARK: - 회원 탈퇴 관련
     @objc func deleteIDButtonTapped() {
         let alertController = UIAlertController(title: "회원탈퇴", message: "회원 탈퇴를 진행하시겠습니까?", preferredStyle: .alert)
             
@@ -603,6 +612,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
                                 print("Firebase Error : ", error)
                             } else {
                                 print("회원탈퇴 성공!")
+                                
                                 DispatchQueue.main.async {
                                     if let navigationController = self?.navigationController {
                                         navigationController.popToRootViewController(animated: true)
