@@ -417,13 +417,13 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectio
 extension CreateNoticeBoardViewController {
     func updateAutolayoutCollectionView() {
         DispatchQueue.main.async {
-            if self.firebaseManager.selectedImage.count == 0 {
+            if self.firebaseManager.newSelectedImage.count == 0 {
                 self.createNoticeBoardView.galleryCollectionView.snp.updateConstraints { make in
                     make.height.equalTo(0)
                 }
                 return
             }
-            let rows = ceil(CGFloat(self.firebaseManager.selectedImage.count) / 5.0)
+            let rows = ceil(CGFloat(self.firebaseManager.newSelectedImage.count) / 5.0)
             let spacing = rows * 2
             let cellHeight = (self.createNoticeBoardView.galleryCollectionView.bounds.width - 8) / 5
             let contentHeight = rows * cellHeight + spacing
