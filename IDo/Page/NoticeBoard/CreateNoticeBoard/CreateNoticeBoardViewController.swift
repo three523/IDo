@@ -220,13 +220,12 @@ private extension CreateNoticeBoardViewController {
                 if success {
                     // 수정 모드 종료
                     self.isEditingMode = false
+                    // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
+                    (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
                     self.navigationController?.popViewController(animated: true)
                     print("업데이트 완료")
                 }
             }
-            
-            // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
-            (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
         }
     }
 }
