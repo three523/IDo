@@ -21,7 +21,7 @@ class MeetingManageViewController: UIViewController {
         setupScrollView()
         meetingNameTextView.text = club.title
         meetingNameTextView.textColor = UIColor.black
-        countMeetingNameLabel.text = "(\(meetingNameTextView.text.count)/16)"
+        countMeetingNameLabel.text = "(\(meetingNameTextView.text.count)/20)"
         countMeetingNameLabel.textColor = UIColor.black
         
         meetingDescriptionTextView.text = club.description
@@ -125,7 +125,7 @@ class MeetingManageViewController: UIViewController {
     // 이름 글자 수 표시 label
     let countMeetingNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "(0/16)"
+        label.text = "(0/20)"
         label.textColor = UIColor(color: .placeholder)
         label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
@@ -354,7 +354,7 @@ extension MeetingManageViewController: UITextViewDelegate {
         
         if textView == meetingNameTextView {
             let textCount = textView.text.count
-            countMeetingNameLabel.text = "(\(textCount)/10)"
+            countMeetingNameLabel.text = "(\(textCount)/20)"
             
             if textCount == 0 {
                 countMeetingNameLabel.textColor = UIColor(color: .placeholder)
@@ -403,7 +403,7 @@ extension MeetingManageViewController: UITextViewDelegate {
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == meetingNameTextView {
-            if changedText.count > 10 {
+            if changedText.count > 20 {
                 countMeetingNameLabel.textColor = UIColor.red
                 shakeAnimation(for: countMeetingNameLabel)
                 return false

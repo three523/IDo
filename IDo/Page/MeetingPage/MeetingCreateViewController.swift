@@ -43,7 +43,7 @@ class MeetingCreateViewController: UIViewController {
     // 이름 글자 수 표시 label
     let countMeetingNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "(0/16)"
+        label.text = "(0/20)"
         label.textColor = UIColor(color: .placeholder)
         label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
@@ -315,7 +315,7 @@ extension MeetingCreateViewController: UITextViewDelegate {
         
         if textView == meetingNameTextView {
             let textCount = textView.text.count
-            countMeetingNameLabel.text = "(\(textCount)/10)"
+            countMeetingNameLabel.text = "(\(textCount)/20)"
             
             if textCount == 0 {
                 countMeetingNameLabel.textColor = UIColor(color: .placeholder)
@@ -364,7 +364,7 @@ extension MeetingCreateViewController: UITextViewDelegate {
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == meetingNameTextView {
-            if changedText.count > 10 {
+            if changedText.count > 20 {
                 countMeetingNameLabel.textColor = UIColor.red
                 shakeAnimation(for: countMeetingNameLabel)
                 return false
@@ -423,9 +423,9 @@ extension MeetingCreateViewController: UITextFieldDelegate {
         let currentText = textField.text ?? ""
         let prospectiveText = (currentText as NSString).replacingCharacters(in: range, with: string)
         
-        countMeetingNameLabel.text = "\(prospectiveText.count)/16"
+        countMeetingNameLabel.text = "\(prospectiveText.count)/20"
         
-        if prospectiveText.count > 16 {
+        if prospectiveText.count > 20 {
             shakeAnimation(for: countMeetingNameLabel)
             countMeetingNameLabel.textColor = .red
             return false
