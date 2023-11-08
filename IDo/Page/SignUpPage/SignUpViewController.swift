@@ -454,45 +454,20 @@ private extension SignUpViewController {
     }
     
     @objc func clickNextButton() {
-        guard let email = emailTextField.text, !email.isEmpty,
-              let password = passwordTextField.text, !password.isEmpty
-        else {
-            showAlertDialog(title: "경고", message: "이메일 또는 비밀번호를 입력하세요.")
-            return
-        }
-        
-        guard password.isValidPassword() else {
-            showAlertDialog(title: "경고", message: "비밀번호가 안전하지 않습니다.")
-            return
-        }
-        guard let confirmPassword = passwordConfirmTextField.text, !confirmPassword.isEmpty else {
-            showAlertDialog(title: "경고", message: "비밀번호 재확인을 입력하세요.")
-            return
-        }
-        
-        guard password == confirmPassword else {
-            showAlertDialog(title: "경고", message: "비밀번호와 비밀번호 재확인이 일치하지 않습니다.")
-            return
-        }
-        guard termsCheckButton.isSelected else {
-            showAlertDialog(title: "경고", message: "이용약관에 동의해주세요.")
-            return
-        }
-        guard privacyPolicycheckButton.isSelected else {
-            showAlertDialog(title: "경고", message: "개인정보처리방침에 동의해주세요.")
-            return
-        }
-        if authenticationNumberButton.title(for: .normal) != "완료" {
-            if authenticationNumberTextField.text?.isEmpty == true {
-                showAlertDialog(title: "경고", message: "인증번호를 입력해주세요")
-            } else {
-                showAlertDialog(title: "경고", message: "인증번호를 확인해주세요")
-            }
-            return
+        nextButton.isEnabled = false
+        defer {
+            nextButton.isEnabled = true
         }
 
-        Auth.auth().createUser(withEmail: email, password: password) { [weak self] _, error in
+        if let errorMessage = errorProcessing() {
+            showAlertDialog(title: "경고", message: errorMessage)
+            nextButton.isEnabled = true
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: emailTextField.text!, password: passwordTextField.text!) { [weak self] _, error in
             if let error = error {
+                self?.nextButton.isEnabled = true
                 let nsError = error as NSError
                 let errorCode = AuthErrorCode(_nsError: nsError)
                 print(errorCode)
@@ -500,6 +475,8 @@ private extension SignUpViewController {
                 case .emailAlreadyInUse:
                     self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다. 다른 이메일을 사용해주세요.")
                     self?.emailAuthorizationButton.isEnabled = true
+                    self?.emailTextField.isEnabled = true
+                    self?.linkButton.isEnabled = true
                     self?.emailAuthorizationButton.setTitleColor(UIColor(color: .white), for: .normal)
                     self?.emailAuthorizationButton.backgroundColor = UIColor(color: .contentPrimary)
                     return
@@ -512,12 +489,48 @@ private extension SignUpViewController {
                     return
                 }
             } else {
-                let categoryVC = CategorySelectViewController(email: email, password: password)
-                self?.navigationController?.pushViewController(categoryVC, animated: true)
+                self?.navigateToCategorySelection()
             }
         }
     }
-    
+
+    private func errorProcessing() -> String? {
+        guard let email = emailTextField.text, !email.isEmpty else {
+            return "이메일 또는 비밀번호를 입력하세요."
+        }
+        
+        guard let password = passwordTextField.text, !password.isEmpty, password.isValidPassword() else {
+            return "비밀번호가 안전하지 않습니다."
+        }
+        
+        guard let confirmPassword = passwordConfirmTextField.text, !confirmPassword.isEmpty, password == confirmPassword else {
+            return "비밀번호 재확인을 입력하세요."
+        }
+        
+        guard termsCheckButton.isSelected else {
+            return "이용약관에 동의해주세요."
+        }
+        
+        guard privacyPolicycheckButton.isSelected else {
+            return "개인정보처리방침에 동의해주세요."
+        }
+        
+        if authenticationNumberButton.title(for: .normal) != "완료",
+           authenticationNumberTextField.text?.isEmpty != false
+        {
+            return "인증번호를 입력하거나 확인해주세요."
+        }
+        
+        return nil
+    }
+
+    private func navigateToCategorySelection() {
+        let email = emailTextField.text!
+        let password = passwordTextField.text!
+        let categoryVC = CategorySelectViewController(email: email, password: password)
+        navigationController?.pushViewController(categoryVC, animated: true)
+    }
+
     @objc func termsOfUseTap() {
         if let url = URL(string: "https://melon-drawer-23e.notion.site/43d5209ed002411998698f51554c074a?pvs=4") {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -668,42 +681,42 @@ private extension SignUpViewController {
             if let error = error {
                 print("Error checking for email existence: \(error)")
                 self?.showAlertDialog(title: "오류", message: "이메일 확인 중 오류가 발생했습니다.")
+                self?.emailTextField.isEnabled = true
+                self?.linkButton.isEnabled = true
                 return
             }
-            
+                
             if let signInMethods = signInMethods, !signInMethods.isEmpty {
-                self?.emailAuthorizationButton.isEnabled = true
-                self?.emailAuthorizationButton.setTitleColor(.blue, for: .normal)
-                self?.emailAuthorizationButton.backgroundColor = .white
+                self?.showAlertDialog(title: "경고", message: "이미 사용 중인 이메일입니다. 다른 이메일을 사용해주세요.")
+                self?.emailTextField.isEnabled = true
+                self?.linkButton.isEnabled = false
             } else {
                 self?.smtpNumberCode { success in
-                    DispatchQueue.main.async {
-                        if success {
-                            self?.emailTextField.isEnabled = false
-                            self?.isEmailChecked = true
-                            self?.linkButton.isEnabled = false
+                    if success {
+                        self?.emailTextField.isEnabled = false
+                        self?.isEmailChecked = true
+                        self?.linkButton.isEnabled = false
 
-                            self?.showAlertDialog(title: "인증", message: "인증이 성공적으로 처리되었습니다")
+                        self?.showAlertDialog(title: "인증", message: "인증이 성공적으로 처리되었습니다")
                             
-                            self?.authenticationNumberButton.setTitle("완료", for: .normal)
-                            self?.authenticationNumberButton.isEnabled = false
-                            self?.authenticationNumberButton.setTitleColor(UIColor(color: .borderSelected), for: .normal)
-                            self?.authenticationNumberButton.backgroundColor = UIColor(color: .contentBackground)
-                            self?.emailAuthorizationButton.isEnabled = false
-                            self?.emailAuthorizationButton.setTitleColor(.darkGray, for: .normal)
-                            self?.emailAuthorizationButton.backgroundColor = UIColor(color: .placeholder)
-                        } else {
-                            self?.showAlertDialog(title: "경고", message: "인증번호가 일치하지 않습니다.")
-                            self?.emailTextField.isEnabled = true
-                            self?.isEmailChecked = false
-                            self?.linkButton.isEnabled = true
-                        }
+                        self?.authenticationNumberButton.setTitle("완료", for: .normal)
+                        self?.authenticationNumberButton.isEnabled = false
+                        self?.authenticationNumberButton.setTitleColor(UIColor(color: .borderSelected), for: .normal)
+                        self?.authenticationNumberButton.backgroundColor = UIColor(color: .contentBackground)
+                        self?.emailAuthorizationButton.isEnabled = false
+                        self?.emailAuthorizationButton.setTitleColor(.darkGray, for: .normal)
+                        self?.emailAuthorizationButton.backgroundColor = UIColor(color: .placeholder)
+                    } else {
+                        self?.showAlertDialog(title: "경고", message: "인증번호가 일치하지 않습니다.")
+                        self?.emailTextField.isEnabled = true
+                        self?.isEmailChecked = false
+                        self?.linkButton.isEnabled = true
                     }
                 }
             }
         }
     }
-
+    
     @objc func eyeClickButton() {
         passwordTextField.isSecureTextEntry.toggle()
         eyeButton.isSelected.toggle()
