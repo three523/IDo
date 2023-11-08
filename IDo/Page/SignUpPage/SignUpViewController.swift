@@ -11,7 +11,7 @@ import FirebaseDatabase
 import SnapKit
 import SwiftSMTP
 import UIKit
-
+//  회원가입 페이지
 final class SignUpViewController: UIViewController {
     private let fbUserDatabaseManager: FirebaseCreateUserManager = .init(refPath: ["Users"])
     

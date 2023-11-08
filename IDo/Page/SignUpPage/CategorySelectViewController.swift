@@ -8,6 +8,7 @@
 import FirebaseAuth
 import FirebaseDatabase
 import UIKit
+// 회원가입 카테고리 페이지
 final class CategorySelectViewController: UIViewController {
 //    private let selectedCountLabel: UILabel = {
 //        let label = UILabel()

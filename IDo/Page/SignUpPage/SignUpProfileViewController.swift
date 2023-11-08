@@ -10,7 +10,7 @@ import FirebaseDatabase
 import FirebaseStorage
 import SnapKit
 import UIKit
-
+ // 회원가입 프로필 페이지
 class SignUpProfileViewController: UIViewController {
     private let email: String
     private let password: String
