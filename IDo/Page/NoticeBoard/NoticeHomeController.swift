@@ -28,7 +28,7 @@ final class NoticeHomeController: UIViewController {
     lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.backgroundColor = UIColor(color: .contentBackground)
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleToFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 24
         return imageView
@@ -107,7 +107,9 @@ final class NoticeHomeController: UIViewController {
                 self.memberTableView.reloadData()
             }
         }
-        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageTapped))
+            imageView.addGestureRecognizer(tapGesture)
+            imageView.isUserInteractionEnabled = true
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
     }
@@ -120,6 +122,16 @@ final class NoticeHomeController: UIViewController {
         print("Sign Up button tapped!.")
         addUser()
     }
+    
+    // 탭해서 이미지 전체보기
+    @objc func imageTapped() {
+        if let image = imageView.image {
+            let imageViewer = FullScreenImageViewer(image: image)
+            imageViewer.modalPresentationStyle = .fullScreen
+            present(imageViewer, animated: true, completion: nil)
+        }
+    }
+
     
     private func addUser() {
         guard let idoUser = MyProfile.shared.myUserInfo?.toIDoUser else { return }

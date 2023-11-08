@@ -447,11 +447,16 @@ private extension MyProfileViewController {
             print("사용자 정보가 없습니다.")
             return
         }
+        
+        hiddenLeftButton()
+        
         navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
         profileName.isUserInteractionEnabled = false
         profileName.text = myProfile.nickName
         selfInfoDetail.isUserInteractionEnabled = false
         selfInfoDetail.text = myProfile.description
+        selfInfoInt.text = "(\(myProfile.description?.count ?? 0)/300)"
+        selfInfoInt.textColor = UIColor(color: .placeholder)
         choiceEnjoyTextField.isUserInteractionEnabled = false
         choiceEnjoyTextField.text = myProfile.hobbyList?.first
 
@@ -482,7 +487,9 @@ private extension MyProfileViewController {
             // 각각 텍스트뷰를 활성화 시킴
             profileName.isUserInteractionEnabled = true
             selfInfoDetail.isUserInteractionEnabled = true
+            selfInfoInt.textColor = UIColor(color: .textStrong)
             choiceEnjoyTextField.isUserInteractionEnabled = true
+            
             writeMe.isHidden = true // "작성한글" title Label 숨기기
             writeMeTableView.isHidden = true // 작성한글 리스트 숨기기
             logout.isHidden = true
@@ -497,9 +504,10 @@ private extension MyProfileViewController {
             hiddenLeftButton()
             
             profileName.isUserInteractionEnabled = false
-//            selfInfoDetail.isUserInteractionEnabled = false
+            selfInfoDetail.isUserInteractionEnabled = false
+            selfInfoInt.textColor = UIColor(color: .placeholder)
             choiceEnjoyTextField.isUserInteractionEnabled = false
-
+            
             writeMe.isHidden = false // 작성한글 title Label 나타내기
             writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
             logout.isHidden = false

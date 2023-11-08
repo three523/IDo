@@ -109,6 +109,9 @@
 		7B226F142AEBD85900EAED75 /* CategoryCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76A3FC72AE6159A005751AD /* CategoryCollectionCell.swift */; };
 		7B226F152AEBD85900EAED75 /* MyProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10CBA03D2AD6466400F1DA37 /* MyProfileViewController.swift */; };
 		7B226F162AEBD85900EAED75 /* MyProfileViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */; };
+		7FDFF20F2AFA40300036B1E0 /* FullScreenImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FDFF20E2AFA40300036B1E0 /* FullScreenImageViewer.swift */; };
+		7FDFF2122AFB819B0036B1E0 /* CropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 7FDFF2112AFB819B0036B1E0 /* CropViewController */; };
+		7FDFF2142AFB819B0036B1E0 /* TOCropViewController in Frameworks */ = {isa = PBXBuildFile; productRef = 7FDFF2132AFB819B0036B1E0 /* TOCropViewController */; };
 		E70A37112AF77BA100FB9EBB /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70A37102AF77BA100FB9EBB /* APIKey.swift */; };
 		E73D73DC2AD7D14000EF9554 /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = E73D73DB2AD7D14000EF9554 /* Tabman */; };
 		E7C7D25A2AEFEBC500636732 /* SwiftSMTP in Frameworks */ = {isa = PBXBuildFile; productRef = E7C7D2592AEFEBC500636732 /* SwiftSMTP */; };
@@ -201,6 +204,7 @@
 		7FBE185C2AD796AF0052E950 /* BasicCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicCell.swift; sourceTree = "<group>"; };
 		7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyMessageStackView.swift; sourceTree = "<group>"; };
 		7FBE185E2AD796AF0052E950 /* BasicImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicImageView.swift; sourceTree = "<group>"; };
+		7FDFF20E2AFA40300036B1E0 /* FullScreenImageViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenImageViewer.swift; sourceTree = "<group>"; };
 		7FE072A32ADF82E900966916 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		7FE072A72ADFE21200966916 /* TemporaryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryManager.swift; sourceTree = "<group>"; };
 		E70A37102AF77BA100FB9EBB /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
@@ -220,6 +224,8 @@
 			files = (
 				10B565B32ADD1439006DED66 /* KakaoSDKCert in Frameworks */,
 				10B565B72ADD1439006DED66 /* KakaoSDKCommon in Frameworks */,
+				7FDFF2142AFB819B0036B1E0 /* TOCropViewController in Frameworks */,
+				7FDFF2122AFB819B0036B1E0 /* CropViewController in Frameworks */,
 				E7C7D25A2AEFEBC500636732 /* SwiftSMTP in Frameworks */,
 				18C26A042AD941AF00899A6F /* FirebaseDatabase in Frameworks */,
 				10B565B52ADD1439006DED66 /* KakaoSDKCertCore in Frameworks */,
@@ -541,6 +547,7 @@
 				7FBE185E2AD796AF0052E950 /* BasicImageView.swift */,
 				7FBE185D2AD796AF0052E950 /* EmptyMessageStackView.swift */,
 				10B174802ADA60D800BF4273 /* AlertManager.swift */,
+				7FDFF20E2AFA40300036B1E0 /* FullScreenImageViewer.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -591,6 +598,8 @@
 				10B565B42ADD1439006DED66 /* KakaoSDKCertCore */,
 				10B565B62ADD1439006DED66 /* KakaoSDKCommon */,
 				E7C7D2592AEFEBC500636732 /* SwiftSMTP */,
+				7FDFF2112AFB819B0036B1E0 /* CropViewController */,
+				7FDFF2132AFB819B0036B1E0 /* TOCropViewController */,
 			);
 			productName = IDo;
 			productReference = 10C265AE2AD55BBF002BA40A /* IDo.app */;
@@ -626,6 +635,7 @@
 				18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				10B565AD2ADD1439006DED66 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
 				E7C7D2582AEFEBC500636732 /* XCRemoteSwiftPackageReference "Swift-SMTP" */,
+				7FDFF2102AFB819B0036B1E0 /* XCRemoteSwiftPackageReference "TOCropViewController" */,
 			);
 			productRefGroup = 10C265AF2AD55BBF002BA40A /* Products */;
 			projectDirPath = "";
@@ -702,6 +712,7 @@
 				10C4882A2AF4ED6A00E4EAB3 /* HomeEmptyView.swift in Sources */,
 				18D764AC2AF3C34600AD6140 /* MemberListHeaderView.swift in Sources */,
 				7B226EEF2AEBD85900EAED75 /* LoginViewController.swift in Sources */,
+				7FDFF20F2AFA40300036B1E0 /* FullScreenImageViewer.swift in Sources */,
 				7B226EF02AEBD85900EAED75 /* LoginView.swift in Sources */,
 				7B226EF12AEBD85900EAED75 /* TabBarController.swift in Sources */,
 				7B226EF22AEBD85900EAED75 /* NoticeMeetingController.swift in Sources */,
@@ -888,7 +899,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2YK85BG576;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDo/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
@@ -903,7 +914,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.camp.iDo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.nbcamp.iDo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -920,7 +931,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 2YK85BG576;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = IDo/Info.plist;
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "";
@@ -935,7 +946,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.camp.iDo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.iOS.nbcamp.iDo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -990,6 +1001,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 10.0.0;
+			};
+		};
+		7FDFF2102AFB819B0036B1E0 /* XCRemoteSwiftPackageReference "TOCropViewController" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/TimOliver/TOCropViewController";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.1;
 			};
 		};
 		E73D73DA2AD7D14000EF9554 /* XCRemoteSwiftPackageReference "Tabman" */ = {
@@ -1060,6 +1079,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 18C269FE2AD941AF00899A6F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		7FDFF2112AFB819B0036B1E0 /* CropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7FDFF2102AFB819B0036B1E0 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = CropViewController;
+		};
+		7FDFF2132AFB819B0036B1E0 /* TOCropViewController */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7FDFF2102AFB819B0036B1E0 /* XCRemoteSwiftPackageReference "TOCropViewController" */;
+			productName = TOCropViewController;
 		};
 		E73D73DB2AD7D14000EF9554 /* Tabman */ = {
 			isa = XCSwiftPackageProductDependency;
