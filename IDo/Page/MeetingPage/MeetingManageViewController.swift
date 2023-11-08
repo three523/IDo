@@ -1,6 +1,8 @@
 import FirebaseDatabase
 import FirebaseStorage
 import UIKit
+import TOCropViewController
+
 
 class MeetingManageViewController: UIViewController {
     var meetingTitle: String?
@@ -20,7 +22,7 @@ class MeetingManageViewController: UIViewController {
         setupScrollView()
         meetingNameTextView.text = club.title
         meetingNameTextView.textColor = UIColor.black
-        countMeetingNameLabel.text = "(\(meetingNameTextView.text.count)/16)"
+        countMeetingNameLabel.text = "(\(meetingNameTextView.text.count)/20)"
         countMeetingNameLabel.textColor = UIColor.black
         
         meetingDescriptionTextView.text = club.description
@@ -125,7 +127,7 @@ class MeetingManageViewController: UIViewController {
     // 이름 글자 수 표시 label
     let countMeetingNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "(0/16)"
+        label.text = "(0/20)"
         label.textColor = UIColor(color: .placeholder)
         label.font = UIFont.bodyFont(.small, weight: .regular)
         return label
@@ -313,15 +315,36 @@ class MeetingManageViewController: UIViewController {
     }
 }
 
-// MARK: - 이미지 피커 관련
+// MARK: - 이미지 편집 관련
 
 extension MeetingManageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            //                let roundedImage = selectedImage.resizedAndRoundedImage()
-            profileImageButton.setImage(selectedImage, for: .normal)
+            let cropViewController = TOCropViewController(croppingStyle: .default, image: selectedImage)
+                       cropViewController.delegate = self
+                       cropViewController.customAspectRatio = CGSize(width: 3, height: 2) // 비율 3:2
+                       cropViewController.aspectRatioLockEnabled = true // 비율 선택 잠금
+                       cropViewController.resetAspectRatioEnabled = false // 비율 리셋 막음
+                       cropViewController.aspectRatioPickerButtonHidden = true // 비율 변경 토글 히든
+
+            picker.dismiss(animated: true) {
+                self.present(cropViewController, animated: true, completion: nil)
+            }
         }
-        picker.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension MeetingManageViewController: TOCropViewControllerDelegate {
+     func cropViewController(_ cropViewController: TOCropViewController, didCropTo image: UIImage, with cropRect: CGRect, angle: Int) {
+        // 편집된 이미지 버튼에 할당
+        profileImageButton.setImage(image, for: .normal)
+        profileImageButton.profileImageChanged = true
+        
+        cropViewController.dismiss(animated: true, completion: nil)
+    }
+    
+    func cropViewController(_ cropViewController: TOCropViewController, didFinishCancelled cancelled: Bool) {
+        cropViewController.dismiss(animated: true, completion: nil) // 취소했을때
     }
 }
 
@@ -359,7 +382,7 @@ extension MeetingManageViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         if textView == meetingNameTextView {
             let textCount = textView.text.count
-            countMeetingNameLabel.text = "(\(textCount)/10)"
+            countMeetingNameLabel.text = "(\(textCount)/20)"
             
             if textCount == 0 {
                 countMeetingNameLabel.textColor = UIColor(color: .placeholder)
@@ -406,7 +429,7 @@ extension MeetingManageViewController: UITextViewDelegate {
         let changedText = currentText.replacingCharacters(in: stringRange, with: text)
         
         if textView == meetingNameTextView {
-            if changedText.count > 10 {
+            if changedText.count > 20 {
                 countMeetingNameLabel.textColor = UIColor.red
                 shakeAnimation(for: countMeetingNameLabel)
                 return false
