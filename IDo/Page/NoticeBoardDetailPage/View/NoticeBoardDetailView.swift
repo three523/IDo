@@ -32,7 +32,7 @@ final class NoticeBoardDetailView: UIStackView {
         label.textColor = UIColor(color: .textStrong)
         return label
     }()
-    private let imageStackView: UIStackView = {
+    let imageStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .fill

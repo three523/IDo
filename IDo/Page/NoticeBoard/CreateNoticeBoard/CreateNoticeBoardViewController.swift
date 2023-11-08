@@ -5,15 +5,14 @@
 //  Created by Junyoung_Hong on 2023/10/11.
 //
 
-import UIKit
 import FirebaseDatabase
+import UIKit
 
 protocol RemoveDelegate: AnyObject {
     func removeCell(_ indexPath: IndexPath)
 }
 
 class CreateNoticeBoardViewController: UIViewController {
-    
     let createNoticeBoardView = CreateNoticeBoardView()
     
     private var isTitleTextViewEdited = false
@@ -41,6 +40,7 @@ class CreateNoticeBoardViewController: UIViewController {
         self.isEditingMode = true
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -84,15 +84,14 @@ class CreateNoticeBoardViewController: UIViewController {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.createNoticeBoardView.titleTextView.resignFirstResponder()
-        self.createNoticeBoardView.contentTextView.resignFirstResponder()
+        createNoticeBoardView.titleTextView.resignFirstResponder()
+        createNoticeBoardView.contentTextView.resignFirstResponder()
     }
-    
 }
 
 // MARK: - KeyBoard 관련 extension
+
 private extension CreateNoticeBoardViewController {
-    
     func addKeyboardNotifications() {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
@@ -106,7 +105,7 @@ private extension CreateNoticeBoardViewController {
     @objc func keyboardWillShow(notification: NSNotification) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
         let keyboardHeight = keyboardFrame.cgRectValue.height
-        let adjustmentHeight = keyboardHeight - (self.tabBarController?.tabBar.frame.size.height ?? 0)
+        let adjustmentHeight = keyboardHeight - (tabBarController?.tabBar.frame.size.height ?? 0)
         
         createNoticeBoardView.scrollView.snp.updateConstraints { make in
             make.height.equalTo(view.safeAreaLayoutGuide).offset(-adjustmentHeight)
@@ -121,16 +120,16 @@ private extension CreateNoticeBoardViewController {
 }
 
 // MARK: - NavigationBar 관련 extension
+
 private extension CreateNoticeBoardViewController {
-    
     func navigationControllerSet() {
         if isEditingMode {
-            if let navigationBar = self.navigationController?.navigationBar {
+            if let navigationBar = navigationController?.navigationBar {
                 NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "게시판 수정")
             }
         }
         else {
-            if let navigationBar = self.navigationController?.navigationBar {
+            if let navigationBar = navigationController?.navigationBar {
                 NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "게시판 작성")
             }
         }
@@ -139,7 +138,6 @@ private extension CreateNoticeBoardViewController {
     }
     
     func navigationBarButtonAction() {
-        
         // 수정 할 때
         if isEditingMode {
             if let editingTitleText = editingTitleText, let editingContentText = editingContentText {
@@ -165,34 +163,35 @@ private extension CreateNoticeBoardViewController {
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
             let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedEdit))
-            self.navigationItem.rightBarButtonItem = finishButton
-            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
+            navigationItem.rightBarButtonItem = finishButton
+            navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
         
         // 처음 작성 할 때
         else {
             // 제목 textView
-            self.createNoticeBoardView.titleTextView.text = "제목을 입력하세요."
-            self.createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
-            self.createNoticeBoardView.titleTextView.resignFirstResponder()
+            createNoticeBoardView.titleTextView.text = "제목을 입력하세요."
+            createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
+            createNoticeBoardView.titleTextView.resignFirstResponder()
             
             // 내용 textView
-            self.createNoticeBoardView.contentTextView.text = "내용을 입력하세요."
-            self.createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
-            self.createNoticeBoardView.contentTextView.resignFirstResponder()
+            createNoticeBoardView.contentTextView.text = "내용을 입력하세요."
+            createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
+            createNoticeBoardView.contentTextView.resignFirstResponder()
             
             // 네비게이션 바 오른쪽 버튼 커스텀 -> 완료
             let finishButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(finishButtonTappedNew))
-            self.navigationItem.rightBarButtonItem = finishButton
-            self.navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
+            navigationItem.rightBarButtonItem = finishButton
+            navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
         }
-        self.navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
+        navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
     }
     
     // 새로운 메모 작성
     @objc func finishButtonTappedNew() {
+        navigationItem.rightBarButtonItem?.isEnabled = false
         
-        if isTitleTextViewEdited && isContentTextViewEdited {
+        if isTitleTextViewEdited, isContentTextViewEdited {
             guard let newTitleText = createNoticeBoardView.titleTextView.text else { return }
             guard let newContentText = createNoticeBoardView.contentTextView.text else { return }
             
@@ -202,38 +201,46 @@ private extension CreateNoticeBoardViewController {
                     print("게시판 생성 성공")
                 }
                 else {
+                    self.navigationItem.rightBarButtonItem?.isEnabled = true
                     print("게시판 생성 실패")
                 }
             }
+        }
+        else {
+            navigationItem.rightBarButtonItem?.isEnabled = true
         }
     }
     
     // 메모 내용 수정
     @objc func finishButtonTappedEdit() {
+        navigationItem.rightBarButtonItem?.isEnabled = false
         
         if let updateTitle = createNoticeBoardView.titleTextView.text, !updateTitle.isEmpty,
            let updateContent = createNoticeBoardView.contentTextView.text, !updateContent.isEmpty,
-           let index = editingMemoIndex {
-            
-            // 해당 인덱스의 메모 수정 코드 필요
+           let index = editingMemoIndex
+        {
             firebaseManager.updateNoticeBoard(at: index, title: updateTitle, content: updateContent) { success in
                 if success {
-                    // 수정 모드 종료
                     self.isEditingMode = false
+                    (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
                     self.navigationController?.popViewController(animated: true)
                     print("업데이트 완료")
                 }
+                else {
+                    self.navigationItem.rightBarButtonItem?.isEnabled = true
+                    print("업데이트 실패")
+                }
             }
-            
-            // 수정된 메모 내용을 업데이트하고 해당 셀만 리로드
-            (self.navigationController?.viewControllers.first as? NoticeBoardView)?.noticeBoardTableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
+        }
+        else {
+            navigationItem.rightBarButtonItem?.isEnabled = true
         }
     }
 }
 
 // MARK: - TextView 관련
+
 extension CreateNoticeBoardViewController: UITextViewDelegate {
-    
     // 애니메이션 함수
     func shakeAnimation(for view: UIView) {
         let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
@@ -245,11 +252,9 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 초기 호출
     func textViewDidBeginEditing(_ textView: UITextView) {
-        
         // 제목 textView
         if textView == createNoticeBoardView.titleTextView {
             if createNoticeBoardView.titleTextView.textColor == UIColor(color: .placeholder) {
-                
                 createNoticeBoardView.titleTextView.text = nil
                 createNoticeBoardView.titleTextView.textColor = UIColor.black
             }
@@ -258,7 +263,6 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         // 내용 textView
         if textView == createNoticeBoardView.contentTextView {
             if createNoticeBoardView.contentTextView.textColor == UIColor(color: .placeholder) {
-                
                 createNoticeBoardView.contentTextView.text = nil
                 createNoticeBoardView.contentTextView.textColor = UIColor.black
             }
@@ -267,14 +271,14 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
     
     // 입력 시 호출
     func textViewDidChange(_ textView: UITextView) {
-        
         if textView == createNoticeBoardView.titleTextView {
             let textCount = textView.text.count
             createNoticeBoardView.titleCountLabel.text = "(\(textCount)/16)"
             
             if textCount == 0 {
                 createNoticeBoardView.titleCountLabel.textColor = UIColor(color: .placeholder)
-            } else {
+            }
+            else {
                 createNoticeBoardView.titleCountLabel.textColor = UIColor.black
             }
         }
@@ -285,7 +289,8 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
             
             if textCount == 0 {
                 createNoticeBoardView.contentCountLabel.textColor = UIColor(color: .placeholder)
-            } else {
+            }
+            else {
                 createNoticeBoardView.contentCountLabel.textColor = UIColor.black
             }
         }
@@ -296,24 +301,23 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
         }
         
         // 내용 textView에 내용이 있는 경우
-        if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0, createNoticeBoardView.contentTextView.textColor == UIColor.black{
+        if createNoticeBoardView.contentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count != 0, createNoticeBoardView.contentTextView.textColor == UIColor.black {
             isContentTextViewEdited = true
         }
         
         // 제목과 내용이 모두 있으면 "완료" 버튼 활성화
-        self.navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
+        navigationItem.rightBarButtonItem?.isEnabled = isTitleTextViewEdited && isContentTextViewEdited
     }
     
     // 입력 종료 시 호출
     func textViewDidEndEditing(_ textView: UITextView) {
-        
         if createNoticeBoardView.titleTextView.text.isEmpty {
-            createNoticeBoardView.titleTextView.text =  "제목을 입력하세요."
+            createNoticeBoardView.titleTextView.text = "제목을 입력하세요."
             createNoticeBoardView.titleTextView.textColor = UIColor(color: .placeholder)
         }
         
         if createNoticeBoardView.contentTextView.text.isEmpty {
-            createNoticeBoardView.contentTextView.text =  "내용을 입력하세요."
+            createNoticeBoardView.contentTextView.text = "내용을 입력하세요."
             createNoticeBoardView.contentTextView.textColor = UIColor(color: .placeholder)
         }
     }
@@ -346,8 +350,8 @@ extension CreateNoticeBoardViewController: UITextViewDelegate {
 }
 
 // MARK: - addPictureButton 관련
+
 private extension CreateNoticeBoardViewController {
-    
     func buttonAction() {
         createNoticeBoardView.addPictureButton.addTarget(self, action: #selector(addPicture), for: .touchUpInside)
     }
@@ -366,9 +370,8 @@ private extension CreateNoticeBoardViewController {
 }
 
 extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let image = info[.originalImage] as? UIImage {
-            
 //            if isEditingMode {
 //                firebaseManager.newSelectedImage.append(image)
 //            }
@@ -388,13 +391,13 @@ extension CreateNoticeBoardViewController: UIImagePickerControllerDelegate {
                 self.createNoticeBoardView.galleryCollectionView.insertItems(at: [IndexPath(row: index, section: 0)])
                 self.updateAutolayoutCollectionView()
             }
-            
         }
         picker.dismiss(animated: true, completion: nil)
     }
 }
 
 // MARK: - 사진 CollectionView 관련
+
 extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return firebaseManager.newSelectedImage.count
@@ -407,10 +410,10 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegate, UICollectio
         cell.indexPath = indexPath
         return cell
     }
-    
 }
 
-//MARK: - CollectionView AutoLayout Update
+// MARK: - CollectionView AutoLayout Update
+
 extension CreateNoticeBoardViewController {
     func updateAutolayoutCollectionView() {
         DispatchQueue.main.async {
@@ -432,10 +435,9 @@ extension CreateNoticeBoardViewController {
 }
 
 extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
-    
     // CollectionView Cell의 사이즈
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (collectionView.bounds.width - 8)/5, height: (collectionView.bounds.width - 8)/5)
+        return CGSize(width: (collectionView.bounds.width - 8) / 5, height: (collectionView.bounds.width - 8) / 5)
     }
     
     // 수평
@@ -450,13 +452,12 @@ extension CreateNoticeBoardViewController: UICollectionViewDelegateFlowLayout {
 }
 
 // MARK: - Navigation 관련
-extension CreateNoticeBoardViewController: UINavigationControllerDelegate {
 
-}
+extension CreateNoticeBoardViewController: UINavigationControllerDelegate {}
 
 // MARK: - 사진 삭제 관련
+
 extension CreateNoticeBoardViewController: RemoveDelegate {
-    
     //    func removeLocal(_ indexPath: IndexPath) {
     //            // 로컬에서 이미지를 삭제하고 Collection View를 업데이트
     //            self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {
@@ -484,33 +485,30 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
     //
     //                // 재정렬된 이미지 딕셔너리를 업데이트
     //                self.firebaseManager.selectedImage = newSelectedImage
-    //                
+    //
     //                self.createNoticeBoardView.galleryCollectionView.reloadData()
     //            }
     //        }
 
-
     func removeLocal(_ indexPath: IndexPath) {
-        
-        guard let removeImage = self.firebaseManager.newSelectedImage[String(indexPath.row)] else {
+        guard let removeImage = firebaseManager.newSelectedImage[String(indexPath.row)] else {
             print("삭제할 이미지를 찾을 수 없음")
             return
         }
         
-        self.firebaseManager.removeSelecteImage.append(removeImage)
+        firebaseManager.removeSelecteImage.append(removeImage)
         
         // 딕셔너리에서 이미지를 삭제
-        self.firebaseManager.newSelectedImage.removeValue(forKey: String(indexPath.row))
+        firebaseManager.newSelectedImage.removeValue(forKey: String(indexPath.row))
         
         // Collection View에서 해당 아이템을 삭제
-        self.createNoticeBoardView.galleryCollectionView.performBatchUpdates {
+        createNoticeBoardView.galleryCollectionView.performBatchUpdates {
             self.createNoticeBoardView.galleryCollectionView.deleteItems(at: [indexPath])
         } completion: { [weak self] _ in
             guard let self = self else { return }
             
             // 변경된 인덱스를 추적하기 위한 배열
             var updatedIndexPaths: [IndexPath] = []
-            
             
             // 딕셔너리의 키를 재정렬하고, 업데이트할 인덱스를 계산
             let newSelectedImage = self.reorderSelectedImages(startingFrom: indexPath.row, updatedIndexPaths: &updatedIndexPaths)
@@ -528,12 +526,12 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
         var newIndex = 0
         
         // 삭제된 인덱스 이후의 아이템들을 업데이트하기 위한 인덱스 경로를 저장
-        for i in index..<self.firebaseManager.newSelectedImage.count {
+        for i in index ..< firebaseManager.newSelectedImage.count {
             updatedIndexPaths.append(IndexPath(item: i, section: 0))
         }
         
         // 정렬된 딕셔너리를 반복하며 새로운 인덱스를 할당
-        for (_, image) in self.firebaseManager.newSelectedImage.sorted(by: { Int($0.key)! < Int($1.key)! }) {
+        for (_, image) in firebaseManager.newSelectedImage.sorted(by: { Int($0.key)! < Int($1.key)! }) {
             newSelectedImage[String(newIndex)] = image
             newIndex += 1
         }
@@ -542,30 +540,29 @@ extension CreateNoticeBoardViewController: RemoveDelegate {
     }
     
     func removeCell(_ indexPath: IndexPath) {
-        
         // 게시글을 수정할 때
 //        if isEditingMode {
-//            
+//
 //            // storage에 이미지가 있을 때
 //            if let editingMemoIndex = editingMemoIndex,
 //               let imageList = firebaseManager.noticeBoards[editingMemoIndex].imageList,
 //               indexPath.row < imageList.count {
-//                
+//
 //                let imagePath = imageList[indexPath.row]
-//                
+//
 //                // Firebase Storage에서 이미지를 삭제
 //                firebaseManager.deleteImage(noticeBoardID: firebaseManager.noticeBoards[editingMemoIndex].id, imagePaths: [imagePath]) { success in
 //                    self.removeLocal(indexPath)
-//                    
+//
 //                }
 //            }
-//            
+//
 //            // storage에 이미지가 없을 때
 //            else {
 //                removeLocal(indexPath)
 //            }
 //        }
-//        
+//
 //        // 처음 게시글을 작성할 때
 //        else {
 //            removeLocal(indexPath)
