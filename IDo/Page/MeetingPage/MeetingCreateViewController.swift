@@ -282,9 +282,8 @@ class MeetingCreateViewController: UIViewController {
     }
 }
 
-// MARK: - 이미지 피커 관련
+// MARK: - 이미지 편집 관련
 
-// MeetingCreateViewController.swift 내부
 
 extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -305,7 +304,7 @@ extension MeetingCreateViewController: UIImagePickerControllerDelegate, UINaviga
 
 extension MeetingCreateViewController: TOCropViewControllerDelegate {
      func cropViewController(_ cropViewController: TOCropViewController, didCropTo image: UIImage, with cropRect: CGRect, angle: Int) {
-        // 편집된 이미지 버튼에 할다
+        // 편집된 이미지 버튼에 할당
         profileImageButton.setImage(image, for: .normal)
         profileImageButton.profileImageChanged = true
         
