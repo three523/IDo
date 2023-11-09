@@ -57,6 +57,7 @@ class CategoryViewController: UIViewController {
         view.backgroundColor = .white
 
         setCollectionView()
+        navigationBar()
     }
 
     func setCollectionView() {
@@ -102,5 +103,33 @@ extension CategoryViewController: UICollectionViewDelegate, UICollectionViewData
         TemporaryManager.shared.categoryData = selectedCategory
 
         navigationController?.pushViewController(meetingVC, animated: true)
+    }
+}
+
+private extension CategoryViewController {
+    
+    func HomeViewTopControllerSet() {
+        
+        // 네비게이션 LargeTitle 비활성화 및 title 입력
+        navigationController?.navigationBar.prefersLargeTitles = false
+    }
+    func navigationBar() {
+        
+        // 네비게이션 라벨 생성
+        let label = UILabel()
+        label.text = "i들아 모여라"
+        label.font = UIFont.headFont(.xSmall , weight: .bold)
+        label.textColor = UIColor(color: .borderSelected)
+        let containerView = UIView(); containerView.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(7) // 또는 적절한 값을 사용
+            make.top.bottom.trailing.equalToSuperview()
+        }
+        
+        // 백 버튼 아이템 생성 및 설정
+        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        
+        navigationController?.navigationBar.tintColor = UIColor.black
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: containerView)
     }
 }
