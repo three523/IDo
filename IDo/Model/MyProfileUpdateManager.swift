@@ -57,8 +57,7 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
             }
         }
         
-        let clubRootUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("rootUser")
-        if idoUser.id == club.rootUser.id {
+        let clubRootUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("rootUser")        if idoUser.id == club.rootUser.id {
             clubRootUserRef.setValue(idoUser.toUserSummary.dictionary) { error, _ in
                 if let error {
                     print(error.localizedDescription)
