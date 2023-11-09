@@ -54,6 +54,7 @@ class CreateNoticeBoardViewController: UIViewController {
         
         navigationControllerSet()
         navigationBarButtonAction()
+        updateAutolayoutCollectionView()
         
         buttonAction()
         
