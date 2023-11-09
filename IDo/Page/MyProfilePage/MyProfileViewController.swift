@@ -591,34 +591,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
             
         // 로그아웃 버튼 추가
         let deleteIDAction = UIAlertAction(title: "회원탈퇴", style: .destructive) { [weak self] _ in
-                
-            let userDatabaseManager = FBDatabaseManager<IDoUser>(refPath: ["Users"])
-            guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
-                
-            userDatabaseManager.deleteData(data: user) { [weak self] success in
-                if success {
-                    if let user = Auth.auth().currentUser {
-                        user.delete { [self] error in
-                            if let error = error {
-                                print("Firebase Error : ", error)
-                            } else {
-                                print("회원탈퇴 성공!")
-                                DispatchQueue.main.async {
-                                    if let navigationController = self?.navigationController {
-                                        navigationController.popToRootViewController(animated: true)
-                                        let loginViewController = LoginViewController()
-                                        loginViewController.hidesBottomBarWhenPushed = true
-                                        loginViewController.modalPresentationStyle = .fullScreen
-                                        self?.present(loginViewController, animated: true, completion: nil)
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        print("로그인 정보가 존재하지 않습니다")
-                    }
-                }
-            }
+            self?.showPasswordAlert()
         }
         alertController.addAction(deleteIDAction)
             
@@ -641,6 +614,77 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
         pickerContainer.addSubview(toolBar)
         view.addSubview(pickerContainer)
         sender.becomeFirstResponder()
+    }
+    
+    func showPasswordAlert() {
+        // AlertController 생성
+        let alertController = UIAlertController(title: "알림", message: "비밀번호를 입력해주세요.", preferredStyle: .alert)
+        
+        // 비밀번호 입력 필드 추가
+        alertController.addTextField { textField in
+            textField.placeholder = "비밀번호"
+            textField.isSecureTextEntry = true // 비밀번호 입력 필드로 설정
+        }
+        
+        // 확인 버튼 액션
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak alertController] _ in
+            guard let alertController = alertController, let passwordField = alertController.textFields?.first else { return }
+            // 여기에서 사용자가 입력한 비밀번호 처리
+            guard let password = passwordField.text else { return }
+            let userDatabaseManager = FBDatabaseManager<IDoUser>(refPath: ["Users"])
+            guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
+            MyProfile.shared.deleteAllUserData() { success in
+                if success {
+                    userDatabaseManager.deleteData(data: user) { [weak self] success in
+                        if success {
+                            if let user = Auth.auth().currentUser, let email = user.email {
+                                let credential: AuthCredential = EmailAuthProvider.credential(withEmail: email, password: password)
+                                
+                                user.reauthenticate(with: credential, completion: { (result, error) in
+                                    if let error = error {
+                                        // 재인증 오류 처리
+                                        print(error.localizedDescription)
+                                    } else {
+                                        // 재인증이 성공적으로 완료되었다면 민감한 작업을 계속합니다.
+                                        user.delete { [self] error in
+                                            if let error = error {
+                                                print("Firebase Error : ", error)
+                                            } else {
+                                                
+                                                print("회원탈퇴 성공!")
+                                                DispatchQueue.main.async {
+                                                    if let navigationController = self?.navigationController {
+                                                        navigationController.popToRootViewController(animated: true)
+                                                        let loginViewController = LoginViewController()
+                                                        loginViewController.hidesBottomBarWhenPushed = true
+                                                        loginViewController.modalPresentationStyle = .fullScreen
+                                                        self?.present(loginViewController, animated: true, completion: nil)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                })
+                                
+                            } else {
+                                print("로그인 정보가 존재하지 않습니다")
+                            }
+                        }
+                    }
+                }
+            }
+            print("입력된 비밀번호: \(String(describing: password))")
+        }
+        
+        // 취소 버튼 액션
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        // 버튼을 AlertController에 추가
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        // AlertController 표시
+        present(alertController, animated: true, completion: nil)
     }
 }
 
