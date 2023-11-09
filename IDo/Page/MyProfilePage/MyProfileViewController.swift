@@ -591,37 +591,54 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
             
         // 로그아웃 버튼 추가
         let deleteIDAction = UIAlertAction(title: "회원탈퇴", style: .destructive) { [weak self] _ in
-                
+            self?.showPasswordAlert()
+        }
+        alertController.addAction(deleteIDAction)
+            
+        // 알림창 표시
+        present(alertController, animated: true, completion: nil)
+    }
+
+    @objc func onPickDone() {
+        choiceEnjoyTextField.resignFirstResponder() /// 피커뷰 내림
+    }
+
+    @objc func onPickCancel() {
+        choiceEnjoyTextField.resignFirstResponder() /// 피커뷰 내림
+    }
+
+    @objc func choiceEnjoyButtonTapped(_ sender: UIButton) {
+        sender.becomeFirstResponder() // PickerView를 활성화
+        let pickerContainer = UIView()
+        pickerContainer.addSubview(choicePickerView)
+        pickerContainer.addSubview(toolBar)
+        view.addSubview(pickerContainer)
+        sender.becomeFirstResponder()
+    }
+    
+    func showPasswordAlert() {
+        // AlertController 생성
+        let alertController = UIAlertController(title: "알림", message: "비밀번호를 입력해주세요.", preferredStyle: .alert)
+        
+        // 비밀번호 입력 필드 추가
+        alertController.addTextField { textField in
+            textField.placeholder = "비밀번호"
+            textField.isSecureTextEntry = true // 비밀번호 입력 필드로 설정
+        }
+        
+        // 확인 버튼 액션
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { [weak alertController] _ in
+            guard let alertController = alertController, let passwordField = alertController.textFields?.first else { return }
+            // 여기에서 사용자가 입력한 비밀번호 처리
+            guard let password = passwordField.text else { return }
             let userDatabaseManager = FBDatabaseManager<IDoUser>(refPath: ["Users"])
             guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
-            
-            // 자기가 가입한 클럽 리스트들을 불러옴
-//            if let myClubs = MyProfile.shared.myUserInfo?.myClubList {
-//                for club in myClubs {
-//                    // 게시글 삭제 로직 + 게시글을 불러오는 로직
-//                    let firebaseManager = FirebaseManager(club: club)
-//                    
-//                    // 그 클럽 안에 있는 게시글 리스틀
-//                    for (index, noticeBoard) in firebaseManager.noticeBoards.enumerated().reversed() {
-//                        if noticeBoard.rootUser.id == MyProfile.shared.myUserInfo?.id {
-//                            firebaseManager.deleteNoticeBoard(at: index) { success in
-//                                if success {
-//                                    print("게시글 삭제 성공: \(noticeBoard.id)")
-//                                } else {
-//                                    print("게시글 삭제 실패: \(noticeBoard.id)")
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-            //            }
             MyProfile.shared.deleteAllUserData() { success in
                 if success {
                     userDatabaseManager.deleteData(data: user) { [weak self] success in
                         if success {
-                            if let user = Auth.auth().currentUser {
-                                
-                                let credential: AuthCredential = EmailAuthProvider.credential(withEmail: user.email ?? "0987@0987.com", password: "1q2w3e!!")
+                            if let user = Auth.auth().currentUser, let email = user.email {
+                                let credential: AuthCredential = EmailAuthProvider.credential(withEmail: email, password: password)
                                 
                                 user.reauthenticate(with: credential, completion: { (result, error) in
                                     if let error = error {
@@ -656,28 +673,18 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
                     }
                 }
             }
+            print("입력된 비밀번호: \(String(describing: password))")
         }
-        alertController.addAction(deleteIDAction)
-            
-        // 알림창 표시
+        
+        // 취소 버튼 액션
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        // 버튼을 AlertController에 추가
+        alertController.addAction(confirmAction)
+        alertController.addAction(cancelAction)
+        
+        // AlertController 표시
         present(alertController, animated: true, completion: nil)
-    }
-
-    @objc func onPickDone() {
-        choiceEnjoyTextField.resignFirstResponder() /// 피커뷰 내림
-    }
-
-    @objc func onPickCancel() {
-        choiceEnjoyTextField.resignFirstResponder() /// 피커뷰 내림
-    }
-
-    @objc func choiceEnjoyButtonTapped(_ sender: UIButton) {
-        sender.becomeFirstResponder() // PickerView를 활성화
-        let pickerContainer = UIView()
-        pickerContainer.addSubview(choicePickerView)
-        pickerContainer.addSubview(toolBar)
-        view.addSubview(pickerContainer)
-        sender.becomeFirstResponder()
     }
 }
 
