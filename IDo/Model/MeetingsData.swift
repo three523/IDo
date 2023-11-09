@@ -57,7 +57,7 @@ class MeetingsData {
                 self.update()
                 completion(isSuccess)
                 guard let index = myClubList.firstIndex(where: { $0.id == club.id }) else { return }
-                myClubList[index].imageURL = "\(club.category)/meeting_images/\(club.id).png"
+                myClubList[index].imageURL = "\(club.category)/meeting_images/\(club.id)"
                 MyProfile.shared.update(myClubList: myClubList)
             }
         }
