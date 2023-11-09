@@ -595,6 +595,27 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
             let userDatabaseManager = FBDatabaseManager<IDoUser>(refPath: ["Users"])
             guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
             
+            // 자기가 가입한 클럽 리스트들을 불러옴
+//            if let myClubs = MyProfile.shared.myUserInfo?.myClubList {
+//                for club in myClubs {
+//                    // 게시글 삭제 로직 + 게시글을 불러오는 로직
+//                    let firebaseManager = FirebaseManager(club: club)
+//                    
+//                    // 그 클럽 안에 있는 게시글 리스틀
+//                    for (index, noticeBoard) in firebaseManager.noticeBoards.enumerated().reversed() {
+//                        if noticeBoard.rootUser.id == MyProfile.shared.myUserInfo?.id {
+//                            firebaseManager.deleteNoticeBoard(at: index) { success in
+//                                if success {
+//                                    print("게시글 삭제 성공: \(noticeBoard.id)")
+//                                } else {
+//                                    print("게시글 삭제 실패: \(noticeBoard.id)")
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+            MyProfile.shared.deleteAllUserData()
             userDatabaseManager.deleteData(data: user) { [weak self] success in
                 if success {
                     if let user = Auth.auth().currentUser {
@@ -602,23 +623,7 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
                             if let error = error {
                                 print("Firebase Error : ", error)
                             } else {
-                                if let myClubs = MyProfile.shared.myUserInfo?.myClubList {
-                                    for club in myClubs {
-                                        // 게시글 삭제 로직
-                                        let firebaseManager = FirebaseManager(club: club)
-                                        for (index, noticeBoard) in firebaseManager.noticeBoards.enumerated().reversed() {
-                                            if noticeBoard.rootUser.id == user.uid {
-                                                firebaseManager.deleteNoticeBoard(at: index) { success in
-                                                    if success {
-                                                        print("게시글 삭제 성공: \(noticeBoard.id)")
-                                                    } else {
-                                                        print("게시글 삭제 실패: \(noticeBoard.id)")
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                
                                 print("회원탈퇴 성공!")
                                 DispatchQueue.main.async {
                                     if let navigationController = self?.navigationController {

@@ -161,4 +161,15 @@ class FBDatabaseManager<T: Codable & Identifier> {
             completion(true)
         }
     }
+    
+    func deleteValue<V: Codable & Identifier>(value: V, completion: ((Bool) -> Void)? = nil) {
+        ref.child(value.id).removeValue { error, _ in
+            if let error = error {
+                print(error.localizedDescription)
+                completion?(false)
+            } else {
+                completion?(true)
+            }
+        }
+    }
 }

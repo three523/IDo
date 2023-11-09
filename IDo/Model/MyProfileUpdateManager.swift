@@ -10,6 +10,7 @@ import FirebaseDatabase
 class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
     private let defaultRef = Database.database().reference()
     
+    // MARK: - 유저 업데이트
     func updateUser(idoUser: IDoUser, completion: ((Bool) -> Void)?) {
         updateValue(value: idoUser) { isSuccess in
             if isSuccess {
@@ -106,6 +107,87 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
         commentRef.setValue(idoUser.toUserSummary.dictionary) { error, _ in
             if let error {
                 print(error.localizedDescription)
+            }
+        }
+    }
+    
+    // MARK: - 유저 삭제
+    func deleteUser(idoUser: IDoUser, completion: ((Bool) -> Void)?) {
+        deleteValue(value: idoUser) { success in
+            if success {
+                idoUser.myClubList?.forEach({ club in
+                    self.deleteClub(idoUser: idoUser, club: club)
+                })
+                idoUser.myNoticeBoardList?.forEach({ noticeBoard in
+                    self.deleteNoticeBoard(noticeBoard: noticeBoard, idoUser: idoUser)
+                })
+                idoUser.myCommentList?.forEach({ comment in
+                    self.deleteComment(comment: comment, idoUser: idoUser)
+                    
+                })
+                completion?(true)
+            }
+        }
+    }
+    
+    private func deleteClub(idoUser: IDoUser, club: Club, completion: ((Bool) -> Void)? = nil) {
+        let clubUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("userList")
+        
+        clubUserRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+            if var userList = currentData.value as? [[String: Any]] {
+                userList.removeAll { $0["id"] as? String == idoUser.id }
+                currentData.value = userList
+                return TransactionResult.success(withValue: currentData)
+            }
+            return TransactionResult.success(withValue: currentData)
+        }) { error, _, _ in
+            if let error = error {
+                print(error.localizedDescription)
+                completion?(false)
+            } else {
+                completion?(true)
+            }
+        }
+        
+        let clubRootUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("rootUser")
+        clubRootUserRef.getData { error, dataSnapShot in
+            if let snapshotValue = dataSnapShot?.value as? [String: Any],
+               let rootUserId = snapshotValue["id"] as? String, rootUserId == idoUser.id {
+                clubRootUserRef.removeValue { error, _ in
+                    if let error = error {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func deleteNoticeBoard(noticeBoard: NoticeBoard, idoUser: IDoUser) {
+        let noticeBoardRef = defaultRef.child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
+        
+        noticeBoardRef.child("rootUser").getData { error, dataSnapShot in
+            if let snapshotValue = dataSnapShot?.value as? [String: Any],
+               let rootUserId = snapshotValue["id"] as? String, rootUserId == idoUser.id {
+                noticeBoardRef.child("rootUser").removeValue { error, _ in
+                    if let error = error {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func deleteComment(comment: Comment, idoUser: IDoUser) {
+        let commentRef = defaultRef.child("CommentList").child(comment.noticeBoardID).child(comment.id)
+        
+        commentRef.child("writeUser").getData { error, dataSnapShot in
+            if let snapshotValue = dataSnapShot?.value as? [String: Any],
+               let writerUserId = snapshotValue["id"] as? String, writerUserId == idoUser.id {
+                commentRef.child("writeUser").removeValue { error, _ in
+                    if let error = error {
+                        print(error.localizedDescription)
+                    }
+                }
             }
         }
     }
