@@ -37,6 +37,7 @@ class MeetingViewController: UIViewController {
         setupTableView()
         navigationItem()
         setupNoMeetingsView()
+        setupEmptyMessageView()
         if let data = TemporaryManager.shared.categoryData, // 카테고리 Index에 따른 제목 표시
            let index = TemporaryManager.shared.categoryIndex,
            index < TemporaryManager.shared.meetingTitle.count && index < TemporaryManager.shared.meetingDate.count
@@ -50,9 +51,10 @@ class MeetingViewController: UIViewController {
         super.viewWillAppear(animated)
         meetingsData.readClub { [weak self] _ in
             guard let self else { return }
-            self.tableView.reloadData()
-            self.setupEmptyMessageView()
-            self.updateNoMeetingsViewVisibility()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.updateNoMeetingsViewVisibility()
+            }
         }
     }
 
@@ -82,7 +84,7 @@ class MeetingViewController: UIViewController {
 
     private func updateNoMeetingsViewVisibility() {
         if meetingsData.clubs.isEmpty {
-            noMeetingsView.isHidden = true // 기존 noMeetingsView를 숨깁니다.
+//            noMeetingsView.isHidden = true // 기존 noMeetingsView를 숨깁니다.
             emptyMessageView.isHidden = false // EmptyMessageStackView를 보입니다.
         } else {
             emptyMessageView.isHidden = true // 회의가 있으면 EmptyMessageStackView를 숨깁니다.
