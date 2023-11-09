@@ -12,7 +12,7 @@ class FBURLCache {
     static let shared = FBURLCache()
     private let urlCache: URLCache
     private let imageCache = NSCache<NSString, UIImage>()
-    private var downloadTasks: [String: URLSessionDataTask] = [:]
+    private var downloadTasks: [IndexPath: URLSessionDataTask] = [:]
     
     private init() {
         let cacheSizeMemory = 100 * 1024 * 1024
@@ -22,9 +22,9 @@ class FBURLCache {
         self.urlCache = URLCache.shared
     }
     
-    func cancelDownloadURL(storagePath: String) {
-        downloadTasks[storagePath]?.cancel()
-        downloadTasks[storagePath] = nil
+    func cancelDownloadURL(indexPath: IndexPath) {
+        downloadTasks[indexPath]?.cancel()
+        downloadTasks[indexPath] = nil
     }
     
     //TODO: 코드를 메서드를 어떻게 줄일지 생각해보기
@@ -107,7 +107,7 @@ class FBURLCache {
         var image: UIImage
     }
     
-    func downloadURL(storagePath: String, completion: @escaping (Result<ImageIndex,Error>) -> Void) {
+    func downloadURL(storagePath: String, indexPath: IndexPath? = nil,completion: @escaping (Result<ImageIndex,Error>) -> Void) {
         
 //        if let image = imageCache.object(forKey: storagePath as NSString) {
 //            completion(.success(image))
@@ -151,11 +151,13 @@ class FBURLCache {
         }
     }
     
-    private func downloadImageData(request: URLRequest, storagePath: String, completion: @escaping (Result<Data,Error>) -> Void) {
+    private func downloadImageData(request: URLRequest, storagePath: String, indexPath: IndexPath? = nil, completion: @escaping (Result<Data,Error>) -> Void) {
         let urlTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             
             defer {
-                self?.downloadTasks.removeValue(forKey: storagePath)
+                if let indexPath {
+                    self?.downloadTasks.removeValue(forKey: indexPath)
+                }
             }
             
             if let error {
@@ -171,7 +173,9 @@ class FBURLCache {
                 self?.imageCache.setObject(image, forKey: storagePath as NSString)
             }
         }
-        downloadTasks[storagePath] = urlTask
+        if let indexPath {
+            downloadTasks[indexPath] = urlTask
+        }
         urlTask.resume()
     }
 }
