@@ -58,6 +58,10 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
         let clubRootUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("rootUser")
         
         clubRootUserRef.getData { error, dataSnapShot in
+            if let error {
+                print(error.localizedDescription)
+                return
+            }
             guard let dataSnapShot = dataSnapShot?.value else {
                 print("데이터가 존재하지 않습니다.")
                 return
