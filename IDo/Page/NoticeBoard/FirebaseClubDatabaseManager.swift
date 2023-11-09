@@ -17,7 +17,10 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 print(error.localizedDescription)
                 return
             }
-            self.removeUserClub(user: club.rootUser, club: club)
+            let userList = club.userList ?? []
+            for user in userList {
+                self.removeUserClub(user: user, removeClub: club)
+            }
             self.removeNoticeBoard(club: club)
             if let imagePath = club.imageURL {
                 self.removeImage(path: imagePath)
@@ -88,7 +91,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
         }
     }
 
-    private func removeUserClub(user: UserSummary, club: Club) {
+    private func removeUserClub(user: UserSummary, removeClub: Club) {
         let ref = Database.database().reference().child("Users").child(user.id)
         let userClubListRef = ref.child("myClubList")
         userClubListRef.getData { error, dataSnapShot in
@@ -99,12 +102,12 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             guard let value = dataSnapShot?.value as? [Any] else { return }
             var userClubList = [Club]()
             value.forEach { dict in
-                if let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: dict) {
-                    userClubList.append(club)
+                if let userClub: Club = DataModelCodable.decodingSingleDataSnapshot(value: dict) {
+                    if userClub.id == removeClub.id { return }
+                    userClubList.append(userClub)
                 }
             }
-            userClubList.removeAll(where: { $0.id == club.id })
-            ref.updateChildValues(["myClubList": userClubList.dictionary])
+            ref.updateChildValues(["myClubList": userClubList.asArrayDictionary()])
         }
     }
 

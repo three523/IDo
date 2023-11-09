@@ -174,23 +174,8 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         if let imageURL = club.imageURL {
             cell.indexPath = indexPath
             FBURLCache.shared.cancelDownloadURL(indexPath: indexPath)
-//            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
-//                switch result {
-//                case .success(let image):
-//                    DispatchQueue.main.async {
-//                        cell.basicImageView.image = image
-//                    }
-//
-//                case .failure(let error):
-//                    print(error)
-//                }
-//            }
             meetingsData.loadImageResize(storagePath: imageURL, clubId: club.id, imageSize: .small) { [weak self] result in
                 DispatchQueue.main.async {
-//                    guard let self = self,
-//                          let cell = tableView.cellForRow(at: indexPath) as? BasicCell else {
-//                        return
-//                    }
                     switch result {
                     case .success(let image):
                         cell.basicImageView.image = image
