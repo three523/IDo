@@ -38,6 +38,31 @@ class MeetingsData {
         }
     }
     
+    func addClubImageResize(club: Club, image: UIImage?, completion: @escaping (Bool) -> Void) {
+        let ref = defaultRef.child(club.id)
+        
+        ref.setValue(club.dictionary) { error, _ in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+            self.clubs.append(club)
+            var myClubList = MyProfile.shared.myUserInfo?.myClubList ?? []
+            myClubList.append(club)
+            MyProfile.shared.update(myClubList: myClubList)
+            guard let image else {
+                print("image가 없습니다.")
+                return
+            }
+            self.saveResizeImage(clubImage: image, club: club){ isSuccess in
+                self.update()
+                completion(isSuccess)
+                guard let index = myClubList.firstIndex(where: { $0.id == club.id }) else { return }
+                myClubList[index].imageURL = "\(club.category)/meeting_images/\(club.id).png"
+                MyProfile.shared.update(myClubList: myClubList)
+            }
+        }
+    }
+    
     func readClub(completion: ((Bool) -> Void)? = nil) {
         defaultRef.getData { error, datasnapshot in
             if let error = error {
@@ -57,8 +82,51 @@ class MeetingsData {
         }
     }
     
+    func saveResizeImage(clubImage: UIImage, club: Club, completion: @escaping (Bool) -> Void) {
+        let imageSize: [ImageSize] = [.small,.medium]
+        let storageRef = Storage.storage().reference().child(category).child("meeting_images").child(club.id)
+        for size in imageSize {
+            let storageSizeRef = storageRef.child(size.rawValue)
+            var image = UIImage()
+            var imageData: Data?
+            if size == .small {
+                image = clubImage.resizeImage(targetSize: size.size)
+                imageData = image.pngData()
+            } else {
+                imageData = clubImage.jpegData(compressionQuality: 0.5)
+            }
+            guard let imageData else {
+                print("data가 없습니다.")
+                return
+            }
+            storageSizeRef.putData(imageData) { _, error in
+                if let error = error {
+                    print("Failed to upload image to Firebase Storage:", error)
+                    completion(false)
+                    return
+                }
+                self.updateImageURL(club: club, storageRef: storageRef.fullPath)
+                completion(true)
+            }
+        }
+    }
+    
     func saveImage(imageData: Data?, club: Club, completion: @escaping (Bool) -> Void) {
         if let imageData = imageData {
+//            let imageSize: [ImageSize] = [.small,.medium]
+//            let storageRef = Storage.storage().reference().child(category).child("meeting_images").child(club.id)
+//            for size in imageSize {
+//                let storageSizeRef = storageRef.child(size.rawValue)
+//                storageSizeRef.putData(imageData) { _, error in
+//                    if let error = error {
+//                        print("Failed to upload image to Firebase Storage:", error)
+//                        completion(false)
+//                        return
+//                    }
+//                    self.updateImageURL(club: club, storageRef: storageRef.fullPath)
+//                    completion(true)
+//                }
+//            }
             let storageRef = Storage.storage().reference().child(category).child("meeting_images").child("\(club.id).png")
             
             storageRef.putData(imageData, metadata: nil) { _, error in
@@ -89,6 +157,22 @@ class MeetingsData {
         }
     }
     
+    func updateClubResize(club: Club, clubImage: UIImage, completion: @escaping (Bool) -> Void) {
+        
+        defaultRef.updateChildValues([club.id: club.dictionary]) { error, _ in
+            if let error = error {
+                print(error)
+                return
+            }
+            self.saveResizeImage(clubImage: clubImage, club: club){ isSuccess in
+                if isSuccess {
+                    completion(true)
+                    print("업데이트 성공?")
+                }
+            }
+        }
+    }
+    
     func updateImageURL(club: Club, storageRef: String) {
         let ref = defaultRef.child(club.id)
         ref.updateChildValues(["imageURL": storageRef]) { error, _ in
@@ -105,6 +189,21 @@ class MeetingsData {
     func loadImage(storagePath: String, clubId: String ,completion: @escaping (Result<UIImage, Error>) -> Void) {
         let storageRefPath =
         Storage.storage().reference().child(storagePath).fullPath
+        FBURLCache.shared.downloadURL(storagePath: storageRefPath) { result in
+            switch result {
+            case .success(let image):
+                self.clubImages[clubId] = image
+                completion(.success(image))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func loadImageResize(storagePath: String, clubId: String ,imageSize: ImageSize ,completion: @escaping (Result<UIImage, Error>) -> Void) {
+        let storageRefPath =
+        Storage.storage().reference().child(storagePath).child(imageSize.rawValue).fullPath
+        
         FBURLCache.shared.downloadURL(storagePath: storageRefPath) { result in
             switch result {
             case .success(let image):

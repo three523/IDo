@@ -84,9 +84,22 @@ final class NoticeBoardDetailViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         guard let noticeBoard = firebaseNoticeBoardManager.noticeBoards.first(where: { $0.id == noticeBoard.id }) else { return }
         self.noticeBoard = noticeBoard
-        print(noticeBoard)
         updateNoticeBoardSetup()
-        commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+        firebaseCommentManager.readDatas { result in
+            switch result {
+            case .success(let commentList):
+                DispatchQueue.main.async {
+                    if commentList.isEmpty {
+                        self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
+                    } else {
+                        self.commentTableView.reloadSections(IndexSet(integer: 1), with: .none)
+                    }
+//                    self.commentTableView.reloadData()
+                }
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -138,7 +151,6 @@ private extension NoticeBoardDetailViewController {
         noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
         
         noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList?.count ?? 0)
-        
         firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
             let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
             self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)
@@ -302,59 +314,10 @@ private extension NoticeBoardDetailViewController {
     }
     
     func tableViewSetup() {
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(commentLongPress))
-        commentTableView.addGestureRecognizer(longPress)
         commentTableView.register(CommentTableViewCell.self, forCellReuseIdentifier: CommentTableViewCell.identifier)
         commentTableView.register(EmptyCountTableViewCell.self, forCellReuseIdentifier: EmptyCountTableViewCell.identifier)
         commentTableView.delegate = self
         commentTableView.dataSource = self
-    }
-    
-    @objc func commentLongPress(sender: UILongPressGestureRecognizer) {
-        if sender.state == .began {
-            let touchPoint = sender.location(in: commentTableView)
-            if let indexPath = commentTableView.indexPathForRow(at: touchPoint) {
-                let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-                
-                let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-                let removeAction = UIAlertAction(title: "댓글 삭제", style: .destructive) { _ in
-                    let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
-                    guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                    myCommentList.removeAll(where: { $0.id == removeCommnet.id })
-                    MyProfile.shared.update(myCommentList: myCommentList)
-                    self.firebaseCommentManager.deleteData(data: removeCommnet) { isComplete in
-                        if self.firebaseCommentManager.modelList.isEmpty {
-                            self.commentTableView.reloadData()
-                        } else {
-                            self.commentTableView.beginUpdates()
-                            self.commentTableView.deleteRows(at: [indexPath], with: .none)
-                            self.commentTableView.endUpdates()
-                        }
-                    }
-                }
-                let updateAction = UIAlertAction(title: "댓글 수정", style: .default) { _ in
-                    let comment = self.firebaseCommentManager.modelList[indexPath.row]
-                    let vc = CommentUpdateViewController(comment: comment)
-                    vc.commentUpdate = { [weak self] updateComment in
-                        guard let self else { return }
-                        guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                        if myCommentList.update(element: updateComment) == nil { return }
-                        MyProfile.shared.update(myCommentList: myCommentList)
-                        self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
-                            self.commentTableView.reloadRows(at: [indexPath], with: .none)
-                        }
-                    }
-                    vc.hidesBottomBarWhenPushed = true
-                    vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
-                
-                alert.addAction(cancelAction)
-                alert.addAction(updateAction)
-                alert.addAction(removeAction)
-                present(alert, animated: true)
-            }
-        }
     }
     
     func addCommentSetup() {
@@ -466,7 +429,9 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                         if myCommentList.update(element: updateComment) == nil { return }
                         MyProfile.shared.update(myCommentList: myCommentList)
                         self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
-                            self.commentTableView.reloadRows(at: [indexPath], with: .none)
+                            DispatchQueue.main.async {
+                                self.commentTableView.reloadRows(at: [indexPath], with: .none)
+                            }
                         }
                     }
                     vc.hidesBottomBarWhenPushed = true

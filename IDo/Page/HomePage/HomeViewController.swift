@@ -148,7 +148,7 @@ class HomeViewController : UIViewController {
     
     func getUserClubImage(referencePath: String, imageSize: ImageSize, completion: ((UIImage) -> Void)? = nil) {
         // 카테고리 -> meetings_images -> referencePath
-        let storageRef = Storage.storage().reference().child(referencePath)
+        let storageRef = Storage.storage().reference().child(referencePath).child(imageSize.rawValue)
         FBURLCache.shared.downloadURL(storagePath: storageRef.fullPath) { result in
             switch result {
             case .success(let image):
@@ -188,7 +188,7 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
             cell.memberLabel.text = "멤버 \((currentUserClubList[indexPath.row].userList?.count ?? 0))"
             
             guard let imageReferencePath = currentUserClubList[indexPath.row].imageURL else { return cell }
-            getUserClubImage(referencePath: imageReferencePath, imageSize: .medium) { image in
+            getUserClubImage(referencePath: imageReferencePath, imageSize: .small) { image in
                 DispatchQueue.main.async {
                     cell.basicImageView.image = image
                 }
@@ -200,12 +200,10 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let currentUserClubList = MyProfile.shared.myUserInfo?.myClubList,
-            let clubImagePath = currentUserClubList[indexPath.row].imageURL else { return }
-        getUserClubImage(referencePath: clubImagePath, imageSize: .medium) { image in
-            let noticeBoardVC = NoticeMeetingController(club: currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!, clubImage: image)
-            self.navigationController?.pushViewController(noticeBoardVC, animated: true)
-        }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? BasicCell else { return }
+        guard let currentUserClubList = MyProfile.shared.myUserInfo?.myClubList else { return }
+        let noticeBoardVC = NoticeMeetingController(club: currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!)
+        navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 }
 

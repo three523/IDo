@@ -78,13 +78,35 @@ private extension NoticeBoardDetailView {
 
 extension NoticeBoardDetailView {
     func loadingNoticeBoardImages(imageCount: Int) {
-        for index in 0..<imageCount {
-            let imageView = createLodingImageView()
-            DispatchQueue.main.async {
-                self.imageStackView.addArrangedSubview(imageView)
+        let appendImageCount = imageCount - imageStackView.arrangedSubviews.count
+        if appendImageCount == 0 {
+            return
+        } else if appendImageCount > 0 {
+            appendNoticeBoardImageView(count: appendImageCount)
+        } else {
+            let count = abs(appendImageCount)
+            removeNoticeBoardImageView(count: count)
+        }
+    }
+    
+    private func appendNoticeBoardImageView(count: Int) {
+        DispatchQueue.main.async {
+            for _ in 0..<count {
+                let imageView = self.createLodingImageView()
+                DispatchQueue.main.async {
+                    self.imageStackView.addArrangedSubview(imageView)
+                }
+                imageView.snp.makeConstraints { make in
+                    make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
+                }
             }
-            imageView.snp.makeConstraints { make in
-                make.height.equalTo(imageView.snp.width).multipliedBy(0.9)
+        }
+    }
+    
+    private func removeNoticeBoardImageView(count: Int) {
+        DispatchQueue.main.async {
+            for _ in 0..<count {
+                self.imageStackView.arrangedSubviews.last?.removeFromSuperview()
             }
         }
     }
