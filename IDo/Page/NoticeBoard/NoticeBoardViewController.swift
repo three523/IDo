@@ -85,8 +85,8 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
         cell.contentLabel.text = noticeBoard.content
         cell.timeLabel.text = noticeBoard.createDate.toDate?.diffrenceDate ?? noticeBoard.createDate
         if let profileImageURL = noticeBoard.rootUser.profileImagePath {
-            FBURLCache.shared.cancelDownloadURL(storagePath: profileImageURL)
-            cell.storagePath = profileImageURL
+            FBURLCache.shared.cancelDownloadURL(indexPath: indexPath)
+            cell.indexPath = indexPath
             firebaseManager.getUserImage(referencePath: profileImageURL, imageSize: .medium) { downloadedImage in
                 if let image = downloadedImage {
                     DispatchQueue.main.async {
