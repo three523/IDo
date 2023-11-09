@@ -72,6 +72,7 @@ class MeetingsData {
             }
             guard let value = datasnapshot?.value as? [String: Any] else {
                 print("값이 없습니다")
+                self.clubs = []
                 completion?(false)
                 return
             }
