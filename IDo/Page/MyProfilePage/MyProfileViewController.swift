@@ -594,28 +594,65 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
                 
             let userDatabaseManager = FBDatabaseManager<IDoUser>(refPath: ["Users"])
             guard let user = MyProfile.shared.myUserInfo?.toIDoUser else { return }
-                
-            userDatabaseManager.deleteData(data: user) { [weak self] success in
+            
+            // 자기가 가입한 클럽 리스트들을 불러옴
+//            if let myClubs = MyProfile.shared.myUserInfo?.myClubList {
+//                for club in myClubs {
+//                    // 게시글 삭제 로직 + 게시글을 불러오는 로직
+//                    let firebaseManager = FirebaseManager(club: club)
+//                    
+//                    // 그 클럽 안에 있는 게시글 리스틀
+//                    for (index, noticeBoard) in firebaseManager.noticeBoards.enumerated().reversed() {
+//                        if noticeBoard.rootUser.id == MyProfile.shared.myUserInfo?.id {
+//                            firebaseManager.deleteNoticeBoard(at: index) { success in
+//                                if success {
+//                                    print("게시글 삭제 성공: \(noticeBoard.id)")
+//                                } else {
+//                                    print("게시글 삭제 실패: \(noticeBoard.id)")
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+            //            }
+            MyProfile.shared.deleteAllUserData() { success in
                 if success {
-                    if let user = Auth.auth().currentUser {
-                        user.delete { [self] error in
-                            if let error = error {
-                                print("Firebase Error : ", error)
-                            } else {
-                                print("회원탈퇴 성공!")
-                                DispatchQueue.main.async {
-                                    if let navigationController = self?.navigationController {
-                                        navigationController.popToRootViewController(animated: true)
-                                        let loginViewController = LoginViewController()
-                                        loginViewController.hidesBottomBarWhenPushed = true
-                                        loginViewController.modalPresentationStyle = .fullScreen
-                                        self?.present(loginViewController, animated: true, completion: nil)
+                    userDatabaseManager.deleteData(data: user) { [weak self] success in
+                        if success {
+                            if let user = Auth.auth().currentUser {
+                                
+                                let credential: AuthCredential = EmailAuthProvider.credential(withEmail: user.email ?? "0987@0987.com", password: "1q2w3e!!")
+                                
+                                user.reauthenticate(with: credential, completion: { (result, error) in
+                                    if let error = error {
+                                        // 재인증 오류 처리
+                                        print(error.localizedDescription)
+                                    } else {
+                                        // 재인증이 성공적으로 완료되었다면 민감한 작업을 계속합니다.
+                                        user.delete { [self] error in
+                                            if let error = error {
+                                                print("Firebase Error : ", error)
+                                            } else {
+                                                
+                                                print("회원탈퇴 성공!")
+                                                DispatchQueue.main.async {
+                                                    if let navigationController = self?.navigationController {
+                                                        navigationController.popToRootViewController(animated: true)
+                                                        let loginViewController = LoginViewController()
+                                                        loginViewController.hidesBottomBarWhenPushed = true
+                                                        loginViewController.modalPresentationStyle = .fullScreen
+                                                        self?.present(loginViewController, animated: true, completion: nil)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                }
+                                })
+                                
+                            } else {
+                                print("로그인 정보가 존재하지 않습니다")
                             }
                         }
-                    } else {
-                        print("로그인 정보가 존재하지 않습니다")
                     }
                 }
             }

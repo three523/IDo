@@ -10,7 +10,7 @@ import FirebaseStorage
 import Foundation
 
 class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
-    func removeClub(completion: ((Bool) -> Void)?) {
+    func removeMyClub(completion: ((Bool) -> Void)?) {
         guard let club = model else { return }
         ref.removeValue { error, _ in
             if let error {
@@ -33,6 +33,23 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             myClubList.removeAll(where: { $0.id == club.id })
             MyProfile.shared.update(myClubList: myClubList) { _ in
                 completion?(true)
+            }
+        }
+    }
+    
+    func removeClub(club: Club, userList: [UserSummary] ,completion: ((Bool) -> Void)?) {
+        let clubRef = Database.database().reference().child(club.category).child("meetings").child(club.id)
+        clubRef.removeValue { error, _ in
+            if let error {
+                print(error.localizedDescription)
+                return
+            }
+            for user in userList {
+                self.removeUserClub(user: user, removeClub: club)
+            }
+            self.removeNoticeBoard(club: club)
+            if let imagePath = club.imageURL {
+                self.removeImage(path: imagePath)
             }
         }
     }
