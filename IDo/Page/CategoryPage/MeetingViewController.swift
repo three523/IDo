@@ -32,10 +32,6 @@ class MeetingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        loadDataFromFirebase()
-        meetingsData.update = { [weak self] in
-            self?.tableView.reloadData()
-            self?.updateNoMeetingsViewVisibility()
-        }
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
@@ -52,7 +48,9 @@ class MeetingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        meetingsData.readClub { _ in
+        meetingsData.readClub { [weak self] _ in
+            guard let self else { return }
+            self.tableView.reloadData()
             self.setupEmptyMessageView()
             self.updateNoMeetingsViewVisibility()
         }
@@ -174,28 +172,16 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.basicImageView.image = nil
         
         if let imageURL = club.imageURL {
-            cell.storagePath = imageURL
-            FBURLCache.shared.cancelDownloadURL(storagePath: imageURL)
-//            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
-//                switch result {
-//                case .success(let image):
-//                    DispatchQueue.main.async {
-//                        cell.basicImageView.image = image
-//                    }
-//
-//                case .failure(let error):
-//                    print(error)
-//                }
-//            }
-            meetingsData.loadImageResize(storagePath: imageURL, clubId: club.id, imageSize: .small) { result in
-                switch result {
-                case .success(let image):
-                    DispatchQueue.main.async {
+            cell.indexPath = indexPath
+            FBURLCache.shared.cancelDownloadURL(indexPath: indexPath)
+            meetingsData.loadImageResize(storagePath: imageURL, clubId: club.id, imageSize: .small) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let image):
                         cell.basicImageView.image = image
+                    case .failure(let error):
+                        print(error)
                     }
-                    
-                case .failure(let error):
-                    print(error)
                 }
             }
         }

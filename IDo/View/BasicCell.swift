@@ -50,7 +50,7 @@ class BasicCell: UITableViewCell {
         return imageView
     }()
     
-    var storagePath: String?
+    var indexPath: IndexPath?
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -84,10 +84,10 @@ class BasicCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        if let storagePath {
-            FBURLCache.shared.cancelDownloadURL(storagePath: storagePath)
+        if let indexPath {
+            FBURLCache.shared.cancelDownloadURL(indexPath: indexPath)
         }
-        basicImageView.image = nil // 이미지 뷰 초기화
+        basicImageView.image = nil
     }
 }
 
