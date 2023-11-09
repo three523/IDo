@@ -227,8 +227,6 @@ private extension HomeViewController {
             make.top.bottom.trailing.equalToSuperview()
         }
         
-        
-        
         // 백 버튼 아이템 생성 및 설정
         NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
         
