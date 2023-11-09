@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         // 카카오 초기화
-        KakaoSDK.initSDK(appKey: apiKey)
+//        KakaoSDK.initSDK(appKey: apiKey)
         return true
     }
 
