@@ -32,15 +32,12 @@ class MeetingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        loadDataFromFirebase()
-        meetingsData.update = { [weak self] in
-            self?.tableView.reloadData()
-            self?.updateNoMeetingsViewVisibility()
-        }
         navigationController?.navigationBar.tintColor = UIColor.black
         setupNavigationBar()
         setupTableView()
         navigationItem()
         setupNoMeetingsView()
+        setupEmptyMessageView()
         if let data = TemporaryManager.shared.categoryData, // 카테고리 Index에 따른 제목 표시
            let index = TemporaryManager.shared.categoryIndex,
            index < TemporaryManager.shared.meetingTitle.count && index < TemporaryManager.shared.meetingDate.count
@@ -52,9 +49,12 @@ class MeetingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        meetingsData.readClub { _ in
-            self.setupEmptyMessageView()
-            self.updateNoMeetingsViewVisibility()
+        meetingsData.readClub { [weak self] _ in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.updateNoMeetingsViewVisibility()
+            }
         }
     }
 
@@ -84,7 +84,7 @@ class MeetingViewController: UIViewController {
 
     private func updateNoMeetingsViewVisibility() {
         if meetingsData.clubs.isEmpty {
-            noMeetingsView.isHidden = true // 기존 noMeetingsView를 숨깁니다.
+//            noMeetingsView.isHidden = true // 기존 noMeetingsView를 숨깁니다.
             emptyMessageView.isHidden = false // EmptyMessageStackView를 보입니다.
         } else {
             emptyMessageView.isHidden = true // 회의가 있으면 EmptyMessageStackView를 숨깁니다.
@@ -174,28 +174,16 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         cell.basicImageView.image = nil
         
         if let imageURL = club.imageURL {
-            cell.storagePath = imageURL
-            FBURLCache.shared.cancelDownloadURL(storagePath: imageURL)
-//            meetingsData.loadImage(storagePath: imageURL, clubId: club.id) { result in
-//                switch result {
-//                case .success(let image):
-//                    DispatchQueue.main.async {
-//                        cell.basicImageView.image = image
-//                    }
-//
-//                case .failure(let error):
-//                    print(error)
-//                }
-//            }
-            meetingsData.loadImageResize(storagePath: imageURL, clubId: club.id, imageSize: .small) { result in
-                switch result {
-                case .success(let image):
-                    DispatchQueue.main.async {
+            cell.indexPath = indexPath
+            FBURLCache.shared.cancelDownloadURL(indexPath: indexPath)
+            meetingsData.loadImageResize(storagePath: imageURL, clubId: club.id, imageSize: .small) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success(let image):
                         cell.basicImageView.image = image
+                    case .failure(let error):
+                        print(error)
                     }
-                    
-                case .failure(let error):
-                    print(error)
                 }
             }
         }
