@@ -133,29 +133,29 @@ final class MyProfile {
     }
     
     func deleteAllUserData(completion: ((Bool) -> Void)? = nil) {
-            // 먼저 프로필 이미지를 삭제합니다.
-            deleteProfileImage { [weak self] success in
-                guard success, let self = self else {
-                    completion?(false)
-                    return
-                }
-                
-                // 프로필 이미지 삭제에 성공하면 사용자 데이터를 삭제합니다.
-                if let idoUser = self.myUserInfo?.toIDoUser {
-                    self.firebaseManager.deleteUser(idoUser: idoUser) { success in
-                        if success {
-                            self.myUserInfo = nil
-                            self.fileCache.removeFile(uid: idoUser.id)
-                            completion?(true)
-                        }
+        // 먼저 프로필 이미지를 삭제합니다.
+        deleteProfileImage { [weak self] success in
+            guard success, let self = self else {
+                completion?(false)
+                return
+            }
+            
+            // 프로필 이미지 삭제에 성공하면 사용자 데이터를 삭제합니다.
+            if let idoUser = self.myUserInfo?.toIDoUser {
+                self.firebaseManager.deleteUser(idoUser: idoUser) { success in
+                    if success {
+                        self.myUserInfo = nil
+                        self.fileCache.removeFile(uid: idoUser.id)
+                        completion?(true)
                     }
                 }
-                else {
-                    print("사용자 정보 삭제에 실패했습니다.")
-                    completion?(false)
-                }
+            }
+            else {
+                print("사용자 정보 삭제에 실패했습니다.")
+                completion?(false)
             }
         }
+    }
 
     // 프로필 이미지 삭제
     private func deleteProfileImage(completion: ((Bool) -> Void)? = nil) {

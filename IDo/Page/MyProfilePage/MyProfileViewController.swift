@@ -614,30 +614,45 @@ extension MyProfileViewController: UIImagePickerControllerDelegate {
 //                        }
 //                    }
 //                }
-//            }
-            MyProfile.shared.deleteAllUserData()
-            userDatabaseManager.deleteData(data: user) { [weak self] success in
+            //            }
+            MyProfile.shared.deleteAllUserData() { success in
                 if success {
-                    if let user = Auth.auth().currentUser {
-                        user.delete { [self] error in
-                            if let error = error {
-                                print("Firebase Error : ", error)
-                            } else {
+                    userDatabaseManager.deleteData(data: user) { [weak self] success in
+                        if success {
+                            if let user = Auth.auth().currentUser {
                                 
-                                print("회원탈퇴 성공!")
-                                DispatchQueue.main.async {
-                                    if let navigationController = self?.navigationController {
-                                        navigationController.popToRootViewController(animated: true)
-                                        let loginViewController = LoginViewController()
-                                        loginViewController.hidesBottomBarWhenPushed = true
-                                        loginViewController.modalPresentationStyle = .fullScreen
-                                        self?.present(loginViewController, animated: true, completion: nil)
+                                let credential: AuthCredential = EmailAuthProvider.credential(withEmail: user.email ?? "0987@0987.com", password: "1q2w3e!!")
+                                
+                                user.reauthenticate(with: credential, completion: { (result, error) in
+                                    if let error = error {
+                                        // 재인증 오류 처리
+                                        print(error.localizedDescription)
+                                    } else {
+                                        // 재인증이 성공적으로 완료되었다면 민감한 작업을 계속합니다.
+                                        user.delete { [self] error in
+                                            if let error = error {
+                                                print("Firebase Error : ", error)
+                                            } else {
+                                                
+                                                print("회원탈퇴 성공!")
+                                                DispatchQueue.main.async {
+                                                    if let navigationController = self?.navigationController {
+                                                        navigationController.popToRootViewController(animated: true)
+                                                        let loginViewController = LoginViewController()
+                                                        loginViewController.hidesBottomBarWhenPushed = true
+                                                        loginViewController.modalPresentationStyle = .fullScreen
+                                                        self?.present(loginViewController, animated: true, completion: nil)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                }
+                                })
+                                
+                            } else {
+                                print("로그인 정보가 존재하지 않습니다")
                             }
                         }
-                    } else {
-                        print("로그인 정보가 존재하지 않습니다")
                     }
                 }
             }

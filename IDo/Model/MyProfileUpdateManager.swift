@@ -9,6 +9,7 @@ import FirebaseDatabase
 
 class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
     private let defaultRef = Database.database().reference()
+    private let clubFirebaseManager = FirebaseClubDatabaseManager(refPath: [])
     
     // MARK: - 유저 업데이트
     func updateUser(idoUser: IDoUser, completion: ((Bool) -> Void)?) {
@@ -57,22 +58,10 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
         }
         
         let clubRootUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("rootUser")
-        
-        clubRootUserRef.getData { error, dataSnapShot in
-            guard let dataSnapShot = dataSnapShot?.value else {
-                print("데이터가 존재하지 않습니다.")
-                return
-            }
-            
-            guard let rootUser: IDoUser = DataModelCodable.decodingSingleDataSnapshot(value: dataSnapShot) else {
-                print("iDoUser 데이터를 가져오지 못합니다")
-                return
-            }
-            if idoUser.id == rootUser.id {
-                clubRootUserRef.setValue(idoUser.toUserSummary.dictionary) { error, _ in
-                    if let error {
-                        print(error.localizedDescription)
-                    }
+        if idoUser.id == club.rootUser.id {
+            clubRootUserRef.setValue(idoUser.toUserSummary.dictionary) { error, _ in
+                if let error {
+                    print(error.localizedDescription)
                 }
             }
         }
@@ -131,11 +120,17 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
     }
     
     private func deleteClub(idoUser: IDoUser, club: Club, completion: ((Bool) -> Void)? = nil) {
-        let clubUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("userList")
         
+        // 클럽 안에 있는 UserList에서 탈퇴한 회원 삭제하기
+        let clubUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("userList")
         clubUserRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
             if var userList = currentData.value as? [[String: Any]] {
-                userList.removeAll { $0["id"] as? String == idoUser.id }
+                userList.removeAll { user in
+                    if let userId = user["id"] as? String {
+                        return userId == idoUser.id
+                    }
+                    return false
+                }
                 currentData.value = userList
                 return TransactionResult.success(withValue: currentData)
             }
@@ -143,21 +138,60 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
         }) { error, _, _ in
             if let error = error {
                 print(error.localizedDescription)
+                print("클럽 유저 리스트 삭제 실패")
                 completion?(false)
             } else {
+                print("클럽 유저 리스트 삭제 성공")
+                
+                // 탈퇴한 회원이 만든 클럽 삭제하기
+                if club.rootUser.id == idoUser.id {
+                    let clubRootUserRef = self.defaultRef.child(club.category).child("meetings").child(club.id)
+                    clubRootUserRef.getData { error, dataSnapShot in
+                        
+                        if let error = error {
+                            print(error.localizedDescription)
+                            return
+                        }
+
+                        guard let dataSnapShot = dataSnapShot?.value else {
+                            print("데이터가 존재하지 않습니다.")
+                            return
+                        }
+                        guard let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: dataSnapShot) else { return }
+                        self.clubFirebaseManager.removeClub(club: club, userList: club.userList ?? []) { success in
+                            if success {
+                                print("탈퇴 회원 관련 게시글,댓글 삭제 성공")
+                            }
+                        }
+                    }
+                }
                 completion?(true)
             }
         }
         
-        let clubRootUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("rootUser")
-        clubRootUserRef.getData { error, dataSnapShot in
-            if let snapshotValue = dataSnapShot?.value as? [String: Any],
-               let rootUserId = snapshotValue["id"] as? String, rootUserId == idoUser.id {
-                clubRootUserRef.removeValue { error, _ in
-                    if let error = error {
-                        print(error.localizedDescription)
+        // 탈퇴한 회원이 만든 게시글 삭제하기
+        let clubNoticeBoardListRef = defaultRef.child(club.category).child("meetings").child(club.id).child("noticeBoardList")
+        clubNoticeBoardListRef.runTransactionBlock({ (currentData: MutableData) -> TransactionResult in
+            if var noticeBoardList = currentData.value as? [[String: Any]] {
+                noticeBoardList.removeAll { noticeBoardDict in
+                    if let rootUserDict = noticeBoardDict["rootUser"] as? [String: Any],
+                       let rootUserId = rootUserDict["id"] as? String {
+                        return rootUserId == idoUser.id
                     }
+                    return false
                 }
+                currentData.value = noticeBoardList
+                return TransactionResult.success(withValue: currentData)
+            }
+            return TransactionResult.success(withValue: currentData)
+        }) { error, _, _ in
+            if let error = error {
+                print(error.localizedDescription)
+                print("클럽 게시글 삭제 실패")
+                completion?(false)
+            } else {
+                print("클럽 게시글 삭제 성공")
+                completion?(true)
             }
         }
     }
@@ -165,14 +199,34 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
     private func deleteNoticeBoard(noticeBoard: NoticeBoard, idoUser: IDoUser) {
         let noticeBoardRef = defaultRef.child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
         
-        noticeBoardRef.child("rootUser").getData { error, dataSnapShot in
+//        noticeBoardRef.child("rootUser").getData { error, dataSnapShot in
+//            if let snapshotValue = dataSnapShot?.value as? [String: Any],
+//               let rootUserId = snapshotValue["id"] as? String, rootUserId == idoUser.id {
+//                noticeBoardRef.child("rootUser").removeValue { error, _ in
+//                    if let error = error {
+//                        print(error.localizedDescription)
+//                    }
+//                }
+//            }
+//        }
+        noticeBoardRef.getData { error, dataSnapShot in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
             if let snapshotValue = dataSnapShot?.value as? [String: Any],
-               let rootUserId = snapshotValue["id"] as? String, rootUserId == idoUser.id {
-                noticeBoardRef.child("rootUser").removeValue { error, _ in
+               let rootUserDict = snapshotValue["rootUser"] as? [String: Any],
+               let rootUserId = rootUserDict["id"] as? String, rootUserId == idoUser.id {
+                noticeBoardRef.removeValue { error, _ in
                     if let error = error {
                         print(error.localizedDescription)
+                    } else {
+                        print("게시판 삭제 성공")
                     }
                 }
+            } else {
+                print("게시판 삭제 권한이 없습니다.")
             }
         }
     }
@@ -180,14 +234,34 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
     private func deleteComment(comment: Comment, idoUser: IDoUser) {
         let commentRef = defaultRef.child("CommentList").child(comment.noticeBoardID).child(comment.id)
         
-        commentRef.child("writeUser").getData { error, dataSnapShot in
+//        commentRef.child("writeUser").getData { error, dataSnapShot in
+//            if let snapshotValue = dataSnapShot?.value as? [String: Any],
+//               let writerUserId = snapshotValue["id"] as? String, writerUserId == idoUser.id {
+//                commentRef.child("writeUser").removeValue { error, _ in
+//                    if let error = error {
+//                        print(error.localizedDescription)
+//                    }
+//                }
+//            }
+//        }
+        commentRef.getData { error, dataSnapShot in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
             if let snapshotValue = dataSnapShot?.value as? [String: Any],
-               let writerUserId = snapshotValue["id"] as? String, writerUserId == idoUser.id {
-                commentRef.child("writeUser").removeValue { error, _ in
+               let rootUserDict = snapshotValue["writeUser"] as? [String: Any],
+               let rootUserId = rootUserDict["id"] as? String, rootUserId == idoUser.id {
+                commentRef.removeValue { error, _ in
                     if let error = error {
                         print(error.localizedDescription)
+                    } else {
+                        print("댓글 삭제 성공")
                     }
                 }
+            } else {
+                print("댓글 삭제 권한이 없습니다.")
             }
         }
     }
