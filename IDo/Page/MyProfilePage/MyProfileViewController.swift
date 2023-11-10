@@ -450,7 +450,7 @@ private extension MyProfileViewController {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .done, target: self, action: #selector(profileUpdateCancle))
         navigationItem.leftBarButtonItem?.tintColor = UIColor(color: .negative)
         if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "카테고리 선택")
+            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 편집")
         }
         navigationItem.leftBarButtonItem?.isEnabled = true
     }
