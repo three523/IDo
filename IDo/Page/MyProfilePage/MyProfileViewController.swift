@@ -55,8 +55,9 @@ class MyProfileViewController: UIViewController {
     func makeProfileName() {
         profileName.text = ""
         profileName.textAlignment = .center
-        profileName.textColor = .black
+        profileName.textColor = UIColor(named: "ui-text-strong")
         profileName.font = UIFont.headFont(.xSmall, weight: .medium)
+        profileName.layer.cornerRadius = 10
         profileName.isUserInteractionEnabled = false
     }
         
@@ -358,6 +359,10 @@ extension MyProfileViewController: UITextViewDelegate {
             
         let chagedText = currentText.replacingCharacters(in: stringRange, with: text)
             
+        if textView == profileName {
+            return chagedText.count <= 6
+        }
+        
         if textView === selfInfoDetail {
             return chagedText.count <= 300
         }
@@ -464,6 +469,7 @@ private extension MyProfileViewController {
         navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
         
         profileName.isUserInteractionEnabled = false
+        profileName.backgroundColor = .clear
         profileName.text = myProfile.nickName
         
         selfInfoDetail.isUserInteractionEnabled = false
@@ -502,7 +508,6 @@ private extension MyProfileViewController {
                 
         // isEdit = true인 상태의 실행 코드
         if isEdit {
-//            navigationItem.rightBarButtonItem?.image = UIImage(systemName: "checkmark.circle")
             navigationItem.rightBarButtonItem = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(editVC))
             navigationItem.rightBarButtonItem?.tintColor = UIColor(color: .main)
             
@@ -510,6 +515,7 @@ private extension MyProfileViewController {
             
             // 각각 텍스트뷰를 활성화 시킴
             profileName.isUserInteractionEnabled = true
+            profileName.backgroundColor = UIColor(color: .backgroundSecondary)
             selfInfoDetail.isUserInteractionEnabled = true
             selfInfoInt.textColor = UIColor(color: .textStrong)
             choiceEnjoyTextField.isUserInteractionEnabled = true
@@ -521,29 +527,37 @@ private extension MyProfileViewController {
             deleteID.isHidden = true
             profileImage.isUserInteractionEnabled = true
             choiceEnjoyTextField.tintColor = .clear
-
+            
+            
             // isEdit = false인 상태의 실행 코드
         } else {
-            navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
-            hiddenLeftButton()
-            
-            profileName.isUserInteractionEnabled = false
-            selfInfoDetail.isUserInteractionEnabled = false
-            selfInfoInt.textColor = UIColor(color: .placeholder)
-            choiceEnjoyTextField.isUserInteractionEnabled = false
-            
-            writeMe.isHidden = false // 작성한글 title Label 나타내기
-            writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
-            logout.isHidden = false
-            line.isHidden = false
-            deleteID.isHidden = false
-            profileImage.isUserInteractionEnabled = false
-            choiceEnjoyTextField.tintColor = .clear
-            guard let hobby = choiceEnjoyTextField.text else {
-                print("관심사가 업습니다.")
-                return
+            if profileName.text.count == 0 {
+                AlertManager.showAlert(on: self, title: "알림", message: "닉네임을 입력하세요.")
+                isEdit = true
             }
-            MyProfile.shared.update(nickName: profileName.text, updateProfileImage: profileImage.image(for: .normal), description: selfInfoDetail.text, hobbyList: [hobby])
+            else {
+                navigationItem.rightBarButtonItem?.image = UIImage(systemName: "square.and.pencil")
+                hiddenLeftButton()
+                
+                profileName.isUserInteractionEnabled = false
+                profileName.backgroundColor = .clear
+                selfInfoDetail.isUserInteractionEnabled = false
+                selfInfoInt.textColor = UIColor(color: .placeholder)
+                choiceEnjoyTextField.isUserInteractionEnabled = false
+                
+                writeMe.isHidden = false // 작성한글 title Label 나타내기
+                writeMeTableView.isHidden = false // 작성한글 리스트 나타내기
+                logout.isHidden = false
+                line.isHidden = false
+                deleteID.isHidden = false
+                profileImage.isUserInteractionEnabled = false
+                choiceEnjoyTextField.tintColor = .clear
+                guard let hobby = choiceEnjoyTextField.text else {
+                    print("관심사가 업습니다.")
+                    return
+                }
+                MyProfile.shared.update(nickName: profileName.text, updateProfileImage: profileImage.image(for: .normal), description: selfInfoDetail.text, hobbyList: [hobby])
+            }
         }
     }
     
