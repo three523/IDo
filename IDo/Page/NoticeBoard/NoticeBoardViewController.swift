@@ -36,15 +36,22 @@ class NoticeBoardViewController: UIViewController {
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
         
+        firebaseManager.observeClub()
         firebaseManager.readNoticeBoard()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         firebaseManager.delegate = self
-        
-        
+        guard MyProfile.shared.isJoin(in: firebaseManager.club) else {
+            AlertManager.showIsNotClubMemberChek(on: self)
+            return
+        }
+    }
+    
+    deinit {
+        print("NoticeBoardViewController Deinit")
+        firebaseManager.removeObserveClub()
     }
     
     private func selectView() {

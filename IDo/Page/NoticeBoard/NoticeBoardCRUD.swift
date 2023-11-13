@@ -405,4 +405,29 @@ class FirebaseManager {
             }
         })
     }
+    
+    //MARK: observe 클럽
+    func observeClub() {
+        let club = self.club
+        let clubRef = Database.database().reference().child(club.category).child("meetings").child(club.id)
+        clubRef.observe(.value) { dataSnapShot in
+            if dataSnapShot.exists() {
+                guard let value = dataSnapShot.value else {
+                    print("club에 value가 존재하지 않습니다.")
+                    return
+                }
+                guard let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
+                    print("업데이트된 모임을 디코딩하지 못했습니다.")
+                    return
+                }
+                self.club = club
+            }
+        }
+    }
+    
+    func removeObserveClub() {
+        let club = self.club
+        let ref = Database.database().reference().child(club.category).child("meetings").child(club.id)
+        ref.removeAllObservers()
+    }
 }

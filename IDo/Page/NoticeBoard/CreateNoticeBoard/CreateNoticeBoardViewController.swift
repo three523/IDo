@@ -81,6 +81,10 @@ class CreateNoticeBoardViewController: UIViewController {
             firebaseManager.missSelectedImage.removeAll()
             isEditingMode = false
         }
+        guard MyProfile.shared.isJoin(in: firebaseManager.club) else {
+            AlertManager.showIsNotClubMemberChek(on: self)
+            return
+        }
         removeKeyboardNotifications()
     }
     

@@ -80,8 +80,11 @@ class HomeViewController : UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 //        getUserClubList(userID: MyProfile.shared.myUserInfo!.id)
-        updateUIBasedOnData()
-        joinClubTableView.reloadData()
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        MyProfile.shared.getUserProfile(uid: uid) { _ in
+            self.updateUIBasedOnData()
+            self.joinClubTableView.reloadData()
+        }
     }
     
     func setLayout() {

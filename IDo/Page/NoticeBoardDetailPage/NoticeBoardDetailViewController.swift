@@ -82,6 +82,10 @@ final class NoticeBoardDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        guard MyProfile.shared.isJoin(in: firebaseNoticeBoardManager.club) else {
+            AlertManager.showIsNotClubMemberChek(on: self)
+            return
+        }
         guard let noticeBoard = firebaseNoticeBoardManager.noticeBoards.first(where: { $0.id == noticeBoard.id }) else { return }
         self.noticeBoard = noticeBoard
         updateNoticeBoardSetup()
@@ -534,37 +538,69 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
     }
     
     private func declarationAlert(indexPath: IndexPath) {
+        let commentUser = self.firebaseCommentManager.modelList[indexPath.row].writeUser
+        guard let commentWriteUser = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == commentUser.id }) else { return }
+        let deleteComment = self.firebaseCommentManager.modelList[indexPath.row]
+        let clubRootUser = self.firebaseNoticeBoardManager.club.rootUser
         let okHandler: (UIAlertAction) -> Void = { _ in
-            let commentUser = self.firebaseCommentManager.modelList[indexPath.row].writeUser
-            
-            guard let rootUserIndex = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == commentUser.id}) else { return }
-            
-            let deleteCommnet = self.firebaseCommentManager.modelList[indexPath.row]
-            self.firebaseCommentManager.deleteData(data: deleteCommnet) { isComplete in
-                var declarationCount = self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount ?? 0
+            self.firebaseCommentManager.deleteData(data: deleteComment) { isComplete in
+                var declarationCount = self.firebaseNoticeBoardManager.club.userList?[commentWriteUser].declarationCount ?? 0
                 declarationCount += 1
-                self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount = declarationCount
-                self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: deleteCommnet.writeUser.id, declarationCount: declarationCount)
-                self.firebaseClubDatabaseManager.removeUserComment(comment: deleteCommnet)
+                self.firebaseNoticeBoardManager.club.userList?[commentWriteUser].declarationCount = declarationCount
+                self.firebaseNoticeBoardManager.updateUserDeclarationCount(userID: deleteComment.writeUser.id, declarationCount: declarationCount)
+                self.firebaseClubDatabaseManager.removeUserComment(comment: deleteComment)
                 
-                if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
+                if self.firebaseNoticeBoardManager.club.userList?[commentWriteUser].declarationCount ?? 0 >= 3 {
+                    
+                    guard let userList = self.firebaseNoticeBoardManager.club.userList else {
+                        print("UserList에 신고당해 방출될 회원이 없습니다.")
+                        return
+                    }
+                    
+                    let user = userList[commentWriteUser]
+                    
+                    if user.id == self.firebaseNoticeBoardManager.club.rootUser.id {
+                        self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club, userList: userList) { isSuccess in
+                            if isSuccess {
+                                self.navigationController?.popToRootViewController(animated: true)
+                            }
+                            return
+                        }
+                    }
                     
                     // club에 있는 유저 삭제
-                    self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
+                    self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![commentWriteUser]) { success in
                         if success {
                             // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
                             print("해당 작성자가 모임에서 방출되었습니다.")
+                            self.firebaseCommentManager.readDatas { [weak self] result in
+                                switch result {
+                                case .success(_):
+                                    DispatchQueue.main.async {
+                                        self?.commentTableView.reloadData()
+                                    }
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                }
+                            }
+                            return
                         }
                     }
                 }
-                if self.firebaseCommentManager.modelList.isEmpty {
-                    self.commentTableView.reloadData()
-                } else {
-                    self.deleteCell(tableView: self.commentTableView, indexPath: indexPath)
+                DispatchQueue.main.async {
+                    if self.firebaseCommentManager.modelList.isEmpty {
+                        self.commentTableView.reloadData()
+                    } else {
+                        self.deleteCell(tableView: self.commentTableView, indexPath: indexPath)
+                    }
                 }
             }
         }
-        AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+        if commentUser.id == clubRootUser.id {
+            AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?\n이 게시글은 모임장의 게시글입니다.\n신고당하면 모임이 삭제될 수 있습니다.", okHandler: okHandler)
+        } else {
+            AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+        }
     }
     
     private func insertCell(tableView: UITableView, indexPath: IndexPath) {

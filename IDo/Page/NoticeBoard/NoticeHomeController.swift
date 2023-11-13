@@ -13,6 +13,7 @@ import UIKit
 final class NoticeHomeController: UIViewController {
     var signUpButtonUpdate: ((AuthState) -> Void)?
     private let firebaseClubDatabaseManager: FirebaseClubDatabaseManager
+    private let firebaseNoticeBoardManager: FirebaseManager
     private let clubImage: UIImage? = nil
     private let club: Club
     let memberTableView: IntrinsicTableView = {
@@ -75,9 +76,10 @@ final class NoticeHomeController: UIViewController {
         return view
     }()
     
-    init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager) {
+    init(club: Club, authState: AuthState, firebaseClubDataManager: FirebaseClubDatabaseManager, firebaseNoticeBoardManager: FirebaseManager) {
         self.club = club
         self.firebaseClubDatabaseManager = firebaseClubDataManager
+        self.firebaseNoticeBoardManager = firebaseNoticeBoardManager
         self.authState = authState
         super.init(nibName: nil, bundle: nil)
         
@@ -116,6 +118,7 @@ final class NoticeHomeController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         //loadDataFromFirebase()
         super.viewWillAppear(animated)
+        memberTableView.reloadData()
     }
     
     @objc func handleSignUp() {
@@ -145,6 +148,9 @@ final class NoticeHomeController: UIViewController {
                 self.signUpButton.snp.updateConstraints { make in
                     make.height.equalTo(0)
                 }
+                var userList = self.firebaseNoticeBoardManager.club.userList ?? []
+                userList.append(idoUser.toUserSummary)
+                self.firebaseNoticeBoardManager.club.userList = userList
             }
             let authState: AuthState = isCompleted ? .member : .notMember
             guard let count = self.firebaseClubDatabaseManager.model?.userList?.count else {
@@ -285,7 +291,7 @@ extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
         guard authState == .root,
               let user = firebaseClubDatabaseManager.model?.userList?[indexPath.row] else { return nil }
         let removeAction = UIContextualAction(style: .normal, title: "삭제") { _, _, _ in
-            self.firebaseClubDatabaseManager.removeUser(user: user) { isCompleted in
+            self.firebaseClubDatabaseManager.removeMyUser(user: user) { isCompleted in
                 if isCompleted {
                     tableView.beginUpdates()
                     tableView.deleteRows(at: [indexPath], with: .automatic)

@@ -81,5 +81,22 @@ class AlertManager {
         alertController.addAction(cancelAction)
         viewController.present(alertController, animated: true, completion: nil)
     }
+    
+    static func showIsNotClubMemberChek(on viewController: UIViewController) {
+        
+        let alertController = UIAlertController(title: "모임 회원이 아닙니다", message: nil, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .destructive) { _ in
+            if let navigationController = viewController.navigationController {
+                for controller in navigationController.viewControllers {
+                    if let meetingVC = controller as? MeetingViewController {
+                        navigationController.popToViewController(meetingVC, animated: true)
+                        break
+                    }
+                }
+            }
+        }
+        alertController.addAction(okAction)
+        viewController.present(alertController, animated: true, completion: nil)
+    }
 }
 
