@@ -36,7 +36,7 @@ class NoticeBoardViewController: UIViewController {
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
         
-        firebaseManager.observeClub()
+        firebaseManager.observeClubUserList()
         firebaseManager.readNoticeBoard()
     }
     
@@ -51,7 +51,7 @@ class NoticeBoardViewController: UIViewController {
     
     deinit {
         print("NoticeBoardViewController Deinit")
-        firebaseManager.removeObserveClub()
+        firebaseManager.removeObserveClubUserList()
     }
     
     private func selectView() {

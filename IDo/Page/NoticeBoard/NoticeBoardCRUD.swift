@@ -407,25 +407,30 @@ class FirebaseManager {
     }
     
     //MARK: observe 클럽
-    func observeClub() {
+    func observeClubUserList() {
         let club = self.club
-        let clubRef = Database.database().reference().child(club.category).child("meetings").child(club.id)
+        let clubRef = Database.database().reference().child(club.category).child("meetings").child(club.id).child("userList")
         clubRef.observe(.value) { dataSnapShot in
             if dataSnapShot.exists() {
-                guard let value = dataSnapShot.value else {
+                guard let values = dataSnapShot.value as? [Any] else {
                     print("club에 value가 존재하지 않습니다.")
                     return
                 }
-                guard let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
-                    print("업데이트된 모임을 디코딩하지 못했습니다.")
-                    return
+                
+                var userList: [UserSummary] = []
+                values.forEach { value in
+                    guard let user: UserSummary = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
+                        print("업데이트된 모임 맴버를 디코딩하지 못했습니다.")
+                        return
+                    }
+                    userList.append(user)
                 }
-                self.club = club
+                self.club.userList = userList
             }
         }
     }
     
-    func removeObserveClub() {
+    func removeObserveClubUserList() {
         let club = self.club
         let ref = Database.database().reference().child(club.category).child("meetings").child(club.id)
         ref.removeAllObservers()
