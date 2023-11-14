@@ -91,12 +91,7 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
 //                return
 //            }
             if let dataSnapShot,
-               dataSnapShot.exists(),
-               let value = dataSnapShot.value {
-                guard let noticeBoard: NoticeBoard = DataModelCodable.decodingSingleDataSnapshot(value: dataSnapShot) else {
-                    print("datasnapshot을 게시판으로 디코딩하지 못했습니다")
-                    return
-                }
+               dataSnapShot.exists() {
                 let noticeBoardRootUserRef = noticeBoardRef.child("rootUser")
                 noticeBoardRootUserRef.setValue(idoUser.toUserSummary.dictionary) { error, _ in
                     if let error {

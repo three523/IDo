@@ -73,7 +73,6 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
                 print(error.localizedDescription)
                 return
             }
-            self.modelList.removeAll()
             if let myUserInfo = MyProfile.shared.myUserInfo {
                 let deleteMyCommentList = self.modelList.filter{ $0.writeUser.id == myUserInfo.id }
                 var myCommentList = MyProfile.shared.myUserInfo?.myCommentList

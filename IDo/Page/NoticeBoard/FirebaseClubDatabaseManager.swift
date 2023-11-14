@@ -55,7 +55,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
     }
     
     // 유저가 방출된 경우 클럽안에 모든 사용자들에 MyClubList에 방출된 회원 제외시키고,방출된 회원의 club안에 게시판, 댓글 삭제
-    private func outUser(in club: Club, outUser: UserSummary) {
+    private func outUser(in club: Club, outUser: UserSummary, isBlock: Bool) {
         var userList = club.userList ?? []
         userList.forEach { user in
             self.removeOutUser(in: club, user: user, outUser: outUser)
@@ -63,6 +63,14 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
         removeOutUserNoticeBoard(in: club, outUser: outUser)
         removeUserClub(user: outUser, removeClub: club)
         removeOutUserMyCommentList(in: club, outUser: outUser)
+        if isBlock { addBlackList(in: club, blockUser: outUser) }
+    }
+    
+    private func addBlackList(in club: Club, blockUser: UserSummary) {
+        let ref = Database.database().reference(withPath: "\(club.category)/meetings/\(club.id)/blackList")
+        var blackList = club.blackList ?? []
+        blackList.append(blockUser)
+        ref.setValue(blackList.asArrayDictionary())
     }
     
     // 클럽안에 있는 User들에게 Users 있는 각각의 유저마다 myClubList에 방출된 클럽맴버를 제거하는 메서드
@@ -107,12 +115,16 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             }
             // TODO: 방출된 회원의 게시판이 안지워지는 버그 수정해야함, 방출될때 user.myNoticeBoardList에 값이 잘 들어가는지 확인중
             var userNoticeBoardList = user.myNoticeBoardList ?? []
+            var clubNoticeBoardList = club.noticeBoardList ?? []
+            let clubNoticeBoardRef = ref.child(club.category).child("meetings").child(club.id).child("noticeBoardList")
             userNoticeBoardList.forEach { noticeBoard in
                 if club.id == noticeBoard.clubID {
+                    clubNoticeBoardList.removeAll(where: { $0.id == noticeBoard.id })
                     self.removeUserNoticeBoard(club: club, user: user.toUserSummary, removeNoticeBoard: noticeBoard)
                     self.removeAllCommentList(noticeBoard: noticeBoard)
                 }
             }
+            clubNoticeBoardRef.setValue(clubNoticeBoardList.asArrayDictionary())
         }
     }
     
@@ -147,6 +159,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
         }
     }
 
+    //MARK: 게시판 DB에서 클럽에 있는 모든 게시판 제거
     private func removeNoticeBoard(club: Club) {
         let ref = Database.database().reference().child("noticeBoards").child(club.id)
         let noticeBoards = club.noticeBoardList
@@ -164,6 +177,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
         }
     }
     
+    //MARK: 클럽 DB에서 특정 게시판 제거
     func removeNoticeBoard(club: Club, clubNoticeboard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
         let ref = Database.database().reference().child(club.category).child("meetings").child(club.id).child("noticeBoardList")
         var noticeBoardList = club.noticeBoardList
@@ -224,10 +238,8 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
     private func removeUserNoticeBoard(club: Club, user: UserSummary, removeNoticeBoard: NoticeBoard) {
         let ref = Database.database().reference()
         let noticeBoardRef = ref.child("noticeBoards").child(removeNoticeBoard.clubID).child(removeNoticeBoard.id)
-        let clubNoticeBoardRef = ref.child(club.category).child(club.id).child("noticeBoardList").child(removeNoticeBoard.id)
         noticeBoardRef.removeValue()
-        clubNoticeBoardRef.removeValue()
-        let userNoticeBoardListRef = ref.child("Users").child(user.id).child("myNoticeBoardList")
+        let userNoticeBoardListRef = ref.child("Users").child(user.id)
         userNoticeBoardListRef.getData { error, dataSnapShot in
             if let error {
                 print(error.localizedDescription)
@@ -314,7 +326,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
      outUser에서 myNoticeBoard에서 club id 확인해서 제거 -> club에 게시판에도 제거, myCommentList에서 club id 확인해서 제거
     */
     
-    func removeUser(club: Club, user: UserSummary, completion: ((Bool) -> Void)? = nil) {
+    func removeUser(club: Club, user: UserSummary, isBlock: Bool, completion: ((Bool) -> Void)? = nil) {
         guard var userList = club.userList else { return }
         userList.removeAll(where: { $0.id == user.id })
         var club = club
@@ -325,7 +337,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 return
             }
             
-            self.outUser(in: club, outUser: user)
+            self.outUser(in: club, outUser: user, isBlock: isBlock)
             completion?(true)
         }
     }

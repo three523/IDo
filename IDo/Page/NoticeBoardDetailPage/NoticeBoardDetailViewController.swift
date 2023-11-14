@@ -215,8 +215,10 @@ private extension NoticeBoardDetailViewController {
                 
                 // MARK: - 게시판 삭제 로직
                 let deleteHandler: (UIAlertAction) -> Void = { _ in
+//                    self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex])
                     self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                         if success {
+                            
                             self.firebaseCommentManager.deleteAllCommentList()
                             self.firebaseNoticeBoardManager.readNoticeBoard()
                             self.navigationController?.popViewController(animated: true)
@@ -269,6 +271,7 @@ private extension NoticeBoardDetailViewController {
         }
     }
     
+    //MARK: 게시글 신고
     func handleSuccessAction(title: String, message: String) {
         let okHandler: (UIAlertAction) -> Void = { _ in
             
@@ -282,8 +285,6 @@ private extension NoticeBoardDetailViewController {
             self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]) { success in
                 
                 self.firebaseNoticeBoardManager.club.noticeBoardList?.removeAll(where: {$0.id == self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].id})
-                
-                
             }
             
             // 그냥 noticeboardList에서 지우기
@@ -300,15 +301,24 @@ private extension NoticeBoardDetailViewController {
                     
                     self.firebaseNoticeBoardManager.readNoticeBoard()
                     
-                    if self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount == 3 {
+                    if (self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount) ?? 0 >= 3 {
                         
-                        // club에 있는 유저 삭제
-                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
+                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex], isBlock: true) { success in
                             if success {
                                 // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
                                 print("해당 작성자가 모임에서 방출되었습니다.")
+                                self.navigationController?.popViewController(animated: true)
+                                return
                             }
                         }
+                        
+                        // club에 있는 유저 삭제
+//                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
+//                            if success {
+//                                // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
+//                                print("해당 작성자가 모임에서 방출되었습니다.")
+//                            }
+//                        }
                     }
                     self.navigationController?.popViewController(animated: true)
                 }
@@ -537,6 +547,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         return config
     }
     
+    //MARK: 댓글 신고
     private func declarationAlert(indexPath: IndexPath) {
         let commentUser = self.firebaseCommentManager.modelList[indexPath.row].writeUser
         guard let commentWriteUser = self.firebaseNoticeBoardManager.club.userList?.firstIndex(where: { $0.id == commentUser.id }) else { return }
@@ -569,7 +580,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                     }
                     
                     // club에 있는 유저 삭제
-                    self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![commentWriteUser]) { success in
+                    self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![commentWriteUser], isBlock: true) { success in
                         if success {
                             // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
                             print("해당 작성자가 모임에서 방출되었습니다.")
