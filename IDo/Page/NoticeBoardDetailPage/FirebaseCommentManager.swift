@@ -50,23 +50,6 @@ class FirebaseCommentManaer: FBDatabaseManager<Comment> {
         }
     }
     
-    func updateNoticeBoard(completion: ((Bool) -> Void)? = nil) {
-        noticeBoardRef.getData { error, datasnapShot in
-            if let error {
-                print(error.localizedDescription)
-                return
-            }
-            if datasnapShot == nil {
-                return
-            }
-            self.noticeBoardRef.updateChildValues(["commentCount": "\(self.modelList.count)"]) { error, _ in
-                if let error {
-                    print(error.localizedDescription)
-                }
-            }
-        }
-    }
-    
     func deleteAllCommentList() {
         ref.removeValue { error, _ in
             if let error {

@@ -61,12 +61,6 @@ final class NoticeBoardDetailViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        firebaseCommentManager.update = { [weak self] in
-            guard let self else { return }
-            self.firebaseCommentManager.updateNoticeBoard()
-            self.delegate?.updateComment(noticeBoardID: self.noticeBoard.id, commentCount: "\(self.firebaseCommentManager.modelList.count)")
-        }
         firebaseCommentManager.readDatas { result in
             switch result {
             case .success(_):
@@ -286,6 +280,16 @@ private extension NoticeBoardDetailViewController {
                     self.firebaseNoticeBoardManager.readNoticeBoard()
                     
                     if (self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount) ?? 0 >= 3 {
+                        let userList = self.firebaseNoticeBoardManager.club.userList ?? []
+                        let user = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
+                        if user.id == self.firebaseNoticeBoardManager.club.rootUser.id {
+                            self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club, userList: userList) { isSuccess in
+                                if isSuccess {
+                                    self.navigationController?.popToRootViewController(animated: true)
+                                }
+                                return
+                            }
+                        }
                         
                         self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex], isBlock: true) { success in
                             if success {
@@ -295,20 +299,18 @@ private extension NoticeBoardDetailViewController {
                                 return
                             }
                         }
-                        
-                        // club에 있는 유저 삭제
-//                        self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex]) { success in
-//                            if success {
-//                                // 후에 해당 작성자에게 안내 메일 발송 기능 구현 예정
-//                                print("해당 작성자가 모임에서 방출되었습니다.")
-//                            }
-//                        }
                     }
                     self.navigationController?.popViewController(animated: true)
                 }
             }
         }
-        AlertManager.showCheckDeclaration(on: self, title: title, message: message, okHandler: okHandler)
+        let noticeBoardRootUser = firebaseNoticeBoardManager.noticeBoards[editIndex].rootUser
+        let clubRootUser = firebaseNoticeBoardManager.club.rootUser
+        if noticeBoardRootUser.id == clubRootUser.id {
+            AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?\n이 게시글은 모임장의 게시글입니다.\n신고당하면 모임이 삭제될 수 있습니다.", okHandler: okHandler)
+        } else {
+            AlertManager.showCheckDeclaration(on: self, title: "알림", message: "해당 항목으로 이 게시글을 신고하시겠습니까?", okHandler: okHandler)
+        }
     }
     
     func tableViewSetup() {

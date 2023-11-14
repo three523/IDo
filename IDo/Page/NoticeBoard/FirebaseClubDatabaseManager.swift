@@ -55,7 +55,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
     }
     
     // 유저가 방출된 경우 클럽안에 모든 사용자들에 MyClubList에 방출된 회원 제외시키고,방출된 회원의 club안에 게시판, 댓글 삭제
-    private func outUser(in club: Club, outUser: UserSummary, isBlock: Bool) {
+    private func outUser(in club: Club, outUser: UserSummary, isBlock: Bool, completion: (() -> Void)? = nil) {
         var userList = club.userList ?? []
         userList.forEach { user in
             self.removeOutUser(in: club, user: user, outUser: outUser)
@@ -99,8 +99,9 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
     
     // 방출된 회원의 모든 게시판과 관련된 댓글 모두 삭제
     private func removeOutUserNoticeBoard(in club: Club, outUser: UserSummary) {
-        let ref = Database.database().reference().child("Users").child(outUser.id)
-        ref.getData { error, dataSnapShot in
+        let ref = Database.database().reference()
+        let outUserRef = ref.child("Users").child(outUser.id)
+        outUserRef.getData { error, dataSnapShot in
             if let error {
                 print(error.localizedDescription)
                 return
@@ -115,16 +116,23 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             }
             // TODO: 방출된 회원의 게시판이 안지워지는 버그 수정해야함, 방출될때 user.myNoticeBoardList에 값이 잘 들어가는지 확인중
             var userNoticeBoardList = user.myNoticeBoardList ?? []
+            var removeUserNoticeBoard = [NoticeBoard]()
             var clubNoticeBoardList = club.noticeBoardList ?? []
-            let clubNoticeBoardRef = ref.child(club.category).child("meetings").child(club.id).child("noticeBoardList")
             userNoticeBoardList.forEach { noticeBoard in
                 if club.id == noticeBoard.clubID {
                     clubNoticeBoardList.removeAll(where: { $0.id == noticeBoard.id })
-                    self.removeUserNoticeBoard(club: club, user: user.toUserSummary, removeNoticeBoard: noticeBoard)
-                    self.removeAllCommentList(noticeBoard: noticeBoard)
+                    removeUserNoticeBoard.append(noticeBoard)
                 }
             }
-            clubNoticeBoardRef.setValue(clubNoticeBoardList.asArrayDictionary())
+            self.removeUserNoticeBoardList(club: club, user: user, removeNoticeBoardList: removeUserNoticeBoard)
+            let clubNoticeBoardRef = ref.child(club.category).child("meetings").child(club.id).child("noticeBoardList")
+
+            clubNoticeBoardRef.setValue(clubNoticeBoardList.asArrayDictionary()) { error, _ in
+                if let error {
+                    print(error.localizedDescription)
+                    return
+                }
+            }
         }
     }
     
@@ -147,15 +155,27 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 }
             }
             let noticeBoardList = club.noticeBoardList ?? []
+            var outUserRemoveCommentList = [Comment]()
             noticeBoardList.forEach { noticeBoard in
-                if let removeCommentIndex = outUserCommentList.firstIndex(where: { $0.noticeBoardID == noticeBoard.id }) {
-                    let removeComment = outUserCommentList[removeCommentIndex]
-                    let removeCommentRef = Database.database().reference().child("CommentList").child(removeComment.noticeBoardID).child(removeComment.id)
-                    removeCommentRef.removeValue()
-                    outUserCommentList.remove(at: removeCommentIndex)
+                let removeCommentList = outUserCommentList.filter { $0.noticeBoardID == noticeBoard.id }
+                outUserRemoveCommentList.append(contentsOf: removeCommentList)
+            }
+            outUserRemoveCommentList.forEach { comment in
+                let removeCommentRef = Database.database().reference().child("CommentList").child(comment.noticeBoardID).child(comment.id)
+                removeCommentRef.removeValue { error, _ in
+                    if let error {
+                        print(error.localizedDescription)
+                        return
+                    }
+                }
+                outUserCommentList.removeAll(where: { $0.id == comment.id })
+            }
+            outUserCommentListRef.setValue(outUserCommentList.asArrayDictionary()) { error, _ in
+                if let error {
+                    print(error.localizedDescription)
+                    return
                 }
             }
-            outUserCommentListRef.setValue(outUserCommentList.asArrayDictionary())
         }
     }
 
@@ -234,12 +254,12 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
             ref.updateChildValues(["myClubList": userClubList.asArrayDictionary()])
         }
     }
-
+    
     private func removeUserNoticeBoard(club: Club, user: UserSummary, removeNoticeBoard: NoticeBoard) {
         let ref = Database.database().reference()
         let noticeBoardRef = ref.child("noticeBoards").child(removeNoticeBoard.clubID).child(removeNoticeBoard.id)
         noticeBoardRef.removeValue()
-        let userNoticeBoardListRef = ref.child("Users").child(user.id)
+        let userNoticeBoardListRef = ref.child("Users").child(user.id).child("myNoticeBoardList")
         userNoticeBoardListRef.getData { error, dataSnapShot in
             if let error {
                 print(error.localizedDescription)
@@ -255,14 +275,32 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                     userNoticeBoardList.append(noticeBoard)
                 }
             }
-            userNoticeBoardList.removeAll(where: { $0.id == removeNoticeBoard.id })
-            ref.updateChildValues(["myNoticeBoardList": userNoticeBoardList.asArrayDictionary()])
+            userNoticeBoardListRef.setValue(userNoticeBoardList.asArrayDictionary())
         }
+    }
+    
+    // MARK: 삭제될 사용자의 클럽에 관련된 모든 게시판 삭제 로직
+    private func removeUserNoticeBoardList(club: Club, user: IDoUser, removeNoticeBoardList: [NoticeBoard]) {
+        let ref = Database.database().reference()
+        removeNoticeBoardList.forEach { noticeBoard in
+            let noticeBoardRef = ref.child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
+            noticeBoardRef.removeValue()
+        }
+        let userNoticeBoardListRef = ref.child("Users").child(user.id).child("myNoticeBoardList")
+        
+        var userNoticeBoardList = user.myNoticeBoardList ?? []
+        userNoticeBoardList.forEach { noticeBoard in
+            if removeNoticeBoardList.contains(where: { $0.id == noticeBoard.id }) {
+                userNoticeBoardList.removeAll(where: { $0.id == noticeBoard.id })
+                self.removeAllCommentList(noticeBoard: noticeBoard)
+                return
+            }
+        }
+        userNoticeBoardListRef.setValue(userNoticeBoardList.asArrayDictionary())
     }
 
     func removeUserComment(comment: Comment) {
-        let ref = Database.database().reference().child("Users").child(comment.writeUser.id)
-        let userCommentListRef = ref.child("myCommentList")
+        let userCommentListRef = Database.database().reference().child("Users").child(comment.writeUser.id).child("myCommentList")
         userCommentListRef.getData { error, dataSnapShot in
             if let error {
                 print(error.localizedDescription)
@@ -276,7 +314,7 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
                 }
             }
             userCommentList.removeAll(where: { $0.id == comment.id })
-            ref.updateChildValues(["myCommentList": userCommentList.asArrayDictionary()])
+            userCommentListRef.setValue(userCommentList.asArrayDictionary())
         }
     }
 
