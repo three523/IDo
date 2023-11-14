@@ -176,22 +176,6 @@ private extension NoticeBoardDetailViewController {
     }
     
     func noticeBoardSetup() {
-//        if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
-//            noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
-//        }
-//        noticeBoardDetailView.writerInfoView.writerNameLabel.text = noticeBoard.rootUser.nickName
-//        noticeBoardDetailView.contentTitleLabel.text = noticeBoard.title
-//        noticeBoardDetailView.contentDescriptionLabel.text = noticeBoard.content
-//        
-//        noticeBoardDetailView.loadingNoticeBoardImages(imageCount: noticeBoard.imageList?.count ?? 0)
-//        
-//        firebaseCommentManager.getNoticeBoardImages(noticeBoard: noticeBoard) { imageList in
-//            let sortedImageList = imageList.sorted(by: { $0.key < $1.key }).map{ $0.value }
-//            self.noticeBoardDetailView.addNoticeBoardImages(images: sortedImageList)
-//            DispatchQueue.main.async {
-//                self.commentTableView.reloadSections(IndexSet(integer: 0), with: .none)
-//            }
-//        }
         
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self else { return }
@@ -345,6 +329,10 @@ private extension NoticeBoardDetailViewController {
         
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
+            guard MyProfile.shared.isJoin(in: firebaseNoticeBoardManager.club) else {
+                AlertManager.showIsNotClubMemberChek(on: self)
+                return
+            }
             if let myUserInfo = MyProfile.shared.myUserInfo {
                 let user = UserSummary(id: myUserInfo.id, profileImagePath: myUserInfo.profileImagePath, nickName: myUserInfo.nickName)
                 let comment = Comment(id: UUID().uuidString, noticeBoardID: noticeBoard.id, writeUser: user, createDate: Date(), content: content)
