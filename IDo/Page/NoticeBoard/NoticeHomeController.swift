@@ -122,6 +122,21 @@ final class NoticeHomeController: UIViewController {
     }
     
     @objc func handleSignUp() {
+        if let myInfo = MyProfile.shared.myUserInfo,
+           let blackList = firebaseNoticeBoardManager.club.blackList,
+           blackList.contains(where: { $0.id == myInfo.id }){
+            AlertManager.showAlert(on: self, title: "모임에서 추방당하여 \n 모임에 가입할 수 없습니다.", message: nil) { [weak self] _ in
+                if let navigationController = self?.navigationController {
+                    for controller in navigationController.viewControllers {
+                        if let meetingVC = controller as? MeetingViewController {
+                            navigationController.popToViewController(meetingVC, animated: true)
+                            break
+                        }
+                    }
+                }
+            }
+            return
+        }
         signUpButton.isEnabled = false
         print("Sign Up button tapped!.")
         addUser()
