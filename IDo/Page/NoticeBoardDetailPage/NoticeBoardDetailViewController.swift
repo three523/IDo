@@ -415,7 +415,9 @@ extension NoticeBoardDetailViewController {
         guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
         if myCommentList.update(element: comment) == nil { return }
         MyProfile.shared.update(myCommentList: myCommentList)
-        firebaseCommentManager.updateDatas(data: comment)
+        firebaseCommentManager.updateDatas(data: comment) { [weak self] _ in
+            self?.commentTableView.reloadData()
+        }
     }
     
     private func delete(comment: Comment) {
