@@ -27,6 +27,8 @@ class FirebaseManager {
     var club: Club
     var missSelectedImage: [UIImage] = []
     
+    var isClubExists: Bool = true
+    
     
     // 원본
     var selectedImage: [String: StorageImage] = [:]
@@ -441,12 +443,14 @@ class FirebaseManager {
         let club = self.club
         let clubRef = Database.database().reference().child(club.category).child("meetings").child(club.id).child("userList")
         clubRef.observe(.value) { dataSnapShot in
+            print("update club")
             if dataSnapShot.exists() {
                 guard dataSnapShot.exists(),
                       let values = dataSnapShot.value as? [Any] else {
                     print("club에 value가 존재하지 않습니다.")
                     return
                 }
+                self.isClubExists = true
                 
                 var userList: [UserSummary] = []
                 values.forEach { value in
@@ -457,6 +461,8 @@ class FirebaseManager {
                     userList.append(user)
                 }
                 self.club.userList = userList
+            } else {
+                self.isClubExists = false
             }
         }
     }

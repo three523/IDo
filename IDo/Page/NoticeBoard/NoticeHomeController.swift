@@ -118,6 +118,7 @@ final class NoticeHomeController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         //loadDataFromFirebase()
         super.viewWillAppear(animated)
+        guard isClubExists() else { return }
         memberTableView.reloadData()
     }
     
@@ -266,6 +267,18 @@ final class NoticeHomeController: UIViewController {
             self.textLabel.text = club.description
             self.imageView.image = UIImage(data: imageData)
         }
+    }
+}
+
+extension NoticeHomeController {
+    private func isClubExists() -> Bool {
+        if firebaseNoticeBoardManager.isClubExists == false {
+            AlertManager.showAlert(on: self, title: "클럽이 존재하지 않습니다", message: nil) { _ in
+                self.navigationController?.popViewController(animated: true)
+            }
+            return false
+        }
+        return true
     }
 }
 

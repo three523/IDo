@@ -43,10 +43,8 @@ class NoticeBoardViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         firebaseManager.delegate = self
-        guard MyProfile.shared.isJoin(in: firebaseManager.club) else {
-            AlertManager.showIsNotClubMemberChek(on: self)
-            return
-        }
+        isClubExists()
+        isMyClub()
     }
     
     deinit {
@@ -78,6 +76,25 @@ class NoticeBoardViewController: UIViewController {
     }
 }
 
+extension NoticeBoardViewController {
+    private func isMyClub() {
+        guard MyProfile.shared.isJoin(in: firebaseManager.club) else {
+            AlertManager.showIsNotClubMemberChek(on: self)
+            return
+        }
+        return
+    }
+    
+    private func isClubExists() {
+        if firebaseManager.isClubExists == false {
+            AlertManager.showAlert(on: self, title: "클럽이 존재하지 않습니다", message: nil) { _ in
+                self.navigationController?.popViewController(animated: true)
+            }
+            return
+        }
+        return 
+    }
+}
 
 extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource {
     

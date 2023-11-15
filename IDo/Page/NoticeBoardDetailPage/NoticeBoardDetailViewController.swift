@@ -76,10 +76,10 @@ final class NoticeBoardDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-        guard MyProfile.shared.isJoin(in: firebaseNoticeBoardManager.club) else {
-            AlertManager.showIsNotClubMemberChek(on: self)
-            return
-        }
+        
+        isClubExists()
+        isJoinCheck()
+        
         guard let noticeBoard = firebaseNoticeBoardManager.noticeBoards.first(where: { $0.id == noticeBoard.id }) else { return }
         self.noticeBoard = noticeBoard
         updateNoticeBoardSetup()
@@ -172,8 +172,8 @@ private extension NoticeBoardDetailViewController {
     func noticeBoardSetup() {
         
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
-            guard let self else { return }
-            
+            guard let self,
+                isJoinCheck(), isClubExists() else { return }
             if noticeBoard.rootUser.id == currentUser?.uid {
                 // MARK: - 게시판 업데이트 로직
                 let updateHandler: (UIAlertAction) -> Void = { _ in
@@ -252,7 +252,7 @@ private extension NoticeBoardDetailViewController {
     //MARK: 게시글 신고
     func handleSuccessAction(title: String, message: String) {
         let okHandler: (UIAlertAction) -> Void = { _ in
-            
+            guard isJoinCheck(), isClubExists() else { return }
             // 해당 게시글의 작성자에 접근
             let rootUser = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
             
@@ -378,6 +378,33 @@ private extension NoticeBoardDetailViewController {
     
     @objc func keyBoardWillHide(notification: NSNotification) {
         self.addCommentViewBottomConstraint?.update(inset: 0)
+    }
+}
+
+extension NoticeBoardDetailViewController {
+    private func isJoinCheck() -> Bool {
+        guard MyProfile.shared.isJoin(in: firebaseNoticeBoardManager.club) else {
+            AlertManager.showIsNotClubMemberChek(on: self)
+            return false
+        }
+        return true
+    }
+    private func isClubExists() -> Bool {
+        if firebaseNoticeBoardManager.isClubExists == false {
+            AlertManager.showAlert(on: self, title: "클럽이 존재하지 않습니다", message: nil) { _ in
+                if let navigationController = self.navigationController {
+                    for controller in navigationController.viewControllers {
+                        if let meetingVC = controller as? MeetingViewController {
+                            navigationController.popToViewController(meetingVC, animated: true)
+                            break
+                        }
+                    }
+                    navigationController.popToRootViewController(animated: true)
+                }
+            }
+            return false
+        }
+        return true
     }
 }
 
@@ -553,6 +580,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         let deleteComment = self.firebaseCommentManager.modelList[indexPath.row]
         let clubRootUser = self.firebaseNoticeBoardManager.club.rootUser
         let okHandler: (UIAlertAction) -> Void = { _ in
+            guard isJoinCheck(), isClubExists() else { return }
             self.firebaseCommentManager.deleteData(data: deleteComment) { isComplete in
                 var declarationCount = self.firebaseNoticeBoardManager.club.userList?[commentWriteUser].declarationCount ?? 0
                 declarationCount += 1
