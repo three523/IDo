@@ -252,7 +252,7 @@ private extension NoticeBoardDetailViewController {
     //MARK: 게시글 신고
     func handleSuccessAction(title: String, message: String) {
         let okHandler: (UIAlertAction) -> Void = { _ in
-            guard isJoinCheck(), isClubExists() else { return }
+            guard self.isJoinCheck(), self.isClubExists() else { return }
             // 해당 게시글의 작성자에 접근
             let rootUser = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
             
@@ -352,13 +352,7 @@ private extension NoticeBoardDetailViewController {
                         var myCommentList = myUserInfo.myCommentList ?? []
                         myCommentList.append(comment)
                         MyProfile.shared.update(myCommentList: myCommentList)
-                        if self.firebaseCommentManager.modelList.count == 1 {
-                            self.commentTableView.reloadData()
-                        } else {
-                            self.commentTableView.beginUpdates()
-                            self.commentTableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: .none)
-                            self.commentTableView.endUpdates()
-                        }
+                        self.commentTableView.reloadData()
                     }
                 }
             } else {
@@ -460,8 +454,8 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
             //TODO: 같이 LongPress할때와 똑같이 작동함 함수로 뺄 필요가 있음
             guard let self else { return }
             if isCommentWriteUser {
-                let updateHandler: (UIAlertAction) -> Void = { _ in
-                    let comment = self.firebaseCommentManager.modelList[indexPath.row]
+                let updateHandler: (UIAlertAction) -> Void = { [weak tableView] _ in
+                    guard let indexPath = tableView?.indexPath(for: cell) else { return }
                     let vc = CommentUpdateViewController(comment: comment)
                     vc.commentUpdate = { [weak self] updateComment in
                         guard let self else { return }
@@ -470,7 +464,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                         MyProfile.shared.update(myCommentList: myCommentList)
                         self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
                             DispatchQueue.main.async {
-                                self.commentTableView.reloadRows(at: [indexPath], with: .none)
+                                tableView?.reloadData()
                             }
                         }
                     }
@@ -478,17 +472,21 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                     vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
                     self.navigationController?.pushViewController(vc, animated: true)
                 }
-                let deleteHandler: (UIAlertAction) -> Void = { _ in
+                let deleteHandler: (UIAlertAction) -> Void = { [weak tableView] _ in
+                    guard let indexPath = tableView?.indexPath(for: cell) else { return }
                     let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
                     guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
                     myCommentList.removeAll(where: { $0.id == removeCommnet.id })
                     MyProfile.shared.update(myCommentList: myCommentList)
                     self.firebaseCommentManager.deleteData(data: removeCommnet) { isComplete in
-                        if self.firebaseCommentManager.modelList.isEmpty {
-                            tableView.reloadData()
-                        } else {
-                            self.deleteCell(tableView: tableView, indexPath: indexPath)
+                        DispatchQueue.main.async {
+                            tableView?.reloadData()
                         }
+//                        if self.firebaseCommentManager.modelList.isEmpty {
+//                            tableView.reloadData()
+//                        } else {
+//                            self.deleteCell(tableView: tableView, indexPath: indexPath)
+//                        }
                     }
                 }
                 
@@ -580,7 +578,8 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         let deleteComment = self.firebaseCommentManager.modelList[indexPath.row]
         let clubRootUser = self.firebaseNoticeBoardManager.club.rootUser
         let okHandler: (UIAlertAction) -> Void = { _ in
-            guard isJoinCheck(), isClubExists() else { return }
+            guard self.isJoinCheck(), self.isClubExists() else { return }
+            
             self.firebaseCommentManager.deleteData(data: deleteComment) { isComplete in
                 var declarationCount = self.firebaseNoticeBoardManager.club.userList?[commentWriteUser].declarationCount ?? 0
                 declarationCount += 1
@@ -628,11 +627,15 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                     }
                 }
                 DispatchQueue.main.async {
-                    if self.firebaseCommentManager.modelList.isEmpty {
-                        self.commentTableView.reloadData()
-                    } else {
-                        self.deleteCell(tableView: self.commentTableView, indexPath: indexPath)
-                    }
+                    self.commentTableView.reloadData()
+//                    if self.firebaseCommentManager.modelList.isEmpty {
+//                        self.commentTableView.reloadData()
+//                    } else {
+////                        self.deleteCell(tableView: self.commentTableView, indexPath: indexPath)
+//                        self.tableView.beginUpdates()
+//                        self.tableView.deleteRows(at: [indexPath], with: .none)
+//                        self.tableView.endUpdates()
+//                    }
                 }
             }
         }
