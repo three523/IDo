@@ -65,11 +65,13 @@ final class NoticeBoardDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         firebaseCommentManager.readDatas { result in
-            switch result {
-            case .success(_):
-                self.commentTableView.reloadData()
-            case .failure(_):
-                self.commentTableView.reloadData()
+            DispatchQueue.main.async {
+                switch result {
+                case .success(_):
+                    self.commentTableView.reloadData()
+                case .failure(_):
+                    self.commentTableView.reloadData()
+                }
             }
         }
         NavigationBar.setNavigationCategoryTitle(for: navigationItem)
@@ -207,7 +209,6 @@ private extension NoticeBoardDetailViewController {
 //                    self.firebaseClubDatabaseManager.removeNoticeBoard(club: self.firebaseNoticeBoardManager.club, clubNoticeboard: self.firebaseNoticeBoardManager.noticeBoards[self.editIndex])
                     self.firebaseNoticeBoardManager.deleteNoticeBoard(at: self.editIndex) { success in
                         if success {
-                            
                             self.firebaseCommentManager.deleteAllCommentList()
                             self.firebaseNoticeBoardManager.readNoticeBoard()
                             self.navigationController?.popViewController(animated: true)
@@ -351,24 +352,11 @@ private extension NoticeBoardDetailViewController {
         
         addCommentStackView.commentAddHandler = { [weak self] content in
             guard let self else { return }
-            guard MyProfile.shared.isJoin(in: firebaseNoticeBoardManager.club) else {
-                AlertManager.showIsNotClubMemberChek(on: self)
+            
+            guard isJoinCheck(), isClubExists() else {
                 return
             }
-            if let myUserInfo = MyProfile.shared.myUserInfo {
-                let user = UserSummary(id: myUserInfo.id, profileImagePath: myUserInfo.profileImagePath, nickName: myUserInfo.nickName)
-                let comment = Comment(id: UUID().uuidString, noticeBoardID: noticeBoard.id, writeUser: user, createDate: Date(), content: content)
-                firebaseCommentManager.appendData(data: comment) { isComplete in
-                    if isComplete {
-                        var myCommentList = myUserInfo.myCommentList ?? []
-                        myCommentList.append(comment)
-                        MyProfile.shared.update(myCommentList: myCommentList)
-                        self.commentTableView.reloadData()
-                    }
-                }
-            } else {
-                //TODO: 사용자 로그인이 필요하다는 경고창과 함꼐 로그인 화면으로 넘기기
-            }
+            addComment(commentContent: content)
         }
     }
     
@@ -386,6 +374,75 @@ private extension NoticeBoardDetailViewController {
     }
 }
 
+//MARK: 댓글 관련
+extension NoticeBoardDetailViewController {
+    
+    private func addComment(commentContent: String) {
+        
+        if let myUserInfo = MyProfile.shared.myUserInfo {
+            let user = myUserInfo.toUserSummary
+            let comment = Comment(id: UUID().uuidString, noticeBoardID: noticeBoard.id, writeUser: user, createDate: Date(), content: commentContent)
+            
+            firebaseCommentManager.appendData(data: comment) { isComplete in
+                if isComplete {
+                    
+                    var myCommentList = myUserInfo.myCommentList ?? []
+                    myCommentList.append(comment)
+                    MyProfile.shared.update(myCommentList: myCommentList)
+                    
+                    self.firebaseCommentManager.readDatas { result in
+                        switch result {
+                        case .success(let commentList):
+                            self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].commentCount = String(commentList.count)
+                            let updateNoticeBoard = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]
+                            self.firebaseNoticeBoardManager.updateNoticeBoardCommentCount(noticeBoard: updateNoticeBoard)
+                            self.delegate?.updateComment(noticeBoardID: updateNoticeBoard.id, commentCount: updateNoticeBoard.commentCount)
+                            DispatchQueue.main.async {
+                                self.commentTableView.reloadData()
+                            }
+                        case .failure(let error):
+                            print(error.localizedDescription)
+                        }
+                    }
+                }
+            }
+        } else {
+            //TODO: 사용자 로그인이 필요하다는 경고창과 함꼐 로그인 화면으로 넘기기
+        }
+    }
+    
+    private func update(comment: Comment) {
+        guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
+        if myCommentList.update(element: comment) == nil { return }
+        MyProfile.shared.update(myCommentList: myCommentList)
+        firebaseCommentManager.updateDatas(data: comment)
+    }
+    
+    private func delete(comment: Comment) {
+        guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
+        myCommentList.removeAll(where: { $0.id == comment.id })
+        MyProfile.shared.update(myCommentList: myCommentList)
+        self.firebaseCommentManager.deleteData(data: comment) { [weak self] isComplete in
+            guard let self else { return }
+            self.firebaseCommentManager.readDatas { result in
+                switch result {
+                case .success(let commentList):
+                    self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].commentCount = String(commentList.count)
+                    let updateNoticeBoard = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex]
+                    self.firebaseNoticeBoardManager.updateNoticeBoardCommentCount(noticeBoard: updateNoticeBoard)
+                    self.delegate?.updateComment(noticeBoardID: updateNoticeBoard.id, commentCount: updateNoticeBoard.commentCount)
+                    DispatchQueue.main.async {
+                        self.commentTableView.reloadData()
+                    }
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            }
+        }
+    }
+}
+
+// MARK: 현재 클럽 상태 (사용자가 방출된 경우, 클럽이 없어진경우)
 extension NoticeBoardDetailViewController {
     private func isJoinCheck() -> Bool {
         guard MyProfile.shared.isJoin(in: firebaseNoticeBoardManager.club) else {
@@ -413,6 +470,7 @@ extension NoticeBoardDetailViewController {
     }
 }
 
+// MARK: 테이블뷰 관련
 extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -462,7 +520,6 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         cell.contentLabel.text = comment.content
         cell.writeInfoView.writerNameLabel.text = comment.writeUser.nickName
         cell.moreButtonTapHandler = { [weak self] in
-            //TODO: 같이 LongPress할때와 똑같이 작동함 함수로 뺄 필요가 있음
             guard let self else { return }
             if isCommentWriteUser {
                 let updateHandler: (UIAlertAction) -> Void = { [weak tableView] _ in
@@ -470,14 +527,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                     let vc = CommentUpdateViewController(comment: comment)
                     vc.commentUpdate = { [weak self] updateComment in
                         guard let self else { return }
-                        guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                        if myCommentList.update(element: updateComment) == nil { return }
-                        MyProfile.shared.update(myCommentList: myCommentList)
-                        self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
-                            DispatchQueue.main.async {
-                                tableView?.reloadData()
-                            }
-                        }
+                        self.update(comment: updateComment)
                     }
                     vc.hidesBottomBarWhenPushed = true
                     vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
@@ -486,14 +536,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                 let deleteHandler: (UIAlertAction) -> Void = { [weak tableView] _ in
                     guard let indexPath = tableView?.indexPath(for: cell) else { return }
                     let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
-                    guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                    myCommentList.removeAll(where: { $0.id == removeCommnet.id })
-                    MyProfile.shared.update(myCommentList: myCommentList)
-                    self.firebaseCommentManager.deleteData(data: removeCommnet) { isComplete in
-                        DispatchQueue.main.async {
-                            tableView?.reloadData()
-                        }
-                    }
+                    self.delete(comment: removeCommnet)
                 }
                 
                 AlertManager.showUpdateAlert(on: self, updateHandler: updateHandler, deleteHandler: deleteHandler)
@@ -543,32 +586,17 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         if firebaseCommentManager.modelList.isEmpty { return nil }
         let comment = firebaseCommentManager.modelList[indexPath.row]
         guard comment.writeUser.id == currentUser.uid else { return nil }
-        let removeAction = UIContextualAction(style: .normal, title: "삭제", handler: {(action, view, completionHandler) in
-            
+        let removeAction = UIContextualAction(style: .normal, title: "삭제", handler: { [weak self] (action, view, completionHandler) in
+            guard let self else { return }
             let removeCommnet = self.firebaseCommentManager.modelList[indexPath.row]
-            guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-            myCommentList.removeAll(where: { $0.id == removeCommnet.id })
-            MyProfile.shared.update(myCommentList: myCommentList)
-            self.firebaseCommentManager.deleteData(data: removeCommnet) { isComplete in
-                if self.firebaseCommentManager.modelList.isEmpty {
-                    tableView.reloadData()
-                } else {
-                    self.deleteCell(tableView: tableView, indexPath: indexPath)
-                }
-            }
-            
+            self.delete(comment: removeCommnet)
         })
         let updateAction = UIContextualAction(style: .normal, title: "수정", handler: {(action, view, completionHandler) in
             let comment = self.firebaseCommentManager.modelList[indexPath.row]
             let vc = CommentUpdateViewController(comment: comment)
             vc.commentUpdate = { [weak self] updateComment in
                 guard let self else { return }
-                guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
-                if myCommentList.update(element: updateComment) == nil { return }
-                MyProfile.shared.update(myCommentList: myCommentList)
-                self.firebaseCommentManager.updateDatas(data: updateComment) { _ in
-                    self.commentTableView.reloadRows(at: [indexPath], with: .none)
-                }
+                self.update(comment: updateComment)
             }
             vc.hidesBottomBarWhenPushed = true
             vc.view.backgroundColor = UIColor(color: .backgroundPrimary)
