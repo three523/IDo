@@ -378,7 +378,7 @@ private extension NoticeBoardDetailViewController {
 extension NoticeBoardDetailViewController {
     
     private func addComment(commentContent: String) {
-        
+        guard isJoinCheck(), isClubExists() else { return }
         if let myUserInfo = MyProfile.shared.myUserInfo {
             let user = myUserInfo.toUserSummary
             let comment = Comment(id: UUID().uuidString, noticeBoardID: noticeBoard.id, writeUser: user, createDate: Date(), content: commentContent)
@@ -412,6 +412,7 @@ extension NoticeBoardDetailViewController {
     }
     
     private func update(comment: Comment) {
+        guard isJoinCheck(), isClubExists() else { return }
         guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
         if myCommentList.update(element: comment) == nil { return }
         MyProfile.shared.update(myCommentList: myCommentList)
@@ -421,6 +422,7 @@ extension NoticeBoardDetailViewController {
     }
     
     private func delete(comment: Comment) {
+        guard isJoinCheck(), isClubExists() else { return }
         guard var myCommentList = MyProfile.shared.myUserInfo?.myCommentList else { return }
         myCommentList.removeAll(where: { $0.id == comment.id })
         MyProfile.shared.update(myCommentList: myCommentList)
