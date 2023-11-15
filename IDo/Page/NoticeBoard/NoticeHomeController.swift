@@ -7,6 +7,7 @@
 
 import FirebaseAuth
 import FirebaseDatabase
+import FirebaseStorage
 import SnapKit
 import UIKit
 
@@ -16,6 +17,10 @@ final class NoticeHomeController: UIViewController {
     private let firebaseNoticeBoardManager: FirebaseManager
     private let clubImage: UIImage? = nil
     private let club: Club
+    
+    let urlCache = FBURLCache.shared
+    let storage = Storage.storage().reference()
+    
     let memberTableView: IntrinsicTableView = {
         let tableview = IntrinsicTableView()
         tableview.rowHeight = 36 + 8 + 8
@@ -294,26 +299,39 @@ extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MemberTableViewCell.identifier, for: indexPath) as? MemberTableViewCell else { return UITableViewCell() }
         cell.selectionStyle = .none
-        if let userList = firebaseClubDatabaseManager.model?.userList {
+
+        if let userList = firebaseClubDatabaseManager.model?.userList, let rootUser = firebaseClubDatabaseManager.model?.rootUser {
             let user = userList[indexPath.row]
             cell.nameLabel.text = user.nickName
             cell.descriptionLabel.text = user.description
-            cell.profileImageView.image = nil
-            guard let profilePath = user.profileImagePath else { return cell }
-            FBURLCache.shared.downloadURL(storagePath: profilePath + "/\(ImageSize.small.rawValue)") { result in
-                switch result {
-                case .success(let image):
-                    DispatchQueue.main.async {
-                        cell.profileImageView.image = image
-                        cell.profileImageView.backgroundColor = UIColor(color: .white)
+            cell.profileImageView.imageView.image = nil
+            cell.headImageView.isHidden = (user.id != rootUser.id)
+
+            if let profilePath = user.profileImagePath {
+                FBURLCache.shared.downloadURL(storagePath: profilePath + "/\(ImageSize.small.rawValue)") { result in
+                    switch result {
+                    case .success(let image):
+                        DispatchQueue.main.async {
+                            cell.setUserImage(profileImage: image, color: UIColor(color: .white), margin: 0)
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
                     }
-                case .failure(let error):
-                    print(error.localizedDescription)
+                }
+            } else {
+                if let defaultImage = UIImage(systemName: "person.fill") {
+                    cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentBackground))
                 }
             }
+
+            cell.onImageTap = { [weak self] in
+                self?.navigateToProfilePage(for: indexPath)
+            }
         }
+
         return cell
     }
+
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         guard authState == .root,
@@ -331,5 +349,12 @@ extension NoticeHomeController: UITableViewDelegate, UITableViewDataSource {
         let config = UISwipeActionsConfiguration(actions: [removeAction])
         config.performsFirstActionWithFullSwipe = false
         return config
+    }
+    
+    func navigateToProfilePage(for indexPath: IndexPath) {
+        if let userList = firebaseClubDatabaseManager.model?.userList {
+            let profile = userList[indexPath.row]
+            PresentToProfileVC.presentToProfileVC(from: self, with: profile)
+        }
     }
 }

@@ -8,11 +8,16 @@
 import UIKit
 
 final class MemberTableViewCell: UITableViewCell, Reusable {
+    
+    var onImageTap: (() -> Void)?
 
-    let profileImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(systemName: "person"))
+    let profileImageView: BasicImageView = {
+        let imageView = BasicImageView(image: UIImage(systemName: "person.fill"))
         imageView.backgroundColor = UIColor(color: .contentBackground)
-        imageView.tintColor = UIColor(color: .white)
+        imageView.contentMargin = 4
+        imageView.tintColor = UIColor.white
+        imageView.layer.cornerRadius = 18
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
@@ -32,11 +37,19 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
         return label
     }()
     
+    let headImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "star.fill")
+        imageView.tintColor = UIColor(color: .contentDisable)
+        return imageView
+    }()
+    
     var imageSize: CGFloat = 36
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setup()
+        addTapGestureToProfileImageView()
     }
     
     required init?(coder: NSCoder) {
@@ -53,6 +66,7 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
         contentView.addSubview(profileImageView)
         contentView.addSubview(nameLabel)
         contentView.addSubview(descriptionLabel)
+        contentView.addSubview(headImageView)
     }
     
     private func setupAutoLayout() {
@@ -71,6 +85,14 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
             make.bottom.equalTo(profileImageView.snp.bottom)
             make.left.equalTo(profileImageView.snp.right).offset(Constant.margin2)
         }
+        headImageView.snp.makeConstraints { make in
+            make.centerY.equalTo(profileImageView)
+            make.right.equalTo(contentView.snp.right)
+            make.width.height.equalTo(imageSize/2)
+//            make.centerY.equalTo(nameLabel)
+//            make.left.equalTo(nameLabel.snp.right).offset(Constant.margin1)
+//            make.width.height.equalTo(imageSize/3)
+        }
     }
     
     private func setupImageView() {
@@ -80,7 +102,29 @@ final class MemberTableViewCell: UITableViewCell, Reusable {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        profileImageView.image = nil
+        profileImageView.imageView.image = nil
     }
 
+}
+
+extension MemberTableViewCell {
+    
+    func setUserImage(profileImage: UIImage, color: UIColor, margin: CGFloat = 4) {
+        DispatchQueue.main.async {
+            self.profileImageView.imageView.image = profileImage
+            self.profileImageView.imageView.backgroundColor = color
+            self.profileImageView.contentMargin = margin
+        }
+    }
+    
+    private func addTapGestureToProfileImageView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageTapped))
+        profileImageView.isUserInteractionEnabled = true
+        profileImageView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func profileImageTapped() {
+        onImageTap?()
+    }
+    
 }

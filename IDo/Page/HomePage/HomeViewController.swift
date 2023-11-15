@@ -50,7 +50,10 @@ class HomeViewController : UIViewController {
         line2.backgroundColor = UIColor(color: .placeholder)
     }
     func makeJoinClub() {
-        joinClub.text = "가입한 모임"
+        DispatchQueue.main.async {
+            guard let nickName = MyProfile.shared.myUserInfo?.nickName else { return }
+            self.joinClub.text = "\(nickName)님이 가입하신 모임"
+        }
         joinClub.textColor = UIColor(color: .textStrong)
         joinClub.font = .bodyFont(.large, weight: .bold)
     }
@@ -206,6 +209,7 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as? BasicCell else { return }
         guard let currentUserClubList = MyProfile.shared.myUserInfo?.myClubList else { return }
         let noticeBoardVC = NoticeMeetingController(club: currentUserClubList[indexPath.row], currentUser: MyProfile.shared.myUserInfo!)
+        TemporaryManager.shared.categoryData = currentUserClubList[indexPath.row].category
         navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
 }

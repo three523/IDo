@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import FirebaseAuth
 import FirebaseDatabase
+import FirebaseStorage
 
 final class NoticeBoardDetailViewController: UIViewController {
     
@@ -33,6 +34,8 @@ final class NoticeBoardDetailViewController: UIViewController {
     weak var delegate: FirebaseManagerDelegate?
     
     private var editIndex: Int
+    let urlCache = FBURLCache.shared
+    let storage = Storage.storage().reference()
     
     init(noticeBoard: NoticeBoard, firebaseNoticeBoardManager: FirebaseManager, editIndex: Int) {
         self.noticeBoard = noticeBoard
@@ -77,8 +80,7 @@ final class NoticeBoardDetailViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyBoardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        isClubExists()
-        isJoinCheck()
+        guard isClubExists(), isJoinCheck() else { return }
         
         guard let noticeBoard = firebaseNoticeBoardManager.noticeBoards.first(where: { $0.id == noticeBoard.id }) else { return }
         self.noticeBoard = noticeBoard
@@ -140,6 +142,7 @@ private extension NoticeBoardDetailViewController {
         
     }
     
+    // MARK: - 게시판 사용자 정보 보여주기
     func updateNoticeBoardSetup() {
         if let dateString = noticeBoard.createDate.toDate?.diffrenceDate {
             noticeBoardDetailView.writerInfoView.writerTimeLabel.text = dateString
@@ -169,8 +172,16 @@ private extension NoticeBoardDetailViewController {
         }
     }
     
+    func presentToProfilePage() {
+        let profile = noticeBoard.rootUser
+        PresentToProfileVC.presentToProfileVC(from: self, with: profile)
+    }
+    
     func noticeBoardSetup() {
-        
+        noticeBoardDetailView.onImageTap = { [weak self] in
+            // 여기에서 MyProfileViewController로 넘어가는 로직을 구현합니다.
+            self?.presentToProfilePage()
+        }
         noticeBoardDetailView.writerInfoView.moreButtonTapHandler = { [weak self] in
             guard let self,
                 isJoinCheck(), isClubExists() else { return }
@@ -440,7 +451,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
               let currentUser else { return UITableViewCell() }
         cell.selectionStyle = .none
         if let defaultImage = UIImage(systemName: "person.fill") {
-            cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentPrimary))
+            cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentBackground))
         }
         let comment = firebaseCommentManager.modelList[indexPath.row]
         firebaseCommentManager.getUserImage(referencePath: comment.writeUser.profileImagePath, imageSize: .small) { image in
@@ -520,6 +531,10 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         }
         guard let dateText = comment.createDate.diffrenceDate else { return cell }
         cell.setDate(dateText: dateText)
+        
+        cell.onImageTap = { [weak self] in
+            self?.navigateToProfilePage(for: indexPath)
+        }
         return cell
     }
     
@@ -644,5 +659,8 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
         tableView.deleteRows(at: [indexPath], with: .none)
         tableView.endUpdates()
     }
-    
+    func navigateToProfilePage(for indexPath: IndexPath) {
+        let profile = firebaseCommentManager.modelList[indexPath.row].writeUser
+        PresentToProfileVC.presentToProfileVC(from: self, with: profile)
+    }
 }

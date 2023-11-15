@@ -29,10 +29,6 @@ class NoticeBoardViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Navigation 관련 함수
-//        navigationControllerSet()
-//        navigationBarButtonAction()
-        
         noticeBoardView.noticeBoardTableView.delegate = self
         noticeBoardView.noticeBoardTableView.dataSource = self
         
@@ -76,6 +72,7 @@ class NoticeBoardViewController: UIViewController {
     }
 }
 
+//MARK: Club 확인 관련
 extension NoticeBoardViewController {
     private func isMyClub() {
         guard MyProfile.shared.isJoin(in: firebaseManager.club) else {
@@ -96,6 +93,7 @@ extension NoticeBoardViewController {
     }
 }
 
+// MARK: - 테이블 뷰 관련
 extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -113,40 +111,28 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
             cell.indexPath = indexPath
             firebaseManager.getUserImage(referencePath: profileImageURL, imageSize: .medium) { downloadedImage in
                 if let image = downloadedImage {
-                    DispatchQueue.main.async {
-                        cell.profileImageView.image = image
-                    }
+                    cell.setUserImage(profileImage: image, color: UIColor(color: .white), margin: 0)
                 }
+            }
+        }
+        else {
+            if let defaultImage = UIImage(systemName: "person.fill") {
+                cell.setUserImage(profileImage: defaultImage, color: UIColor(color: .contentBackground))
             }
         }
         cell.nameLabel.text = firebaseManager.noticeBoards[indexPath.row].rootUser.nickName
         cell.commentLabel.text = firebaseManager.noticeBoards[indexPath.row].commentCount
         cell.selectionStyle = .none
+        
+        cell.onImageTap = { [weak self] in
+            self?.navigateToProfilePage(for: indexPath)
+        }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = NoticeBoardDetailViewController(noticeBoard: firebaseManager.noticeBoards[indexPath.row], firebaseNoticeBoardManager: firebaseManager, editIndex: indexPath.row)
         vc.delegate = self
-//        let createVC = CreateNoticeBoardViewController(club: club, firebaseManager: firebaseManager)
-//        createVC.editingTitleText = firebaseManager.noticeBoards[indexPath.row].title
-//        createVC.editingContentText = firebaseManager.noticeBoards[indexPath.row].content
-//        
-//        firebaseManager.downloadImages(imagePaths: firebaseManager.noticeBoards[indexPath.row].imageList) { downloadedImages in
-//            if let images = downloadedImages {
-//                // 이미지 다운로드 성공
-//                print("다운로드된 이미지 개수: \(images.count)")
-//                //self.firebaseManager.selectedImage = images
-//                createVC.createNoticeBoardView.galleryCollectionView.reloadData()
-//            }
-//            else {
-//                // 이미지 다운로드 실패
-//                print("이미지를 다운로드하지 못했습니다.")
-//            }
-//        }
-//        
-//        createVC.editingMemoIndex = indexPath.row
-//        createVC.isEditingMode = true
         
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -180,8 +166,13 @@ extension NoticeBoardViewController: UITableViewDelegate, UITableViewDataSource 
             return UISwipeActionsConfiguration(actions: [])
         }
     }
+    func navigateToProfilePage(for indexPath: IndexPath) {
+        let profile = firebaseManager.noticeBoards[indexPath.row].rootUser
+        PresentToProfileVC.presentToProfileVC(from: self, with: profile)
+    }
 }
 
+// MARK: - FirebaseManaerDelegate 관련
 extension NoticeBoardViewController: FirebaseManagerDelegate {
     func reloadData() {
         selectView()
