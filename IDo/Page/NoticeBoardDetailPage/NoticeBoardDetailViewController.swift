@@ -482,11 +482,6 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                         DispatchQueue.main.async {
                             tableView?.reloadData()
                         }
-//                        if self.firebaseCommentManager.modelList.isEmpty {
-//                            tableView.reloadData()
-//                        } else {
-//                            self.deleteCell(tableView: tableView, indexPath: indexPath)
-//                        }
                     }
                 }
                 
@@ -628,14 +623,6 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                 }
                 DispatchQueue.main.async {
                     self.commentTableView.reloadData()
-//                    if self.firebaseCommentManager.modelList.isEmpty {
-//                        self.commentTableView.reloadData()
-//                    } else {
-////                        self.deleteCell(tableView: self.commentTableView, indexPath: indexPath)
-//                        self.tableView.beginUpdates()
-//                        self.tableView.deleteRows(at: [indexPath], with: .none)
-//                        self.tableView.endUpdates()
-//                    }
                 }
             }
         }
