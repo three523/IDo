@@ -442,7 +442,8 @@ class FirebaseManager {
         let clubRef = Database.database().reference().child(club.category).child("meetings").child(club.id).child("userList")
         clubRef.observe(.value) { dataSnapShot in
             if dataSnapShot.exists() {
-                guard let values = dataSnapShot.value as? [Any] else {
+                guard dataSnapShot.exists(),
+                      let values = dataSnapShot.value as? [Any] else {
                     print("club에 value가 존재하지 않습니다.")
                     return
                 }

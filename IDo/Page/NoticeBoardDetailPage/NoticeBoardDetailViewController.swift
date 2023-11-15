@@ -282,13 +282,22 @@ private extension NoticeBoardDetailViewController {
                     if (self.firebaseNoticeBoardManager.club.userList?[rootUserIndex].declarationCount) ?? 0 >= 3 {
                         let userList = self.firebaseNoticeBoardManager.club.userList ?? []
                         let user = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
+                        
                         if user.id == self.firebaseNoticeBoardManager.club.rootUser.id {
                             self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club, userList: userList) { isSuccess in
                                 if isSuccess {
-                                    self.navigationController?.popToRootViewController(animated: true)
+                                    guard let uid = Auth.auth().currentUser?.uid else {
+                                        return
+                                    }
+                                    MyProfile.shared.getUserProfile(uid: uid) { _ in
+                                        self.navigationController?.popToRootViewController(animated: true)
+                                        return
+                                    }
                                 }
+                                self.navigationController?.popToRootViewController(animated: true)
                                 return
                             }
+                            return
                         }
                         
                         self.firebaseClubDatabaseManager.removeUser(club: self.firebaseNoticeBoardManager.club, user: self.firebaseNoticeBoardManager.club.userList![rootUserIndex], isBlock: true) { success in
@@ -565,8 +574,10 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                             if isSuccess {
                                 self.navigationController?.popToRootViewController(animated: true)
                             }
+                            self.navigationController?.popToRootViewController(animated: true)
                             return
                         }
+                        return
                     }
                     
                     // club에 있는 유저 삭제
