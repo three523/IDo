@@ -175,6 +175,11 @@ class FirebaseManager {
         }
     }
     
+    func updateNoticeBoardCommentCount(noticeBoard: NoticeBoard) {
+        let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id).child("commentCount")
+        ref.setValue(noticeBoard.commentCount)
+    }
+    
     // MARK: - 데이터 삭제
 
     func deleteNoticeBoard(at index: Int, completion: ((Bool) -> Void)? = nil) {
