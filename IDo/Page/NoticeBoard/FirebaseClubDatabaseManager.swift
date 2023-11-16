@@ -425,16 +425,33 @@ class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
 
     func appendUser(user: UserSummary, completion: ((Bool) -> Void)? = nil) {
         guard let model else { return }
-        var userList = model.userList ?? []
-        userList.append(user)
-        ref.updateChildValues(["userList": userList.asArrayDictionary()]) { error, _ in
+        ref.getData { error, dataSnapShot in
             if let error {
                 print(error.localizedDescription)
                 return
             }
-            self.model?.userList = userList
-            completion?(true)
+            guard dataSnapShot?.exists() != nil,
+                  let value = dataSnapShot?.value else {
+                print("club 정보를 가져오지 못했습니다")
+                return
+            }
+            guard let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
+                print("Club 정보를 디코딩 해오지 못했습니다.")
+                return
+            }
+            var userList = club.userList ?? []
+            userList.append(user)
+            self.ref.updateChildValues(["userList": userList.asArrayDictionary()]) { error, _ in
+                if let error {
+                    print(error.localizedDescription)
+                    return
+                }
+                self.model? = club
+                self.model?.userList = userList
+                completion?(true)
+            }
         }
+        
     }
     
     func removeMyUser(user: UserSummary, completion: ((Bool) -> Void)? = nil) {

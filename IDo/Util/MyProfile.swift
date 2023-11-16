@@ -96,7 +96,7 @@ final class MyProfile {
         fileCache.storeFile(myUserInfo: myUserInfo)
     }
     
-    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil, completion: ((Bool) -> Void)? = nil) {
+    func update(nickName: String? = nil, updateProfileImage: UIImage? = nil, profileImagePath: String? = nil, description: String? = nil, myClubList: [Club]? = nil, hobbyList: [String]? = nil, myNoticeBoardList: [NoticeBoard]? = nil, myCommentList: [Comment]? = nil, completion: ((Bool) -> Void)? = nil) {
         guard let myUserInfo = self.myUserInfo else { return }
         let ref = Database.database().reference().child("Users").child(myUserInfo.id)
         ref.getData { error, dataSnapShot in
@@ -130,6 +130,9 @@ final class MyProfile {
                     self.uploadProfileImage(imageData: mediumImageData, imageSize: .medium)
                 }
             }
+            if let profileImagePath {
+                myInfo.profileImagePath = profileImagePath
+            }
             if let description {
                 myInfo.description = description
             }
@@ -158,15 +161,18 @@ final class MyProfile {
     }
     
     private func uploadProfileImage(imageData: Data, imageSize: ImageSize) {
-        guard let uid = myUserInfo?.id else {
+        guard let myUserInfo else {
             print("uid가 존재하지 않아 이미지 저장에 실패하였습니다")
             return
         }
-        let storageRef = Storage.storage().reference().child("UserProfileImages/\(uid)/\(imageSize.rawValue)")
-        storageRef.putData(imageData) { _, error in
+        let defaultImageRef = Storage.storage().reference().child("UserProfileImages/\(myUserInfo.id)")
+        let detailProfileImageRef = defaultImageRef.child(imageSize.rawValue)
+        detailProfileImageRef.putData(imageData) { _, error in
             if let error {
                 print(error.localizedDescription)
+                return
             }
+            self.update(profileImagePath: defaultImageRef.fullPath)
         }
     }
     
