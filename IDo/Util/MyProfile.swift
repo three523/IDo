@@ -22,23 +22,6 @@ final class MyProfile {
     
     func getUserProfile(uid: String, completion: ((Bool) -> Void)? = nil) {
         ref = ref.child("Users").child(uid)
-        
-        ref.observe(.value) { dataSnapShot, _  in
-            guard let value = dataSnapShot.value,
-                  dataSnapShot.exists() else {
-                print("User 정보를 가져오지 못했습니다.")
-                return
-            }
-            guard let idoUser: IDoUser = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
-                print("나의 User정보를 IdoUser 형태로 디코딩하지 못했습니다.")
-                return
-            }
-            self.myUserInfo = idoUser.toMyUserInfo
-            if let profilePath = idoUser.profileImagePath {
-                self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)
-                return
-            }
-        }
         firebaseManager = MyProfileUpdateManager(refPath: ["Users",uid])
         //MARK: 데이터가 바꼈는지 체크하는 부분 로직 생각해보기
 //        if let currentUser = fileCache.getFile(uid: uid) {
@@ -223,6 +206,25 @@ final class MyProfile {
     
     func isJoin(in club: Club) -> Bool {
         return club.userList?.contains(where: { $0.id == myUserInfo?.id }) ?? false
+    }
+    
+    func addObserve() {
+        ref.observe(.value) { dataSnapShot, _  in
+            guard let value = dataSnapShot.value,
+                  dataSnapShot.exists() else {
+                print("User 정보를 가져오지 못했습니다.")
+                return
+            }
+            guard let idoUser: IDoUser = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
+                print("나의 User정보를 IdoUser 형태로 디코딩하지 못했습니다.")
+                return
+            }
+            self.myUserInfo = idoUser.toMyUserInfo
+            if let profilePath = idoUser.profileImagePath {
+                self.loadImage(defaultPath: profilePath, paths: ImageSize.allCases)
+                return
+            }
+        }
     }
     
     deinit {

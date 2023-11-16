@@ -217,7 +217,7 @@ extension NoticeMeetingController {
     }
     
     private func removeClub() {
-        firebaseClubDatabaseManager.removeMyClub { isCompleted in
+        firebaseClubDatabaseManager.removeClub(club: club) { isCompleted in
             if isCompleted { self.navigationController?.popViewController(animated: true) }
         }
     }
