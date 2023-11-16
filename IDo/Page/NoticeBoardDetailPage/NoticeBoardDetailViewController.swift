@@ -296,7 +296,7 @@ private extension NoticeBoardDetailViewController {
                         let user = self.firebaseNoticeBoardManager.noticeBoards[self.editIndex].rootUser
                         
                         if user.id == self.firebaseNoticeBoardManager.club.rootUser.id {
-                            self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club, userList: userList) { isSuccess in
+                            self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club) { isSuccess in
                                 if isSuccess {
                                     guard let uid = Auth.auth().currentUser?.uid else {
                                         return
@@ -639,7 +639,7 @@ extension NoticeBoardDetailViewController: UITableViewDelegate, UITableViewDataS
                     let user = userList[commentWriteUser]
                     
                     if user.id == self.firebaseNoticeBoardManager.club.rootUser.id {
-                        self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club, userList: userList) { isSuccess in
+                        self.firebaseClubDatabaseManager.removeClub(club: self.firebaseNoticeBoardManager.club) { isSuccess in
                             if isSuccess {
                                 self.navigationController?.popToRootViewController(animated: true)
                             }

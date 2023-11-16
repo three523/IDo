@@ -169,7 +169,7 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
                             return
                         }
                         guard let club: Club = DataModelCodable.decodingSingleDataSnapshot(value: dataSnapShot) else { return }
-                        self.clubFirebaseManager.removeClub(club: club, userList: club.userList ?? []) { success in
+                        self.clubFirebaseManager.removeClub(club: club) { success in
                             if success {
                                 print("탈퇴 회원 관련 게시글,댓글 삭제 성공")
                             }
