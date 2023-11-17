@@ -10,6 +10,43 @@ import FirebaseStorage
 import Foundation
 
 class FirebaseClubDatabaseManager: FBDatabaseManager<Club> {
+    
+    override func readData(completion: @escaping (Result<Club, Error>) -> Void = {_ in}) {
+        ref.getData { error, dataSnapshot in
+            if let error {
+                let nsError = error as NSError
+                if nsError.code == 1 { self.viewState = .error(true) }
+                else { self.viewState = .error(false) }
+                completion(.failure(nsError))
+                self.update()
+                return
+            }
+            guard let dataSnapshot else {
+                self.viewState = .error(false)
+                self.update()
+                return
+            }
+            guard let value = dataSnapshot.value as? [String: Any] else {
+                self.viewState = .loaded
+                self.modelList = []
+                return
+            }
+            
+            guard var club: Club = DataModelCodable.decodingSingleDataSnapshot(value: value) else {
+                print("decoding error")
+                return
+            }
+            let blockUserList = MyProfile.shared.myUserInfo?.blockList ?? []
+            blockUserList.forEach { blockUser in
+                club.userList?.removeAll(where: { $0.id == blockUser.id })
+            }
+            self.model = club
+            completion(.success(club))
+            
+            self.viewState = .loaded
+        }
+    }
+    
     func removeMyClub(completion: ((Bool) -> Void)?) {
         guard let club = model else { return }
         ref.removeValue { error, _ in
