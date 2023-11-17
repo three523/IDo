@@ -143,6 +143,20 @@ final class MyProfile {
         }
     }
     
+    func appendBlockUser(blockUser: UserSummary, completion: (() -> Void)? = nil) {
+        guard let myUserInfo else { return }
+        firebaseManager.updateBlockUser(blockUser: blockUser, myProfile: myUserInfo) { isComplete in
+            completion?()
+        }
+    }
+    
+    func removeBlockUser(blockUser: UserSummary, completion: (() -> Void)? = nil) {
+        guard let myUserInfo else { return }
+        firebaseManager.removeBlockUser(blockUser: blockUser, myProfile: myUserInfo) { isComplete in
+            completion?()
+        }
+    }
+    
     private func uploadProfileImage(imageData: Data, imageSize: ImageSize) {
         guard let myUserInfo else {
             print("uid가 존재하지 않아 이미지 저장에 실패하였습니다")

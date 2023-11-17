@@ -29,6 +29,36 @@ class MyProfileUpdateManager: FBDatabaseManager<IDoUser> {
         }
     }
     
+    func updateBlockUser(blockUser: UserSummary, myProfile: MyUserInfo, completion: ((Bool) -> Void)? = nil) {
+        var idoUser = myProfile.toIDoUser
+        var blockList = idoUser.blockList ?? []
+        blockList.append(blockUser)
+        idoUser.blockList = blockList
+        
+        updateValue(value: idoUser) { isSuccess in
+            if isSuccess {
+                completion?(true)
+                return
+            }
+            completion?(false)
+        }
+    }
+    
+    func removeBlockUser(blockUser: UserSummary, myProfile: MyUserInfo, completion: ((Bool) -> Void)? = nil) {
+        var idoUser = myProfile.toIDoUser
+        var blockList = idoUser.blockList ?? []
+        blockList.removeAll(where: { $0.id == blockUser.id })
+        idoUser.blockList = blockList
+        
+        updateValue(value: idoUser) { isSuccess in
+            if isSuccess {
+                completion?(true)
+                return
+            }
+            completion?(false)
+        }
+    }
+    
     private func updateClub(idoUser: IDoUser, club: Club, completion: ((Bool) -> Void)? = nil) {
         let clubUserRef = defaultRef.child(club.category).child("meetings").child(club.id).child("userList")
         
