@@ -33,3 +33,9 @@ final class NavigationBar {
         navigationItem.titleView = titleLabel
     }
 }
+
+extension UINavigationController {
+    func setNavigationTitle(title: String) {
+        self.navigationItem.title = title
+    }
+}
