@@ -67,9 +67,7 @@ private extension BlockListViewController {
     }
     
     func setupNavigation() {
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "차단 목록")
-        }
+        self.navigationController?.setNavigationTitle(title: "차단 목록")
     }
 }
 

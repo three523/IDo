@@ -74,7 +74,9 @@ final class NoticeBoardDetailViewController: UIViewController {
                 }
             }
         }
-        NavigationBar.setNavigationCategoryTitle(for: navigationItem)
+        //NavigationBar.setNavigationCategoryTitle(for: navigationItem)
+        self.navigationController?.setNavigationCategoryTitle()
+        self.navigationController?.setNavigationBackButton(title: "")
         setup()
     }
     
@@ -102,6 +104,7 @@ final class NoticeBoardDetailViewController: UIViewController {
                 print(error.localizedDescription)
             }
         }
+        self.navigationController?.setNavigationBackButton(title: "")
     }
     
     override func viewDidDisappear(_ animated: Bool) {

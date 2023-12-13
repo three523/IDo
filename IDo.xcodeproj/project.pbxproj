@@ -24,6 +24,7 @@
 		10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10C265BF2AD55BC2002BA40A /* LaunchScreen.storyboard */; };
 		10C265CA2AD55C81002BA40A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 10C265C92AD55C81002BA40A /* SnapKit */; };
 		10C4882A2AF4ED6A00E4EAB3 /* HomeEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C488292AF4ED6A00E4EAB3 /* HomeEmptyView.swift */; };
+		10D2721C2B1EB8770045F5A0 /* GoogleService-Info-Debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10D2721B2B1EB8770045F5A0 /* GoogleService-Info-Debug.plist */; };
 		18A860AD2AFB7430002DC32B /* MyProfileUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18A860AC2AFB7430002DC32B /* MyProfileUpdateManager.swift */; };
 		18B591A02AF1D658002A684D /* DataModelCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B5919F2AF1D658002A684D /* DataModelCodable.swift */; };
 		18B591A22AF275CF002A684D /* MemberTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B591A12AF275CE002A684D /* MemberTableViewCell.swift */; };
@@ -36,7 +37,6 @@
 		18D764AA2AF3C30C00AD6140 /* IntrinsicTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D764A92AF3C30C00AD6140 /* IntrinsicTableView.swift */; };
 		18D764AC2AF3C34600AD6140 /* MemberListHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18D764AB2AF3C34600AD6140 /* MemberListHeaderView.swift */; };
 		18DAE4332AEFAB9B00E37626 /* LodingImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DAE4322AEFAB9B00E37626 /* LodingImageView.swift */; };
-		18DAE60A2B0F395200D5B6EE /* GoogleService-Info-Debug.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18DAE6092B0F395200D5B6EE /* GoogleService-Info-Debug.plist */; };
 		7B226EC62AEBD85900EAED75 /* ViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C055242ADE8AA3003D26E4 /* ViewState.swift */; };
 		7B226EC72AEBD85900EAED75 /* ImageSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C6BC792AE78DC7000E4D3F /* ImageSize.swift */; };
 		7B226EC82AEBD85900EAED75 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CCC17E2ADD039B000D092C /* Date.swift */; };
@@ -154,6 +154,7 @@
 		10CBA04D2AD6678800F1DA37 /* NoticeBoardTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoticeBoardTableViewCell.swift; sourceTree = "<group>"; };
 		10CBA0502AD6711900F1DA37 /* CreateNoticeBoardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardViewController.swift; sourceTree = "<group>"; };
 		10CBA0522AD6713C00F1DA37 /* CreateNoticeBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNoticeBoardView.swift; sourceTree = "<group>"; };
+		10D2721B2B1EB8770045F5A0 /* GoogleService-Info-Debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Debug.plist"; sourceTree = "<group>"; };
 		180C33672AD642B6000979F7 /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		180C33682AD642B6000979F7 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		187108622AE121B7006B9DEB /* FirebaseClubDatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseClubDatabaseManager.swift; sourceTree = "<group>"; };
@@ -199,7 +200,6 @@
 		18D764A92AF3C30C00AD6140 /* IntrinsicTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntrinsicTableView.swift; sourceTree = "<group>"; };
 		18D764AB2AF3C34600AD6140 /* MemberListHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListHeaderView.swift; sourceTree = "<group>"; };
 		18DAE4322AEFAB9B00E37626 /* LodingImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LodingImageView.swift; sourceTree = "<group>"; };
-		18DAE6092B0F395200D5B6EE /* GoogleService-Info-Debug.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info-Debug.plist"; path = "../../../../../../Downloads/GoogleService-Info-Debug.plist"; sourceTree = "<group>"; };
 		18DCD1A42AE5FB4300FEE070 /* SignUpProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpProfileViewController.swift; sourceTree = "<group>"; };
 		18DCD1A82AE61E9F00FEE070 /* LoginInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginInfo.swift; sourceTree = "<group>"; };
 		7B6D8C622ADFD6CA00FF2194 /* MyProfileViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyProfileViewCell.swift; sourceTree = "<group>"; };
@@ -534,7 +534,7 @@
 		18DAE6052B0F286100D5B6EE /* Development */ = {
 			isa = PBXGroup;
 			children = (
-				18DAE6092B0F395200D5B6EE /* GoogleService-Info-Debug.plist */,
+				10D2721B2B1EB8770045F5A0 /* GoogleService-Info-Debug.plist */,
 			);
 			path = Development;
 			sourceTree = "<group>";
@@ -687,7 +687,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				10B1748A2ADAE11C00BF4273 /* SpoqaHanSansNeo-Medium.ttf in Resources */,
-				18DAE60A2B0F395200D5B6EE /* GoogleService-Info-Debug.plist in Resources */,
 				18CEA07A2AF7F54B00185B10 /* GoogleService-Info-Release.plist in Resources */,
 				10B1748B2ADAE11C00BF4273 /* SpoqaHanSansNeo-Regular.ttf in Resources */,
 				10B174892ADAE11C00BF4273 /* SpoqaHanSansNeo-Light.ttf in Resources */,
@@ -695,6 +694,7 @@
 				10C265C12AD55BC2002BA40A /* LaunchScreen.storyboard in Resources */,
 				10C265BE2AD55BC2002BA40A /* Assets.xcassets in Resources */,
 				10B1748C2ADAE11C00BF4273 /* SpoqaHanSansNeo-Thin.ttf in Resources */,
+				10D2721C2B1EB8770045F5A0 /* GoogleService-Info-Debug.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

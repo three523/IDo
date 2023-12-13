@@ -250,11 +250,9 @@ final class SignUpViewController: UIViewController {
         navigationItem.leftBarButtonItem = backButton
         navigationItem.leftBarButtonItem?.tintColor = UIColor.black
         
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
         
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "회원가입")
-        }
+        self.navigationController?.setNavigationTitle(title: "회원 가입")
     }
 }
 

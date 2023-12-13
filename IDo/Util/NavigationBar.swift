@@ -7,35 +7,31 @@
 
 import UIKit
 
-final class NavigationBar {
-    
-    static func setNavigationBackButton(for navigationItem: UINavigationItem, title: String) {
+extension UINavigationController {
+
+    func setNavigationBackButton(title: String) {
         let backBarButtonItem = UIBarButtonItem(title: title, style: .plain, target: nil, action: nil)
         backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
+        self.navigationBar.topItem?.backBarButtonItem = backBarButtonItem
     }
-    
-    static func setNavigationTitle(for navigationItem: UINavigationItem, in navigationBar: UINavigationBar, title: String) {
-        navigationItem.title = title
+
+    func setNavigationTitle(title: String) {
+        guard let visibleViewController = self.visibleViewController else { return }
+        visibleViewController.navigationItem.title = title
         let titleAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.bodyFont(.medium, weight: .regular),
             .foregroundColor: UIColor.black
         ]
-        navigationBar.titleTextAttributes = titleAttributes
+        self.navigationBar.titleTextAttributes = titleAttributes
     }
-    
-    static func setNavigationCategoryTitle(for navigationItem: UINavigationItem) {
+
+    func setNavigationCategoryTitle() {
+        guard let visibleViewController = self.visibleViewController else { return }
         let titleLabel = UILabel()
         titleLabel.text = TemporaryManager.shared.categoryData ?? ""
         titleLabel.font = UIFont.bodyFont(.medium, weight: .regular)
         titleLabel.textAlignment = .center
         
-        navigationItem.titleView = titleLabel
-    }
-}
-
-extension UINavigationController {
-    func setNavigationTitle(title: String) {
-        self.navigationItem.title = title
+        visibleViewController.navigationItem.titleView = titleLabel
     }
 }

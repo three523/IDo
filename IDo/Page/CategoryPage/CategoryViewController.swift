@@ -151,9 +151,6 @@ extension CategoryViewController: UICollectionViewDelegate, UICollectionViewData
         let meetingsData = MeetingsData(category: selectedCategory)
         let meetingVC = MeetingViewController(meetingsData: meetingsData)
 
-        // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
-
         TemporaryManager.shared.categoryData = selectedCategory
 
         navigationController?.pushViewController(meetingVC, animated: true)
@@ -198,7 +195,7 @@ private extension CategoryViewController {
         }
         
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
         
         navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: containerView)

@@ -88,6 +88,7 @@ class HomeViewController : UIViewController {
             self.updateUIBasedOnData()
             self.joinClubTableView.reloadData()
         }
+        self.navigationController?.setNavigationBackButton(title: "")
     }
     
     func setLayout() {
@@ -235,7 +236,7 @@ private extension HomeViewController {
         }
         
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
         
         navigationController?.navigationBar.tintColor = UIColor.black
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: containerView)

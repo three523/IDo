@@ -87,12 +87,10 @@ final class CategorySelectViewController: UIViewController {
         super.viewDidLoad()
 
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
 
         // 타이틀 생성 및 설정
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "카테고리 선택")
-        }
+        self.navigationController?.setNavigationTitle(title: "카테고리 선택")
 
         setup()
     }

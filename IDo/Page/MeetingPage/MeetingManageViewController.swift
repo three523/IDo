@@ -48,9 +48,7 @@ class MeetingManageViewController: UIViewController {
         }
         ref = Database.database().reference()
         manageFinishButton.addTarget(self, action: #selector(manageFinishButtonTapped), for: .touchUpInside)
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 수정하기")
-        }
+        self.navigationController?.setNavigationTitle(title: "모임 수정하기")
 //        placeholderLabel.isHidden = !meetingDescriptionField.text.isEmpty
     }
     

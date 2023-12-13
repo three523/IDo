@@ -444,15 +444,13 @@ private extension MyProfileViewController {
         hiddenLeftButton()
             
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
     }
     
     // 취소 버튼을 숨기고 문구를 표시
     private func hiddenLeftButton() {
         navigationItem.leftBarButtonItem = nil
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "")
-        }
+        self.navigationController?.setNavigationTitle(title: "")
         showLeftLabel()
     }
     
@@ -460,9 +458,7 @@ private extension MyProfileViewController {
     private func unHiddenLeftButton() {
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .done, target: self, action: #selector(profileUpdateCancle))
         navigationItem.leftBarButtonItem?.tintColor = UIColor(color: .negative)
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 편집")
-        }
+        self.navigationController?.setNavigationTitle(title: "프로필 편집")
         navigationItem.leftBarButtonItem?.isEnabled = true
     }
     

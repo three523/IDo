@@ -161,9 +161,8 @@ class MeetingCreateViewController: UIViewController {
         configureUI()
         setupScrollView()
 
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "모임 생성하기")
-        }
+        self.navigationController?.setNavigationBackButton(title: "")
+        self.navigationController?.setNavigationTitle(title: "모임 생성하기")
     }
     
     override func viewWillAppear(_ animated: Bool) {
