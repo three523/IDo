@@ -65,6 +65,8 @@ class CreateNoticeBoardViewController: UIViewController {
         createNoticeBoardView.galleryCollectionView.dataSource = self
         
         navigationController?.delegate = self
+        
+        self.navigationController?.setNavigationBackButton(title: "")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -146,14 +148,10 @@ private extension CreateNoticeBoardViewController {
 private extension CreateNoticeBoardViewController {
     func navigationControllerSet() {
         if isEditingMode {
-            if let navigationBar = navigationController?.navigationBar {
-                NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "게시판 수정")
-            }
+            self.navigationController?.setNavigationTitle(title: "게시판 수정")
         }
         else {
-            if let navigationBar = navigationController?.navigationBar {
-                NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "게시판 작성")
-            }
+            self.navigationController?.setNavigationTitle(title: "게시판 작성")
         }
         navigationItem.largeTitleDisplayMode = .never
         navigationController?.view.tintColor = UIColor.black

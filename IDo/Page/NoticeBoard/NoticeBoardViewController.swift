@@ -38,6 +38,8 @@ class NoticeBoardViewController: UIViewController {
                 print("Firebase 정보 불러오기 성공")
             }
         }
+        
+        self.navigationController?.setNavigationBackButton(title: "")
     }
     
     override func viewWillAppear(_ animated: Bool) {

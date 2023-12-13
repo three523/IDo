@@ -104,12 +104,10 @@ class SignUpProfileViewController: UIViewController {
         view.backgroundColor = .white
 
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
 
         // 타이틀 생성 및 설정
-        if let navigationBar = navigationController?.navigationBar {
-            NavigationBar.setNavigationTitle(for: navigationItem, in: navigationBar, title: "프로필 생성")
-        }
+        self.navigationController?.setNavigationTitle(title: "프로필 생성")
 
         setup()
     }

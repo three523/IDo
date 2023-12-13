@@ -45,7 +45,6 @@ class FirebaseManager {
     }
     
     // MARK: - 데이터 저장
-
     func saveNoticeBoard(noticeBoard: NoticeBoard, completion: ((Bool) -> Void)? = nil) {
         let ref = Database.database().reference().child("noticeBoards").child(noticeBoard.clubID).child(noticeBoard.id)
         
@@ -192,7 +191,6 @@ class FirebaseManager {
     }
     
     // MARK: - 데이터 삭제
-
     func deleteNoticeBoard(at index: Int, completion: @escaping (Bool) -> Void) {
         if index >= 0, index < self.noticeBoards.count {
             let noticeBoardID = self.noticeBoards[index].id

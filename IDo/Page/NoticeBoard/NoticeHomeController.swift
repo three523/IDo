@@ -117,7 +117,7 @@ final class NoticeHomeController: UIViewController {
             imageView.addGestureRecognizer(tapGesture)
             imageView.isUserInteractionEnabled = true
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
     }
     
     override func viewWillAppear(_ animated: Bool) {

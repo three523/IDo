@@ -88,11 +88,11 @@ final class NoticeMeetingController: TabmanViewController {
 //        titleLabel.textAlignment = .center
 //        
 //        navigationItem.titleView = titleLabel
-        
-        NavigationBar.setNavigationCategoryTitle(for: navigationItem)
+        //NavigationBar.setNavigationCategoryTitle(for: navigationItem)
+        self.navigationController?.setNavigationCategoryTitle()
         
         // 백 버튼 아이템 생성 및 설정
-        NavigationBar.setNavigationBackButton(for: navigationItem, title: "")
+        self.navigationController?.setNavigationBackButton(title: "")
     }
     
     func setupTabman() {
