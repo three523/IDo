@@ -8,19 +8,22 @@
 import UIKit
 import FirebaseStorage
 
+final class CacheImage {
+    var image: UIImage
+    var updated: Date?
+    
+    init(image: UIImage, updated: Date?) {
+        self.image = image
+        self.updated = updated
+    }
+}
+
 class FBURLCache {
     static let shared = FBURLCache()
-    private let urlCache: URLCache
-    private let imageCache = NSCache<NSString, UIImage>()
+    private let imageCache = NSCache<NSString, CacheImage>()
     private var downloadTasks: [IndexPath: URLSessionDataTask] = [:]
     
-    private init() {
-        let cacheSizeMemory = 100 * 1024 * 1024
-        let cacheSizeDisk = 100 * 1024 * 1024
-        let cache = URLCache(memoryCapacity: cacheSizeMemory, diskCapacity: cacheSizeDisk, diskPath: "UserProfileImage")
-        URLCache.shared = cache
-        self.urlCache = URLCache.shared
-    }
+    private init() {}
     
     func cancelDownloadURL(indexPath: IndexPath) {
         downloadTasks[indexPath]?.cancel()
@@ -29,26 +32,25 @@ class FBURLCache {
     
     //TODO: 코드를 메서드를 어떻게 줄일지 생각해보기
     func downloadURL(storagePath: String, completion: @escaping (Result<UIImage,Error>) -> Void) {
-        var cacheImage = UIImage()
-        //TODO: 이미지를 바뀌었을떄 metadata로 확인하여 이미지를 확인하는데 그전에 확인하는 방법 생각해보기
+        var cacheImage: CacheImage? = nil
         if let image = imageCache.object(forKey: storagePath as NSString) {
-            completion(.success(image))
+            completion(.success(image.image))
             cacheImage = image
-//            return
         }
         let storage = Storage.storage().reference(withPath: storagePath)
+                
         storage.getMetadata { metadata, error in
             if let error {
                 completion(.failure(error))
                 return
             }
-            if let localDataHash = cacheImage.pngData()?.md5Hash,
-               let storageDataHash = metadata?.md5Hash,
-               localDataHash == storageDataHash {
-//                completion(.success(cacheImage))
+                        
+            if let cacheImageUpdated = cacheImage?.updated,
+               let storageDataUpdated = metadata?.updated,
+               cacheImageUpdated == storageDataUpdated {
                 return
             }
-                        
+                                                
             storage.downloadURL { url, error in
                 if let error {
                     completion(.failure(error))
@@ -56,46 +58,17 @@ class FBURLCache {
                 }
                 guard let url else { return }
                 let request = URLRequest(url: url)
-                if let cachedResponse = self.urlCache.cachedResponse(for: request) {
-                    let localDataHash = cachedResponse.data.md5Hash
-                    if let storageDataHash = metadata?.md5Hash,
-                       localDataHash == storageDataHash {
-                        if let image = UIImage(data: cachedResponse.data) {
+                self.downloadImageData(request: request, storagePath: storagePath, updated: metadata?.updated) { result in
+                    switch result {
+                    case .success(let data):
+                        if let image = UIImage(data: data) {
                             completion(.success(image))
-                            self.imageCache.setObject(image, forKey: storagePath as NSString)
-                            return
-                        } else {
-                            print("image Data를 읽을수 없습니다.")
                             return
                         }
-                    } else {
-                        self.downloadImageData(request: request, storagePath: storagePath) { result in
-                            switch result {
-                            case .success(let data):
-                                if let image = UIImage(data: data) {
-                                    completion(.success(image))
-                                    return
-                                }
-                                print("image Data를 읽을수 없습니다.")
-                            case .failure(let error):
-                                completion(.failure(error))
-                                return
-                            }
-                        }
-                    }
-                } else {
-                    self.downloadImageData(request: request, storagePath: storagePath) { result in
-                        switch result {
-                        case .success(let data):
-                            if let image = UIImage(data: data) {
-                                completion(.success(image))
-                                return
-                            }
-                            print("image Data를 읽을수 없습니다.")
-                        case .failure(let error):
-                            completion(.failure(error))
-                            return
-                        }
+                        print("image Data를 읽을수 없습니다.")
+                    case .failure(let error):
+                        completion(.failure(error))
+                        return
                     }
                 }
             }
@@ -131,8 +104,7 @@ class FBURLCache {
                 guard let url else { return }
                 let request = URLRequest(url: url)
                 
-                
-                self.downloadImageData(request: request, storagePath: storagePath) { result in
+                self.downloadImageData(request: request, storagePath: storagePath, updated: metadata?.updated) { result in
                     switch result {
                     case .success(let data):
                         if let image = UIImage(data: data) {
@@ -151,7 +123,7 @@ class FBURLCache {
         }
     }
     
-    private func downloadImageData(request: URLRequest, storagePath: String, indexPath: IndexPath? = nil, completion: @escaping (Result<Data,Error>) -> Void) {
+    private func downloadImageData(request: URLRequest, storagePath: String, indexPath: IndexPath? = nil, updated: Date? = nil, completion: @escaping (Result<Data,Error>) -> Void) {
         let urlTask = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             
             defer {
@@ -166,11 +138,10 @@ class FBURLCache {
             }
             guard let data,
                 let response else { return }
-            let cachedData = CachedURLResponse(response: response, data: data)
-            URLCache.shared.storeCachedResponse(cachedData, for: request)
             completion(.success(data))
             if let image = UIImage(data: data) {
-                self?.imageCache.setObject(image, forKey: storagePath as NSString)
+                let cacheImage = CacheImage(image: image, updated: updated)
+                self?.imageCache.setObject(cacheImage, forKey: storagePath as NSString)
             }
         }
         if let indexPath {
