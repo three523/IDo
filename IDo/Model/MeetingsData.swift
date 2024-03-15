@@ -7,6 +7,8 @@ class MeetingsData {
     var clubs: [Club] = []
     let category: String
     private let defaultRef: DatabaseReference
+    private var lastClubId: String?
+
     var update: () -> Void = {}
     var clubImages: [String: UIImage] = [:] // 딕셔너리
     
@@ -64,7 +66,17 @@ class MeetingsData {
     }
     
     func readClub(completion: ((Bool) -> Void)? = nil) {
-        defaultRef.getData { error, datasnapshot in
+        
+        var query = defaultRef.queryOrderedByKey()
+        print(lastClubId)
+        if let lastClubId {
+            query = query.queryStarting(atValue: lastClubId)
+        }
+        
+        query = query.queryLimited(toFirst: 10)
+        
+        query.getData { error, datasnapshot in
+
             if let error = error {
                 print(error.localizedDescription)
                 completion?(false)
@@ -77,6 +89,7 @@ class MeetingsData {
                 return
             }
             var tempClubs: [Club] = DataModelCodable.decodingDataSnapshot(value: value)
+                        
             let myBlockList = MyProfile.shared.myUserInfo?.blockList ?? []
             myBlockList.forEach { blockUser in
                 tempClubs = tempClubs.filter { $0.rootUser.id != blockUser.id }
@@ -84,9 +97,19 @@ class MeetingsData {
                     tempClubs[index].userList?.removeAll(where: {$0.id == blockUser.id})
                 }
             }
-            self.clubs = tempClubs.sorted(by: { $0.createDate > $1.createDate })
+            
+            self.lastClubId = tempClubs.last?.id
+            
+            if self.clubs.contains(where: { $0.id == tempClubs.first?.id }) {
+                print("contains")
+                completion?(true)
+                self.update()
+                return
+            }
+            self.clubs.append(contentsOf: tempClubs)
             completion?(true)
             self.update()
+            
         }
     }
     

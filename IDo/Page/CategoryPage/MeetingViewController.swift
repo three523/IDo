@@ -19,6 +19,9 @@ class MeetingViewController: UIViewController {
     private var noMeetingsView: UIView!
     private var clubList: [Club] = []
     private var meetingsData: MeetingsData
+    
+    private var isLoading: Bool = false
+    
     init(meetingsData: MeetingsData) {
         self.meetingsData = meetingsData
         super.init(nibName: nil, bundle: nil)
@@ -49,13 +52,7 @@ class MeetingViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        meetingsData.readClub { [weak self] _ in
-            guard let self else { return }
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                self.updateNoMeetingsViewVisibility()
-            }
-        }
+        loadData()
     }
 
     private func createTitleLabel(with data: String) -> UILabel {
@@ -72,6 +69,19 @@ class MeetingViewController: UIViewController {
         
         // 백 버튼 아이템 생성 및 설정
         self.navigationController?.setNavigationBackButton(title: "")
+    }
+    
+    private func loadData() {
+        isLoading = true
+        
+        meetingsData.readClub { [weak self] _ in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+                self.updateNoMeetingsViewVisibility()
+                self.isLoading = false
+            }
+        }
     }
 
     private func setupEmptyMessageView() {
@@ -201,4 +211,13 @@ extension MeetingViewController: UITableViewDelegate, UITableViewDataSource {
         let noticeBoardVC = NoticeMeetingController(club: club, currentUser: currentUser)
         self.navigationController?.pushViewController(noticeBoardVC, animated: true)
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        if offsetY > contentHeight - scrollView.frame.height && !isLoading {
+            loadData()
+        }
+    }
 }
+
