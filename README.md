@@ -29,7 +29,7 @@
 ## ⭐️ 프로젝트 소개
 
 ### 프로젝트 목표
-팀원들간의 협업을 잘 해보기 <br>
+앱 배포, 파이어베이스 연동, 이미지 다루기 <br>
 
 <br>
 
@@ -171,27 +171,75 @@
 
 #### 이미지 다운로드 속도가 느림
 - 원인 : 사용자가 보는 이미지에 비해 매우 큰 사이즈의 이미지를 저장하고 불러오기 때문, Firebase Storage는 따로 캐싱작업을 해주지 않음
-- 해결 : compressionQuality 를 사용하여 이미지를 압축하여 저장, storage에 metadata에 있는 md5hash값과 로컬에 있는 이미지 데이터를 md5hash로 변환하여 비교하여 다를 경우 서버에서 이미지를 가져와 캐싱된 이미지를 변경함
+- 해결 : 이미지 사이즈 조절을 구현하여 저장, storage에 metadata에 있는 updated값과 로컬에 있는 이미지 데이터를 updated 비교하여 다를 경우 서버에서 이미지를 가져와 캐싱된 이미지를 변경함
+
+1. 이미지 리사이징 작업
+```swift
+extension UIImage {
+    func resizeImage(targetSize: CGSize) -> UIImage {
+        let size = self.size
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+
+        var newSize: CGSize
+
+        if widthRatio > heightRatio {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio, height: size.height * widthRatio)
+        }
+
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        self.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage!
+    }
+}
+```
+```swift
+guard let smallImageData = image.resizeImage(targetSize: CGSize(width: 90, height: 90)).pngData(),
+      let mediumImageData = image.resizeImage(targetSize: CGSize(width: 480, height: 480)).pngData() else { return }
+let datas = [smallImageData, mediumImageData]
+imageUpload(datas: datas, uid: uid)
+```
+
+2. 이미지 캐싱 작업
+```swift
+final class CacheImage {
+    var image: UIImage
+    var updated: Date?
+    
+    init(image: UIImage, updated: Date?) {
+	self.image = image
+	self.updated = updated
+    }
+}
+```
   ```swift
-  if let image = profileImageButton.image(for: .normal) {
-      imageData = image.jpegData(compressionQuality: 0.5) // 이미지 품질
-  }
-  ```
-  ```swift
-  extension Data {
-      var md5Hash: String {
-          let hash = Insecure.MD5.hash(data: self)
-          return Data(hash).base64EncodedString()
+var cacheImage: CacheImage? = nil
+if let image = imageCache.object(forKey: storagePath as NSString) {
+      completion(.success(image.image))
+      cacheImage = image
+}
+let storage = Storage.storage().reference(withPath: storagePath)
+	
+storage.getMetadata { metadata, error in
+      if let error {
+          completion(.failure(error))
+          return
       }
-  }
-  ```
-  ```swift
-  //사용 예시
-  if let localDataHash = cacheImage.pngData()?.md5Hash,
-     let storageDataHash = metadata?.md5Hash,
-     localDataHash == storageDataHash {
-     return
-  }
+
+      if let cacheImageUpdated = cacheImage?.updated,
+         let storageDataUpdated = metadata?.updated,
+         cacheImageUpdated == storageDataUpdated {
+          return
+      }
+						  .  
+						  .
   ```
 
 <br>
