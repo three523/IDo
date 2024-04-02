@@ -244,6 +244,35 @@ storage.getMetadata { metadata, error in
 
 <br>
 
+### 데이터가 많은 화면에서 느린 속도
+- 원인 : 모든 데이터를 한꺼번에 가져와서 생긴 문제
+- 해결 : 페이지 네이션을 구현하여 데이터를 10개씩 나눠서 가져오도록 구현
+```swift
+var query = defaultRef.queryOrderedByKey()
+if let lastClubId {
+    query = query.queryStarting(atValue: lastClubId)
+}
+
+query = query.queryLimited(toFirst: 10)
+
+query.getData { error, datasnapshot in
+				.
+				.
+```
+
+```swift
+// 스크롤뷰에서 일정 높이가 넘어가면 새로 데이터를 불러오도록 구현
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        if offsetY > contentHeight - scrollView.frame.height && !isLoading {
+            loadData()
+        }
+    }
+```
+  <p align="left">
+    <img src="https://github.com/three523/IDo/assets/71269216/f6d24a4e-3bc9-4b00-af29-54e472b82563" alt="iPhone 15 Pro" width="300" style="margin-right: 16px;"/>
+  </p>
 ### 기기 별 레이아웃 조정
 
 #### 기기에 따라서 컴포넌트의 레이아웃이 깨짐
